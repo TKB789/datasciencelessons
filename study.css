@@ -25,14 +25,27 @@ img,svg{max-width:100%}
 
 /* ---------------- top bar ---------------- */
 .topbar{position:sticky;top:0;z-index:40;background:var(--field);border-bottom:1px solid var(--rule);padding:13px 0 0}
-.topline{display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap}
-.brand{font-family:var(--sans);font-size:.84rem;color:var(--ink-soft);padding-bottom:11px;margin-right:auto;text-decoration:none}
+.topline{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.brand{font-family:var(--sans);font-size:.84rem;color:var(--ink-soft);padding-bottom:9px;margin-right:auto;text-decoration:none}
 .brand:hover{color:var(--ink)}
-.tabs{display:flex;gap:2px;flex-wrap:wrap}
-.tabs a{font-family:var(--sans);font-size:.9rem;font-weight:500;border-bottom:3px solid transparent;color:var(--ink-soft);padding:8px 13px 9px;text-decoration:none;display:block}
-.tabs a:hover{color:var(--ink)}
-.tabs a[aria-current="page"]{color:var(--ink);font-weight:600;border-bottom-color:var(--ink)}
-.tabs a.add{font-weight:400}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;padding-bottom:9px}
+.tabs a{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:var(--sans);font-size:.86rem;font-weight:500;line-height:1.2;
+  background:var(--surface);border:1px solid var(--rule);border-radius:100px;
+  padding:8px 15px 8px 12px;color:var(--ink-soft);text-decoration:none;
+  transition:border-color .15s,background .15s,color .15s;
+}
+.tabs a::before{content:"";flex:0 0 auto;width:9px;height:9px;border-radius:50%;background:var(--c,#9aa5b1)}
+.tabs a:hover{border-color:var(--c);color:var(--ink)}
+.tabs a[aria-current="page"]{background:var(--c);border-color:var(--c);color:#fff;font-weight:600}
+.tabs a[aria-current="page"]::before{background:rgba(255,255,255,.85)}
+.tabs .tpre{color:inherit;opacity:.65;font-weight:400}
+@media (max-width:640px){
+  .tabs{gap:5px}
+  .tabs a{font-size:.83rem;padding:7px 13px 7px 10px}
+  .tabs .tpre{display:none}
+}
 .toolbar{display:flex;gap:8px;padding-bottom:8px}
 .btn{font-family:var(--sans);font-size:.82rem;font-weight:500;background:var(--surface);border:1px solid var(--rule);color:var(--ink);padding:6px 12px;cursor:pointer;border-radius:2px}
 .btn:hover{border-color:var(--ink-soft)}
@@ -188,7 +201,10 @@ aside.check .a + .a{margin-top:8px}
 .match .cell .pill{display:inline-block;font-family:var(--mono);font-size:.7rem;color:var(--ok);margin-left:6px}
 @keyframes shake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
 @media (prefers-reduced-motion:reduce){.match .cell[data-state="wrong"]{animation:none}}
-@media (max-width:620px){.match{grid-template-columns:1fr}}
+@media (max-width:620px){
+  .match{grid-template-columns:1fr;gap:4px}
+  .match .col[data-side="b"]{border-top:1px solid var(--rule-faint);padding-top:12px;margin-top:6px}
+}
 
 /* ---------------- interactive: hotspot figure ---------------- */
 .hotwrap{position:relative}

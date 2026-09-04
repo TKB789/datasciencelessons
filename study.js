@@ -77,9 +77,14 @@ var MODULES = [
   function buildNav(){
     var tabs = document.querySelector(".tabs");
     if (!tabs) return;
-    var html = '<a href="index.html"' + (HERE === "index" ? ' aria-current="page"' : '') + '>All modules</a>';
+    var html = '<a href="index.html" style="--c:#131b26"' +
+               (HERE === "index" ? ' aria-current="page"' : '') + '>All modules</a>';
     MODULES.forEach(function(m){
-      html += '<a href="' + m.file + '"' + (HERE === m.id ? ' aria-current="page"' : '') + '>' + m.tab + '</a>';
+      var pre = m.tab.split("—")[0].trim();          /* e.g. "Module 2" */
+      html += '<a href="' + m.file + '" style="--c:' + m.colour + '"' +
+              (HERE === m.id ? ' aria-current="page"' : '') + '>' +
+              '<span class="tpre">' + pre + ' &middot;&nbsp;</span>' +
+              '<span class="ttitle">' + m.title + '</span></a>';
     });
     tabs.innerHTML = html;
   }

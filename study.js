@@ -1,13 +1,18 @@
 /* ============================================================
-   ISyE 6501 study guide — shared behaviour
+   Analytics modeling study notes — shared behaviour
    Loaded by index.html and every module-*.html page.
 
-   >>> TO ADD A MODULE: add one line to MODULES below and copy
-   >>> module-template.html. Nothing else needs editing — the tab
-   >>> bar and the index page both build themselves from this list.
+   >>> TO ADD A MODULE: add one line to MODULES below and drop the new
+   >>> page in the same folder. Nothing else needs editing — the tab bar
+   >>> and the index cards both build themselves from this list.
+   >>> module-template.html is a starting point you can copy.
    ============================================================ */
 
 var MODULES = [
+  { id:"m1", file:"module-1-introduction.html", tab:"Module 1 — Foundations",
+    title:"Foundations", colour:"#7a3f52",
+    blurb:"The three kinds of question analytics answers, how the topics fit together, and the one word that means three different things." },
+
   { id:"m3", file:"module-3-validation.html", tab:"Module 3 — Validation",
     title:"Validation", colour:"#1f6b6b",
     blurb:"Why training accuracy lies, how training / validation / test split the work, and what k-fold cross-validation buys you." },
@@ -64,7 +69,6 @@ var MODULES = [
     MODULES.forEach(function(m){
       html += '<a href="' + m.file + '"' + (HERE === m.id ? ' aria-current="page"' : '') + '>' + m.tab + '</a>';
     });
-    html += '<a class="add" href="index.html#add">＋ Add a module</a>';
     tabs.innerHTML = html;
   }
 

@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Module 1: Foundations — Study Notes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="study.css">
+</head>
+<body data-page="m1">
+<div class="wrap">
+
+<div class="topbar">
+  <div class="topline">
+    <a class="brand" href="index.html">Analytics Modeling &middot; Study Notes</a>
+    <nav class="tabs" aria-label="Modules"></nav>
+    <div class="toolbar">
+      <button class="btn" id="exportBtn">Export</button>
+      <button class="btn" id="importBtn">Import</button>
+    </div>
+  </div>
+  <nav class="rail" id="rail" aria-label="Lessons in this module"></nav>
+</div>
+
+<header class="hero">
+  <h1>Module 1: Foundations</h1>
+  <p class="sub">What analytics is for, how the topics fit together, and the one word that means three different things all term.</p>
+
+  <svg class="plot" viewBox="0 0 660 300" role="img" aria-label="Diagram of the three question types: descriptive questions look at the past, predictive questions look at the future, and prescriptive questions sit above both and ask what action to take.">
+    <rect x="170" y="26" width="320" height="66" fill="#7a3f52" fill-opacity=".1" stroke="#7a3f52" stroke-width="2"/>
+    <text x="330" y="53" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="15" font-weight="600" fill="#131b26">Prescriptive</text>
+    <text x="330" y="76" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="12.5" fill="#4a5765">what action would be best?</text>
+
+    <rect x="40" y="132" width="250" height="66" fill="#7a3f52" fill-opacity=".05" stroke="#7a3f52" stroke-width="1.5"/>
+    <text x="165" y="159" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="15" font-weight="600" fill="#131b26">Descriptive</text>
+    <text x="165" y="182" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="12.5" fill="#4a5765">what happened?</text>
+
+    <rect x="370" y="132" width="250" height="66" fill="#7a3f52" fill-opacity=".05" stroke="#7a3f52" stroke-width="1.5"/>
+    <text x="495" y="159" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="15" font-weight="600" fill="#131b26">Predictive</text>
+    <text x="495" y="182" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="12.5" fill="#4a5765">what will happen?</text>
+
+    <polyline points="200,132 200,110 250,110" fill="none" stroke="#7a3f52" stroke-width="1.5"/>
+    <polygon points="260,110 248,105 248,115" fill="#7a3f52"/>
+    <polyline points="460,132 460,110 410,110" fill="none" stroke="#7a3f52" stroke-width="1.5"/>
+    <polygon points="400,110 412,105 412,115" fill="#7a3f52"/>
+
+    <line x1="40" y1="244" x2="612" y2="244" stroke="#131b26" stroke-width="1.5"/>
+    <polygon points="622,244 608,238 608,250" fill="#131b26"/>
+    <line x1="330" y1="204" x2="330" y2="256" stroke="#9aa5b1" stroke-width="1.5" stroke-dasharray="4 4"/>
+    <text x="330" y="276" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11.5" fill="#4a5765">now</text>
+    <text x="44" y="276" font-family="IBM Plex Sans,sans-serif" font-size="12" fill="#9aa5b1">the past</text>
+    <text x="612" y="276" text-anchor="end" font-family="IBM Plex Sans,sans-serif" font-size="12" fill="#9aa5b1">the future</text>
+  </svg>
+
+  <ul class="track">
+    <li style="--dot:#7a3f52"><a href="#l1"><span class="tnum">Lesson 1</span><span class="tname">What analytics answers</span><span class="tq">What kinds of question can analytics address?</span></a></li>
+    <li style="--dot:#2f6b52"><a href="#l2"><span class="tnum">Lesson 2</span><span class="tname">How the topics fit together</span><span class="tq">Why do models and concepts interleave?</span></a></li>
+    <li style="--dot:#3d5a99"><a href="#l3"><span class="tnum">Lesson 3</span><span class="tname">What is a model?</span><span class="tq">Why does one word mean three things?</span></a></li>
+  </ul>
+
+  <div class="badge-strip">
+    <p class="cap">Badges unlock when every activity in a lesson is finished.</p>
+    <ul class="badges">
+      <li class="badge" data-for="l1" style="--b:#7a3f52"><span class="gem">Q</span><span class="nm">Three Questions</span></li>
+      <li class="badge" data-for="l2" style="--b:#2f6b52"><span class="gem">S</span><span class="nm">Two Streams</span></li>
+      <li class="badge" data-for="l3" style="--b:#3d5a99"><span class="gem">M</span><span class="nm">Three Models</span></li>
+      <li class="badge" data-for="*"  style="--b:#131b26"><span class="gem">★</span><span class="nm">Module 1 complete</span></li>
+    </ul>
+  </div>
+</header>
+
+<!-- ==================== LESSON 1 ==================== -->
+<section class="lesson" id="l1" data-short="Question types" style="--accent:#7a3f52">
+  <div class="lesson-head">
+    <span class="ln">Lesson 1</span>
+    <h2>What analytics answers</h2>
+    <p class="keyline">Analytics answers three kinds of question — what happened, what will happen, and what to do about it — and modeling is the act of turning a situation into math and the math back into a recommendation.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>The three parts of analytics modeling</h3>
+      <p>Across almost any applied project, the critical work breaks into three pieces:</p>
+      <ol class="steps">
+        <li>Selecting and specifying the right model or models to combine into a solution.</li>
+        <li>Compiling, building and/or forecasting the necessary data sets.</li>
+        <li>Interpreting the model’s output to make suggestions that match the organization’s needs, priorities and structure.</li>
+      </ol>
+      <p>Notice that only the middle third is what most people picture as “doing analytics.” The first and last thirds are judgement about the organization, and the whole subject is shaped around that.</p>
+    </div>
+    <aside class="check">
+      <span class="n">Frame for the term</span>
+      <p class="q">Which of the three parts of analytics modeling does an algorithm actually do for you?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Only part of the middle one. Choosing the model and interpreting its output for a specific organization are both yours — which is why Module 4 later calls this “the art of analytics.”</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>The three kinds of question</h3>
+      <p>Click through the diagram, then read on.</p>
+
+      <figure class="hotwrap" data-hotspot="m1l1-hot">
+        <svg class="fig" viewBox="0 0 660 340" role="img" aria-label="The three question types on a timeline, plus a fourth open-ended category. Four clickable regions.">
+          <rect x="170" y="26" width="320" height="66" fill="#7a3f52" fill-opacity=".1" stroke="#7a3f52" stroke-width="2"/>
+          <text x="330" y="53" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="15" font-weight="600" fill="#131b26">Prescriptive</text>
+          <text x="330" y="76" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="12.5" fill="#4a5765">what action would be best?</text>
+
+          <rect x="40" y="132" width="250" height="66" fill="#7a3f52" fill-opacity=".05" stroke="#7a3f52" stroke-width="1.5"/>
+          <text x="165" y="159" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="15" font-weight="600" fill="#131b26">Descriptive</text>
+          <text x="165" y="182" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="12.5" fill="#4a5765">what happened?</text>
+
+          <rect x="370" y="132" width="250" height="66" fill="#7a3f52" fill-opacity=".05" stroke="#7a3f52" stroke-width="1.5"/>
+          <text x="495" y="159" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="15" font-weight="600" fill="#131b26">Predictive</text>
+          <text x="495" y="182" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="12.5" fill="#4a5765">what will happen?</text>
+
+          <polyline points="200,132 200,110 250,110" fill="none" stroke="#7a3f52" stroke-width="1.5"/>
+          <polygon points="260,110 248,105 248,115" fill="#7a3f52"/>
+          <polyline points="460,132 460,110 410,110" fill="none" stroke="#7a3f52" stroke-width="1.5"/>
+          <polygon points="400,110 412,105 412,115" fill="#7a3f52"/>
+
+          <line x1="40" y1="236" x2="612" y2="236" stroke="#131b26" stroke-width="1.5"/>
+          <polygon points="622,236 608,230 608,242" fill="#131b26"/>
+          <line x1="330" y1="204" x2="330" y2="248" stroke="#9aa5b1" stroke-width="1.5" stroke-dasharray="4 4"/>
+          <text x="330" y="266" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="11.5" fill="#4a5765">now</text>
+
+          <rect x="150" y="282" width="360" height="42" fill="none" stroke="#9aa5b1" stroke-width="1.5" stroke-dasharray="5 4"/>
+          <text x="330" y="308" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="12.5" fill="#4a5765">…and the open-ended questions</text>
+
+          <g class="hs" data-title="Descriptive — explaining what happened"
+             data-body="Did the new checkout layout change average basket size? When did a machine's failure rate cross an unacceptable threshold? Which customers behave most alike, and which attributes drive that similarity? Did treatment A outperform treatment B in the trial?">
+            <rect class="hit" x="40" y="132" width="250" height="66"/><rect class="ring" x="40" y="132" width="250" height="66"/>
+          </g>
+          <g class="hs" data-title="Predictive — what will happen"
+             data-body="What will demand be next quarter, and in five years? What will this asset be worth in a year — and how much uncertainty sits in that estimate? How likely is a customer with these characteristics to redeem a coupon, or click an ad?">
+            <rect class="hit" x="370" y="132" width="250" height="66"/><rect class="ring" x="370" y="132" width="250" height="66"/>
+          </g>
+          <g class="hs" data-title="Prescriptive — what action is best"
+             data-body="How should traffic signals be timed to minimize delay during a large event? How should a delivery fleet schedule its pickups and drop-offs? How should an airline re-route passengers to get them moving again after a storm?">
+            <rect class="hit" x="170" y="26" width="320" height="66"/><rect class="ring" x="170" y="26" width="320" height="66"/>
+          </g>
+          <g class="hs" data-title="The open-ended fourth kind"
+             data-body="Sometimes the question has no shape yet: we now capture detail we never had before, so how do we turn it into value? These arrive without a model attached — deciding what question to ask is the work.">
+            <rect class="hit" x="150" y="282" width="360" height="42"/><rect class="ring" x="150" y="282" width="360" height="42" rx="3"/>
+          </g>
+        </svg>
+        <div class="hotpanel"><span class="hint">Four regions are clickable, each with worked examples. Open all four to finish this activity.</span></div>
+      </figure>
+
+      <div class="ix" data-quiz="m1l1-q1">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Which of these is <strong>prescriptive</strong>?</p>
+        <div class="opts">
+          <button class="opt" data-fb="Predictive. It asks what a number will be at a future date — and note the second half, about uncertainty in the estimate, which is part of what makes it a prediction rather than a decision.">What will this asset be worth a year from now, and how uncertain is that estimate?</button>
+          <button class="opt" data-right data-fb="Prescriptive. It asks for an action to take — a timing plan — not for a description or a forecast. The giveaway is 'minimize': there is an objective and a set of choices.">How should traffic signals be timed to minimize delay during a large event?</button>
+          <button class="opt" data-fb="Descriptive. It asks for an explanation of something that already happened — the effect a change had — rather than for a course of action.">How much effect did the new checkout layout have on average basket size?</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="ix" data-quiz="m1l1-q2">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">“Which customers behave most alike, and which attributes drive that similarity?” This counts as descriptive. Why not predictive?</p>
+        <div class="opts">
+          <button class="opt" data-fb="Clustering is unsupervised, but that isn't what decides the category. Category depends on what the question asks for, not which family of method you'd reach for.">Because it would be answered with clustering, and clustering isn’t a predictive method.</button>
+          <button class="opt" data-right data-fb="It asks for an explanation of structure already present in past behaviour. Nothing about a future state is being asked for — though the same grouping could later feed a predictive question.">Because it asks for an explanation of patterns already present in past behaviour, not for a future value.</button>
+          <button class="opt" data-fb="Confidence has nothing to do with it. Descriptive questions can be answered with enormous uncertainty and predictive ones with very little.">Because you can answer it with certainty, and predictive questions always carry uncertainty.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Exam target</span>
+      <p class="q">Given an unfamiliar business question, how do you decide which of the three it is?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Ask what the answer would be. An explanation of something past → descriptive. A value for something not yet observed → predictive. A course of action, usually with an objective to optimize → prescriptive.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>What “modeling” means here</h3>
+      <div class="defn">
+        <span class="term">Modeling, in analytics</span>
+        <p>Taking a real-life situation and expressing the key parts of that situation in terms of math — so we can analyze the math, and then turn the mathematical analysis back into a real-life answer, solution or recommendation.</p>
+      </div>
+      <p>Read that as a round trip with three legs: <strong>situation → math</strong>, then <strong>analysis</strong>, then <strong>math → recommendation</strong>. Most teaching covers the middle leg, but the two translations at either end are where analytics work actually succeeds or fails. The word “key” is doing real work too — a model expresses the key parts, not all of them.</p>
+      <div class="note">
+        <div class="note-head"><span class="lbl">Class discussion — Lesson 1</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="m1l1" data-placeholder="Examples from your own work that fit each question type…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Worth memorising</span>
+      <p class="q">Can you state the definition of modeling in one breath?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Expressing the key parts of a real-life situation in terms of math, so the math can be analyzed and the analysis turned back into a real-life answer. It reappears in Lesson 3.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
+<!-- ==================== LESSON 2 ==================== -->
+<section class="lesson" id="l2" data-short="Two streams" style="--accent:#2f6b52">
+  <div class="lesson-head">
+    <span class="ln">Lesson 2</span>
+    <h2>How the topics fit together</h2>
+    <p class="keyline">Two parallel streams — the models themselves, and the concepts that cut across all of them — followed by the harder work of integrating both into one recommendation.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>The map</h3>
+      <figure>
+        <svg class="fig" viewBox="0 0 660 300" role="img" aria-label="Map of the subject: a knowledge phase containing two parallel streams, models and cross-cutting concepts, followed by an integration phase of case studies.">
+          <text x="40" y="34" font-family="IBM Plex Sans,sans-serif" font-size="12.5" font-weight="600" fill="#2f6b52">Building knowledge — the larger part</text>
+          <rect x="40" y="46" width="410" height="176" fill="#2f6b52" fill-opacity=".05" stroke="#2f6b52" stroke-width="1.5" stroke-dasharray="6 4"/>
+
+          <rect x="58" y="68" width="180" height="136" fill="#ffffff" stroke="#2f6b52" stroke-width="2"/>
+          <text x="74" y="94" font-family="IBM Plex Sans,sans-serif" font-size="13.5" font-weight="600" fill="#131b26">Models</text>
+          <g font-family="IBM Plex Sans,sans-serif" font-size="12" fill="#4a5765">
+            <text x="74" y="118">machine learning</text><text x="74" y="138">regression</text>
+            <text x="74" y="158">optimization</text><text x="74" y="178">and many others</text>
+          </g>
+
+          <rect x="252" y="68" width="180" height="136" fill="#ffffff" stroke="#2f6b52" stroke-width="2"/>
+          <text x="268" y="94" font-family="IBM Plex Sans,sans-serif" font-size="13.5" font-weight="600" fill="#131b26">Cross-cutting</text>
+          <g font-family="IBM Plex Sans,sans-serif" font-size="12" fill="#4a5765">
+            <text x="268" y="118">preparing data</text><text x="268" y="138">measuring quality</text>
+            <text x="268" y="158">imputing missing data</text><text x="268" y="178">and others</text>
+          </g>
+
+          <line x1="450" y1="134" x2="490" y2="134" stroke="#131b26" stroke-width="2"/>
+          <polygon points="500,134 488,129 488,139" fill="#131b26"/>
+
+          <text x="510" y="34" font-family="IBM Plex Sans,sans-serif" font-size="12.5" font-weight="600" fill="#131b26">Then</text>
+          <rect x="510" y="68" width="120" height="136" fill="#131b26" fill-opacity=".06" stroke="#131b26" stroke-width="2"/>
+          <text x="526" y="94" font-family="IBM Plex Sans,sans-serif" font-size="13.5" font-weight="600" fill="#131b26">Integration</text>
+          <g font-family="IBM Plex Sans,sans-serif" font-size="12" fill="#4a5765">
+            <text x="526" y="118">case studies</text><text x="526" y="138">combining data</text>
+            <text x="526" y="158">and modeling</text><text x="526" y="178">decisions</text>
+          </g>
+
+          <text x="40" y="252" font-family="IBM Plex Sans,sans-serif" font-size="12" fill="#4a5765">Cross-cutting concepts arrive the first time each one is needed, then apply to every model after it.</text>
+        </svg>
+        <figcaption>Module 3 (validation) is a cross-cutting topic; Module 4 (clustering) is a models topic. That is why they interleave rather than running in blocks.</figcaption>
+      </figure>
+
+      <p>The <span class="key">models stream</span> is a run of mathematical approaches to solving analytics problems — machine learning, regression, optimization and many others, each paired with situations where it is valuable.</p>
+      <p>The <span class="key">cross-cutting stream</span> holds concepts that matter for using and understanding many different models: preparing data, measuring the quality of a model’s output, imputing missing data. Each arrives the first time it’s needed, and then applies to every model you learn afterwards.</p>
+      <p><span class="key">Integration</span> is the last stage and the hardest: combining data decisions with modeling decisions, and combining several models with each other, to deliver one complete recommendation.</p>
+    </div>
+    <aside class="check">
+      <span class="n">Orientation</span>
+      <p class="q">Which stream does validation belong to, and why does that matter?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Cross-cutting. It isn’t a model — it’s a way of judging any model, so it arrives once and then applies to everything afterwards.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>The depth tradeoff</h3>
+      <div class="callout">
+        <p class="tag">What an introduction deliberately does not do</p>
+        <p>It gives enough mathematical intuition to understand what’s going on and what each model’s benefits and drawbacks are — <em>without</em> going far down into the theory. And it gives a broad toolbox rather than every advanced variation of one method: you see the most commonly used version of each model. Depth on any single method is what specialist study is for.</p>
+      </div>
+
+      <div class="ix" data-match="m1l2-match" data-win="Two streams running in parallel, integration work afterwards, and specialist study waiting outside for anything deeper.">
+        <div class="ix-head"><span class="ix-kind">match the pairs</span><span class="ix-done">matched</span></div>
+        <p class="prompt">Click a part on the left, then what it covers on the right.</p>
+        <div class="match">
+          <div class="col" data-side="a">
+            <h4>Part of the subject</h4>
+            <button class="cell" data-pair="1">The models stream</button>
+            <button class="cell" data-pair="2">The cross-cutting stream</button>
+            <button class="cell" data-pair="3">Integration work</button>
+            <button class="cell" data-pair="4">Specialist study afterwards</button>
+          </div>
+          <div class="col" data-side="b">
+            <h4>What it holds</h4>
+            <button class="cell" data-pair="1" data-fb="Machine learning, regression, optimization and many others, each with situations where it is valuable.">Mathematical approaches to solving analytics problems</button>
+            <button class="cell" data-pair="2" data-fb="Preparing data, measuring output quality, imputing missing data — introduced when first needed, then reused everywhere.">Concepts that apply across many different models</button>
+            <button class="cell" data-pair="3" data-fb="Combining data decisions with modeling decisions, and combining models into one complete recommendation.">Case studies that combine several decisions at once</button>
+            <button class="cell" data-pair="4" data-fb="An introduction stops at the most commonly used version of each model on purpose; advanced variations and full theory come later.">Deeper theory and one method’s advanced variations</button>
+          </div>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="ix" data-quiz="m1l2-q1">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Imputing missing data sits in the cross-cutting stream rather than the models stream. What makes something cross-cutting?</p>
+        <div class="opts">
+          <button class="opt" data-fb="Difficulty has nothing to do with the split. Some cross-cutting topics are simple and some models are simple; the streams divide by role, not by how hard the material is.">That it’s simpler than a full model, so it can be covered quickly between larger topics.</button>
+          <button class="opt" data-right data-fb="Cross-cutting topics are things you do around any model rather than a method for producing an answer — so they're introduced once and then reused for everything that follows.">That it applies to many different models rather than being a method for producing an answer itself.</button>
+          <button class="opt" data-fb="Data handling and modeling aren't cleanly separable, and several cross-cutting topics — like measuring output quality — happen after a model has run, not before it.">That it happens before modeling begins, so it belongs to the data stage rather than the modeling stage.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="note">
+        <div class="note-head"><span class="lbl">Class discussion — Lesson 2</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="m1l2" data-placeholder="Which topics your syllabus puts in which stream…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Practical</span>
+      <p class="q">Why is it worth knowing which stream a topic belongs to?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Because cross-cutting material is worth over-learning — you will reuse it against every model that follows. A single model’s details matter less if you never use that model again.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
+<!-- ==================== LESSON 3 ==================== -->
+<section class="lesson" id="l3" data-short="What is a model" style="--accent:#3d5a99">
+  <div class="lesson-head">
+    <span class="ln">Lesson 3</span>
+    <h2>What is a model?</h2>
+    <p class="keyline">“Model” means at least three different things in analytics, often within a single paragraph — so learn to read which one is meant from the level of detail on the table.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Three zoom levels, one word</h3>
+      <p>Modeling means expressing the key parts of a real-life situation in math; the mathematical expression of that situation is called a model. Confusingly, there are at least three ways the word gets used. Here they are on one worked example — predicting how long a parcel takes to arrive.</p>
+
+      <figure>
+        <svg class="fig" viewBox="0 0 660 300" role="img" aria-label="Three nested levels of the word model: the method, the method plus its chosen variables, and the specific fitted equation.">
+          <rect x="30" y="30" width="600" height="240" fill="none" stroke="#3d5a99" stroke-width="2"/>
+          <text x="48" y="56" font-family="IBM Plex Mono,monospace" font-size="11" fill="#3d5a99">level 1 · the method</text>
+          <text x="48" y="80" font-family="IBM Plex Sans,sans-serif" font-size="14" font-weight="600" fill="#131b26">Regression</text>
+
+          <rect x="60" y="96" width="540" height="158" fill="#3d5a99" fill-opacity=".05" stroke="#3d5a99" stroke-width="2"/>
+          <text x="78" y="122" font-family="IBM Plex Mono,monospace" font-size="11" fill="#3d5a99">level 2 · the method plus its variables</text>
+          <text x="78" y="146" font-family="IBM Plex Sans,sans-serif" font-size="14" font-weight="600" fill="#131b26">Regression on size, weight and distance</text>
+
+          <rect x="90" y="162" width="480" height="76" fill="#3d5a99" fill-opacity=".1" stroke="#3d5a99" stroke-width="2"/>
+          <text x="108" y="188" font-family="IBM Plex Mono,monospace" font-size="11" fill="#3d5a99">level 3 · the fitted equation</text>
+          <text x="108" y="216" font-family="IBM Plex Mono,monospace" font-size="12.5" fill="#131b26">days ≈ 1.4 + 0.02·size + 0.05·weight + 0.003·distance</text>
+        </svg>
+        <figcaption>Each box is called a model. The outer one names only the approach; the inner one is a specific equation with numbers in it. Which sense is meant is almost always readable from how much detail is on the table.</figcaption>
+      </figure>
+
+      <p>(Regression is covered at length later. Not knowing it yet is fine — the example works regardless.)</p>
+
+      <div class="ix" data-match="m1l3-match" data-win="Level 1 names an approach, level 2 adds which variables go in, level 3 pins down the coefficients. Ask how much detail is on the table and the sense becomes obvious.">
+        <div class="ix-head"><span class="ix-kind">match the pairs</span><span class="ix-done">matched</span></div>
+        <p class="prompt">Click a statement on the left, then which sense of “model” it uses.</p>
+        <div class="match">
+          <div class="col" data-side="a">
+            <h4>Statement</h4>
+            <button class="cell" data-pair="1">“We’ll use regression to predict delivery times.”</button>
+            <button class="cell" data-pair="2">“Regression on parcel size, weight and shipping distance.”</button>
+            <button class="cell" data-pair="3">“days ≈ 1.4 + 0.02·size + 0.05·weight + 0.003·distance”</button>
+          </div>
+          <div class="col" data-side="b">
+            <h4>Sense of the word</h4>
+            <button class="cell" data-pair="1" data-fb="The method alone. No variables named, no numbers — just the family of approach being used.">The method being used</button>
+            <button class="cell" data-pair="2" data-fb="The method plus its specification: which attributes go in. Still no coefficients, so it isn't fitted to anything yet.">The method plus its chosen inputs</button>
+            <button class="cell" data-pair="3" data-fb="The fitted equation, coefficients and all. This is the narrowest sense and the only one you could compute a prediction from.">The specific fitted equation</button>
+          </div>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="ix" data-quiz="m1l3-q1">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Later you read: “we’ll compare five different SVM models.” Which sense of the word is that, and how can you tell?</p>
+        <div class="opts">
+          <button class="opt" data-fb="If it meant the method, all five would be the same thing and there would be nothing to compare. The plural is the clue that something below the method level is varying.">The method — SVM is named, so it’s level 1.</button>
+          <button class="opt" data-right data-fb="Five of them exist, so what varies must be below the method level — different inputs or settings, each a distinct specification. This is the sense Module 3 uses when it warns about picking the best of ten.">A specification — five SVMs means five different setups, so the variation is below the method.</button>
+          <button class="opt" data-fb="Fitted equations exist only after training. The comparison is being set up before anything has been fitted, so this can't be level 3 yet — though each specification will produce one.">A fitted equation — comparing models means comparing their coefficients.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="note">
+        <div class="note-head"><span class="lbl">Class discussion — Lesson 3</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="m1l3" data-placeholder="Places later where the ambiguity actually bit you…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Why this matters later</span>
+      <p class="q">Module 3 says “pick the best of ten models, then retrain the model on all the data.” How many senses of the word are in that sentence?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Two. The ten you compare are specifications; the thing you retrain is a specification that then produces a fitted equation. Reading it as one sense is exactly how people end up thinking they should deploy one of the fold models.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
+<section class="close" style="--accent:#131b26">
+  <h2>How the module fits together</h2>
+  <p class="h2meta">The through-line across the three lessons</p>
+  <ul class="thread">
+    <li><span class="dot" style="--d:#7a3f52"></span><span class="lbl">Lesson 1</span><span>Sets the scope: three question types, and modeling as a round trip from situation to math and back.</span></li>
+    <li><span class="dot" style="--d:#2f6b52"></span><span class="lbl">Lesson 2</span><span>Maps the route: models and cross-cutting concepts in parallel, then integration.</span></li>
+    <li><span class="dot" style="--d:#3d5a99"></span><span class="lbl">Lesson 3</span><span>Clears one piece of vocabulary that would otherwise confuse every later topic.</span></li>
+  </ul>
+
+  <h3 style="color:#131b26">Three things worth noticing</h3>
+  <ul>
+    <li><strong>The two ends of the round trip are the hard parts.</strong> Situation → math and math → recommendation are where the value of an analytics professional sits. The middle leg is what a computer does. The same argument returns in Module 4 as “the art of analytics.”</li>
+    <li><strong>The streams explain the ordering.</strong> Once you know Module 3 is cross-cutting and Module 4 is models, the apparent zig-zag between topics stops looking random — cross-cutting concepts land the first time they’re needed.</li>
+    <li><strong>The three senses of “model” resolve a real later confusion.</strong> “Which model do we deploy after cross-validation?” only sounds paradoxical if you collapse the specification and the fitted equation into one word.</li>
+  </ul>
+
+  <h3 style="color:#131b26">Likely exam targets</h3>
+  <ul>
+    <li>Classify a business question as descriptive, predictive or prescriptive, with a reason.</li>
+    <li>Give the definition of modeling and name the three legs of the round trip.</li>
+    <li>Name the three parts of analytics modeling from Lesson 1.</li>
+    <li>Describe the two streams and give examples of each.</li>
+    <li>Give the three senses of the word “model” with an example of each.</li>
+  </ul>
+
+  <div class="note">
+    <div class="note-head"><span class="lbl">Module 1 — my own summary</span><span class="hint">click to type; saves automatically</span></div>
+    <div class="note-body" contenteditable="true" data-note="m1summary" data-placeholder="Write the module back in your own words — the fastest way to find out what you don't actually know yet."></div>
+  </div>
+
+  <footer><span class="ai"><strong>Written by an AI model from lecture recordings.</strong> Not reviewed by any instructor or institution — verify anything you rely on against the original lectures. Examples here are generic illustrations rather than the ones used in class, and the cross-references to Modules 3 and 4 are this summary’s own additions.</span></footer>
+</section>
+
+</div>
+
+<dialog id="dlg">
+  <div class="dlg-in">
+    <h3 id="dlgTitle">Your notes</h3>
+    <p id="dlgHelp" style="font-family:var(--sans);font-size:.88rem;color:var(--ink-soft);max-width:none">Copy this text and keep it somewhere safe.</p>
+    <textarea id="dlgText" spellcheck="false"></textarea>
+    <div class="dlg-row">
+      <button class="btn" id="dlgCopy">Copy to clipboard</button>
+      <button class="btn" id="dlgLoad" hidden>Load these notes</button>
+      <button class="btn" id="dlgClose">Close</button>
+      <span class="status" id="dlgStatus"></span>
+    </div>
+  </div>
+</dialog>
+
+<script src="study.js"></script>
+</body>
+</html>

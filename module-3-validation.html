@@ -3,7 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Module 3: Validation — ISyE 6501</title>
+<meta name="robots" content="noindex">
+<title>Module 3: Validation — Study Notes</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
@@ -14,7 +15,7 @@
 
 <div class="topbar">
   <div class="topline">
-    <a class="brand" href="index.html">ISyE 6501 &middot; Introduction to Analytics Modeling</a>
+    <a class="brand" href="index.html">Analytics Modeling &middot; Study Notes</a>
     <nav class="tabs" aria-label="Modules"></nav>
     <div class="toolbar">
       <button class="btn" id="exportBtn">Export</button>
@@ -25,16 +26,16 @@
 </div>
 
 <header class="hero">
-  <p class="course">Georgia Tech ISyE 6501 &middot; Joel Sokol</p>
+  
   <h1>Module 3: Validation</h1>
   <p class="sub">Your model looks great on the data it was built from. That number is a lie, and this module is about getting an honest one.</p>
 
-  <svg class="plot" viewBox="0 0 660 300" role="img" aria-label="Dot plot of the day of the month ten students were born: nine fall in the last eleven days, one on the third. A dashed line marks the model's guess of the 26th.">
-    <text x="0" y="22" font-family="IBM Plex Sans,sans-serif" font-size="13.5" font-weight="600" fill="#131b26">Ten students, day of the month they were born</text>
-    <text x="0" y="42" font-family="IBM Plex Sans,sans-serif" font-size="12" fill="#4a5765">the pattern is real in this data and absent in every other</text>
+  <svg class="plot" viewBox="0 0 660 300" role="img" aria-label="Dot plot of ten numbers drawn at random from 1 to 50: nine happen to land above 33, one lands at 4. A dashed line marks the model's guess of 42.">
+    <text x="0" y="22" font-family="IBM Plex Sans,sans-serif" font-size="13.5" font-weight="600" fill="#131b26">Ten numbers drawn at random from 1 to 50</text>
+    <text x="0" y="42" font-family="IBM Plex Sans,sans-serif" font-size="12" fill="#4a5765">the clustering is real in this sample and absent from every other</text>
     <line x1="30" y1="200" x2="640" y2="200" stroke="#131b26" stroke-width="1.5"/>
     <g font-family="IBM Plex Mono,monospace" font-size="10.5" fill="#9aa5b1" text-anchor="middle">
-      <text x="30" y="220">1</text><text x="151" y="220">7</text><text x="292" y="220">14</text><text x="433" y="220">21</text><text x="614" y="220">30</text>
+      <text x="30" y="220">1</text><text x="151" y="220">11</text><text x="292" y="220">22</text><text x="433" y="220">33</text><text x="614" y="220">48</text>
     </g>
     <rect x="433" y="70" width="181" height="130" fill="#1f6b6b" opacity=".07"/>
     <g fill="#1f6b6b">
@@ -45,8 +46,8 @@
     </g>
     <line x1="534" y1="182" x2="534" y2="86" stroke="#131b26" stroke-width="1.5" stroke-dasharray="5 4"/>
     <circle cx="534" cy="182" r="12" fill="none" stroke="#131b26" stroke-width="2"/>
-    <text x="524" y="78" text-anchor="end" font-family="IBM Plex Sans,sans-serif" font-size="12.5" font-weight="600" fill="#131b26">the model guesses the 26th</text>
-    <text x="524" y="95" text-anchor="end" font-family="IBM Plex Sans,sans-serif" font-size="12" fill="#4a5765">and is within five days for nine of ten</text>
+    <text x="524" y="78" text-anchor="end" font-family="IBM Plex Sans,sans-serif" font-size="12.5" font-weight="600" fill="#131b26">the model guesses 42</text>
+    <text x="524" y="95" text-anchor="end" font-family="IBM Plex Sans,sans-serif" font-size="12" fill="#4a5765">and is within eight for nine of the ten</text>
     <text x="70" y="160" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="11.5" fill="#4a5765">the one</text>
     <text x="70" y="145" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="11.5" fill="#4a5765">that got away</text>
   </svg>
@@ -73,7 +74,7 @@
 <!-- ==================== LESSON 1 ==================== -->
 <section class="lesson" id="l1" data-short="Why validate" style="--accent:#1f6b6b">
   <div class="lesson-head">
-    <span class="ln">Lesson 1 <span class="mins">&middot; 4 min</span></span>
+    <span class="ln">Lesson 1</span>
     <h2>Introduction to validation</h2>
     <p class="keyline">Every dataset contains real patterns and random ones. A model fits both, but only the real ones show up again — so scoring a model on its own training data always flatters it.</p>
   </div>
@@ -122,26 +123,26 @@
     </div>
     <aside class="check">
       <span class="n">Watch for</span>
-      <p class="q">Sokol’s birthday demo is the module’s most quotable moment. Make sure you can retell it in three sentences.</p>
+      <p class="q">Can you retell the random-draw demonstration in three sentences?</p>
       <details><summary>Show answer</summary>
-        <p class="a">He asked ten students their day of birth; nine landed in the last third of the month. A model guessing the 26th would look excellent on those ten and terrible on anyone else, because birthdays are really spread uniformly.</p>
+        <p class="a">Ten numbers were drawn uniformly at random from 1 to 50, and nine happened to land in the top third. A model guessing 42 looks excellent on those ten and terrible on any fresh draw, because the numbers are genuinely spread evenly.</p>
       </details>
     </aside>
   </div>
 
   <div class="row">
     <div class="main">
-      <h3>The birthday demonstration</h3>
-      <p>The first time Sokol taught this class he asked the ten people in the back row what day of the month they were born — the 16th of November answers “16,” the 3rd of March answers “3.” The results made it look obvious that analytics students are much more likely to be born in the last ten days of a month. A predictive model would guess the 26th, right in the middle of where nine of the ten points sit.</p>
-      <p>Which is silly. There is no reason analytics students would be born late in the month. It’s randomness — students are born uniformly through the month like everyone else. On the training data the model looks great, off by five days or fewer for nine of ten people. On new data it would be off by a lot for many people.</p>
+      <h3>A demonstration you can run yourself</h3>
+      <p>Draw ten numbers uniformly at random from 1 to 50 and plot them. Often enough, the result looks like the chart above: nine of the ten bunched in the upper third, one stray low value. Anyone shown only this sample would conclude the numbers skew high. A predictive model would guess about 42, right in the middle of where nine of the ten points sit.</p>
+      <p>Which we know is wrong, because we generated the numbers ourselves and they are uniform by construction. The skew is pure randomness. On this sample the model looks excellent — within eight for nine of the ten. On a fresh draw it would be badly off for most of them. That is the entire argument, and the only reason it is obvious here is that we happen to know the truth.</p>
 
       <figure class="hotwrap" data-hotspot="m3l1-hot">
-        <svg class="fig" viewBox="0 0 660 250" role="img" aria-label="Interactive version of the birthday plot with four clickable regions.">
+        <svg class="fig" viewBox="0 0 660 250" role="img" aria-label="Interactive version of the random-draw plot with four clickable regions.">
           <line x1="40" y1="150" x2="620" y2="150" stroke="#131b26" stroke-width="1.5"/>
           <g font-family="IBM Plex Mono,monospace" font-size="10.5" fill="#9aa5b1" text-anchor="middle">
-            <text x="40" y="170">1</text><text x="298" y="170">14</text><text x="620" y="170">31</text>
+            <text x="40" y="170">1</text><text x="298" y="170">25</text><text x="620" y="170">50</text>
           </g>
-          <text x="330" y="196" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="12" fill="#4a5765">day of the month</text>
+          <text x="330" y="196" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="12" fill="#4a5765">value drawn</text>
           <rect x="415" y="60" width="205" height="90" fill="#1f6b6b" opacity=".07"/>
           <g fill="#1f6b6b">
             <circle cx="78" cy="132" r="6.5"/>
@@ -150,13 +151,13 @@
             <circle cx="548" cy="132" r="6.5"/><circle cx="567" cy="132" r="6.5"/><circle cx="605" cy="132" r="6.5"/>
           </g>
           <line x1="510" y1="132" x2="510" y2="66" stroke="#131b26" stroke-width="1.5" stroke-dasharray="5 4"/>
-          <text x="500" y="58" text-anchor="end" font-family="IBM Plex Sans,sans-serif" font-size="12" fill="#131b26">guess: the 26th</text>
+          <text x="500" y="58" text-anchor="end" font-family="IBM Plex Sans,sans-serif" font-size="12" fill="#131b26">guess: 42</text>
           <g font-family="IBM Plex Sans,sans-serif" font-size="11.5" fill="#4a5765">
             <text x="40" y="228">Click each marked area.</text>
           </g>
 
           <g class="hs" data-title="The lone early point"
-             data-body="One student born on the 3rd. A model tuned to the cluster is wildly wrong for this person — and in genuinely uniform data, one in three people looks like this.">
+             data-body="A single low draw. A model tuned to the cluster is wildly wrong for this one — and in genuinely uniform data, roughly a third of all draws look like this.">
             <rect class="hit" x="52" y="106" width="52" height="52"/>
             <rect class="ring" x="52" y="106" width="52" height="52" rx="3"/>
           </g>
@@ -166,12 +167,12 @@
             <rect class="ring" x="405" y="108" width="215" height="48" rx="3"/>
           </g>
           <g class="hs" data-title="The model's prediction"
-             data-body="Guessing the 26th puts it within five days for nine of ten students here. That is the inflated number — the one you must not report.">
+             data-body="Guessing 42 lands within eight for nine of the ten draws here. That is the inflated number — the one you must not report.">
             <rect class="hit" x="486" y="44" width="48" height="96"/>
             <rect class="ring" x="486" y="44" width="48" height="96" rx="3"/>
           </g>
-          <g class="hs" data-title="What the axis should look like"
-             data-body="Real birthdays spread evenly across all 31 days. Against that, a model anchored on the 26th is off by a lot for most people — which is the honest measure of its quality.">
+          <g class="hs" data-title="What the axis really looks like"
+             data-body="The true distribution is flat across all 50 values. Against that, a model anchored on 42 is off by a lot for most draws — which is the honest measure of its quality.">
             <rect class="hit" x="40" y="140" width="580" height="22"/>
             <rect class="ring" x="40" y="140" width="580" height="22" rx="3"/>
           </g>
@@ -190,16 +191,16 @@
 
   <div class="row">
     <div class="main">
-      <h3>Was he just lucky?</h3>
-      <p>Reasonable question: how could he know that nine of ten students would be born on the 21st or later? He didn’t. But he knew <em>some</em> random pattern would be there to use. It might have been a majority born early in the month, or right in the middle, or on even-numbered days, or odd, or on multiples of three, or close to one of his kids’ birthdays. The specific pattern was unpredictable. The existence of one was not.</p>
+      <h3>Was that just a lucky sample?</h3>
+      <p>Reasonable question: was that particular clustering cherry-picked? In a sense, yes — but it doesn’t matter, because <em>some</em> spurious pattern is always available. It might have been a bunch of low values instead, or a cluster in the middle, or a run of even numbers, or of odd ones, or of multiples of three. The specific pattern is unpredictable. The existence of one is not, and a flexible enough model will find whichever one showed up.</p>
 
       <div class="ix" data-quiz="m3l1-q2">
         <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
-        <p class="prompt">Why is “he got lucky with that back row” the wrong takeaway from the demonstration?</p>
+        <p class="prompt">Why is “that was just an unlucky sample” the wrong takeaway from the demonstration?</p>
         <div class="opts">
-          <button class="opt" data-fb="The number of students isn't the mechanism. A bigger room would have produced a subtler random pattern, not no random pattern — and a flexible enough model finds it either way.">Because with more students the same clustering would have appeared even more strongly.</button>
+          <button class="opt" data-fb="Sample size isn't the mechanism. More draws produce a subtler chance pattern, not no chance pattern — and a flexible enough model finds it either way.">Because with more draws the same clustering would have appeared even more strongly.</button>
           <button class="opt" data-right data-fb="He couldn't predict which pattern would appear, but some chance pattern was guaranteed. That is why the problem is structural rather than a fluke of one classroom.">Because he didn’t need that particular pattern — any dataset would have handed him some chance pattern to fit.</button>
-          <button class="opt" data-fb="Birthdays really are close to uniform, which is what makes the demo work. If the underlying distribution were skewed, the clustering would be a real effect and the point would collapse.">Because birthdays genuinely are clustered later in the month, so the model wasn’t wrong.</button>
+          <button class="opt" data-fb="The draws are uniform by construction, which is what makes the demo work. If the true distribution really were skewed, the clustering would be a real effect and the point would collapse.">Because the numbers genuinely do skew high, so the model wasn’t wrong.</button>
         </div>
         <p class="fb"></p>
       </div>
@@ -222,7 +223,7 @@
 <!-- ==================== LESSON 2 ==================== -->
 <section class="lesson" id="l2" data-short="Three sets" style="--accent:#7d4b7a">
   <div class="lesson-head">
-    <span class="ln">Lesson 2 <span class="mins">&middot; 6 min</span></span>
+    <span class="ln">Lesson 2</span>
     <h2>Validation and test sets</h2>
     <p class="keyline">One held-out set gives an honest score for one model. The moment you pick a winner from several, that winner’s score is inflated by luck — so you need a third set that had no part in the choosing.</p>
   </div>
@@ -270,7 +271,7 @@
     </div>
     <aside class="check">
       <span class="n">Why this is hard</span>
-      <p class="q">Sokol says most people find this confusing at first. What is the subtle part?</p>
+      <p class="q">Note most people find this confusing at first. What is the subtle part?</p>
       <details><summary>Show answer</summary>
         <p class="a">That the very act of picking the best introduces bias. Each individual score is unbiased; the <em>maximum</em> of many scores is not, because the winner is disproportionately likely to have been lucky.</p>
       </details>
@@ -418,7 +419,7 @@
 <!-- ==================== LESSON 3 ==================== -->
 <section class="lesson" id="l3" data-short="Splitting" style="--accent:#8a5a1c">
   <div class="lesson-head">
-    <span class="ln">Lesson 3 <span class="mins">&middot; 5 min</span></span>
+    <span class="ln">Lesson 3</span>
     <h2>Splitting the data</h2>
     <p class="keyline">There is no correct ratio — training should be large, validation and test merely large enough. How you split matters more than the exact percentages.</p>
   </div>
@@ -531,7 +532,7 @@
 <!-- ==================== LESSON 4 ==================== -->
 <section class="lesson" id="l4" data-short="Cross-validation" style="--accent:#2f5d8c">
   <div class="lesson-head">
-    <span class="ln">Lesson 4 <span class="mins">&middot; 5 min</span></span>
+    <span class="ln">Lesson 4</span>
     <h2>Cross-validation</h2>
     <p class="keyline">Rotate which slice is held out, train k times, average the k scores. Every point gets used for training — and the model you finally deploy is none of the k you built.</p>
   </div>
@@ -636,7 +637,7 @@
         <p class="prompt">You ran 10-fold cross-validation and chose an SVM. What goes into production?</p>
         <div class="opts">
           <button class="opt" data-fb="Picking the best of the ten reintroduces exactly the selection bias the averaging was designed to smooth out — and it throws away nine-tenths of your training data.">The fold model that scored highest of the ten.</button>
-          <button class="opt" data-fb="Sokol rules this out explicitly. Averaging coefficients has no guarantee of working — the average of ten good models is not reliably a good model.">The average of the ten models’ coefficients.</button>
+          <button class="opt" data-fb="This is ruled out explicitly. Averaging coefficients has no guarantee of working — the average of ten good models is not reliably a good model.">The average of the ten models’ coefficients.</button>
           <button class="opt" data-right data-fb="Cross-validation is a procedure for choosing and for estimating quality, not for producing the deliverable. Once the choice is made, refit on all the training-and-validation data together.">A fresh SVM retrained on all ten parts together.</button>
         </div>
         <p class="fb"></p>
@@ -689,13 +690,13 @@
   <ul>
     <li><strong>Two different biases, often confused.</strong> Training bias comes from fitting; validation bias comes from selecting. Cross-validation reduces the noise behind the second one but does not remove it — you still need a test set.</li>
     <li><strong>The test set is single-use.</strong> Nothing in the lecture says this outright, but it follows directly from Lesson 2: any set you make a choice on becomes a validation set.</li>
-    <li><strong>k appears three times in this course.</strong> k-means, k-nearest-neighbor, k-fold. Sokol flags this himself. Expect a question that tests whether you know which is which.</li>
+    <li><strong>k appears three times in this course.</strong> k-means, k-nearest-neighbor, k-fold. The source material flags this. Expect a question that tests whether you know which is which.</li>
   </ul>
 
   <h3 style="color:#131b26">Likely exam targets</h3>
   <ul>
     <li>Explain why training-set performance is optimistic, using real vs. random effects.</li>
-    <li>Retell the birthday demonstration and say what it proves.</li>
+    <li>Give a small-sample example of a spurious pattern and say what it proves.</li>
     <li>State the job of each of the three sets, and when the validation step is skipped.</li>
     <li>Explain why the best validation score among many models is biased upward.</li>
     <li>Give common split ratios and the principle behind them.</li>
@@ -708,7 +709,7 @@
     <div class="note-body" contenteditable="true" data-note="m3summary" data-placeholder="Write the module back in your own words — the fastest way to find out what you don't actually know yet."></div>
   </div>
 
-  <footer>Compiled from lecture transcripts M3L1 through M3L4. Quiz feedback and the Dana Reyes case are written to test the lecture’s reasoning; the case itself and “Three things worth noticing” go beyond what the transcripts state.</footer>
+  <footer><span class="ai"><strong>Written by an AI model from lecture recordings.</strong> Not reviewed by any instructor or institution — verify anything you rely on against the original lectures.</span></footer>
 </section>
 
 </div>

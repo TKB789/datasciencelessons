@@ -3,7 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Module 4: Clustering — ISyE 6501</title>
+<meta name="robots" content="noindex">
+<title>Module 4: Clustering — Study Notes</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
@@ -14,7 +15,7 @@
 
 <div class="topbar">
   <div class="topline">
-    <a class="brand" href="index.html">ISyE 6501 &middot; Introduction to Analytics Modeling</a>
+    <a class="brand" href="index.html">Analytics Modeling &middot; Study Notes</a>
     <nav class="tabs" aria-label="Modules"></nav>
     <div class="toolbar">
       <button class="btn" id="exportBtn">Export</button>
@@ -25,7 +26,7 @@
 </div>
 
 <header class="hero">
-  <p class="course">Georgia Tech ISyE 6501 &middot; Joel Sokol</p>
+  
   <h1>Module 4: Clustering</h1>
   <p class="sub">Group points that are close together — then decide what “close” means, how to find the groups, and how far to trust them.</p>
 
@@ -85,7 +86,7 @@
 <!-- ============ LESSON 1 ============ -->
 <section class="lesson" id="l1" data-short="Intro" style="--accent:#1b5e7e">
   <div class="lesson-head">
-    <span class="ln">Lesson 1 <span class="mins">&middot; 4 min</span></span>
+    <span class="ln">Lesson 1</span>
     <h2>Introduction to clustering</h2>
     <p class="keyline">Clustering groups points that are similar — and it finds groups you didn’t know were there, not just the ones you went looking for.</p>
   </div>
@@ -115,7 +116,7 @@
   <div class="row">
     <div class="main">
       <h3>Where it gets used</h3>
-      <p><strong>Targeted marketing.</strong> Segment potential customers and give each group a different message, because different people respond to different message types. In the SUV example the four angles are <strong>size</strong> (“look how much stuff you can carry”), <strong>price</strong>, <strong>versatility</strong> and <strong>perceived coolness</strong>. Data produces the clusters; marketing experts then decide what material each cluster sees.</p>
+      <p><strong>Targeted marketing.</strong> Segment potential customers and give each group a different message, because different people respond to different message types. For a consumer durable — say a family car — the four angles might be <strong>capacity</strong>, <strong>price</strong>, <strong>versatility</strong> and <strong>status</strong>. Data produces the clusters; marketing experts then decide what material each cluster sees.</p>
       <p>The discovery payoff shows up here: inspecting a cluster might reveal a segment you never planned for, such as buyers who care about <strong>gas mileage</strong>.</p>
       <p><strong>Personalized medicine.</strong> An ideal cluster is a set of people who would react similarly to a treatment, while different clusters react differently.</p>
       <p><strong>Facility location.</strong> Here closeness is literal physical distance: cluster people by where they live, then put one facility in each cluster. Civic examples are police stations, fire stations, medical clinics and libraries; the same approach works for gas stations and fast food restaurants.</p>
@@ -124,10 +125,10 @@
 
       <div class="ix" data-quiz="m4l1-q1">
         <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
-        <p class="prompt">Your clustering of SUV buyers produces a group you didn’t anticipate — people who mostly care about gas mileage. What does that tell you about the method?</p>
+        <p class="prompt">Your clustering of car buyers produces a group you didn’t anticipate — people who mostly care about running costs. What does that tell you about the method?</p>
         <div class="opts">
           <button class="opt" data-fb="Nothing has failed. Clustering has no target to hit, so there is no such thing as a wrong grouping — only a more or less useful one.">The clustering failed, because it didn’t recover the four segments the marketing team defined.</button>
-          <button class="opt" data-right data-fb="Sokol makes this the headline point: clustering doesn't just sort data into the buckets you expected, it can show you which buckets exist.">It’s working as intended — discovering unexpected segments is one of the two things clustering is for.</button>
+          <button class="opt" data-right data-fb="This is the headline point: clustering doesn't just sort data into the buckets you expected, it can show you which buckets exist.">It’s working as intended — discovering unexpected segments is one of the two things clustering is for.</button>
           <button class="opt" data-fb="Adding a cluster to match a hunch inverts the method. The whole value here is that the group emerged from the data rather than from someone's prior expectation.">You should re-run with k set to five so the new segment gets its own cluster.</button>
         </div>
         <p class="fb"></p>
@@ -146,7 +147,7 @@
   <div class="row">
     <div class="main">
       <h3>The picture</h3>
-      <p>The lecture graph puts <span class="m">age</span> on the horizontal axis and <span class="m">miles driven per year</span> on the vertical axis, with each point a potential SUV buyer. Two dimensions only because it is easy to see and easy to draw.</p>
+      <p>The worked graph puts <span class="m">age</span> on the horizontal axis and <span class="m">miles driven per year</span> on the vertical axis, with each point a potential buyer. Two dimensions only because it is easy to see and easy to draw.</p>
       <p>The same point cloud is split by eye into two clusters, then three, then four. <strong>The same dataset supports multiple valid clusterings.</strong> The number of clusters is a choice you make, not something the data hands you.</p>
       <div class="note">
         <div class="note-head"><span class="lbl">Class discussion — Lesson 1</span><span class="hint">click to type; saves automatically</span></div>
@@ -164,7 +165,7 @@
 <!-- ============ LESSON 2 ============ -->
 <section class="lesson" id="l2" data-short="Distance" style="--accent:#8a3d5c">
   <div class="lesson-head">
-    <span class="ln">Lesson 2 <span class="mins">&middot; 5 min</span></span>
+    <span class="ln">Lesson 2</span>
     <h2>Distance and norms</h2>
     <p class="keyline">Euclidean, Manhattan and infinity distance are one formula with three values of p — and the right p comes from how the real process works.</p>
   </div>
@@ -232,7 +233,7 @@
       </ol>
       <div class="defn">
         <span class="term">Infinity norm</span>
-        <p>The largest of a set of absolute differences. Nothing more. Sokol is deliberately informal with the infinities here because the intuition comes across better; a formal treatment would use the limit as p goes to infinity.</p>
+        <p>The largest of a set of absolute differences. Nothing more. The treatment here is deliberately informal with the infinities here because the intuition comes across better; a formal treatment would use the limit as p goes to infinity.</p>
       </div>
     </div>
     <aside class="check">
@@ -291,7 +292,7 @@
 <!-- ============ LESSON 3 ============ -->
 <section class="lesson" id="l3" data-short="k-means" style="--accent:#4a6b2a">
   <div class="lesson-head">
-    <span class="ln">Lesson 3 <span class="mins">&middot; 6 min</span></span>
+    <span class="ln">Lesson 3</span>
     <h2>The k-means algorithm</h2>
     <p class="keyline">Alternate two cheap steps — reassign points, recompute centers — until nothing moves. It skips an optimization problem that would be far too slow to solve exactly.</p>
   </div>
@@ -299,7 +300,7 @@
   <div class="row">
     <div class="main">
       <h3>Setup and notation</h3>
-      <p>The running example is SUV buyers over the past eight years, with <span class="m">age</span> horizontal and <span class="m">average daily temperature in that person’s city</span> vertical. With <span class="m">n</span> data points and <span class="m">m</span> attributes:</p>
+      <p>The running example is car buyers over the past eight years, with <span class="m">age</span> horizontal and <span class="m">average daily temperature where they live</span> vertical. With <span class="m">n</span> data points and <span class="m">m</span> attributes:</p>
       <table>
         <tr><td>x<sub>ij</sub></td><td>Value of data point <em>i</em>, attribute <em>j</em> — the data itself</td></tr>
         <tr><td>y<sub>ik</sub></td><td>1 if data point <em>i</em> is in cluster <em>k</em>, 0 if not — cluster membership</td></tr>
@@ -414,16 +415,16 @@
 <!-- ============ LESSON 4 ============ -->
 <section class="lesson" id="l4" data-short="In practice" style="--accent:#8a5a1c">
   <div class="lesson-head">
-    <span class="ln">Lesson 4 <span class="mins">&middot; 6 min</span></span>
+    <span class="ln">Lesson 4</span>
     <h2>k-means in practice</h2>
-    <p class="keyline">Outliers, restarts and the choice of k each get a quantitative default and a qualitative override — and Sokol puts the qualitative one first every time.</p>
+    <p class="keyline">Outliers, restarts and the choice of k each get a quantitative default and a qualitative override — and the qualitative one comes first every time.</p>
   </div>
 
   <div class="row">
     <div class="main">
       <h3>Outliers</h3>
       <p>An <strong>outlier</strong> here means a point that isn’t close to any cluster center. k-means has no concept of “not in a cluster” — it assigns the outlier to whichever center is nearest, even though the point may not belong there at all.</p>
-      <p><strong>The default move:</strong> remove the point and rerun, so it doesn’t drag its cluster center artificially to one side. <strong>Sokol’s position:</strong> that’s not always right. Better to ask what the outlier <em>is</em>, what makes its attributes so different, and what the implication is of putting a point like this in the nearest cluster.</p>
+      <p><strong>The default move:</strong> remove the point and rerun, so it doesn’t drag its cluster center artificially to one side. <strong>The lecturer’s position:</strong> that’s not always right. Better to ask what the outlier <em>is</em>, what makes its attributes so different, and what the implication is of putting a point like this in the nearest cluster.</p>
       <div class="callout">
         <p class="tag">The soapbox — it recurs all course</p>
         <p>Answering those questions takes time and effort, and it is part of what separates a top-notch analytics professional from someone who blindly runs algorithms. In many situations the algorithm is really just a guide. As much as this gets called data science, the best professionals also practise <strong>the art of analytics</strong>: looking at the combination of the data, the algorithm and the real situation to find the right answer.</p>
@@ -526,7 +527,7 @@
 <!-- ============ LESSON 5 ============ -->
 <section class="lesson" id="l5" data-short="Prediction" style="--accent:#33507f">
   <div class="lesson-head">
-    <span class="ln">Lesson 5 <span class="mins">&middot; 4 min</span></span>
+    <span class="ln">Lesson 5</span>
     <h2>Clustering for prediction</h2>
     <p class="keyline">Send a new point to the nearest center. Do that for every possible location and the whole space divides into regions — a Voronoi diagram, an idea centuries older than analytics.</p>
   </div>
@@ -592,7 +593,7 @@
         <tr><td>More than 150 years ago</td><td>A diagram like it was used to analyze the source of a cholera outbreak in London</td></tr>
         <tr><td>Early-to-mid 1600s</td><td>René Descartes used something like it in his work</td></tr>
       </table>
-      <p>Sokol’s point: not all the good ideas in analytics are new and cutting-edge. Sometimes the best ideas have been around a long time and just need dusting off.</p>
+      <p>The point: not all the good ideas in analytics are new and cutting-edge. Sometimes the best ideas have been around a long time and just need dusting off.</p>
       <div class="note">
         <div class="note-head"><span class="lbl">Class discussion — Lesson 5</span><span class="hint">click to type; saves automatically</span></div>
         <div class="note-body" contenteditable="true" data-note="m4l5" data-placeholder="John Snow / Broad Street pump discussion, comparisons to KNN…"></div>
@@ -612,7 +613,7 @@
 <!-- ============ LESSON 6 ============ -->
 <section class="lesson" id="l6" data-short="vs. classification" style="--accent:#6e4a8c">
   <div class="lesson-head">
-    <span class="ln">Lesson 6 <span class="mins">&middot; 3 min</span></span>
+    <span class="ln">Lesson 6</span>
     <h2>Clustering vs. classification</h2>
     <p class="keyline">Both split points into groups. The only difference is whether you already knew the right answer going in — and that difference has a name.</p>
   </div>
@@ -685,7 +686,7 @@
     </div>
     <aside class="check">
       <span class="n">Check 13</span>
-      <p class="q">Define supervised and unsupervised learning in the terms Sokol uses.</p>
+      <p class="q">Define supervised and unsupervised learning.</p>
       <details><summary>Show answer</summary>
         <p class="a"><strong>Supervised:</strong> we have observed the right answer for each data point, and use that in addition to attributes. Classification is the example.</p>
         <p class="a"><strong>Unsupervised:</strong> we have not observed the response, and use only attribute information. Clustering is the example.</p>
@@ -708,8 +709,8 @@
 
   <h3 style="color:#131b26">Four things worth noticing</h3>
   <ul>
-    <li><strong>The axes change between lessons.</strong> Lesson 1 plots age against miles driven per year; Lesson 3 plots age against average daily temperature. Same SUV story, different attributes.</li>
-    <li><strong>The qualitative answer comes first, twice.</strong> On outliers and on choosing k, Sokol leads with “understand the situation” and only then gives the technique.</li>
+    <li><strong>The axes change between lessons.</strong> Lesson 1 plots age against miles driven per year; Lesson 3 plots age against average daily temperature. Same buyer story, different attributes.</li>
+    <li><strong>The qualitative answer comes first, twice.</strong> On outliers and on choosing k, the material leads with “understand the situation” and only then gives the technique.</li>
     <li><strong>Speed is the resource being spent.</strong> Restarts and the elbow diagram are both purchased with the same property: k-means is fast enough to run many times.</li>
     <li><strong>k-means pairs naturally with the 2-norm.</strong> The centroid minimizes total <em>squared</em> Euclidean distance, which is one reason variants like k-medians exist.</li>
   </ul>
@@ -731,7 +732,7 @@
     <div class="note-body" contenteditable="true" data-note="m4summary" data-placeholder="Write the module back in your own words — the fastest way to find out what you don't actually know yet."></div>
   </div>
 
-  <footer>Compiled from lecture transcripts M4L1 through M4L6. Quiz feedback and the Marcus Obi case are written to test the lecture’s reasoning; the case and “Four things worth noticing” go beyond what the transcripts state.</footer>
+  <footer><span class="ai"><strong>Written by an AI model from lecture recordings.</strong> Not reviewed by any instructor or institution — verify anything you rely on against the original lectures.</span></footer>
 </section>
 
 </div>

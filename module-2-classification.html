@@ -364,9 +364,9 @@
               <text x="524" y="82" font-weight="600" fill="#8a5a1c">repaid?</text>
             </g>
             <g fill="#131b26" font-family="IBM Plex Mono,monospace" font-size="11.5">
-              <text x="44" y="116">A-1041</text><text x="164" y="116">730</text><text x="284" y="116">76,000</text><text x="404" y="116">30318</text><text x="524" y="116">yes</text>
-              <text x="44" y="149">A-1042</text><text x="164" y="149">602</text><text x="284" y="149">41,500</text><text x="404" y="149">02139</text><text x="524" y="149">no</text>
-              <text x="44" y="181">A-1043</text><text x="164" y="181">788</text><text x="284" y="181">122,000</text><text x="404" y="181">07470</text><text x="524" y="181">yes</text>
+              <text x="44" y="116">A-1041</text><text x="164" y="116">730</text><text x="284" y="116">76,000</text><text x="404" y="116">10001</text><text x="524" y="116">yes</text>
+              <text x="44" y="149">A-1042</text><text x="164" y="149">602</text><text x="284" y="149">41,500</text><text x="404" y="149">20002</text><text x="524" y="149">no</text>
+              <text x="44" y="181">A-1043</text><text x="164" y="181">788</text><text x="284" y="181">122,000</text><text x="404" y="181">30003</text><text x="524" y="181">yes</text>
               <text x="44" y="213">…</text>
             </g>
             <text x="330" y="46" text-anchor="middle" font-size="12" font-weight="600" fill="#4a6b2a">columns → attributes, features, covariates, predictors</text>
@@ -419,7 +419,7 @@
         <p class="prompt">A dataset has a postcode column stored as an integer. What is the risk of feeding it straight into a distance-based model?</p>
         <div class="opts">
           <button class="opt" data-fb="Missing values are a separate problem entirely, and postcodes are usually well populated. The trouble here is with the values that <em>are</em> present.">Postcodes are often missing, so the model will silently drop those rows.</button>
-          <button class="opt" data-right data-fb="The model will treat the gap between 02139 and 30318 as a meaningful magnitude, when the numbers only name categories. Nothing increased when you moved between them.">The model will read the numeric gaps as distances, when the numbers only label categories.</button>
+          <button class="opt" data-right data-fb="The model will treat the gap between two postcodes as a meaningful magnitude, when the numbers only name regions. Nothing increased when you moved from one to the other.">The model will read the numeric gaps as distances, when the numbers only label categories.</button>
           <button class="opt" data-fb="Precision isn't the issue — postcodes are exact. The issue is that arithmetic on them is meaningless no matter how precisely they're recorded.">Postcodes are too coarse a location measure to be precise enough for a model.</button>
         </div>
         <p class="fb"></p>

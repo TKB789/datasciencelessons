@@ -13,6 +13,10 @@ var MODULES = [
     title:"Foundations", colour:"#7a3f52",
     blurb:"The three kinds of question analytics answers, how the topics fit together, and the one word that means three different things." },
 
+  { id:"m2", file:"module-2-classification.html", tab:"Module 2 — Classification",
+    title:"Classification", colour:"#33507f",
+    blurb:"Sorting things into categories: choosing the best boundary, the maths of support vector machines, scaling, and k-nearest neighbours." },
+
   { id:"m3", file:"module-3-validation.html", tab:"Module 3 — Validation",
     title:"Validation", colour:"#1f6b6b",
     blurb:"Why training accuracy lies, how training / validation / test split the work, and what k-fold cross-validation buys you." },
@@ -28,7 +32,8 @@ var MODULES = [
 (function(){
   "use strict";
 
-  var KEY = "isye6501-study-v3";
+  var KEY = "analytics-study-notes-v1";
+  var OLD_KEY = "isye6501-study-v3";   /* migrated once, then ignored */
   var canStore = true;
   var HERE = (document.body.getAttribute("data-page") || "");
 
@@ -42,6 +47,13 @@ var MODULES = [
     catch(e){ canStore = false; return false; }
   }
   var STATE = read();
+  /* one-time migration from the previous storage key */
+  if (!STATE.notes && !STATE.done){
+    try {
+      var legacy = JSON.parse(localStorage.getItem(OLD_KEY) || "null");
+      if (legacy && (legacy.notes || legacy.done)) STATE = legacy;
+    } catch(e){ /* nothing to migrate */ }
+  }
   if (!STATE.notes) STATE.notes = {};
   if (!STATE.done)  STATE.done  = {};
 

@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Module 2: Classification — Study Notes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="study.css">
+</head>
+<body data-page="m2">
+<div class="wrap">
+
+<div class="topbar">
+  <div class="topline">
+    <a class="brand" href="index.html">Analytics Modeling &middot; Study Notes</a>
+    <nav class="tabs" aria-label="Modules"></nav>
+    <div class="toolbar">
+      <button class="btn" id="exportBtn">Export</button>
+      <button class="btn" id="importBtn">Import</button>
+    </div>
+  </div>
+  <nav class="rail" id="rail" aria-label="Lessons in this module"></nav>
+</div>
+
+<header class="hero">
+  <h1>Module 2: Classification</h1>
+  <p class="sub">Sorting things into categories — how to pick the best dividing line, what the maths behind it actually says, and what to do when a line won’t do.</p>
+
+  <svg class="plot" viewBox="0 0 660 350" role="img" aria-label="Scatter of past loan applicants: repaid in blue above, defaulted in red below, with two parallel boundary lines and the classifier in the middle. Two points touch the boundary lines.">
+    <defs><pattern id="gridm2" width="26" height="26" patternUnits="userSpaceOnUse"><path d="M 26 0 L 0 0 0 26" fill="none" stroke="#e3e9ee" stroke-width="1"/></pattern></defs>
+    <rect x="62" y="24" width="576" height="276" fill="url(#gridm2)"/>
+    <polygon points="94,229 594,89 606,131 106,271" fill="#33507f" opacity=".07"/>
+    <line x1="94" y1="229" x2="594" y2="89" stroke="#4a5765" stroke-width="1.5" stroke-dasharray="6 4"/>
+    <line x1="106" y1="271" x2="606" y2="131" stroke="#4a5765" stroke-width="1.5" stroke-dasharray="6 4"/>
+    <line x1="100" y1="250" x2="600" y2="110" stroke="#131b26" stroke-width="2.5"/>
+    <g fill="#1b5e7e">
+      <circle cx="160" cy="190" r="5.5"/><circle cx="210" cy="170" r="5.5"/><circle cx="320" cy="130" r="5.5"/>
+      <circle cx="380" cy="110" r="5.5"/><circle cx="440" cy="100" r="5.5"/><circle cx="500" cy="85" r="5.5"/>
+      <circle cx="200" cy="140" r="5.5"/><circle cx="300" cy="120" r="5.5"/><circle cx="420" cy="80" r="5.5"/>
+      <circle cx="540" cy="70" r="5.5"/><circle cx="360" cy="90" r="5.5"/>
+      <circle cx="260" cy="182" r="5.5"/>
+    </g>
+    <circle cx="260" cy="182" r="11" fill="none" stroke="#1b5e7e" stroke-width="2"/>
+    <g fill="#8a3d5c">
+      <circle cx="150" cy="285" r="5.5"/><circle cx="200" cy="275" r="5.5"/><circle cx="250" cy="255" r="5.5"/>
+      <circle cx="300" cy="250" r="5.5"/><circle cx="400" cy="220" r="5.5"/><circle cx="450" cy="200" r="5.5"/>
+      <circle cx="500" cy="190" r="5.5"/><circle cx="550" cy="175" r="5.5"/><circle cx="230" cy="290" r="5.5"/>
+      <circle cx="330" cy="270" r="5.5"/><circle cx="430" cy="235" r="5.5"/>
+      <circle cx="350" cy="203" r="5.5"/>
+    </g>
+    <circle cx="350" cy="203" r="11" fill="none" stroke="#8a3d5c" stroke-width="2"/>
+    <line x1="62" y1="300" x2="638" y2="300" stroke="#131b26" stroke-width="1.5"/>
+    <line x1="62" y1="300" x2="62" y2="24" stroke="#131b26" stroke-width="1.5"/>
+    <text x="350" y="332" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="13" fill="#4a5765">credit score</text>
+    <text x="30" y="162" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="13" fill="#4a5765" transform="rotate(-90 30 162)">household income</text>
+    <text x="596" y="60" text-anchor="end" font-family="IBM Plex Sans,sans-serif" font-size="12" fill="#1b5e7e">repaid in full</text>
+    <text x="150" y="316" font-family="IBM Plex Sans,sans-serif" font-size="12" fill="#8a3d5c">defaulted</text>
+  </svg>
+
+  <ul class="track">
+    <li style="--dot:#1f6b6b"><a href="#l1"><span class="tnum">Lesson 1</span><span class="tname">What classification is</span><span class="tq">What kinds of question does it answer?</span></a></li>
+    <li style="--dot:#8a3d5c"><a href="#l2"><span class="tnum">Lesson 2</span><span class="tname">Choosing a classifier</span><span class="tq">Infinitely many lines — which is best?</span></a></li>
+    <li style="--dot:#4a6b2a"><a href="#l3"><span class="tnum">Lesson 3</span><span class="tname">Data definitions</span><span class="tq">What do all these words mean?</span></a></li>
+    <li style="--dot:#33507f"><a href="#l4"><span class="tnum">Lesson 4</span><span class="tname">Support vector machines</span><span class="tq">What does the maths actually say?</span></a></li>
+    <li style="--dot:#8a5a1c"><a href="#l5"><span class="tnum">Lesson 5</span><span class="tname">Where the name comes from</span><span class="tq">What is a support vector?</span></a></li>
+    <li style="--dot:#6e4a8c"><a href="#l6"><span class="tnum">Lesson 6</span><span class="tname">Extending SVM</span><span class="tq">Costs, scale, and curved boundaries</span></a></li>
+    <li style="--dot:#2f6b52"><a href="#l7"><span class="tnum">Lesson 7</span><span class="tname">Scaling and standardization</span><span class="tq">Why do mismatched units break models?</span></a></li>
+    <li style="--dot:#7a3f52"><a href="#l8"><span class="tnum">Lesson 8</span><span class="tname">k-nearest neighbours</span><span class="tq">What if we don’t draw a line at all?</span></a></li>
+  </ul>
+
+  <div class="badge-strip">
+    <p class="cap">Badges unlock when every activity in a lesson is finished.</p>
+    <ul class="badges">
+      <li class="badge" data-for="l1" style="--b:#1f6b6b"><span class="gem">C</span><span class="nm">Categories</span></li>
+      <li class="badge" data-for="l2" style="--b:#8a3d5c"><span class="gem">M</span><span class="nm">Margin</span></li>
+      <li class="badge" data-for="l3" style="--b:#4a6b2a"><span class="gem">D</span><span class="nm">Dictionary</span></li>
+      <li class="badge" data-for="l4" style="--b:#33507f"><span class="gem">Σ</span><span class="nm">The Maths</span></li>
+      <li class="badge" data-for="l5" style="--b:#8a5a1c"><span class="gem">V</span><span class="nm">Support Vector</span></li>
+      <li class="badge" data-for="l6" style="--b:#6e4a8c"><span class="gem">K</span><span class="nm">Kernels</span></li>
+      <li class="badge" data-for="l7" style="--b:#2f6b52"><span class="gem">σ</span><span class="nm">Same Scale</span></li>
+      <li class="badge" data-for="l8" style="--b:#7a3f52"><span class="gem">k</span><span class="nm">Neighbours</span></li>
+      <li class="badge" data-for="*"  style="--b:#131b26"><span class="gem">★</span><span class="nm">Module 2 complete</span></li>
+    </ul>
+  </div>
+</header>
+
+<!-- ==================== LESSON 1 ==================== -->
+<section class="lesson" id="l1" data-short="What it is" style="--accent:#1f6b6b">
+  <div class="lesson-head">
+    <span class="ln">Lesson 1</span>
+    <h2>What classification is</h2>
+    <p class="keyline">Classification means putting things into categories — and the whole problem reduces to a picture where you draw a line between two colours of dot, then argue about which line.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>The definition, and it really is that simple</h3>
+      <div class="defn">
+        <span class="term">Classification</span>
+        <p>Putting things into categories. The term carries exactly its everyday meaning — nothing special is intended by it in analytics.</p>
+      </div>
+      <p>The simplest cases have two categories, and often those are just yes and no:</p>
+      <ul>
+        <li>Which loan applicants will fully repay, and which won’t</li>
+        <li>Which email is real and which is spam</li>
+        <li>Which documents are relevant to a case and which are irrelevant</li>
+        <li>Which people passing through a screening point warrant a second look</li>
+        <li>Whether a donor organ is safe to transplant or carries an infectious disease</li>
+      </ul>
+      <p>That last one shows why a model is needed at all rather than just a test. If a donor was infected very recently, a laboratory test may not come back positive yet — so an analytical approach has to fill the gap the test leaves.</p>
+      <p>More than two categories works too: sorting voters into supportive, opposed and undecided; or assigning a newly found bone to one of many species.</p>
+
+      <div class="ix" data-match="m2l1-match" data-win="Two-class problems are the common case, but nothing about classification requires exactly two — the number of categories is a property of the question, not of the method.">
+        <div class="ix-head"><span class="ix-kind">match the pairs</span><span class="ix-done">matched</span></div>
+        <p class="prompt">Click a problem on the left, then what it is sorting into.</p>
+        <div class="match">
+          <div class="col" data-side="a">
+            <h4>Problem</h4>
+            <button class="cell" data-pair="1">A lender assessing applicants</button>
+            <button class="cell" data-pair="2">An email filter</button>
+            <button class="cell" data-pair="3">A political campaign</button>
+            <button class="cell" data-pair="4">A palaeontologist with a new bone</button>
+          </div>
+          <div class="col" data-side="b">
+            <h4>Categories</h4>
+            <button class="cell" data-pair="1" data-fb="Two classes, and the classic worked example for the rest of this module — repaid in full versus defaulted.">Will repay in full / won’t</button>
+            <button class="cell" data-pair="2" data-fb="Two classes again. Note that the cost of the two errors is very different, which Lesson 2 makes a great deal of.">Real / spam</button>
+            <button class="cell" data-pair="3" data-fb="Three classes. Nothing about classification requires two — the undecided group is the one the campaign actually cares about.">Supportive / opposed / undecided</button>
+            <button class="cell" data-pair="4" data-fb="Many classes at once. Lesson 8's k-nearest-neighbours handles this far more naturally than drawing boundaries between every pair of species.">One of many species</button>
+          </div>
+        </div>
+        <p class="fb"></p>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Worth noticing</span>
+      <p class="q">Why can’t the transplant question be settled with a lab test alone?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">A recent infection may not have become detectable yet, so a negative test isn’t conclusive. The model uses other attributes to estimate risk the test can’t yet see.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>What the data looks like</h3>
+      <p>Each classification question needs data. For lending, that might be income, credit history, age, family size, assets and liabilities. Combine those attributes of previous borrowers with the observed outcome — repaid or not — and you can build a model for future applicants.</p>
+      <p>Graphically, put <span class="m">credit score</span> on the horizontal axis and <span class="m">household income</span> on the vertical. An applicant with a credit score of 730 and an income of $76,000 is one point. Blue if they repaid the whole loan, red if they defaulted.</p>
+      <p>Real problems have more factors — length of relationship with the bank, number of dependents, total assets, liabilities — and each is another dimension. Two dimensions are used throughout this module purely because they can be drawn.</p>
+      <div class="callout">
+        <p class="tag">The move that sets up everything else</p>
+        <p>Draw a line separating blue above from red below. A new applicant landing in the blue zone gets a loan; one landing in the red zone doesn’t. That works — but there are infinitely many lines that separate these points equally well. Which is best?</p>
+      </div>
+
+      <div class="ix" data-quiz="m2l1-q1">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Why is “infinitely many lines separate the points” a problem rather than a convenience?</p>
+        <div class="opts">
+          <button class="opt" data-fb="They agree on the points you already have — that's what separating them means. The disagreement shows up on new applicants, which are the only ones you actually care about.">Because the lines disagree about how to classify the historical data you already have.</button>
+          <button class="opt" data-right data-fb="Every separating line handles the known points identically, so the data alone can't rank them. They differ only on new points — and that is exactly where a decision has consequences.">Because they all handle the known data identically but give different answers for new applicants.</button>
+          <button class="opt" data-fb="Computation isn't the issue. Lesson 4 shows the best line can be found by solving a single well-posed optimization problem, no searching required.">Because searching an infinite set of candidate lines is computationally impossible.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="note">
+        <div class="note-head"><span class="lbl">Class discussion — Lesson 1</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="m2l1" data-placeholder="Classification problems from your own work…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Exam target</span>
+      <p class="q">What are the two ingredients a classification model needs from historical data?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">The attributes of each past case, and the observed outcome for each — which category it actually turned out to belong to. Without the second, this would be clustering, not classification.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
+<!-- ==================== LESSON 2 ==================== -->
+<section class="lesson" id="l2" data-short="Choosing" style="--accent:#8a3d5c">
+  <div class="lesson-head">
+    <span class="ln">Lesson 2</span>
+    <h2>Choosing a classifier</h2>
+    <p class="keyline">Prefer the line that is furthest from making a mistake — then bend that rule when one kind of mistake costs far more than the other.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Distance from error</h3>
+      <p>Two candidate classifiers will agree about most applicants. It’s the ambiguous ones — sitting between the groups — where one says lend and the other says decline.</p>
+      <p>The principle: <strong>choose a line that is further from making mistakes</strong>. A line passing close to a red point and a blue point has nearly misclassified both. If the line, or the points, were slightly different, it would. And the input data <em>is</em> inexact — a recorded income may be a little off. Small uncertainties in the data shouldn’t flip a decision.</p>
+      <p>A line sitting well clear of every point would need a much bigger data error before it misclassified anything. Lesson 4 formalises this as maximising the <span class="key">margin</span>.</p>
+
+      <figure class="hotwrap" data-hotspot="m2l2-hot">
+        <svg class="fig" viewBox="0 0 660 330" role="img" aria-label="Four clickable regions comparing a narrow-margin line, a wide-margin line, an unavoidable overlap requiring a soft classifier, and a cost-shifted line.">
+          <g fill="#1b5e7e">
+            <circle cx="120" cy="90" r="5"/><circle cx="170" cy="70" r="5"/><circle cx="210" cy="105" r="5"/>
+            <circle cx="150" cy="128" r="5"/><circle cx="245" cy="72" r="5"/><circle cx="195" cy="150" r="5"/>
+          </g>
+          <g fill="#8a3d5c">
+            <circle cx="130" cy="245" r="5"/><circle cx="185" cy="262" r="5"/><circle cx="225" cy="230" r="5"/>
+            <circle cx="160" cy="205" r="5"/><circle cx="250" cy="268" r="5"/><circle cx="205" cy="192" r="5"/>
+          </g>
+          <line x1="95" y1="172" x2="285" y2="160" stroke="#9d3b3b" stroke-width="2"/>
+          <line x1="95" y1="180" x2="285" y2="168" stroke="#2f6b45" stroke-width="2" stroke-dasharray="7 4"/>
+          <text x="95" y="300" font-family="IBM Plex Sans,sans-serif" font-size="12" fill="#4a5765">two candidate lines</text>
+          <text x="95" y="316" font-family="IBM Plex Sans,sans-serif" font-size="11.5" fill="#9aa5b1">one nearly touches; one is clear</text>
+
+          <g fill="#1b5e7e">
+            <circle cx="400" cy="90" r="5"/><circle cx="450" cy="70" r="5"/><circle cx="490" cy="105" r="5"/>
+            <circle cx="430" cy="128" r="5"/><circle cx="525" cy="72" r="5"/><circle cx="470" cy="178" r="5"/><circle cx="510" cy="205" r="5"/>
+          </g>
+          <g fill="#8a3d5c">
+            <circle cx="410" cy="245" r="5"/><circle cx="465" cy="262" r="5"/><circle cx="505" cy="230" r="5"/>
+            <circle cx="440" cy="205" r="5"/><circle cx="530" cy="268" r="5"/><circle cx="425" cy="150" r="5"/>
+          </g>
+          <line x1="375" y1="185" x2="565" y2="165" stroke="#131b26" stroke-width="2.5"/>
+          <line x1="375" y1="152" x2="565" y2="132" stroke="#6e4a8c" stroke-width="2" stroke-dasharray="5 4"/>
+          <text x="375" y="300" font-family="IBM Plex Sans,sans-serif" font-size="12" fill="#4a5765">overlap, and a cost-shifted line</text>
+          <text x="375" y="316" font-family="IBM Plex Sans,sans-serif" font-size="11.5" fill="#9aa5b1">no line separates these perfectly</text>
+
+          <g class="hs" data-title="The narrow-margin line"
+             data-body="It separates the points, so on the training data it scores perfectly — but it passes within a whisker of a point on each side. A small recording error in either one would flip that decision. A perfect score here is not evidence of a good classifier.">
+            <rect class="hit" x="95" y="152" width="190" height="20"/><rect class="ring" x="95" y="152" width="190" height="20" rx="3"/>
+          </g>
+          <g class="hs" data-title="The wide-margin line"
+             data-body="It also separates the points, and identically so on this data — but it sits clear of everything. It would take a much larger error in the data before anything is misclassified. This is the preference that Lesson 4 turns into an objective function.">
+            <rect class="hit" x="95" y="174" width="190" height="20"/><rect class="ring" x="95" y="174" width="190" height="20" rx="3"/>
+          </g>
+          <g class="hs" data-title="Unavoidable overlap — the soft classifier"
+             data-body="Sometimes no line separates the colours at all. Then you need a soft classifier, which gives as good a separation as possible, rather than a hard classifier, which separates perfectly. Note the tradeoff: a line with the fewest outright errors may sit close to many near-misses, and tilting it can trade one for the other.">
+            <rect class="hit" x="375" y="176" width="190" height="22"/><rect class="ring" x="375" y="176" width="190" height="22" rx="3"/>
+          </g>
+          <g class="hs" data-title="The cost-shifted line"
+             data-body="If one error costs far more than the other, move the line away from the costly side. Here it has been pushed up toward the blue points, so ambiguous cases get classified red. It will misclassify more blues on purpose — and that is the intended behaviour, not a defect.">
+            <rect class="hit" x="375" y="132" width="190" height="22"/><rect class="ring" x="375" y="132" width="190" height="22" rx="3"/>
+          </g>
+        </svg>
+        <div class="hotpanel"><span class="hint">Four regions are clickable. Open all four to finish this activity.</span></div>
+      </figure>
+    </div>
+    <aside class="check">
+      <span class="n">Vocabulary</span>
+      <p class="q">Hard classifier versus soft classifier — what separates them?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">A hard classifier separates the classes perfectly. A soft one accepts some misclassification and aims for the best separation available, which is what you need when no perfect boundary exists.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>When one mistake costs more</h3>
+      <p>So far both errors have been treated as equally bad. Often they aren’t. Lending to someone who won’t repay costs more than turning away someone who would have. Eating a poisonous plant is far worse than passing up an edible one.</p>
+      <div class="defn">
+        <span class="term">The rule</span>
+        <p>The more costly one type of mistake is, the further you move the line away from it.</p>
+      </div>
+      <p>If a bad loan is judged twice as costly as a rejected good applicant, shift the line closer to the blue points. Now an ambiguous applicant — nearer the blue group but still in the contested zone — gets declined anyway.</p>
+      <p>With a life at stake you might go further still. Even when the data looks perfectly separable, you might deliberately misclassify some safe points in order to push the boundary further from any dangerous ones. Foragers do exactly this: anything that even resembles a poisonous species gets left alone.</p>
+      <p>The same logic runs through medical screening. Missing a case of an infectious disease is very costly, because someone may unknowingly infect others. So the initial test is set with a deliberately aggressive threshold, and anyone who tests positive takes a second, confirmatory test.</p>
+
+      <div class="branch" data-branch="m2l2-case">
+        <div class="persona">
+          <span class="av">SO</span>
+          <span class="who"><b>Sam Okafor</b><span>Risk analyst, small business lending</span></span>
+        </div>
+        <div class="scene" data-step="1">
+          <p>Sam’s classifier separates repaid from defaulted loans cleanly on five years of history. Finance tells him a default costs roughly four times what a wrongly declined applicant costs in lost margin.</p>
+          <p class="said">A colleague: “The line already gets 100% of the historical cases right. There’s nothing to change.”</p>
+          <p><strong>What should Sam do?</strong></p>
+          <div class="choices">
+            <button class="choice" data-go="2" data-tone="bad" data-head="What it misses"
+              data-outcome="A perfect score on history says nothing about where the line should sit. Any line inside the gap scores 100%. Leaving it centred quietly assumes the two errors cost the same, which finance has just told him is false by a factor of four.">
+              Nothing. A perfect score means the boundary is already correct.
+            </button>
+            <button class="choice" data-go="2" data-tone="good" data-head="The right move"
+              data-outcome="Every position inside the margin classifies the history perfectly, so he is free to choose within it — and cost is what should decide. Shifting toward the repaid side means ambiguous applicants get declined, trading cheap errors for expensive ones.">
+              Shift the line toward the repaid side, since he can move it freely inside the gap.
+            </button>
+            <button class="choice" data-go="2" data-tone="bad" data-head="What goes wrong"
+              data-outcome="Dropping the attribute doesn't address cost at all — it changes which line is available, not where within the gap it sits. He would lose information and still have an unweighted boundary.">
+              Remove the weakest attribute to make the boundary simpler and more robust.
+            </button>
+          </div>
+        </div>
+        <div class="scene" data-step="2" data-end="1" hidden>
+          <p><strong>Six months later.</strong> New data arrives and the classes now overlap — no line separates them. Sam’s shifted boundary now misclassifies a visible handful of applicants who did repay.</p>
+          <div class="choices">
+            <button class="choice" data-tone="bad" data-head="What happens"
+              data-outcome="Re-centring minimises the raw error count, but the raw count is the wrong objective when errors cost different amounts. He would be optimising for a number nobody in the business cares about.">
+              Re-centre the line to minimise the total number of misclassified points.
+            </button>
+            <button class="choice" data-tone="good" data-head="The right call"
+              data-outcome="The same cost logic applies to soft classification: penalise the two error types differently rather than counting them equally. Those declined-but-would-have-repaid cases are the cheap errors he is deliberately buying, and the four-to-one ratio says buying them is correct.">
+              Keep the asymmetry and weight the two error types differently in the objective.
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Exam target</span>
+      <p class="q">Which way do you move the boundary when one error is more costly?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Away from the costly side — so that ambiguous cases fall on the cheap-error side. Moving it toward the costly class would do the opposite of what you want.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>A free insight from the picture</h3>
+      <p>Suppose you assumed two attributes were needed, and the fitted classifier turns out to run almost parallel to the vertical axis. Then only the horizontal attribute is really doing any work — the vertical one barely affects the decision. You’ve discovered that one attribute suffices.</p>
+      <p>This observation returns in Lesson 6 as a method that works in dimensions you can’t draw.</p>
+      <div class="note">
+        <div class="note-head"><span class="lbl">Class discussion — Lesson 2</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="m2l2" data-placeholder="Cost ratios discussed in class, ROC curves, threshold selection…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Check</span>
+      <p class="q">A classifier is almost parallel to the horizontal axis. Which attribute is irrelevant?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">The horizontal one. The boundary changes with the vertical attribute and barely with the horizontal, so the horizontal attribute isn’t driving the decision. Read the direction the line <em>varies</em> in, not the axis it lies along.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
+<!-- ==================== LESSON 3 ==================== -->
+<section class="lesson" id="l3" data-short="Data words" style="--accent:#4a6b2a">
+  <div class="lesson-head">
+    <span class="ln">Lesson 3</span>
+    <h2>Data definitions</h2>
+    <p class="keyline">A table where rows are data points and columns are attributes — plus one special column, the response, that holds the answer.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>The mental model</h3>
+      <p>Analytics talk almost always assumes data sits in a table.</p>
+      <figure>
+        <svg class="fig" viewBox="0 0 660 280" role="img" aria-label="A data table with rows labelled data points, attribute columns, and a highlighted final column labelled response.">
+          <g font-family="IBM Plex Sans,sans-serif" font-size="12">
+            <rect x="150" y="60" width="360" height="34" fill="#4a6b2a" fill-opacity=".12"/>
+            <rect x="510" y="60" width="120" height="164" fill="#8a5a1c" fill-opacity=".12"/>
+            <rect x="30" y="94" width="120" height="130" fill="#4a6b2a" fill-opacity=".08"/>
+            <g stroke="#c9d2db" stroke-width="1">
+              <line x1="30" y1="94" x2="630" y2="94"/><line x1="30" y1="127" x2="630" y2="127"/>
+              <line x1="30" y1="160" x2="630" y2="160"/><line x1="30" y1="191" x2="630" y2="191"/>
+              <line x1="150" y1="60" x2="150" y2="224"/><line x1="270" y1="60" x2="270" y2="224"/>
+              <line x1="390" y1="60" x2="390" y2="224"/><line x1="510" y1="60" x2="510" y2="224"/>
+            </g>
+            <rect x="30" y="60" width="600" height="164" fill="none" stroke="#131b26" stroke-width="1.5"/>
+            <g fill="#4a5765" font-size="11.5">
+              <text x="44" y="82">applicant</text><text x="164" y="82">credit score</text>
+              <text x="284" y="82">income</text><text x="404" y="82">postcode</text>
+              <text x="524" y="82" font-weight="600" fill="#8a5a1c">repaid?</text>
+            </g>
+            <g fill="#131b26" font-family="IBM Plex Mono,monospace" font-size="11.5">
+              <text x="44" y="116">A-1041</text><text x="164" y="116">730</text><text x="284" y="116">76,000</text><text x="404" y="116">30318</text><text x="524" y="116">yes</text>
+              <text x="44" y="149">A-1042</text><text x="164" y="149">602</text><text x="284" y="149">41,500</text><text x="404" y="149">02139</text><text x="524" y="149">no</text>
+              <text x="44" y="181">A-1043</text><text x="164" y="181">788</text><text x="284" y="181">122,000</text><text x="404" y="181">07470</text><text x="524" y="181">yes</text>
+              <text x="44" y="213">…</text>
+            </g>
+            <text x="330" y="46" text-anchor="middle" font-size="12" font-weight="600" fill="#4a6b2a">columns → attributes, features, covariates, predictors</text>
+            <text x="20" y="252" font-size="12" font-weight="600" fill="#4a6b2a">rows → data points</text>
+            <text x="630" y="252" text-anchor="end" font-size="12" font-weight="600" fill="#8a5a1c">this column → the response</text>
+          </g>
+        </svg>
+        <figcaption>The response column is the one that makes this classification rather than clustering. Take it away and the algorithm has nothing to learn against.</figcaption>
+      </figure>
+      <table class="plain">
+        <tr><td><strong>Data point</strong></td><td>A row. One observation — one applicant, or one day of sales</td></tr>
+        <tr><td><strong>Attribute</strong></td><td>A column. Also called a <em>feature</em>, and depending on use, a <em>covariate</em> or <em>predictor</em></td></tr>
+        <tr><td><strong>Response</strong></td><td>The special column holding the answer for each data point. Also called the <em>outcome</em></td></tr>
+      </table>
+      <p>For loan applicants the response is whether they repaid the full loan — or it could be the <em>fraction</em> repaid, from 0 to 100%. For daily sales it’s the number of sales that day.</p>
+    </div>
+    <aside class="check">
+      <span class="n">Vocabulary</span>
+      <p class="q">Four words for a column, and one for the special column. Name them.</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Attribute, feature, covariate, predictor. The special one is the response, also called the outcome.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Types of data</h3>
+      <div class="defn">
+        <span class="term">Structured</span>
+        <p>Data that can be described and stored neatly. Credit score, age and number of sales are stored as numbers; a category might be stored as a single letter or one of a few fixed words.</p>
+      </div>
+      <div class="defn">
+        <span class="term">Unstructured</span>
+        <p>Data that isn’t easily described and stored. Text is the most common example — free-written incident reports, say, where every author writes differently and the text must be parsed before any trend can be found.</p>
+      </div>
+      <p>Within structured data:</p>
+      <table class="plain">
+        <tr><td><strong>Quantitative</strong></td><td>The numbers mean something. Higher means more, lower means less. Age, sales, temperature, income</td></tr>
+        <tr><td><strong>Categorical</strong></td><td>The number only says which category. Postcodes are the classic case — moving from one to another doesn’t mean anything increased or decreased</td></tr>
+        <tr><td><strong>Binary</strong></td><td>A special case of categorical with exactly two values. Repaid or not, holiday or not, on or off. Binary data can sometimes be treated as quantitative even though it is categorical</td></tr>
+      </table>
+      <div class="defn">
+        <span class="term">Time series</span>
+        <p>Sometimes data points are unrelated — each loan applicant is a different person. Sometimes they’re related in time: put daily sales in chronological order and reading down the column shows sales day after day. Often recorded at equal intervals (daily sales, a stock price every two seconds, a child’s height each birthday), but not necessarily.</p>
+      </div>
+
+      <div class="ix" data-quiz="m2l3-q1">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">A dataset has a postcode column stored as an integer. What is the risk of feeding it straight into a distance-based model?</p>
+        <div class="opts">
+          <button class="opt" data-fb="Missing values are a separate problem entirely, and postcodes are usually well populated. The trouble here is with the values that <em>are</em> present.">Postcodes are often missing, so the model will silently drop those rows.</button>
+          <button class="opt" data-right data-fb="The model will treat the gap between 02139 and 30318 as a meaningful magnitude, when the numbers only name categories. Nothing increased when you moved between them.">The model will read the numeric gaps as distances, when the numbers only label categories.</button>
+          <button class="opt" data-fb="Precision isn't the issue — postcodes are exact. The issue is that arithmetic on them is meaningless no matter how precisely they're recorded.">Postcodes are too coarse a location measure to be precise enough for a model.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="ix" data-match="m2l3-match" data-win="The dividing question for a number is always the same: does a bigger value mean more of something, or does it just name a different group?">
+        <div class="ix-head"><span class="ix-kind">match the pairs</span><span class="ix-done">matched</span></div>
+        <p class="prompt">Click a column on the left, then the type it is.</p>
+        <div class="match">
+          <div class="col" data-side="a">
+            <h4>Column</h4>
+            <button class="cell" data-pair="1">Household income in dollars</button>
+            <button class="cell" data-pair="2">Postcode</button>
+            <button class="cell" data-pair="3">Whether the day was a holiday</button>
+            <button class="cell" data-pair="4">The free text of an incident report</button>
+          </div>
+          <div class="col" data-side="b">
+            <h4>Type</h4>
+            <button class="cell" data-pair="1" data-fb="Quantitative — a higher number genuinely means more of the thing being measured.">Structured, quantitative</button>
+            <button class="cell" data-pair="2" data-fb="Categorical. It is stored as a number, but the number carries no magnitude — it only names a region.">Structured, categorical</button>
+            <button class="cell" data-pair="3" data-fb="Binary, a special case of categorical with exactly two values — and one that can often be treated as quantitative despite being categorical.">Structured, binary</button>
+            <button class="cell" data-pair="4" data-fb="Unstructured. It can't be stored neatly in a column of fixed values, and has to be parsed before anything can be learned from it.">Unstructured</button>
+          </div>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="note">
+        <div class="note-head"><span class="lbl">Class discussion — Lesson 3</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="m2l3" data-placeholder="One-hot encoding, ordinal data, the posted definitions handout…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Cross-module link</span>
+      <p class="q">Where does the response column reappear later?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">In Module 4. Having an observed response is precisely what makes classification supervised; clustering has no response column at all, which is what makes it unsupervised.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
+<!-- ==================== LESSON 4 ==================== -->
+<section class="lesson" id="l4" data-short="SVM maths" style="--accent:#33507f">
+  <div class="lesson-head">
+    <span class="ln">Lesson 4</span>
+    <h2>Support vector machines</h2>
+    <p class="keyline">“Find the line furthest from mistakes” becomes: minimise the sum of squared coefficients, subject to every point landing on its correct side.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Notation</h3>
+      <table>
+        <tr><td>m</td><td>Number of data points</td></tr>
+        <tr><td>n</td><td>Number of attributes per point</td></tr>
+        <tr><td>x<sub>ij</sub></td><td>The <em>j</em>th attribute of data point <em>i</em> — so x<sub>i1</sub> is person <em>i</em>’s credit score, x<sub>i2</sub> their income</td></tr>
+        <tr><td>y<sub>i</sub></td><td>The response: <strong>+1</strong> for a blue point (repaid in full), <strong>−1</strong> for a red point (defaulted)</td></tr>
+        <tr><td>a<sub>1</sub>…a<sub>n</sub></td><td>One coefficient per attribute — these define the line’s direction</td></tr>
+        <tr><td>a<sub>0</sub></td><td>The intercept — this slides the line without turning it</td></tr>
+      </table>
+      <div class="formula">
+        a₁x₁ + a₂x₂ + … + aₙxₙ + a₀ = 0
+        <span class="cap">A line (or in n dimensions, a hyperplane). Parallel lines share a₁…aₙ and differ only in a₀ — which is exactly why the intercept is the thing you slide in Lesson 6.</span>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Check</span>
+      <p class="q">What geometrically distinguishes two parallel lines in this notation?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Only the intercept a₀. The coefficients a₁…aₙ set the direction, so keeping them fixed and changing a₀ slides the line without rotating it.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Stating “classified correctly”</h3>
+      <p>Blue points must sit on one side and red points on the other:</p>
+      <div class="formula">
+        blue: &nbsp; Σⱼ aⱼx<sub>ij</sub> + a₀ &nbsp; ≥ &nbsp; 1<br>
+        red: &nbsp;&nbsp; Σⱼ aⱼx<sub>ij</sub> + a₀ &nbsp; ≤ &nbsp; −1
+        <span class="cap">The 1 is there for scaling and could be any number.</span>
+      </div>
+      <p>Because y<sub>i</sub> was defined as +1 for blue and −1 for red, both conditions collapse into one:</p>
+      <div class="formula">
+        ( Σⱼ aⱼx<sub>ij</sub> + a₀ ) · y<sub>i</sub> &nbsp; ≥ &nbsp; 1 &nbsp;&nbsp; for every point i
+        <span class="cap">This is the reason the response is coded ±1 rather than 1 and 0. Multiplying by −1 flips the inequality for red points, which is exactly what merging the two conditions requires.</span>
+      </div>
+
+      <div class="ix" data-quiz="m2l4-q1">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Why is the response coded as +1 and −1 rather than 1 and 0?</p>
+        <div class="opts">
+          <button class="opt" data-fb="Symmetry is a pleasant side effect, not the reason. The coding is doing algebraic work, not cosmetic work.">Because it keeps the two classes symmetric around zero, which makes the maths tidier to write.</button>
+          <button class="opt" data-right data-fb="Multiplying the red condition by −1 turns ≤ −1 into ≥ 1, so both classes satisfy one identical inequality. Coding a class as 0 would annihilate the expression instead of flipping it.">Because multiplying by −1 flips the red inequality, letting both classes share a single constraint.</button>
+          <button class="opt" data-fb="Nothing here needs zero-mean inputs — that's Lesson 7's standardization, and it applies to the attributes, not the response.">Because a model needs inputs centred on zero before it can be fitted.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Exam target</span>
+      <p class="q">Write the single combined constraint from memory.</p>
+      <details><summary>Show answer</summary>
+        <p class="a">y<sub>i</sub>(Σⱼ aⱼx<sub>ij</sub> + a₀) ≥ 1, required for every data point i.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Turning “widest gap” into an objective</h3>
+      <p>From linear algebra, the distance between the two parallel boundary lines is</p>
+      <div class="formula">
+        margin &nbsp;=&nbsp; 2 / √( Σⱼ aⱼ² )
+        <span class="cap">The coefficients sit in the denominator — so shrinking them widens the gap.</span>
+      </div>
+      <p>Maximising that margin is therefore the same thing as <strong>minimising Σ aⱼ²</strong>. Which gives the whole hard-separation problem:</p>
+      <div class="formula">
+        minimize<sub>a₀…aₙ</sub> &nbsp; Σ<sup>n</sup><sub>j=1</sub> aⱼ²<br><br>
+        subject to &nbsp; y<sub>i</sub> ( Σ<sup>n</sup><sub>j=1</sub> aⱼx<sub>ij</sub> + a₀ ) ≥ 1 &nbsp; for all i
+        <span class="cap">Find coefficients giving the greatest distance between the lines — but only from among coefficients that separate every point correctly. Plenty of software solves this directly.</span>
+      </div>
+
+      <div class="ix" data-order="m2l4-order" data-win="Notice the shape: the geometric wish becomes the objective, and the classification requirement becomes the constraint. Nearly every optimization model in this course has that structure.">
+        <div class="ix-head"><span class="ix-kind">put in order</span><span class="ix-done">solved</span></div>
+        <p class="prompt">Drag the derivation into sequence — or use the arrows.</p>
+        <ol class="order">
+          <li data-pos="1">Code each response as +1 for blue and −1 for red</li>
+          <li data-pos="2">Require blue points to satisfy ≥ 1 and red points ≤ −1</li>
+          <li data-pos="3">Multiply through by y<sub>i</sub> to merge both into one constraint</li>
+          <li data-pos="4">Note that the margin equals 2 divided by the root of the sum of squared coefficients</li>
+          <li data-pos="5">Conclude that maximising the margin means minimising the sum of squared coefficients</li>
+          <li data-pos="6">Minimise that sum subject to the merged constraint holding for every point</li>
+        </ol>
+        <button class="btn check">Check the order</button>
+        <p class="fb"></p>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Check</span>
+      <p class="q">Why does making the coefficients smaller widen the margin?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">They sit in the denominator of 2/√(Σaⱼ²). Shrinking them shrinks the denominator, which enlarges the fraction — the gap between the two boundary lines.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>When perfect separation is impossible</h3>
+      <p>Measure how wrong each point is. If point <em>i</em> is on the correct side, y<sub>i</sub>(Σaⱼx<sub>ij</sub> + a₀) − 1 ≥ 0 and there is no error. If it is on the wrong side that quantity goes negative, and how negative is how big the mistake — the further a misclassified point sits from the line, the worse it is.</p>
+      <div class="formula">
+        error<sub>i</sub> &nbsp;=&nbsp; max { 0 , &nbsp; 1 − y<sub>i</sub>( Σⱼ aⱼx<sub>ij</sub> + a₀ ) }
+        <span class="cap">Zero when the point is comfortably right; growing with distance when it is wrong.</span>
+      </div>
+      <p>Now trade the two goals against each other with a parameter λ:</p>
+      <div class="formula">
+        minimize &nbsp; Σ<sub>i</sub> max{ 0, 1 − y<sub>i</sub>( Σⱼ aⱼx<sub>ij</sub> + a₀ ) } &nbsp; + &nbsp; λ · Σⱼ aⱼ²
+        <span class="cap">Large λ: a wide margin outweighs avoiding mistakes on known points. λ toward 0: avoiding mistakes outweighs a wide margin.</span>
+      </div>
+      <div class="note">
+        <div class="note-head"><span class="lbl">Class discussion — Lesson 4</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="m2l4" data-placeholder="How λ maps onto the C parameter in your software, solver notes…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Exam target</span>
+      <p class="q">What happens to the classifier as λ grows very large?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Margin width dominates, so the model accepts more misclassified training points in exchange for a wider gap. Push λ toward zero and it does the reverse, chasing a perfect fit on the training data — which Module 3 warns is not the same as a good model.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
+<!-- ==================== LESSON 5 ==================== -->
+<section class="lesson" id="l5" data-short="The name" style="--accent:#8a5a1c">
+  <div class="lesson-head">
+    <span class="ln">Lesson 5</span>
+    <h2>Where the name comes from</h2>
+    <p class="keyline">A support vector is a data point the boundary rests on — and the odd part is that the classifier the model returns doesn’t touch any of them.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>The picture behind the name</h3>
+      <p>Take a set of points and connect the dots around the outside. That outline is called the <span class="key">convex hull</span> — a term you don’t need, but it makes the picture concrete. The shape appears to float; a line placed beneath it would hold it up. If the shape balances on that line, the point where they touch is <strong>supporting</strong> it. That point is a support vector.</p>
+      <p>Why vector rather than point? Because each data point is a vector of attribute values. And support vectors don’t need the line underneath — mathematically one can support from the side, or from above. Depending on which line you choose, there may be more than one.</p>
+
+      <figure class="hotwrap" data-hotspot="m2l5-hot">
+        <svg class="fig" viewBox="0 0 660 320" role="img" aria-label="Left: a set of points with its convex hull balanced on a supporting line touching at one point. Right: the two parallel boundary lines with the classifier between them. Four clickable regions.">
+          <polygon points="70,80 160,58 230,110 210,190 120,205 62,150" fill="#8a5a1c" fill-opacity=".1" stroke="#8a5a1c" stroke-width="2"/>
+          <g fill="#131b26">
+            <circle cx="70" cy="80" r="4.5"/><circle cx="160" cy="58" r="4.5"/><circle cx="230" cy="110" r="4.5"/>
+            <circle cx="210" cy="190" r="4.5"/><circle cx="120" cy="205" r="4.5"/><circle cx="62" cy="150" r="4.5"/>
+            <circle cx="130" cy="120" r="4.5"/><circle cx="175" cy="145" r="4.5"/><circle cx="105" cy="160" r="4.5"/>
+          </g>
+          <line x1="40" y1="228" x2="270" y2="228" stroke="#131b26" stroke-width="2.5"/>
+          <circle cx="120" cy="205" r="10" fill="none" stroke="#8a5a1c" stroke-width="2.5"/>
+          <text x="40" y="264" font-family="IBM Plex Sans,sans-serif" font-size="12" fill="#4a5765">the hull, balanced on a line</text>
+          <text x="40" y="282" font-family="IBM Plex Sans,sans-serif" font-size="11.5" fill="#9aa5b1">the touching point is a support vector</text>
+
+          <g fill="#1b5e7e">
+            <circle cx="400" cy="72" r="5"/><circle cx="455" cy="55" r="5"/><circle cx="510" cy="80" r="5"/>
+            <circle cx="560" cy="60" r="5"/><circle cx="430" cy="105" r="5"/><circle cx="500" cy="124" r="5"/>
+          </g>
+          <g fill="#8a3d5c">
+            <circle cx="410" cy="235" r="5"/><circle cx="465" cy="252" r="5"/><circle cx="520" cy="228" r="5"/>
+            <circle cx="570" cy="245" r="5"/><circle cx="440" cy="200" r="5"/><circle cx="545" cy="196" r="5"/>
+          </g>
+          <line x1="380" y1="140" x2="620" y2="126" stroke="#4a5765" stroke-width="2" stroke-dasharray="6 4"/>
+          <line x1="380" y1="190" x2="620" y2="176" stroke="#4a5765" stroke-width="2" stroke-dasharray="6 4"/>
+          <line x1="380" y1="165" x2="620" y2="151" stroke="#131b26" stroke-width="2.5"/>
+          <circle cx="500" cy="124" r="10" fill="none" stroke="#1b5e7e" stroke-width="2.5"/>
+          <circle cx="440" cy="200" r="10" fill="none" stroke="#8a3d5c" stroke-width="2.5"/>
+          <text x="380" y="282" font-family="IBM Plex Sans,sans-serif" font-size="11.5" fill="#9aa5b1">the classifier sits between them, touching neither</text>
+          <text x="380" y="264" font-family="IBM Plex Sans,sans-serif" font-size="12" fill="#4a5765">the same idea, in the classifier</text>
+
+          <g class="hs" data-title="The convex hull"
+             data-body="Connect the dots around the outside of the set and you get this shape. The interior points play no part in what follows — only the ones on the boundary can ever support anything.">
+            <rect class="hit" x="55" y="48" width="185" height="120"/><rect class="ring" x="55" y="48" width="185" height="120" rx="3"/>
+          </g>
+          <g class="hs" data-title="The support vector"
+             data-body="Where the shape rests on the line. One point is carrying it. Mathematically a support vector need not be underneath at all — depending on the line's orientation it can support from the side or from above, and there can be more than one.">
+            <rect class="hit" x="98" y="184" width="44" height="44"/><rect class="ring" x="98" y="184" width="44" height="44" rx="3"/>
+          </g>
+          <g class="hs" data-title="The two boundary lines"
+             data-body="Back in the classification problem: two parallel lines pushed as far apart as possible with every point of each colour on its own side. The points they come to rest against are the support vectors — one blue, one red here.">
+            <rect class="hit" x="380" y="118" width="240" height="24"/><rect class="ring" x="380" y="118" width="240" height="24" rx="3"/>
+          </g>
+          <g class="hs" data-title="The classifier — and the irony"
+             data-body="The line the model actually returns runs midway between the two boundaries, so it touches neither support vector. The method is named after points its own answer never touches. The name comes from the machine automatically determining where the boundaries go and which points support them.">
+            <rect class="hit" x="380" y="143" width="240" height="24"/><rect class="ring" x="380" y="143" width="240" height="24" rx="3"/>
+          </g>
+        </svg>
+        <div class="hotpanel"><span class="hint">Four regions are clickable. Open all four to finish this activity.</span></div>
+      </figure>
+
+      <div class="callout">
+        <p class="tag">Why “machine”</p>
+        <p>Because the model takes the dataset and automatically determines where the two lines should go and which points are the support vectors. Nobody places them by hand.</p>
+      </div>
+      <div class="note">
+        <div class="note-head"><span class="lbl">Class discussion — Lesson 5</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="m2l5" data-placeholder="Notes on why only support vectors affect the solution…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Worth noticing</span>
+      <p class="q">If you deleted a data point sitting well inside the blue cloud and refitted, what would change?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Nothing. Only the points the boundaries rest against constrain the solution — interior points are already comfortably satisfied. This is why the method is named after them, and it makes SVM robust to changes far from the boundary.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
+<!-- ==================== LESSON 6 ==================== -->
+<section class="lesson" id="l6" data-short="Extensions" style="--accent:#6e4a8c">
+  <div class="lesson-head">
+    <span class="ln">Lesson 6</span>
+    <h2>Extending SVM</h2>
+    <p class="keyline">Four extensions: weight the costly error, scale the data first, read variable importance off the coefficients, and bend the boundary with kernels.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Building unequal costs into the model</h3>
+      <p><strong>Under hard separation</strong>, the classifier you pick depends on the intercept — and it can range anywhere from a₀ − 1 to a₀ + 1 without making a single mistake on the known data. That whole range is free to choose from.</p>
+      <div class="formula">
+        if a bad loan costs twice a rejected good one:<br>
+        intercept &nbsp;=&nbsp; ⅔ ( a₀ − 1 ) &nbsp;+&nbsp; ⅓ ( a₀ + 1 )
+        <span class="cap">A weighted blend of the two extremes, pulled toward the costly side in proportion to the cost.</span>
+      </div>
+      <p><strong>Under soft classification</strong>, add an extra multiplier for each type of error. The larger the penalty on a given error type, the less willing the model is to make it.</p>
+    </div>
+    <aside class="check">
+      <span class="n">Check</span>
+      <p class="q">Why is there a whole range of intercepts to choose from under hard separation?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Because every intercept between a₀ − 1 and a₀ + 1 classifies all the known points correctly. The data can’t distinguish between them, so cost is what should.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Scale first, or the margin term breaks</h3>
+      <p>Credit scores run from about 300 to 850 — some newer scales from 150 to 950 — so a range under a thousand. Household incomes measured in dollars can range over millions. That means a₁ and a₂ may differ by two or three orders of magnitude.</p>
+      <p>Since the objective adds their <em>squares</em>, a small change in one coefficient can swamp a huge change in the other, and the model won’t work well. The fix is to scale the data beforehand so the orders of magnitude are comparable. Some software does it automatically; some doesn’t. Lesson 7 covers exactly how.</p>
+
+      <h3>Reading variable importance off the coefficients</h3>
+      <p>Lesson 2 noticed that a classifier running almost parallel to one axis means that axis’s attribute barely matters. That is easy to spot in a drawing and impossible in twenty dimensions. But the coefficients tell you the same thing:</p>
+      <div class="defn">
+        <span class="term">The rule</span>
+        <p>If a coefficient a<sub>j</sub> is very close to zero, attribute <em>j</em> is probably not relevant for classification, and can be dropped.</p>
+      </div>
+      <p>This only works <em>after</em> scaling. On raw data a coefficient can be tiny purely because its attribute is measured in large units — which is the whole problem above.</p>
+
+      <div class="ix" data-quiz="m2l6-q1">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Your fitted SVM has a coefficient of 0.003 on income and 2.1 on credit score. What can you conclude?</p>
+        <div class="opts">
+          <button class="opt" data-fb="This is the trap. Income runs into six figures and credit score into three, so a small coefficient on income may just be compensating for its larger units — it can still be doing plenty of work.">Income is irrelevant and can be dropped from the model.</button>
+          <button class="opt" data-right data-fb="The comparison is only meaningful once the attributes share a scale. Scale, refit, and then a near-zero coefficient genuinely indicates an irrelevant attribute.">Nothing yet — you need to know whether the data was scaled before fitting.</button>
+          <button class="opt" data-fb="Coefficient magnitude is not error, and a large coefficient isn't evidence of a mistake. Both numbers are perfectly plausible for unscaled data.">Credit score is being over-weighted, so the model has been fitted incorrectly.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Exam target</span>
+      <p class="q">Name the two things scaling makes possible in SVM.</p>
+      <details><summary>Show answer</summary>
+        <p class="a">It stops the sum-of-squares margin term being dominated by whichever attribute has the larger units, and it makes coefficient magnitudes comparable so they can be used for variable selection.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Four questions you were probably about to ask</h3>
+
+      <div class="ix" data-match="m2l6-match" data-win="Three of the four answers point at other topics — probabilities to logistic regression, more classes to k-nearest-neighbours, and non-linearity to kernels.">
+        <div class="ix-head"><span class="ix-kind">match the pairs</span><span class="ix-done">matched</span></div>
+        <p class="prompt">Click a question on the left, then its answer.</p>
+        <div class="match">
+          <div class="col" data-side="a">
+            <h4>Question</h4>
+            <button class="cell" data-pair="1">Does SVM work beyond two dimensions?</button>
+            <button class="cell" data-pair="2">Must the classifier be a straight line?</button>
+            <button class="cell" data-pair="3">Can I get a probability instead of a verdict?</button>
+            <button class="cell" data-pair="4">What about more than two classes?</button>
+          </div>
+          <div class="col" data-side="b">
+            <h4>Answer</h4>
+            <button class="cell" data-pair="1" data-fb="Pretty much yes — a 148-dimensional dataset works the same way. The only thing lost is the ability to draw it.">Yes, essentially unchanged — you just can’t draw it</button>
+            <button class="cell" data-pair="2" data-fb="No. Kernel methods generalise SVM to non-linear boundaries. The maths isn't covered here, but statistical software provides kernel SVM functions for both linear and non-linear cases.">No — kernel methods give non-linear boundaries</button>
+            <button class="cell" data-pair="3" data-fb="Yes. Rather than 'lend or don't', you can estimate something like a 37% chance of default and decide from that. Logistic regression is the method for estimating those probabilities.">Yes — logistic regression estimates those</button>
+            <button class="cell" data-pair="4" data-fb="Yes, and it's the next lesson. k-nearest-neighbours handles many classes without needing a boundary between every pair.">Yes — that’s what the next lesson is for</button>
+          </div>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="note">
+        <div class="note-head"><span class="lbl">Class discussion — Lesson 6</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="m2l6" data-placeholder="Which kernel to use, ksvm arguments, class weighting in software…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Vocabulary</span>
+      <p class="q">What does a kernel method buy you?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Non-linear classifiers. The boundary can curve rather than being a straight line or flat hyperplane, while the rest of the SVM machinery stays the same.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
+<!-- ==================== LESSON 7 ==================== -->
+<section class="lesson" id="l7" data-short="Scaling" style="--accent:#2f6b52">
+  <div class="lesson-head">
+    <span class="ln">Lesson 7</span>
+    <h2>Scaling and standardization</h2>
+    <p class="keyline">Two ways to put attributes on a common footing. Scale when a bounded range matters; standardize when distance from the mean matters.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Why mismatched units break the margin</h3>
+      <p>Classify borrowers on household income — tens of thousands or more — and credit score, in the hundreds. A plausible set of SVM coefficients might be <strong>5 × income</strong> and <strong>700 × credit score</strong>. Watch what the sum of squares does.</p>
+      <table>
+        <tr><th>Coefficients</th><th>Sum of squares</th><th>Change</th></tr>
+        <tr><td>5, 700</td><td>25 + 490,000 = 490,025</td><td>—</td></tr>
+        <tr><td>5, 701</td><td>25 + 491,401 = 491,426</td><td>+1,401</td></tr>
+        <tr><td>37.8, 700</td><td>≈ 1,429 + 490,000</td><td>+1,404</td></tr>
+      </table>
+      <p>Nudging the credit-score coefficient from 700 to 701 is under a 1% change and barely moves the line — yet it shifts the objective by 1,401. To move the objective by the same amount through the income coefficient, you’d have to take it from 5 to about 37.8: a change of more than 600%, and an enormous change to the line.</p>
+      <div class="callout">
+        <p class="tag">The consequence</p>
+        <p>Because the data are on such different scales, the coefficients are too — so the sum of squared coefficients is far more sensitive to one than the other. The optimizer spends all its effort on the attribute with the large coefficient and effectively ignores the other. The model doesn’t work well.</p>
+      </div>
+
+      <div class="ix" data-quiz="m2l7-q1">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">In the table above, the two coefficient changes move the objective by roughly the same amount. Why is that a problem rather than a reassurance?</p>
+        <div class="opts">
+          <button class="opt" data-fb="Both rows are legitimate coefficient sets — nothing is wrong arithmetically. The trouble is what equal objective movement corresponds to geometrically.">Because the two rows aren’t comparable, so the arithmetic in the table is misleading.</button>
+          <button class="opt" data-right data-fb="Equal movement in the objective corresponds to a trivial change in one line and a drastic one in the other. The optimizer is therefore steering almost entirely by credit score, whatever income is doing.">Because equal movement in the objective corresponds to wildly unequal movement of the actual boundary.</button>
+          <button class="opt" data-fb="Rounding isn't the issue — the effect is enormous, not marginal, and it would persist at any precision. It comes from the units, not the arithmetic.">Because the sums are large enough that floating-point rounding will dominate the result.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Exam target</span>
+      <p class="q">State in one sentence why unscaled data breaks an SVM.</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Attributes on different scales produce coefficients on different scales, so the sum of squared coefficients responds far more to one attribute than another and no longer measures the margin fairly.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>The two fixes</h3>
+      <div class="defn">
+        <span class="term">Scaling — squeeze into an interval</span>
+        <p>Usually into 0 to 1, the most common choice. For each attribute <em>j</em>, let x<sub>min,j</sub> and x<sub>max,j</sub> be its smallest and largest values.</p>
+      </div>
+      <div class="formula">
+        x<sub>ij</sub><sup>scaled</sup> &nbsp;=&nbsp; ( x<sub>ij</sub> − x<sub>min,j</sub> ) / ( x<sub>max,j</sub> − x<sub>min,j</sub> )
+        <span class="cap">For a different range [a, b], take the 0-to-1 value, multiply by (b − a), and add a.</span>
+      </div>
+      <div class="defn">
+        <span class="term">Standardization — recentre on the mean</span>
+        <p>Rescale to a mean of 0 and a standard deviation of 1 — the standard normal. Let μ<sub>j</sub> be the mean of attribute <em>j</em> and σ<sub>j</sub> its standard deviation.</p>
+      </div>
+      <div class="formula">
+        x<sub>ij</sub><sup>standardized</sup> &nbsp;=&nbsp; ( x<sub>ij</sub> − μ<sub>j</sub> ) / σ<sub>j</sub>
+        <span class="cap">The result says how many standard deviations from the mean each value sits. Unbounded by construction.</span>
+      </div>
+
+      <figure>
+        <svg class="fig" viewBox="0 0 660 260" role="img" aria-label="Left: raw data where income spans a huge range and credit score a narrow one, squashing the points into a band. Right: after scaling, both axes run 0 to 1 and the points spread out.">
+          <g font-family="IBM Plex Sans,sans-serif" font-size="12">
+            <text x="34" y="26" font-size="12.5" font-weight="600" fill="#131b26">Raw</text>
+            <rect x="34" y="40" width="250" height="160" fill="none" stroke="#c9d2db" stroke-width="1.5"/>
+            <g fill="#2f6b52">
+              <circle cx="150" cy="176" r="4"/><circle cx="164" cy="180" r="4"/><circle cx="139" cy="172" r="4"/>
+              <circle cx="176" cy="184" r="4"/><circle cx="157" cy="169" r="4"/><circle cx="146" cy="186" r="4"/>
+              <circle cx="169" cy="174" r="4"/><circle cx="133" cy="181" r="4"/>
+            </g>
+            <text x="159" y="218" text-anchor="middle" font-size="11" fill="#4a5765">credit score 300–850</text>
+            <text x="24" y="120" text-anchor="middle" font-size="11" fill="#4a5765" transform="rotate(-90 24 120)">income 0–2m</text>
+
+            <line x1="300" y1="120" x2="350" y2="120" stroke="#131b26" stroke-width="2"/>
+            <polygon points="360,120 348,115 348,125" fill="#131b26"/>
+            <text x="325" y="110" text-anchor="middle" font-size="11" fill="#4a5765">scale</text>
+
+            <text x="376" y="26" font-size="12.5" font-weight="600" fill="#131b26">Scaled to 0–1</text>
+            <rect x="376" y="40" width="250" height="160" fill="none" stroke="#c9d2db" stroke-width="1.5"/>
+            <g fill="#2f6b52">
+              <circle cx="430" cy="160" r="4.5"/><circle cx="480" cy="120" r="4.5"/><circle cx="410" cy="90" r="4.5"/>
+              <circle cx="540" cy="150" r="4.5"/><circle cx="500" cy="70" r="4.5"/><circle cx="450" cy="185" r="4.5"/>
+              <circle cx="570" cy="105" r="4.5"/><circle cx="395" cy="135" r="4.5"/>
+            </g>
+            <text x="501" y="218" text-anchor="middle" font-size="11" fill="#4a5765">credit score 0–1</text>
+            <text x="366" y="120" text-anchor="middle" font-size="11" fill="#4a5765" transform="rotate(-90 366 120)">income 0–1</text>
+          </g>
+        </svg>
+        <figcaption>Nothing about the data changed — only the units. But the optimizer now sees variation in both directions instead of one.</figcaption>
+      </figure>
+    </div>
+    <aside class="check">
+      <span class="n">Formulas to know</span>
+      <p class="q">Write both formulas from memory.</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Scale: (x − x<sub>min</sub>) / (x<sub>max</sub> − x<sub>min</sub>). Standardize: (x − μ) / σ. Both are applied per attribute, using that attribute’s own statistics.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Which one, when?</h3>
+      <p>It depends — and sometimes it genuinely isn’t clear, in which case you try both and see which works better.</p>
+      <table class="plain">
+        <tr><th>Reach for</th><th>When</th></tr>
+        <tr><td><strong>Scaling</strong></td><td>A bounded range matters. Neural networks often require inputs between 0 and 1; optimization models may need bounded data to guarantee feasibility. Also when the data type is naturally bounded — batting averages between 0 and 1, RGB intensities 0 to 255, certain test scores 200 to 800</td></tr>
+        <tr><td><strong>Standardization</strong></td><td>Some models simply work better with it. Principal component analysis and clustering are the two named examples</td></tr>
+      </table>
+      <div class="callout">
+        <p class="tag">The point that outlives this lesson</p>
+        <p>Scaling or standardizing the input data is often necessary, and true for most models in this course — classification, clustering, prediction, selection and others. It won’t be repeated every time it applies. Do it anyway.</p>
+      </div>
+
+      <div class="ix" data-quiz="m2l7-q2">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">You’re feeding attributes into a neural network that requires every input between 0 and 1. Scaling or standardization?</p>
+        <div class="opts">
+          <button class="opt" data-fb="Standardization produces a mean of 0 and a standard deviation of 1, which is unbounded — plenty of values land outside 0 to 1, and some go negative. It cannot honour a hard range requirement.">Standardization, because it puts everything on a common statistical footing.</button>
+          <button class="opt" data-right data-fb="Only scaling can guarantee a bounded range. That guarantee is exactly what a 0-to-1 input requirement needs, and it's the clearest case where the two methods are not interchangeable.">Scaling, because only it can guarantee the values stay inside a fixed range.</button>
+          <button class="opt" data-fb="Here they genuinely aren't interchangeable. The hard bound decides it — this is one of the few cases where 'try both' is the wrong answer.">Either — they’re interchangeable, so try both and keep whichever scores better.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="note">
+        <div class="note-head"><span class="lbl">Class discussion — Lesson 7</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="m2l7" data-placeholder="scale() in R, whether to fit the scaler on training data only…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Trap to avoid</span>
+      <p class="q">Where should the min, max, mean and standard deviation come from when you also have a test set?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">The training data only, then apply those same numbers to the validation and test sets. Computing them across everything lets information from the test set leak into training — which Module 3 shows is exactly what invalidates a quality estimate. The lecture doesn’t raise this, but graders often do.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
+<!-- ==================== LESSON 8 ==================== -->
+<section class="lesson" id="l8" data-short="KNN" style="--accent:#7a3f52">
+  <div class="lesson-head">
+    <span class="ln">Lesson 8</span>
+    <h2>k-nearest neighbours</h2>
+    <p class="keyline">Skip the boundary entirely — just look at the k closest known points and take a vote. Handles many classes without any extra machinery.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>The idea</h3>
+      <p>Same picture as before: credit score horizontal, household income vertical, blue for repaid and red for defaulted. But instead of drawing a line or any other function to separate them, assume that <strong>each new applicant resembles the previous applicants closest to it</strong>.</p>
+      <p>Look at the five nearest points to a new applicant. Four are blue, one is red — so the new point is more likely blue, and the recommendation is to lend.</p>
+      <p>There is nothing magical about five. Any number of points can be used, and that number is denoted <span class="m">k</span> — which is where the name comes from.</p>
+
+      <figure>
+        <svg class="fig" viewBox="0 0 660 300" role="img" aria-label="Left: a new point with its five nearest neighbours circled, four blue and one red. Right: a three-class version with k of seven, where red wins four to two to one.">
+          <g font-family="IBM Plex Sans,sans-serif" font-size="12">
+            <text x="34" y="26" font-size="12.5" font-weight="600" fill="#131b26">Two classes, k = 5</text>
+            <circle cx="160" cy="140" r="62" fill="#7a3f52" fill-opacity=".06" stroke="#7a3f52" stroke-width="1.5" stroke-dasharray="5 4"/>
+            <g fill="#1b5e7e">
+              <circle cx="128" cy="112" r="5"/><circle cx="186" cy="108" r="5"/><circle cx="122" cy="168" r="5"/>
+              <circle cx="196" cy="164" r="5"/><circle cx="90" cy="70" r="5"/><circle cx="215" cy="70" r="5"/><circle cx="70" cy="130" r="5"/>
+            </g>
+            <g fill="#8a3d5c">
+              <circle cx="163" cy="192" r="5"/><circle cx="120" cy="238" r="5"/><circle cx="205" cy="232" r="5"/><circle cx="255" cy="200" r="5"/>
+            </g>
+            <rect x="153" y="133" width="14" height="14" fill="#ffffff" stroke="#131b26" stroke-width="2.5"/>
+            <text x="160" y="230" text-anchor="middle" font-size="11.5" fill="#4a5765">4 blue, 1 red → blue</text>
+
+            <text x="376" y="26" font-size="12.5" font-weight="600" fill="#131b26">Three classes, k = 7</text>
+            <circle cx="500" cy="140" r="72" fill="#7a3f52" fill-opacity=".06" stroke="#7a3f52" stroke-width="1.5" stroke-dasharray="5 4"/>
+            <g fill="#8a3d5c">
+              <circle cx="470" cy="105" r="5"/><circle cx="535" cy="112" r="5"/><circle cx="463" cy="170" r="5"/><circle cx="540" cy="176" r="5"/>
+              <circle cx="430" cy="60" r="5"/>
+            </g>
+            <g fill="#a2621f">
+              <circle cx="505" cy="88" r="5"/><circle cx="558" cy="145" r="5"/><circle cx="590" cy="90" r="5"/>
+            </g>
+            <g fill="#2f6b52">
+              <circle cx="497" cy="200" r="5"/><circle cx="450" cy="240" r="5"/><circle cx="565" cy="228" r="5"/>
+            </g>
+            <rect x="493" y="133" width="14" height="14" fill="#ffffff" stroke="#131b26" stroke-width="2.5"/>
+            <text x="500" y="272" text-anchor="middle" font-size="11.5" fill="#4a5765">4 red, 2 amber, 1 green → red</text>
+          </g>
+        </svg>
+        <figcaption>The white square is the new point. Multi-class needs no extra machinery — you count colours among the k closest and take the most common.</figcaption>
+      </figure>
+
+      <div class="ix" data-order="m2l8-order" data-win="Note what is absent: no fitting step, no coefficients, no boundary. All the work happens at prediction time, which is what makes k-nearest-neighbours a lazy method.">
+        <div class="ix-head"><span class="ix-kind">put in order</span><span class="ix-done">solved</span></div>
+        <p class="prompt">Drag the k-nearest-neighbours procedure into sequence.</p>
+        <ol class="order">
+          <li data-pos="1">Choose a value of k, and a way of measuring distance</li>
+          <li data-pos="2">Take the new point you want to classify</li>
+          <li data-pos="3">Measure its distance to every known data point</li>
+          <li data-pos="4">Keep the k closest of them</li>
+          <li data-pos="5">Count how many of those k fall in each class</li>
+          <li data-pos="6">Assign the new point to whichever class appears most</li>
+        </ol>
+        <button class="btn check">Check the order</button>
+        <p class="fb"></p>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Contrast</span>
+      <p class="q">What does k-nearest-neighbours never build that SVM does?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">A boundary. SVM produces a line described by coefficients; k-nearest-neighbours keeps all the training points and answers each query by looking at them directly.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Three complications, each handled elsewhere</h3>
+      <table class="plain">
+        <tr><th>Complication</th><th>Where it’s dealt with</th></tr>
+        <tr><td>There’s more than one way to measure distance. Straight-line is the most common, but not the only one</td><td>The distance metrics material — the p-norms in Module 4</td></tr>
+        <tr><td>Some attributes matter more than others. Weight each dimension’s distance differently: the larger the weight, the greater that dimension’s influence. Finding the right weights is harder and may need regression</td><td>Regression, later</td></tr>
+        <tr><td>In the extreme, some attributes barely matter at all and can be removed, measuring distance only in the important ones</td><td>Variable selection</td></tr>
+        <tr><td>How do you find the right k?</td><td>Validation — try different values and measure how well each works</td></tr>
+      </table>
+
+      <div class="ix" data-quiz="m2l8-q1">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">How do you choose k?</p>
+        <div class="opts">
+          <button class="opt" data-fb="A tidy-sounding rule, but the lesson gives no such formula — and any fixed rule would ignore the structure of the particular dataset.">Take the square root of the number of data points, rounded to an odd number.</button>
+          <button class="opt" data-right data-fb="Try different values and measure how well each performs — which is validation. And Module 3 adds the warning: measure on data the model didn't learn from, or every k will look better than it is.">Try several values and measure how well each one performs, using validation.</button>
+          <button class="opt" data-fb="Larger k smooths the decision but doesn't monotonically improve anything. Push k to the size of the dataset and every point gets assigned to whichever class is most common overall.">Use the largest k the dataset supports, since more neighbours means more information.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="note">
+        <div class="note-head"><span class="lbl">Class discussion — Lesson 8</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="m2l8" data-placeholder="kknn syntax, tie-breaking, why odd k for two classes…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Cross-module link</span>
+      <p class="q">Three different k’s now. What does each count?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">k-nearest-neighbours: how many neighbours vote. k-means (Module 4): how many clusters. k-fold cross-validation (Module 3): how many parts the data is split into.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <div class="callout">
+        <p class="tag">You are already doing machine learning</p>
+        <p>Both SVM and k-nearest-neighbours are basic machine learning algorithms. If you were waiting for the course to reach machine learning — it already has.</p>
+      </div>
+      <p>Alongside the two models, this module also delivered several cross-cutting concepts that will keep returning: data terminology and data types, validation, distance metrics, and confusion matrices.</p>
+    </div>
+    <aside class="check">
+      <span class="n">Orientation</span>
+      <p class="q">Which parts of this module were models, and which were cross-cutting?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Models: SVM and k-nearest-neighbours. Cross-cutting: the data dictionary, scaling and standardization, distance metrics, and validation — all of which apply to methods far beyond classification.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
+<section class="close" style="--accent:#131b26">
+  <h2>How the module fits together</h2>
+  <p class="h2meta">The through-line across all eight lessons</p>
+  <ul class="thread">
+    <li><span class="dot" style="--d:#1f6b6b"></span><span class="lbl">Lesson 1</span><span>Poses the problem as a picture, then points out that infinitely many lines solve it.</span></li>
+    <li><span class="dot" style="--d:#8a3d5c"></span><span class="lbl">Lesson 2</span><span>Argues for the line furthest from mistakes — then complicates it with unequal error costs.</span></li>
+    <li><span class="dot" style="--d:#4a6b2a"></span><span class="lbl">Lesson 3</span><span>Supplies the vocabulary the rest of the course assumes you have.</span></li>
+    <li><span class="dot" style="--d:#33507f"></span><span class="lbl">Lesson 4</span><span>Turns “furthest from mistakes” into a solvable optimization problem.</span></li>
+    <li><span class="dot" style="--d:#8a5a1c"></span><span class="lbl">Lesson 5</span><span>Explains the name, and reveals that only a handful of points determine the answer.</span></li>
+    <li><span class="dot" style="--d:#6e4a8c"></span><span class="lbl">Lesson 6</span><span>Adds cost weighting, variable selection from coefficients, and curved boundaries.</span></li>
+    <li><span class="dot" style="--d:#2f6b52"></span><span class="lbl">Lesson 7</span><span>Fixes the units problem Lesson 6 flagged, in a way that applies to nearly every model.</span></li>
+    <li><span class="dot" style="--d:#7a3f52"></span><span class="lbl">Lesson 8</span><span>Abandons boundaries entirely and gets multi-class classification almost for free.</span></li>
+  </ul>
+
+  <h3 style="color:#131b26">Four things worth noticing</h3>
+  <ul>
+    <li><strong>Lesson 2 is Lesson 4 without the algebra.</strong> Every intuition — margin, soft classifiers, cost weighting — reappears as a term in the optimization. If the maths feels opaque, reread Lesson 2 and match the pictures to the symbols.</li>
+    <li><strong>Scaling is load-bearing twice over.</strong> It rescues the margin term, and it is what makes coefficient-based variable selection legitimate. Skip it and both fail quietly rather than loudly.</li>
+    <li><strong>The two models fail in opposite directions.</strong> SVM compresses the training data into a handful of coefficients; k-nearest-neighbours keeps every point and does all the work at prediction time. That trade decides which is practical at scale.</li>
+    <li><strong>Nearly every complication is deferred.</strong> Distance metrics, variable selection, validation, logistic regression — this module names four gaps and fills none of them, which is what a cross-cutting curriculum looks like from the inside.</li>
+  </ul>
+
+  <h3 style="color:#131b26">Likely exam targets</h3>
+  <ul>
+    <li>Explain why a wide margin is preferable to a narrow one, given both classify the training data perfectly.</li>
+    <li>State the hard-separation SVM problem — objective and constraint — from memory.</li>
+    <li>Explain why the response is coded ±1 rather than 1 and 0.</li>
+    <li>Describe the effect of increasing λ in the soft-classification objective.</li>
+    <li>Define a support vector and say why the returned classifier touches none of them.</li>
+    <li>Show how unequal error costs change the intercept under hard separation.</li>
+    <li>Give both the scaling and standardization formulas, and say when each is appropriate.</li>
+    <li>Walk through k-nearest-neighbours and name its three complications.</li>
+    <li>Distinguish quantitative, categorical and binary data with an example of each.</li>
+  </ul>
+
+  <div class="note">
+    <div class="note-head"><span class="lbl">Module 2 — my own summary</span><span class="hint">click to type; saves automatically</span></div>
+    <div class="note-body" contenteditable="true" data-note="m2summary" data-placeholder="Write the module back in your own words — the fastest way to find out what you don't actually know yet."></div>
+  </div>
+
+  <footer><span class="ai"><strong>Written by an AI model from lecture recordings.</strong> Not reviewed by any instructor or institution — verify anything you rely on against the original lectures. Examples here are generic illustrations rather than the ones used in class. The Sam Okafor case, the leakage warning in Lesson 7, and “Four things worth noticing” are this summary’s own additions rather than lecture content.</span></footer>
+</section>
+
+</div>
+
+<dialog id="dlg">
+  <div class="dlg-in">
+    <h3 id="dlgTitle">Your notes</h3>
+    <p id="dlgHelp" style="font-family:var(--sans);font-size:.88rem;color:var(--ink-soft);max-width:none">Copy this text and keep it somewhere safe.</p>
+    <textarea id="dlgText" spellcheck="false"></textarea>
+    <div class="dlg-row">
+      <button class="btn" id="dlgCopy">Copy to clipboard</button>
+      <button class="btn" id="dlgLoad" hidden>Load these notes</button>
+      <button class="btn" id="dlgClose">Close</button>
+      <span class="status" id="dlgStatus"></span>
+    </div>
+  </div>
+</dialog>
+
+<script src="study.js"></script>
+</body>
+</html>

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ISyE 6501 — Study Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="study.css">
+</head>
+<body data-page="index">
+<div class="wrap">
+
+<div class="topbar">
+  <div class="topline">
+    <a class="brand" href="index.html">ISyE 6501 &middot; Introduction to Analytics Modeling</a>
+    <nav class="tabs" aria-label="Modules"></nav>
+    <div class="toolbar">
+      <button class="btn" id="exportBtn">Export</button>
+      <button class="btn" id="importBtn">Import</button>
+      <button class="btn" id="resetBtn">Reset</button>
+    </div>
+  </div>
+</div>
+
+<header class="hero" style="padding-bottom:36px">
+  <p class="course">Georgia Tech &middot; Joel Sokol</p>
+  <h1>ISyE 6501 study guide</h1>
+  <p class="sub">Lecture transcripts turned into something you can actually revise from — one page per module, with activities that tell you straight away whether you understood it.</p>
+  <ul class="modgrid" id="modgrid"></ul>
+  <p style="font-family:var(--sans);font-size:.85rem;color:var(--ink-soft);max-width:64ch;margin:0">
+    Answers and typed notes are stored in this browser and shared across every module page.
+    Use <strong>Export</strong> to back them up or move them to another machine — some browsers block
+    storage for files opened straight from disk, and Export always works either way.
+  </p>
+</header>
+
+<section class="paper" id="add">
+  <h2>Adding a module</h2>
+  <p class="h2meta">Two steps</p>
+
+  <p><strong>1. Add one line to <code>study.js</code>.</strong> The list at the very top of that file is the single source of truth — the tab bar on every page and the cards above both build themselves from it.</p>
+  <pre>{ id:"m5", file:"module-5-something.html", tab:"Module 5 — Title",
+  title:"Title", colour:"#8a5a1c", blurb:"One line about the module." }</pre>
+
+  <p><strong>2. Copy <code>module-template.html</code></strong> to the filename you just used, set <code>&lt;body data-page="m5"&gt;</code>, and fill in the lessons. The template contains a commented example of every block type.</p>
+
+  <h3 style="color:#131b26">Blocks you can use inside a lesson</h3>
+  <table class="plain">
+    <tr><th>Block</th><th>What it is</th></tr>
+    <tr><td><code>.keyline</code></td><td>The one-sentence takeaway under a lesson title</td></tr>
+    <tr><td><code>.defn</code></td><td>A term worth memorising, with an accent bar</td></tr>
+    <tr><td><code>.callout</code></td><td>A bordered aside for caveats and warnings</td></tr>
+    <tr><td><code>.formula</code></td><td>Monospace maths with an optional caption</td></tr>
+    <tr><td><code>.steps</code></td><td>Numbered procedure with circled numerals</td></tr>
+    <tr><td><code>aside.check</code></td><td>Margin question with a collapsed answer</td></tr>
+    <tr><td><code>.note</code></td><td>Editable class-discussion box</td></tr>
+  </table>
+
+  <h3 style="color:#131b26">Interactive blocks</h3>
+  <table class="plain">
+    <tr><th>Attribute</th><th>What it does</th></tr>
+    <tr><td><code>data-quiz</code></td><td>Multiple choice with instant feedback on every option, right or wrong</td></tr>
+    <tr><td><code>data-order</code></td><td>Drag rows into sequence; arrow buttons give a keyboard route</td></tr>
+    <tr><td><code>data-match</code></td><td>Click a term, then its pair; the right column shuffles on load</td></tr>
+    <tr><td><code>data-hotspot</code></td><td>Clickable regions on an SVG that fill a panel underneath</td></tr>
+    <tr><td><code>data-branch</code></td><td>Branching scenario — each choice shows its consequence</td></tr>
+  </table>
+  <p>Every one of these needs a unique id starting with the module id, like <code>data-quiz="m5l2-q1"</code>. That prefix is how progress gets counted per module. Give each lesson <code>&lt;section class="lesson" data-short="…"&gt;</code> so the progress rail has a label, and update <code>MODULE_ITEM_COUNTS</code> in <code>index.html</code> with the number of interactive blocks the module contains.</p>
+
+  <h3 style="color:#131b26">Your own comments</h3>
+  <p>Write them anywhere in the source as <code>&lt;!-- @me: … --&gt;</code> so you can grep them out later. They never render.</p>
+
+  <footer>Built from lecture transcripts. Where a page adds reasoning that goes beyond a transcript, its footer says so.</footer>
+</section>
+
+</div>
+
+<dialog id="dlg">
+  <div class="dlg-in">
+    <h3 id="dlgTitle">Your notes</h3>
+    <p id="dlgHelp" style="font-family:var(--sans);font-size:.88rem;color:var(--ink-soft);max-width:none">Copy this text and keep it somewhere safe.</p>
+    <textarea id="dlgText" spellcheck="false"></textarea>
+    <div class="dlg-row">
+      <button class="btn" id="dlgCopy">Copy to clipboard</button>
+      <button class="btn" id="dlgLoad" hidden>Load these notes</button>
+      <button class="btn" id="dlgClose">Close</button>
+      <span class="status" id="dlgStatus"></span>
+    </div>
+  </div>
+</dialog>
+
+<script>
+/* Number of interactive activities in each module page.
+   Update when you add or remove one, so the progress bars stay honest. */
+window.MODULE_ITEM_COUNTS = { m3: 10, m4: 7 };
+
+function buildIndex(mods){
+  var grid = document.getElementById("modgrid");
+  if (!grid) return;
+  var html = "";
+  mods.forEach(function(m){
+    html +=
+      '<li class="modcard" data-mod="' + m.id + '" style="--c:' + m.colour + '">' +
+        '<span class="mnum">' + m.tab.split("—")[0].trim() + '</span>' +
+        '<h3>' + m.title + '</h3>' +
+        '<p>' + m.blurb + '</p>' +
+        '<div class="bar"><i></i></div><div class="pct">Not started</div>' +
+        '<a class="go" href="' + m.file + '">Open module</a>' +
+      '</li>';
+  });
+  html +=
+    '<li class="modcard soon" style="--c:#c9d2db">' +
+      '<span class="mnum">Next</span><h3>Another module</h3>' +
+      '<p>Add one line to study.js and copy module-template.html. The tab bar and this grid update themselves.</p>' +
+      '<a class="go" href="#add" style="color:#4a5765">How to add one</a>' +
+    '</li>';
+  grid.innerHTML = html;
+}
+</script>
+<script src="study.js"></script>
+</body>
+</html>

@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Module 4: Clustering — ISyE 6501</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="study.css">
+</head>
+<body data-page="m4">
+<div class="wrap">
+
+<div class="topbar">
+  <div class="topline">
+    <a class="brand" href="index.html">ISyE 6501 &middot; Introduction to Analytics Modeling</a>
+    <nav class="tabs" aria-label="Modules"></nav>
+    <div class="toolbar">
+      <button class="btn" id="exportBtn">Export</button>
+      <button class="btn" id="importBtn">Import</button>
+    </div>
+  </div>
+  <nav class="rail" id="rail" aria-label="Lessons in this module"></nav>
+</div>
+
+<header class="hero">
+  <p class="course">Georgia Tech ISyE 6501 &middot; Joel Sokol</p>
+  <h1>Module 4: Clustering</h1>
+  <p class="sub">Group points that are close together — then decide what “close” means, how to find the groups, and how far to trust them.</p>
+
+  <svg class="plot" viewBox="0 0 660 350" role="img" aria-label="Scatter plot of data points resolving into three colored clusters, with axes labeled age and miles driven per year.">
+    <defs><pattern id="grid" width="26" height="26" patternUnits="userSpaceOnUse"><path d="M 26 0 L 0 0 0 26" fill="none" stroke="#e3e9ee" stroke-width="1"/></pattern></defs>
+    <rect x="62" y="24" width="576" height="276" fill="url(#grid)"/>
+    <line x1="62" y1="300" x2="638" y2="300" stroke="#131b26" stroke-width="1.5"/>
+    <line x1="62" y1="300" x2="62" y2="24" stroke="#131b26" stroke-width="1.5"/>
+    <text x="350" y="332" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="13" fill="#4a5765">age</text>
+    <text x="30" y="162" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="13" fill="#4a5765" transform="rotate(-90 30 162)">miles driven per year</text>
+    <g style="--dot:#1b5e7e">
+      <circle class="pt" cx="118" cy="252" r="5.5" style="animation-delay:.35s"/><circle class="pt" cx="143" cy="228" r="5.5" style="animation-delay:.42s"/>
+      <circle class="pt" cx="163" cy="266" r="5.5" style="animation-delay:.49s"/><circle class="pt" cx="132" cy="277" r="5.5" style="animation-delay:.56s"/>
+      <circle class="pt" cx="173" cy="238" r="5.5" style="animation-delay:.63s"/><circle class="pt" cx="102" cy="232" r="5.5" style="animation-delay:.70s"/>
+      <circle class="pt" cx="150" cy="250" r="5.5" style="animation-delay:.77s"/><circle class="pt" cx="124" cy="208" r="5.5" style="animation-delay:.84s"/>
+      <g class="ctr"><circle cx="138" cy="244" r="10" fill="none" stroke="#1b5e7e" stroke-width="1.5"/><circle cx="138" cy="244" r="2.5" fill="#1b5e7e"/></g>
+    </g>
+    <g style="--dot:#8a3d5c">
+      <circle class="pt" cx="312" cy="122" r="5.5" style="animation-delay:.40s"/><circle class="pt" cx="337" cy="100" r="5.5" style="animation-delay:.47s"/>
+      <circle class="pt" cx="357" cy="137" r="5.5" style="animation-delay:.54s"/><circle class="pt" cx="322" cy="152" r="5.5" style="animation-delay:.61s"/>
+      <circle class="pt" cx="352" cy="116" r="5.5" style="animation-delay:.68s"/><circle class="pt" cx="297" cy="140" r="5.5" style="animation-delay:.75s"/>
+      <circle class="pt" cx="334" cy="129" r="5.5" style="animation-delay:.82s"/><circle class="pt" cx="367" cy="106" r="5.5" style="animation-delay:.89s"/>
+      <g class="ctr"><circle cx="335" cy="125" r="10" fill="none" stroke="#8a3d5c" stroke-width="1.5"/><circle cx="335" cy="125" r="2.5" fill="#8a3d5c"/></g>
+    </g>
+    <g style="--dot:#4a6b2a">
+      <circle class="pt" cx="478" cy="256" r="5.5" style="animation-delay:.45s"/><circle class="pt" cx="503" cy="236" r="5.5" style="animation-delay:.52s"/>
+      <circle class="pt" cx="523" cy="271" r="5.5" style="animation-delay:.59s"/><circle class="pt" cx="493" cy="286" r="5.5" style="animation-delay:.66s"/>
+      <circle class="pt" cx="533" cy="246" r="5.5" style="animation-delay:.73s"/><circle class="pt" cx="463" cy="276" r="5.5" style="animation-delay:.80s"/>
+      <circle class="pt" cx="518" cy="256" r="5.5" style="animation-delay:.87s"/><circle class="pt" cx="548" cy="266" r="5.5" style="animation-delay:.94s"/>
+      <g class="ctr"><circle cx="507" cy="262" r="10" fill="none" stroke="#4a6b2a" stroke-width="1.5"/><circle cx="507" cy="262" r="2.5" fill="#4a6b2a"/></g>
+    </g>
+  </svg>
+
+  <ul class="track">
+    <li style="--dot:#1b5e7e"><a href="#l1"><span class="tnum">Lesson 1</span><span class="tname">Introduction to clustering</span><span class="tq">What is a cluster, and what is it good for?</span></a></li>
+    <li style="--dot:#8a3d5c"><a href="#l2"><span class="tnum">Lesson 2</span><span class="tname">Distance and norms</span><span class="tq">What exactly does “close” mean?</span></a></li>
+    <li style="--dot:#4a6b2a"><a href="#l3"><span class="tnum">Lesson 3</span><span class="tname">The k-means algorithm</span><span class="tq">How do we find the groups?</span></a></li>
+    <li style="--dot:#8a5a1c"><a href="#l4"><span class="tnum">Lesson 4</span><span class="tname">k-means in practice</span><span class="tq">What goes wrong, and how many clusters?</span></a></li>
+    <li style="--dot:#33507f"><a href="#l5"><span class="tnum">Lesson 5</span><span class="tname">Clustering for prediction</span><span class="tq">What do we do with a brand-new point?</span></a></li>
+    <li style="--dot:#6e4a8c"><a href="#l6"><span class="tnum">Lesson 6</span><span class="tname">Clustering vs. classification</span><span class="tq">How is this different from what we did before?</span></a></li>
+  </ul>
+
+  <div class="badge-strip">
+    <p class="cap">Badges unlock when every activity in a lesson is finished.</p>
+    <ul class="badges">
+      <li class="badge" data-for="l1" style="--b:#1b5e7e"><span class="gem">C</span><span class="nm">Segments</span></li>
+      <li class="badge" data-for="l2" style="--b:#8a3d5c"><span class="gem">p</span><span class="nm">Norms</span></li>
+      <li class="badge" data-for="l3" style="--b:#4a6b2a"><span class="gem">k</span><span class="nm">The Loop</span></li>
+      <li class="badge" data-for="l4" style="--b:#8a5a1c"><span class="gem">E</span><span class="nm">Elbow</span></li>
+      <li class="badge" data-for="l5" style="--b:#33507f"><span class="gem">V</span><span class="nm">Voronoi</span></li>
+      <li class="badge" data-for="l6" style="--b:#6e4a8c"><span class="gem">U</span><span class="nm">Unsupervised</span></li>
+      <li class="badge" data-for="*" style="--b:#131b26"><span class="gem">★</span><span class="nm">Module 4 complete</span></li>
+    </ul>
+  </div>
+</header>
+
+<!-- ============ LESSON 1 ============ -->
+<section class="lesson" id="l1" data-short="Intro" style="--accent:#1b5e7e">
+  <div class="lesson-head">
+    <span class="ln">Lesson 1 <span class="mins">&middot; 4 min</span></span>
+    <h2>Introduction to clustering</h2>
+    <p class="keyline">Clustering groups points that are similar — and it finds groups you didn’t know were there, not just the ones you went looking for.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>The definition</h3>
+      <div class="defn">
+        <span class="term">Clustering</span>
+        <p>Taking a set of data points and dividing them into groups so that each group contains points that are close to each other, or similar.</p>
+      </div>
+      <table>
+        <tr><th>Learning type</th><th>Unsupervised — nothing is being predicted (formalised in Lesson 6)</th></tr>
+        <tr><td>Goal</td><td>Points inside a cluster are near each other</td></tr>
+        <tr><td>Output</td><td>Group assignments, not a numeric prediction</td></tr>
+        <tr><td>Grouping basis</td><td>Distance between data points</td></tr>
+      </table>
+      <p>Clustering has two payoffs, not one. It segments data into groups you expected, and it can also reveal groups you didn’t know were in the dataset.</p>
+    </div>
+    <aside class="check">
+      <span class="n">Check 1</span>
+      <p class="q">Why is clustering called unsupervised learning, when regression is not?</p>
+      <details><summary>Show answer</summary><p class="a">There is no response variable being predicted and no correct answer to train against. The algorithm only sees the attributes and groups points by how close they are to each other.</p></details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Where it gets used</h3>
+      <p><strong>Targeted marketing.</strong> Segment potential customers and give each group a different message, because different people respond to different message types. In the SUV example the four angles are <strong>size</strong> (“look how much stuff you can carry”), <strong>price</strong>, <strong>versatility</strong> and <strong>perceived coolness</strong>. Data produces the clusters; marketing experts then decide what material each cluster sees.</p>
+      <p>The discovery payoff shows up here: inspecting a cluster might reveal a segment you never planned for, such as buyers who care about <strong>gas mileage</strong>.</p>
+      <p><strong>Personalized medicine.</strong> An ideal cluster is a set of people who would react similarly to a treatment, while different clusters react differently.</p>
+      <p><strong>Facility location.</strong> Here closeness is literal physical distance: cluster people by where they live, then put one facility in each cluster. Civic examples are police stations, fire stations, medical clinics and libraries; the same approach works for gas stations and fast food restaurants.</p>
+      <p><strong>Image analysis.</strong> Re-coloring pictures, recognizing faces and other objects. This is why handwritten CAPTCHAs keep getting more ambiguous — clustering algorithms keep getting better at reading them.</p>
+      <p><strong>Initial data investigation.</strong> Find obvious clusters, then analyze each one separately in case they have different properties. Predicting how much a buyer will spend might need a different model per cluster.</p>
+
+      <div class="ix" data-quiz="m4l1-q1">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Your clustering of SUV buyers produces a group you didn’t anticipate — people who mostly care about gas mileage. What does that tell you about the method?</p>
+        <div class="opts">
+          <button class="opt" data-fb="Nothing has failed. Clustering has no target to hit, so there is no such thing as a wrong grouping — only a more or less useful one.">The clustering failed, because it didn’t recover the four segments the marketing team defined.</button>
+          <button class="opt" data-right data-fb="Sokol makes this the headline point: clustering doesn't just sort data into the buckets you expected, it can show you which buckets exist.">It’s working as intended — discovering unexpected segments is one of the two things clustering is for.</button>
+          <button class="opt" data-fb="Adding a cluster to match a hunch inverts the method. The whole value here is that the group emerged from the data rather than from someone's prior expectation.">You should re-run with k set to five so the new segment gets its own cluster.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Check 2</span>
+      <p class="q">Name the five application areas, and say which one uses distance in the literal physical sense.</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Targeted marketing, personalized medicine, facility location, image analysis, initial data investigation.</p>
+        <p class="a">Facility location is the literal one. Elsewhere “distance” is similarity across attributes, not geography.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>The picture</h3>
+      <p>The lecture graph puts <span class="m">age</span> on the horizontal axis and <span class="m">miles driven per year</span> on the vertical axis, with each point a potential SUV buyer. Two dimensions only because it is easy to see and easy to draw.</p>
+      <p>The same point cloud is split by eye into two clusters, then three, then four. <strong>The same dataset supports multiple valid clusterings.</strong> The number of clusters is a choice you make, not something the data hands you.</p>
+      <div class="note">
+        <div class="note-head"><span class="lbl">Class discussion — Lesson 1</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="m4l1" data-placeholder="Office hours, Piazza threads, anything the TA emphasised…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Check 3</span>
+      <p class="q">Is a 4-cluster solution better than a 2-cluster solution on the same scatter? What would you need to know?</p>
+      <details><summary>Show answer</summary><p class="a">You can’t say from the picture. More clusters always reduce total distance, so “tighter” isn’t the test. What decides it is the use. Lesson 4 gives the quantitative half of this answer.</p></details>
+    </aside>
+  </div>
+</section>
+
+<!-- ============ LESSON 2 ============ -->
+<section class="lesson" id="l2" data-short="Distance" style="--accent:#8a3d5c">
+  <div class="lesson-head">
+    <span class="ln">Lesson 2 <span class="mins">&middot; 5 min</span></span>
+    <h2>Distance and norms</h2>
+    <p class="keyline">Euclidean, Manhattan and infinity distance are one formula with three values of p — and the right p comes from how the real process works.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>The same two points, three answers</h3>
+      <p>Take <span class="m">X = (0, 0)</span> and <span class="m">Y = (3, 4)</span>. Every metric below measures the same gap and gets a different number:</p>
+      <figure>
+        <svg class="fig" viewBox="0 0 680 300" role="img" aria-label="Three panels comparing distance metrics between the same two points: Euclidean gives 5, rectilinear gives 7, infinity norm gives 4.">
+          <defs><pattern id="g2" width="34" height="34" patternUnits="userSpaceOnUse"><path d="M 34 0 L 0 0 0 34" fill="none" stroke="#eef1f4" stroke-width="1"/></pattern></defs>
+          <g font-family="IBM Plex Sans,sans-serif" font-size="12.5" fill="#4a5765">
+            <rect x="60" y="74" width="102" height="136" fill="url(#g2)"/>
+            <line x1="60" y1="210" x2="162" y2="74" stroke="#8a3d5c" stroke-width="3"/>
+            <circle cx="60" cy="210" r="5.5" fill="#131b26"/><circle cx="162" cy="74" r="5.5" fill="#131b26"/>
+            <text x="97" y="132" fill="#8a3d5c" font-weight="600" font-size="14">5</text>
+            <text x="40" y="232" font-family="IBM Plex Mono,monospace" font-size="11">(0,0)</text>
+            <text x="145" y="64" font-family="IBM Plex Mono,monospace" font-size="11">(3,4)</text>
+            <text x="60" y="264" font-weight="600" fill="#131b26">2-norm · Euclidean</text>
+            <text x="60" y="282">straight line, √(9+16)</text>
+
+            <rect x="285" y="74" width="102" height="136" fill="url(#g2)"/>
+            <polyline points="285,210 387,210 387,74" fill="none" stroke="#8a3d5c" stroke-width="3"/>
+            <circle cx="285" cy="210" r="5.5" fill="#131b26"/><circle cx="387" cy="74" r="5.5" fill="#131b26"/>
+            <text x="330" y="230" fill="#8a3d5c" font-weight="600" font-size="14">3</text>
+            <text x="396" y="148" fill="#8a3d5c" font-weight="600" font-size="14">4</text>
+            <text x="285" y="264" font-weight="600" fill="#131b26">1-norm · Manhattan</text>
+            <text x="285" y="282">along the grid, 3 + 4 = 7</text>
+
+            <rect x="510" y="74" width="102" height="136" fill="url(#g2)"/>
+            <polyline points="510,210 612,210" fill="none" stroke="#c9d2db" stroke-width="3"/>
+            <line x1="612" y1="210" x2="612" y2="74" stroke="#8a3d5c" stroke-width="3"/>
+            <circle cx="510" cy="210" r="5.5" fill="#131b26"/><circle cx="612" cy="74" r="5.5" fill="#131b26"/>
+            <text x="555" y="230" fill="#9aa5b1" font-weight="600" font-size="14">3</text>
+            <text x="621" y="148" fill="#8a3d5c" font-weight="600" font-size="14">4</text>
+            <text x="510" y="264" font-weight="600" fill="#131b26">∞-norm · maximum</text>
+            <text x="510" y="282">the bigger leg only, max(3,4)</text>
+          </g>
+        </svg>
+        <figcaption>One gap, three measurements. The ∞-norm ignores the shorter leg entirely — that is the whole idea, and it is why the answer is always the largest single-dimension difference.</figcaption>
+      </figure>
+      <div class="formula">d = √( (x₁ − y₁)² + (x₂ − y₂)² )<span class="cap">Straight-line, or Euclidean, distance.</span></div>
+      <div class="formula">d = |x₁ − y₁| + |x₂ − y₂|<span class="cap">Rectilinear distance. Used for driving on a city street grid, which is why it is also called Manhattan distance.</span></div>
+    </div>
+    <aside class="check">
+      <span class="n">Check 4</span>
+      <p class="q">Why can the rectilinear distance never be smaller than the Euclidean distance?</p>
+      <details><summary>Show answer</summary><p class="a">A straight line is the shortest path, so any route made of axis-aligned legs can only be longer or equal. They are equal only when the points already line up on one axis.</p></details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Generalizing: the p-norm</h3>
+      <div class="formula">d = ( Σⁿᵢ₌₁ |xᵢ − yᵢ|ᵖ )<sup>1/p</sup><span class="cap">The p-norm distance, also called the Minkowski distance of order p. Written for n dimensions.</span></div>
+      <p>Any value of <span class="m">p</span> is available in theory — 3, 10, 1000. In practice the third most common choice is <span class="m">p = ∞</span>.</p>
+
+      <h3>Why the infinity norm is just “the biggest”</h3>
+      <ol>
+        <li>Raise every coordinate difference to the infinity power.</li>
+        <li>The largest term dominates completely. 8<sup>∞</sup> swamps 7<sup>∞</sup>, and their sum is so close to 8<sup>∞</sup> that the second term is irrelevant.</li>
+        <li>So the sum is essentially <span class="m">(largest difference)<sup>∞</sup></span>.</li>
+        <li>You then take the ∞th root of an ∞ power. Root and power cancel.</li>
+        <li>What’s left is the largest difference.</li>
+      </ol>
+      <div class="defn">
+        <span class="term">Infinity norm</span>
+        <p>The largest of a set of absolute differences. Nothing more. Sokol is deliberately informal with the infinities here because the intuition comes across better; a formal treatment would use the limit as p goes to infinity.</p>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Check 5</span>
+      <p class="q">Two points differ by 2 in one dimension and 9 in another. Give the 1-, 2- and ∞-norm distances.</p>
+      <details><summary>Show answer</summary>
+        <p class="a">1-norm: 11. 2-norm: √85 ≈ 9.22. ∞-norm: 9.</p>
+        <p class="a">Note the ordering ∞ ≤ 2 ≤ 1. The larger p gets, the more the single biggest gap dominates.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>When you’d actually want it: the warehouse</h3>
+      <p>A warehouse has an automated storage and retrieval system. In each aisle a machine moves horizontally along the aisle, and also stretches vertically to reach the right height. If it moves, stops, then stretches, the total is the sum of the two times — a 1-norm. If it stretches <em>while</em> it moves, the total is whichever takes longer — an ∞-norm.</p>
+
+      <div class="ix" data-match="m4l2-match" data-win="The pattern to carry away: sequential steps add, parallel steps take a maximum, and the metric should follow the physics.">
+        <div class="ix-head"><span class="ix-kind">match the pairs</span><span class="ix-done">matched</span></div>
+        <p class="prompt">Click a situation on the left, then the norm it calls for on the right.</p>
+        <div class="match">
+          <div class="col" data-side="a">
+            <h4>Situation</h4>
+            <button class="cell" data-pair="1">Driving to a shop across a city laid out in a grid</button>
+            <button class="cell" data-pair="2">A drone flying directly to the same shop</button>
+            <button class="cell" data-pair="3">A crane that lifts and slides at the same time</button>
+            <button class="cell" data-pair="4">A crane that lifts, stops, then slides</button>
+          </div>
+          <div class="col" data-side="b">
+            <h4>Norm</h4>
+            <button class="cell" data-pair="1" data-fb="Streets force axis-aligned travel, so the legs add: this is the 1-norm, which is why it is nicknamed Manhattan distance.">1-norm — the legs add up</button>
+            <button class="cell" data-pair="2" data-fb="No grid constraint, so it takes the straight line: the ordinary 2-norm.">2-norm — straight-line flight</button>
+            <button class="cell" data-pair="3" data-fb="Two motions running in parallel finish when the slower one finishes, which is exactly max() — the ∞-norm.">∞-norm — whichever motion is slower</button>
+            <button class="cell" data-pair="4" data-fb="Sequential motion means the times stack, so this is a 1-norm even though the machine is the same one.">1-norm again — sequential motion stacks</button>
+          </div>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="note">
+        <div class="note-head"><span class="lbl">Class discussion — Lesson 2</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="m4l2" data-placeholder="Other norms mentioned in class? Scaling attributes before computing distance?"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Check 6</span>
+      <p class="q">The machine needs 6 seconds of aisle travel and 4 seconds of stretch. How long until it can pick, under each design?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Sequential: 10 s. Simultaneous: 6 s.</p>
+        <p class="a">Operations in parallel call for the ∞-norm; operations one after another call for the 1-norm.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
+<!-- ============ LESSON 3 ============ -->
+<section class="lesson" id="l3" data-short="k-means" style="--accent:#4a6b2a">
+  <div class="lesson-head">
+    <span class="ln">Lesson 3 <span class="mins">&middot; 6 min</span></span>
+    <h2>The k-means algorithm</h2>
+    <p class="keyline">Alternate two cheap steps — reassign points, recompute centers — until nothing moves. It skips an optimization problem that would be far too slow to solve exactly.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Setup and notation</h3>
+      <p>The running example is SUV buyers over the past eight years, with <span class="m">age</span> horizontal and <span class="m">average daily temperature in that person’s city</span> vertical. With <span class="m">n</span> data points and <span class="m">m</span> attributes:</p>
+      <table>
+        <tr><td>x<sub>ij</sub></td><td>Value of data point <em>i</em>, attribute <em>j</em> — the data itself</td></tr>
+        <tr><td>y<sub>ik</sub></td><td>1 if data point <em>i</em> is in cluster <em>k</em>, 0 if not — cluster membership</td></tr>
+        <tr><td>z<sub>kj</sub></td><td>The <em>j</em>th dimension coordinate of cluster center <em>k</em></td></tr>
+      </table>
+      <div class="formula">
+        minimize &nbsp; Σᵢ Σₖ &nbsp; y<sub>ik</sub> · d( x<sub>i</sub> , z<sub>k</sub> )<br><br>
+        subject to &nbsp; Σₖ y<sub>ik</sub> = 1 &nbsp; for every point i
+        <span class="cap">The first part adds up distances from points to centers, but only where the point is in that cluster — the job the 0/1 y term does. The constraint forces every point into exactly one cluster.</span>
+      </div>
+      <p>This is a hard optimization problem, covered properly in the optimization topic later in the course. So instead of solving it, we use k-means.</p>
+    </div>
+    <aside class="check">
+      <span class="n">Check 7</span>
+      <p class="q">Which of x, y, z is given to you, and which two are you solving for?</p>
+      <details><summary>Show answer</summary><p class="a">x is observed and fixed. Both y (membership) and z (center locations) are unknowns — and they depend on each other, which is why k-means alternates between them.</p></details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>The algorithm as a loop</h3>
+      <figure>
+        <svg class="fig" viewBox="0 0 660 300" role="img" aria-label="Loop diagram: after picking k starting centers, k-means alternates between assigning points to the nearest center and recomputing centers as centroids, stopping when no point changes cluster.">
+          <g font-family="IBM Plex Sans,sans-serif">
+            <text x="30" y="34" font-size="12.5" fill="#4a5765">Start</text>
+            <rect x="26" y="44" width="196" height="40" fill="none" stroke="#c9d2db" stroke-width="1.5" stroke-dasharray="5 4"/>
+            <text x="40" y="69" font-size="13" fill="#131b26">Pick k centers inside the data</text>
+            <line x1="124" y1="84" x2="124" y2="118" stroke="#4a6b2a" stroke-width="2"/>
+            <polygon points="124,128 119,116 129,116" fill="#4a6b2a"/>
+            <rect x="26" y="128" width="196" height="78" fill="#4a6b2a" fill-opacity=".07" stroke="#4a6b2a" stroke-width="2"/>
+            <text x="42" y="154" font-size="11" font-family="IBM Plex Mono,monospace" fill="#4a6b2a">M step</text>
+            <text x="42" y="176" font-size="13.5" font-weight="600" fill="#131b26">Assign each point</text>
+            <text x="42" y="194" font-size="13.5" font-weight="600" fill="#131b26">to its nearest center</text>
+            <rect x="422" y="128" width="212" height="78" fill="#4a6b2a" fill-opacity=".07" stroke="#4a6b2a" stroke-width="2"/>
+            <text x="438" y="154" font-size="11" font-family="IBM Plex Mono,monospace" fill="#4a6b2a">E step</text>
+            <text x="438" y="176" font-size="13.5" font-weight="600" fill="#131b26">Recompute each center</text>
+            <text x="438" y="194" font-size="13.5" font-weight="600" fill="#131b26">as its cluster’s centroid</text>
+            <line x1="222" y1="150" x2="410" y2="150" stroke="#4a6b2a" stroke-width="2"/>
+            <polygon points="420,150 408,145 408,155" fill="#4a6b2a"/>
+            <text x="316" y="141" font-size="12" fill="#4a5765" text-anchor="middle">memberships changed</text>
+            <line x1="434" y1="186" x2="246" y2="186" stroke="#4a6b2a" stroke-width="2"/>
+            <polygon points="236,186 248,181 248,191" fill="#4a6b2a"/>
+            <text x="340" y="205" font-size="12" fill="#4a5765" text-anchor="middle">centers moved</text>
+            <line x1="124" y1="206" x2="124" y2="242" stroke="#131b26" stroke-width="2" stroke-dasharray="5 4"/>
+            <polygon points="124,252 119,240 129,240" fill="#131b26"/>
+            <rect x="26" y="252" width="330" height="34" fill="none" stroke="#131b26" stroke-width="1.5"/>
+            <text x="40" y="274" font-size="13" fill="#131b26">No point changed cluster → these are the final clusters</text>
+          </g>
+        </svg>
+        <figcaption>The two boxes are the expectation and maximization halves of the name. You leave the loop from the assignment step, because that is where “nothing changed” can first be observed.</figcaption>
+      </figure>
+
+      <div class="ix" data-order="m4l3-order" data-win="Steps 3 and 4 are the loop; everything before is setup and everything after is the exit condition.">
+        <div class="ix-head"><span class="ix-kind">put in order</span><span class="ix-done">solved</span></div>
+        <p class="prompt">Drag the steps of k-means into sequence — or use the arrows if you prefer the keyboard.</p>
+        <ol class="order">
+          <li data-pos="1">Decide how many clusters you want</li>
+          <li data-pos="2">Pick k points inside the range of the data as starting centers</li>
+          <li data-pos="3">Assign each data point to the center it is closest to</li>
+          <li data-pos="4">Replace each center with the centroid of the points assigned to it</li>
+          <li data-pos="5">Repeat the assign-and-recompute pair until no point changes cluster</li>
+          <li data-pos="6">Report the final clusters</li>
+        </ol>
+        <button class="btn check">Check the order</button>
+        <p class="fb"></p>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Check 8</span>
+      <p class="q">Why is “no point changed clusters” a safe place to stop?</p>
+      <details><summary>Show answer</summary><p class="a">Centers are computed purely from membership. If membership didn’t change, the centroids are identical to last round, so the next assignment reproduces the same result. The algorithm is at a fixed point.</p></details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Jargon break</h3>
+      <div class="defn">
+        <span class="term">Heuristic</span>
+        <p>An algorithm not guaranteed to find the absolute best solution, but which in many cases — including this one — usually gets very close and gets there quickly.</p>
+      </div>
+      <div class="defn">
+        <span class="term">Expectation-maximization (EM)</span>
+        <p>Calculating cluster centers takes the mean of the points in a cluster, similar to an expectation. Reassigning points strictly minimizes distance, but you can view it as maximizing the negative of the distance. k-means alternates between the two.</p>
+      </div>
+
+      <div class="ix" data-quiz="m4l3-q1">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Which step of k-means is the “expectation” step, and why?</p>
+        <div class="opts">
+          <button class="opt" data-fb="That's the maximization step. It minimizes each point's distance, which you can read as maximizing the negative of the distance.">Assigning each point to its nearest center, because you expect points to belong to the closest group.</button>
+          <button class="opt" data-right data-fb="Taking the mean of the points in a cluster is what makes it an expectation step — mean and expectation being the same operation.">Recomputing the centers, because taking the mean of a cluster’s points is a form of expectation.</button>
+          <button class="opt" data-fb="Choosing the starting centers isn't either step — it happens once, before the loop begins, and the algorithm's behaviour after that doesn't depend on how you did it.">Choosing the initial centers, because you expect them to land near real groups.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="note">
+        <div class="note-head"><span class="lbl">Class discussion — Lesson 3</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="m4l3" data-placeholder="R syntax for kmeans(), homework hints, convergence questions…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Check 9</span>
+      <p class="q">If k-means is a heuristic, what exactly is it not promising you?</p>
+      <details><summary>Show answer</summary><p class="a">That its clustering has the lowest possible total distance. It converges to a solution no point wants to leave, but a different start could converge somewhere better.</p></details>
+    </aside>
+  </div>
+</section>
+
+<!-- ============ LESSON 4 ============ -->
+<section class="lesson" id="l4" data-short="In practice" style="--accent:#8a5a1c">
+  <div class="lesson-head">
+    <span class="ln">Lesson 4 <span class="mins">&middot; 6 min</span></span>
+    <h2>k-means in practice</h2>
+    <p class="keyline">Outliers, restarts and the choice of k each get a quantitative default and a qualitative override — and Sokol puts the qualitative one first every time.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Outliers</h3>
+      <p>An <strong>outlier</strong> here means a point that isn’t close to any cluster center. k-means has no concept of “not in a cluster” — it assigns the outlier to whichever center is nearest, even though the point may not belong there at all.</p>
+      <p><strong>The default move:</strong> remove the point and rerun, so it doesn’t drag its cluster center artificially to one side. <strong>Sokol’s position:</strong> that’s not always right. Better to ask what the outlier <em>is</em>, what makes its attributes so different, and what the implication is of putting a point like this in the nearest cluster.</p>
+      <div class="callout">
+        <p class="tag">The soapbox — it recurs all course</p>
+        <p>Answering those questions takes time and effort, and it is part of what separates a top-notch analytics professional from someone who blindly runs algorithms. In many situations the algorithm is really just a guide. As much as this gets called data science, the best professionals also practise <strong>the art of analytics</strong>: looking at the combination of the data, the algorithm and the real situation to find the right answer.</p>
+      </div>
+
+      <div class="branch" data-branch="m4l4-case">
+        <div class="persona">
+          <span class="av">MO</span>
+          <span class="who"><b>Marcus Obi</b><span>Network planner, county emergency services</span></span>
+        </div>
+        <div class="scene" data-step="1">
+          <p>Marcus is clustering household locations to site new fire stations. His k-means run puts one household far from every center — a property twelve miles up a private road, well outside the built-up area.</p>
+          <p class="said">A colleague: “That one’s wrecking the north cluster’s center. Drop it and re-run.”</p>
+          <p><strong>What should Marcus do first?</strong></p>
+          <div class="choices">
+            <button class="choice" data-go="2" data-tone="bad" data-head="What he'd have missed"
+              data-outcome="The center snaps back and the map looks tidy. But the household is a working farm with a grain dryer and a fuel store — the single highest fire risk in the county. It has been removed from the analysis that decides where the engines live.">
+              Drop the point and re-run. It’s one household out of thousands and it’s distorting the centroid.
+            </button>
+            <button class="choice" data-go="2" data-tone="bad" data-head="What goes wrong"
+              data-outcome="Leaving it in pulls the northern center several miles toward empty land, so the station gets sited away from the population it mostly serves. One property has quietly outvoted a thousand.">
+              Leave it in. Removing real data is never defensible, and the centroid should reflect everything.
+            </button>
+            <button class="choice" data-go="2" data-tone="good" data-head="What he finds"
+              data-outcome="Fifteen minutes with the property record tells him it's a farm with a fuel store — high risk, and badly served by every candidate site. That's not a rounding error in a centroid, it's a finding.">
+              Find out what the point actually is before deciding anything.
+            </button>
+          </div>
+        </div>
+        <div class="scene" data-step="2" data-end="1" hidden>
+          <p><strong>Now what?</strong> Marcus knows the outlier is a high-risk farm that no station will cover well.</p>
+          <div class="choices">
+            <button class="choice" data-tone="bad" data-head="The tempting shortcut"
+              data-outcome="Forcing a sixth cluster to cover one household gives that farm a station of its own — an unaffordable answer that the budget will reject, taking the rest of the plan with it.">
+              Increase k until the farm gets its own cluster and site a station there.
+            </button>
+            <button class="choice" data-tone="good" data-head="The art of analytics"
+              data-outcome="He excludes the farm from the centroid calculation so it can't skew the siting, and reports it separately as a case needing its own answer — a mutual-aid agreement, an on-site suppression system, a targeted inspection. The algorithm sited the stations; Marcus handled the thing the algorithm couldn't see.">
+              Exclude it from the centroids, but flag it in the report as needing a separate solution.
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Check 10</span>
+      <p class="q">Why does an outlier distort a k-means solution rather than sitting harmlessly in the nearest cluster?</p>
+      <details><summary>Show answer</summary><p class="a">The center is the centroid — the mean of its members. A far-off point pulls that mean toward itself, and the shifted center can then change which cluster other borderline points get assigned to.</p></details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Restarts, and choosing k</h3>
+      <p>k-means is fast, and that speed is a resource. Run it several times from <strong>different initial centers</strong> and keep the best result. Run it across a range of <strong>different k</strong> rather than guessing. But there’s a trap:</p>
+      <div class="callout">
+        <p class="tag">Why total distance alone can’t choose k</p>
+        <p>Start with a k-cluster solution and add one more cluster — even one holding a single data point — and the total distance to centers gets smaller. So the clustering always <em>appears</em> better with more clusters. At the extreme, the best-looking solution is one cluster per data point.</p>
+      </div>
+      <p><strong>Qualitative answer.</strong> The best solution is the one that fits the situation. If your city only has budget for four new fire stations, a solution giving six new areas isn’t much help.</p>
+      <p><strong>Quantitative answer — the elbow diagram.</strong></p>
+      <figure>
+        <svg class="fig" viewBox="0 0 660 310" role="img" aria-label="Elbow diagram: total distance falls steeply from k=1 to k=4, then flattens. The kink at k=4 is marked as the elbow.">
+          <line x1="70" y1="252" x2="600" y2="252" stroke="#131b26" stroke-width="1.5"/>
+          <line x1="70" y1="252" x2="70" y2="30" stroke="#131b26" stroke-width="1.5"/>
+          <text x="335" y="292" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="13" fill="#4a5765">number of clusters, k</text>
+          <text x="30" y="141" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="13" fill="#4a5765" transform="rotate(-90 30 141)">total distance to centers</text>
+          <path d="M110,52 L180,110 L250,156 L320,196" fill="none" stroke="#8a5a1c" stroke-width="3"/>
+          <path d="M320,196 L390,212 L460,222 L530,229" fill="none" stroke="#8a5a1c" stroke-width="3" opacity=".45"/>
+          <text x="140" y="96" font-family="IBM Plex Sans,sans-serif" font-size="12" fill="#8a5a1c" font-weight="600">big gains</text>
+          <text x="430" y="248" font-family="IBM Plex Sans,sans-serif" font-size="12" fill="#4a5765">diminishing returns</text>
+          <g fill="#8a5a1c"><circle cx="110" cy="52" r="4.5"/><circle cx="180" cy="110" r="4.5"/><circle cx="250" cy="156" r="4.5"/></g>
+          <g fill="#8a5a1c" opacity=".45"><circle cx="390" cy="212" r="4.5"/><circle cx="460" cy="222" r="4.5"/><circle cx="530" cy="229" r="4.5"/></g>
+          <circle cx="320" cy="196" r="11" fill="#ffffff" stroke="#8a5a1c" stroke-width="2.5"/><circle cx="320" cy="196" r="4.5" fill="#8a5a1c"/>
+          <line x1="320" y1="181" x2="320" y2="126" stroke="#8a5a1c" stroke-width="1" stroke-dasharray="4 3"/>
+          <text x="330" y="120" font-family="IBM Plex Sans,sans-serif" font-size="13.5" font-weight="600" fill="#8a5a1c">the elbow</text>
+          <text x="330" y="138" font-family="IBM Plex Sans,sans-serif" font-size="12" fill="#4a5765">adding clusters past here buys little</text>
+          <g font-family="IBM Plex Sans,sans-serif" font-size="12" fill="#4a5765" text-anchor="middle">
+            <text x="110" y="272">1</text><text x="180" y="272">2</text><text x="250" y="272">3</text><text x="320" y="272">4</text><text x="390" y="272">5</text><text x="460" y="272">6</text><text x="530" y="272">7</text>
+          </g>
+        </svg>
+        <figcaption>Look for the kink — where the marginal benefit of another cluster starts to be small. Its real value is that it works even when you can’t see the clusters, because your data has too many attributes to plot.</figcaption>
+      </figure>
+      <div class="note">
+        <div class="note-head"><span class="lbl">Class discussion — Lesson 4</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="m4l4" data-placeholder="nstart= in R, silhouette scores, how the TA wants the elbow justified…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Check 11</span>
+      <p class="q">A classmate picks k by finding the value with the lowest total distance to cluster centers. What goes wrong?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Total distance falls monotonically as k rises, so that rule always picks the largest k tested — in the limit, one cluster per point.</p>
+        <p class="a">The elbow looks at where the <em>rate of improvement</em> drops off. And a practical constraint can override it entirely.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
+<!-- ============ LESSON 5 ============ -->
+<section class="lesson" id="l5" data-short="Prediction" style="--accent:#33507f">
+  <div class="lesson-head">
+    <span class="ln">Lesson 5 <span class="mins">&middot; 4 min</span></span>
+    <h2>Clustering for prediction</h2>
+    <p class="keyline">Send a new point to the nearest center. Do that for every possible location and the whole space divides into regions — a Voronoi diagram, an idea centuries older than analytics.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Predicting the cluster of a new point</h3>
+      <p>Take a finished solution — five clusters, triangles marking the centers. If a new point lands <strong>inside</strong> a cluster, the answer is easy. If it doesn’t land inside any cluster, choose <strong>whichever center is closest</strong>; that’s as reasonable a choice as any. Do this for every possible location and you get regions.</p>
+
+      <figure class="hotwrap" data-hotspot="m4l5-hot">
+        <svg class="fig" viewBox="0 0 700 400" role="img" aria-label="Voronoi diagram with four clickable areas: a cluster center, a boundary, a corner region and a new point.">
+          <clipPath id="vclip"><rect x="40" y="20" width="620" height="330"/></clipPath>
+          <g clip-path="url(#vclip)" opacity=".26">
+            <polygon points="40.0,20.0 224.4,20.0 252.8,147.8 40.0,265.3" fill="#33507f"/>
+            <polygon points="224.4,20.0 453.0,20.0 355.3,203.2 252.8,147.8" fill="#8a3d5c"/>
+            <polygon points="453.0,20.0 660.0,20.0 660.0,231.2 357.6,208.8 355.3,203.2" fill="#4a6b2a"/>
+            <polygon points="340.0,350.0 40.0,350.0 40.0,265.3 252.8,147.8 355.3,203.2 357.6,208.8" fill="#8a5a1c"/>
+            <polygon points="660.0,231.2 660.0,350.0 340.0,350.0 357.6,208.8" fill="#6e4a8c"/>
+          </g>
+          <g clip-path="url(#vclip)" fill="none" stroke="#131b26" stroke-width="1.4" opacity=".5">
+            <polygon points="40.0,20.0 224.4,20.0 252.8,147.8 40.0,265.3"/>
+            <polygon points="224.4,20.0 453.0,20.0 355.3,203.2 252.8,147.8"/>
+            <polygon points="453.0,20.0 660.0,20.0 660.0,231.2 357.6,208.8 355.3,203.2"/>
+            <polygon points="340.0,350.0 40.0,350.0 40.0,265.3 252.8,147.8 355.3,203.2 357.6,208.8"/>
+            <polygon points="660.0,231.2 660.0,350.0 340.0,350.0 357.6,208.8"/>
+          </g>
+          <rect x="40" y="20" width="620" height="330" fill="none" stroke="#131b26" stroke-width="1.5"/>
+          <g stroke="#131b26" stroke-width="1.6">
+            <polygon points="150,101 159,117 141,117" fill="#33507f"/>
+            <polygon points="330,61 339,77 321,77" fill="#8a3d5c"/>
+            <polygon points="480,141 489,157 471,157" fill="#4a6b2a"/>
+            <polygon points="230,246 239,262 221,262" fill="#8a5a1c"/>
+            <polygon points="470,276 479,292 461,292" fill="#6e4a8c"/>
+          </g>
+          <circle cx="392" cy="120" r="6" fill="#ffffff" stroke="#131b26" stroke-width="2"/>
+          <text x="40" y="386" font-family="IBM Plex Sans,sans-serif" font-size="11.5" fill="#4a5765">Click each of the four outlined areas.</text>
+
+          <g class="hs" data-title="A cluster center"
+             data-body="The triangles are the k centers that k-means converged on. Everything the prediction rule needs is right here — the original data points are no longer required.">
+            <rect class="hit" x="128" y="90" width="46" height="36"/><rect class="ring" x="128" y="90" width="46" height="36" rx="3"/>
+          </g>
+          <g class="hs" data-title="A boundary line"
+             data-body="Every location on this line is exactly equidistant from the two centers either side — it is their perpendicular bisector. Step across and the nearest center changes.">
+            <rect class="hit" x="230" y="120" width="46" height="60"/><rect class="ring" x="230" y="120" width="46" height="60" rx="3"/>
+          </g>
+          <g class="hs" data-title="The unbounded corner"
+             data-body="Regions at the edge run on forever. A new point far outside the data still gets assigned somewhere, and the model gives no warning that it is extrapolating.">
+            <rect class="hit" x="580" y="34" width="70" height="60"/><rect class="ring" x="580" y="34" width="70" height="60" rx="3"/>
+          </g>
+          <g class="hs" data-title="A new point"
+             data-body="It lands inside the second region, so it is predicted into that cluster. Note what wasn't needed: no label, no response, no retraining.">
+            <rect class="hit" x="370" y="98" width="44" height="44"/><rect class="ring" x="370" y="98" width="44" height="44" rx="3"/>
+          </g>
+        </svg>
+        <div class="hotpanel"><span class="hint">Four areas are clickable. Open all four to finish this activity.</span></div>
+      </figure>
+
+      <div class="defn">
+        <span class="term">Voronoi diagram</span>
+        <p>The partition of a space into one region per center, where each region holds every location nearer that center than any other. Named for a mathematician who lived more than 100 years ago.</p>
+      </div>
+      <table class="plain">
+        <tr><td>More than 150 years ago</td><td>A diagram like it was used to analyze the source of a cholera outbreak in London</td></tr>
+        <tr><td>Early-to-mid 1600s</td><td>René Descartes used something like it in his work</td></tr>
+      </table>
+      <p>Sokol’s point: not all the good ideas in analytics are new and cutting-edge. Sometimes the best ideas have been around a long time and just need dusting off.</p>
+      <div class="note">
+        <div class="note-head"><span class="lbl">Class discussion — Lesson 5</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="m4l5" data-placeholder="John Snow / Broad Street pump discussion, comparisons to KNN…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Check 12</span>
+      <p class="q">Assigning a new point to the nearest cluster center looks a lot like KNN. What is different?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">KNN compares the new point to actual labelled training points and votes among the k nearest. Here you compare to k computed centers, and there are no labels anywhere — the groups were invented by the algorithm.</p>
+        <p class="a">The k also means different things: number of clusters vs. number of neighbours consulted.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
+<!-- ============ LESSON 6 ============ -->
+<section class="lesson" id="l6" data-short="vs. classification" style="--accent:#6e4a8c">
+  <div class="lesson-head">
+    <span class="ln">Lesson 6 <span class="mins">&middot; 3 min</span></span>
+    <h2>Clustering vs. classification</h2>
+    <p class="keyline">Both split points into groups. The only difference is whether you already knew the right answer going in — and that difference has a name.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <figure>
+        <svg class="fig" viewBox="0 0 680 320" role="img" aria-label="Side-by-side comparison: classification with points coloured by known outcome and a boundary drawn between them, and clustering with the same points uncoloured and groups discovered by the algorithm.">
+          <g font-family="IBM Plex Sans,sans-serif">
+            <text x="34" y="34" font-size="13.5" font-weight="600" fill="#131b26">Classification — supervised</text>
+            <text x="34" y="52" font-size="12" fill="#4a5765">colours were known before we started</text>
+            <rect x="34" y="64" width="290" height="200" fill="none" stroke="#c9d2db" stroke-width="1.5"/>
+            <line x1="150" y1="264" x2="238" y2="64" stroke="#131b26" stroke-width="2" stroke-dasharray="6 4"/>
+            <g fill="#1b5e7e">
+              <circle cx="74" cy="194" r="5.5"/><circle cx="104" cy="169" r="5.5"/><circle cx="89" cy="219" r="5.5"/>
+              <circle cx="129" cy="204" r="5.5"/><circle cx="64" cy="159" r="5.5"/><circle cx="114" cy="229" r="5.5"/><circle cx="144" cy="174" r="5.5"/>
+            </g>
+            <g fill="#8a3d5c">
+              <circle cx="204" cy="124" r="5.5"/><circle cx="234" cy="149" r="5.5"/><circle cx="189" cy="159" r="5.5"/>
+              <circle cx="249" cy="109" r="5.5"/><circle cx="219" cy="184" r="5.5"/><circle cx="264" cy="169" r="5.5"/><circle cx="179" cy="104" r="5.5"/>
+            </g>
+            <circle cx="46" cy="284" r="5" fill="#1b5e7e"/><text x="58" y="289" font-size="11.5" fill="#4a5765">repaid in full</text>
+            <circle cx="164" cy="284" r="5" fill="#8a3d5c"/><text x="176" y="289" font-size="11.5" fill="#4a5765">did not repay</text>
+
+            <text x="366" y="34" font-size="13.5" font-weight="600" fill="#131b26">Clustering — unsupervised</text>
+            <text x="366" y="52" font-size="12" fill="#4a5765">same points, no colours to start from</text>
+            <rect x="366" y="64" width="290" height="200" fill="none" stroke="#c9d2db" stroke-width="1.5"/>
+            <ellipse cx="437" cy="194" rx="62" ry="48" fill="none" stroke="#6e4a8c" stroke-width="2" stroke-dasharray="6 4"/>
+            <ellipse cx="553" cy="143" rx="62" ry="52" fill="none" stroke="#6e4a8c" stroke-width="2" stroke-dasharray="6 4"/>
+            <g fill="#9aa5b1">
+              <circle cx="406" cy="194" r="5.5"/><circle cx="436" cy="169" r="5.5"/><circle cx="421" cy="219" r="5.5"/>
+              <circle cx="461" cy="204" r="5.5"/><circle cx="396" cy="159" r="5.5"/><circle cx="446" cy="229" r="5.5"/><circle cx="476" cy="174" r="5.5"/>
+              <circle cx="536" cy="124" r="5.5"/><circle cx="566" cy="149" r="5.5"/><circle cx="521" cy="159" r="5.5"/>
+              <circle cx="581" cy="109" r="5.5"/><circle cx="551" cy="184" r="5.5"/><circle cx="596" cy="169" r="5.5"/><circle cx="511" cy="104" r="5.5"/>
+            </g>
+            <text x="378" y="289" font-size="11.5" fill="#4a5765">groups found from attributes alone</text>
+          </g>
+        </svg>
+        <figcaption>Identical point positions in both panels. The only thing that changes is what the model was handed.</figcaption>
+      </figure>
+
+      <div class="callout">
+        <p class="tag">The difference is what we know about the data points</p>
+        <p>Not the shape of the output. Both produce groups. What differs is whether you already had the right answer going in.</p>
+      </div>
+      <table class="plain">
+        <tr><th></th><th>Classification</th><th>Clustering</th></tr>
+        <tr><td><strong>Attributes known?</strong></td><td>Yes</td><td>Yes</td></tr>
+        <tr><td><strong>Correct group known?</strong></td><td>Yes — response already observed</td><td>No</td></tr>
+        <tr><td><strong>Model uses</strong></td><td>Attributes <em>and</em> responses</td><td>Attributes only</td></tr>
+        <tr><td><strong>Jargon</strong></td><td>Supervised learning</td><td>Unsupervised learning</td></tr>
+      </table>
+      <p><strong>The loan example.</strong> We already know each point’s classification: blue repaid in full, red did not. That known response helps us classify a new applicant. In clustering no such labels exist.</p>
+
+      <div class="ix" data-quiz="m4l6-q1">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">You cluster unlabelled customers, a colleague hand-labels each cluster “high value” or “low value,” and you train a model on those labels. What did you just do?</p>
+        <div class="opts">
+          <button class="opt" data-fb="The first half genuinely was unsupervised — no responses existed when the clusters were formed. Calling the whole pipeline unsupervised misses the second stage entirely.">Unsupervised learning throughout, since the original data had no labels.</button>
+          <button class="opt" data-fb="The second model is supervised, but the clustering that produced its labels was not. Describing the whole thing as supervised hides where the labels came from — which is the part worth being careful about.">Supervised learning throughout, since the final model was trained on labels.</button>
+          <button class="opt" data-right data-fb="Unsupervised first, supervised second. Worth being careful, though: those labels came from an algorithm plus a human's judgement, not from observed outcomes, so the second model is only as good as that labelling.">Both, in sequence — and the labels came from judgement, not from observed outcomes.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="note">
+        <div class="note-head"><span class="lbl">Class discussion — Lesson 6</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="m4l6" data-placeholder="Semi-supervised methods? Which course models fall on which side?"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Check 13</span>
+      <p class="q">Define supervised and unsupervised learning in the terms Sokol uses.</p>
+      <details><summary>Show answer</summary>
+        <p class="a"><strong>Supervised:</strong> we have observed the right answer for each data point, and use that in addition to attributes. Classification is the example.</p>
+        <p class="a"><strong>Unsupervised:</strong> we have not observed the response, and use only attribute information. Clustering is the example.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
+<section class="close" style="--accent:#131b26">
+  <h2>How the module fits together</h2>
+  <p class="h2meta">The through-line across all six lessons</p>
+  <ul class="thread">
+    <li><span class="dot" style="--d:#1b5e7e"></span><span class="lbl">Lesson 1</span><span>Defines clustering as grouping points that are <em>close</em> — and leaves “close” undefined.</span></li>
+    <li><span class="dot" style="--d:#8a3d5c"></span><span class="lbl">Lesson 2</span><span>Supplies the definition. Closeness is a p-norm, and which p you pick should follow from how the real process behaves.</span></li>
+    <li><span class="dot" style="--d:#4a6b2a"></span><span class="lbl">Lesson 3</span><span>Puts it to work. Every time k-means asks “which center is this closest to,” it calls a metric from Lesson 2.</span></li>
+    <li><span class="dot" style="--d:#8a5a1c"></span><span class="lbl">Lesson 4</span><span>Handles what the clean version ignored: outliers, unlucky starting points, and how many clusters to ask for.</span></li>
+    <li><span class="dot" style="--d:#33507f"></span><span class="lbl">Lesson 5</span><span>Extends the finished solution to new data, and carves the whole space into nearest-center regions.</span></li>
+    <li><span class="dot" style="--d:#6e4a8c"></span><span class="lbl">Lesson 6</span><span>Names what has been true all along — no responses were ever observed, so this was unsupervised learning.</span></li>
+  </ul>
+
+  <h3 style="color:#131b26">Four things worth noticing</h3>
+  <ul>
+    <li><strong>The axes change between lessons.</strong> Lesson 1 plots age against miles driven per year; Lesson 3 plots age against average daily temperature. Same SUV story, different attributes.</li>
+    <li><strong>The qualitative answer comes first, twice.</strong> On outliers and on choosing k, Sokol leads with “understand the situation” and only then gives the technique.</li>
+    <li><strong>Speed is the resource being spent.</strong> Restarts and the elbow diagram are both purchased with the same property: k-means is fast enough to run many times.</li>
+    <li><strong>k-means pairs naturally with the 2-norm.</strong> The centroid minimizes total <em>squared</em> Euclidean distance, which is one reason variants like k-medians exist.</li>
+  </ul>
+
+  <h3 style="color:#131b26">Likely exam targets</h3>
+  <ul>
+    <li>Compute 1-, 2- and ∞-norm distances between two points.</li>
+    <li>Explain why the infinity norm reduces to the maximum difference.</li>
+    <li>Walk through the k-means loop and state its stopping condition.</li>
+    <li>Define heuristic; identify the E step and the M step.</li>
+    <li>Explain why total distance alone can’t choose k, and what the elbow diagram does instead.</li>
+    <li>Give the two ways to handle an outlier and say when each applies.</li>
+    <li>Distinguish supervised from unsupervised learning, with an example of each.</li>
+    <li>Describe a Voronoi diagram and what its boundaries mean.</li>
+  </ul>
+
+  <div class="note">
+    <div class="note-head"><span class="lbl">Module 4 — my own summary</span><span class="hint">click to type; saves automatically</span></div>
+    <div class="note-body" contenteditable="true" data-note="m4summary" data-placeholder="Write the module back in your own words — the fastest way to find out what you don't actually know yet."></div>
+  </div>
+
+  <footer>Compiled from lecture transcripts M4L1 through M4L6. Quiz feedback and the Marcus Obi case are written to test the lecture’s reasoning; the case and “Four things worth noticing” go beyond what the transcripts state.</footer>
+</section>
+
+</div>
+
+<dialog id="dlg">
+  <div class="dlg-in">
+    <h3 id="dlgTitle">Your notes</h3>
+    <p id="dlgHelp" style="font-family:var(--sans);font-size:.88rem;color:var(--ink-soft);max-width:none">Copy this text and keep it somewhere safe.</p>
+    <textarea id="dlgText" spellcheck="false"></textarea>
+    <div class="dlg-row">
+      <button class="btn" id="dlgCopy">Copy to clipboard</button>
+      <button class="btn" id="dlgLoad" hidden>Load these notes</button>
+      <button class="btn" id="dlgClose">Close</button>
+      <span class="status" id="dlgStatus"></span>
+    </div>
+  </div>
+</dialog>
+
+<script src="study.js"></script>
+</body>
+</html>

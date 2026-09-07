@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>Exam Prep — Study Notes</title>
+<title>Exam Prep: Statistical Learning — Study Notes</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
@@ -22,385 +22,381 @@
       <button class="btn" id="importBtn">Import</button>
     </div>
   </div>
-  <nav class="rail" id="rail" aria-label="Sections on this page"></nav>
+  <nav class="rail" id="rail" aria-label="Topics on this page"></nav>
 </div>
 
 <header class="hero">
-  <h1>Exam Prep</h1>
-  <p class="sub">Three quizzes carry three quarters of the grade. Everything here is about how they are structured, what they cover, and the rules that quietly cost people marks.</p>
+  <h1>Exam Prep: Statistical Learning</h1>
+  <p class="sub">The textbook side of the course, arranged by course topic rather than by chapter — one page covering the ideas every model here is judged by.</p>
 
-  <svg class="plot" viewBox="0 0 660 250" role="img" aria-label="A stacked bar showing how the course grade divides: three quizzes at twenty-five percent each filling the first three quarters of the bar, then homework at fifteen percent, the project at eight, and the syllabus quiz at two.">
-    <text x="60" y="46" font-family="IBM Plex Sans,sans-serif" font-size="12.5" font-weight="600" fill="#131b26">Where the grade comes from</text>
-    <rect x="60"    y="62" width="140"  height="52" fill="#4a6b2a" fill-opacity=".85"/>
-    <rect x="200"   y="62" width="140"  height="52" fill="#4a6b2a" fill-opacity=".68"/>
-    <rect x="340"   y="62" width="140"  height="52" fill="#4a6b2a" fill-opacity=".51"/>
-    <rect x="480"   y="62" width="84"   height="52" fill="#8a5a1c" fill-opacity=".55"/>
-    <rect x="564"   y="62" width="44.8" height="52" fill="#33507f" fill-opacity=".55"/>
-    <rect x="608.8" y="62" width="11.2" height="52" fill="#8a3d5c" fill-opacity=".65"/>
-    <g font-family="IBM Plex Sans,sans-serif" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle">
-      <text x="130" y="93">25%</text><text x="270" y="93">25%</text><text x="410" y="93">25%</text><text x="522" y="93">15%</text>
-    </g>
-    <g font-family="IBM Plex Sans,sans-serif" font-size="11.5" fill="#4a5765" text-anchor="middle">
-      <text x="130" y="133">Midterm 1</text>
-      <text x="270" y="133">Midterm 2</text>
-      <text x="410" y="133">Final</text>
-      <text x="522" y="133">Homework</text>
-      <text x="586.4" y="133">Project</text>
-      <text x="586.4" y="149">8%</text>
-    </g>
-    <line x1="614.4" y1="118" x2="614.4" y2="140" stroke="#8a3d5c" stroke-width="1.2"/>
-    <text x="620" y="152" text-anchor="end" font-family="IBM Plex Sans,sans-serif" font-size="11.5" fill="#8a3d5c">Syllabus quiz 2%</text>
-    <line x1="60" y1="176" x2="480" y2="176" stroke="#4a6b2a" stroke-width="2"/>
-    <line x1="60" y1="171" x2="60" y2="181" stroke="#4a6b2a" stroke-width="2"/>
-    <line x1="480" y1="171" x2="480" y2="181" stroke="#4a6b2a" stroke-width="2"/>
-    <text x="270" y="196" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="12.5" font-weight="600" fill="#4a6b2a">75% is decided by three proctored quizzes</text>
-    <line x1="480" y1="176" x2="620" y2="176" stroke="#9aa5b1" stroke-width="2"/>
-    <line x1="620" y1="171" x2="620" y2="181" stroke="#9aa5b1" stroke-width="2"/>
-    <text x="550" y="196" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="11.5" fill="#4a5765">25% is coursework</text>
-    <text x="60" y="228" font-family="IBM Plex Sans,sans-serif" font-size="11.5" fill="#4a5765">The syllabus quiz is the only piece you can retake until it is right.</text>
+  <svg class="plot" viewBox="0 0 660 330" role="img" aria-label="Error against model flexibility. Training error falls steadily toward zero. Test error is U-shaped, reaching its minimum at moderate flexibility. Squared bias falls and variance rises, and a horizontal line marks the irreducible error floor.">
+    <line x1="70" y1="250" x2="640" y2="250" stroke="#131b26" stroke-width="1.5"/>
+    <line x1="70" y1="250" x2="70" y2="45" stroke="#131b26" stroke-width="1.5"/>
+    <line x1="70" y1="225" x2="640" y2="225" stroke="#9aa5b1" stroke-width="1.3" stroke-dasharray="5 4"/>
+    <text x="636" y="219" text-anchor="end" font-family="IBM Plex Sans,sans-serif" font-size="11" fill="#4a5765">irreducible error — no model beats this</text>
+
+    <polyline points="70.0,125.0 97.5,150.2 125.0,170.3 152.5,186.4 180.0,199.2 207.5,209.4 235.0,217.6 262.5,224.1 290.0,229.3 317.5,233.5 345.0,236.8 372.5,239.5 400.0,241.6 427.5,243.3 455.0,244.6 482.5,245.7 510.0,246.6 537.5,247.3 565.0,247.8 592.5,248.3 620.0,248.6"
+      fill="none" stroke="#8a3d5c" stroke-width="1.8" stroke-dasharray="5 4"/>
+    <polyline points="70.0,245.0 97.5,244.2 125.0,243.2 152.5,242.1 180.0,240.8 207.5,239.3 235.0,237.5 262.5,235.4 290.0,233.0 317.5,230.2 345.0,226.9 372.5,223.1 400.0,218.6 427.5,213.5 455.0,207.4 482.5,200.4 510.0,192.2 537.5,182.6 565.0,171.5 592.5,158.5 620.0,143.4"
+      fill="none" stroke="#8a5a1c" stroke-width="1.8" stroke-dasharray="5 4"/>
+    <polyline points="70.0,100.8 97.5,118.9 125.0,134.7 152.5,148.6 180.0,160.6 207.5,171.2 235.0,180.4 262.5,188.5 290.0,195.5 317.5,201.6 345.0,207.0 372.5,211.7 400.0,215.8 427.5,219.4 455.0,222.5 482.5,225.2 510.0,227.6 537.5,229.7 565.0,231.5 592.5,233.1 620.0,234.5"
+      fill="none" stroke="#9aa5b1" stroke-width="2.2"/>
+    <polyline points="70.0,95.0 97.5,119.4 125.0,138.5 152.5,153.4 180.0,165.0 207.5,173.7 235.0,180.1 262.5,184.5 290.0,187.3 317.5,188.7 331.3,188.9 345.0,188.7 372.5,187.6 400.0,185.2 427.5,181.8 455.0,177.1 482.5,171.1 510.0,163.8 537.5,154.9 565.0,144.3 592.5,131.8 620.0,117.0"
+      fill="none" stroke="#131b26" stroke-width="3"/>
+    <circle cx="331.3" cy="188.9" r="6" fill="none" stroke="#131b26" stroke-width="2.5"/>
+    <line x1="331.3" y1="188.9" x2="331.3" y2="250" stroke="#131b26" stroke-width="1" stroke-dasharray="3 3"/>
+
+    <text x="140" y="88" font-family="IBM Plex Sans,sans-serif" font-size="12" font-weight="600" fill="#131b26">test error</text>
+    <text x="140" y="112" font-family="IBM Plex Sans,sans-serif" font-size="11.5" fill="#9aa5b1">training error</text>
+    <text x="86" y="120" font-family="IBM Plex Sans,sans-serif" font-size="11.5" fill="#8a3d5c">bias²</text>
+    <text x="596" y="138" text-anchor="end" font-family="IBM Plex Sans,sans-serif" font-size="11.5" fill="#8a5a1c">variance</text>
+    <text x="331.3" y="268" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="11.5" font-weight="600" fill="#131b26">best flexibility</text>
+    <text x="355" y="292" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="12" fill="#4a5765">model flexibility →</text>
+    <text x="30" y="150" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="12" fill="#4a5765" transform="rotate(-90 30 150)">error</text>
+    <text x="70" y="316" font-family="IBM Plex Sans,sans-serif" font-size="11.5" fill="#4a5765">Training error keeps falling. Test error stops falling and turns back up. Every topic on this page is a way of managing that turn.</text>
   </svg>
 
   <ul class="track">
-    <li style="--dot:#4a6b2a"><a href="#l1"><span class="tnum">Section 1</span><span class="tname">How you are assessed</span><span class="tq">What is graded, and how much is it worth?</span></a></li>
-    <li style="--dot:#33507f"><a href="#l2"><span class="tnum">Section 2</span><span class="tname">What each quiz covers</span><span class="tq">Which modules appear on which quiz?</span></a></li>
-    <li style="--dot:#8a5a1c"><a href="#l3"><span class="tnum">Section 3</span><span class="tname">The note sheet</span><span class="tq">What is allowed, and what should go on it?</span></a></li>
-    <li style="--dot:#8a3d5c"><a href="#l4"><span class="tnum">Section 4</span><span class="tname">Rules that cost marks</span><span class="tq">Where do people actually lose points?</span></a></li>
+    <li style="--dot:#4a6b2a"><a href="#l1"><span class="tnum">Topic 1</span><span class="tname">What a model estimates</span><span class="tq">What is every method here actually doing?</span></a></li>
+    <li style="--dot:#33507f"><a href="#l2"><span class="tnum">Topic 2</span><span class="tname">Measuring quality</span><span class="tq">How do you tell a good model from a lucky one?</span></a></li>
+    <li style="--dot:#1f6b6b"><a href="#l3"><span class="tnum">Topic 3</span><span class="tname">Validation</span><span class="tq">How do you estimate an error you can't see?</span></a></li>
+    <li style="--dot:#7a3f52"><a href="#l4"><span class="tnum">Topic 4</span><span class="tname">Classification</span><span class="tq">Which classifier, and why that one?</span></a></li>
+    <li style="--dot:#1b5e7e"><a href="#l5"><span class="tnum">Topic 5</span><span class="tname">Regression</span><span class="tq">What does a fitted line actually claim?</span></a></li>
+    <li style="--dot:#8a5a1c"><a href="#l6"><span class="tnum">Topic 6</span><span class="tname">Variable selection</span><span class="tq">Which predictors earn their place?</span></a></li>
+    <li style="--dot:#2f6b52"><a href="#l7"><span class="tnum">Topic 7</span><span class="tname">Tree-based models</span><span class="tq">What do you gain, and give up, past one tree?</span></a></li>
+    <li style="--dot:#6e4a8c"><a href="#l8"><span class="tnum">Topic 8</span><span class="tname">Unsupervised methods</span><span class="tq">What can you do with no response at all?</span></a></li>
   </ul>
 
   <div class="badge-strip">
-    <p class="cap">Badges unlock when every activity in a section is finished.</p>
+    <p class="cap">Badges unlock when every activity in a topic is finished.</p>
     <ul class="badges">
-      <li class="badge" data-for="l1" style="--b:#4a6b2a"><span class="gem">%</span><span class="nm">The Weights</span></li>
-      <li class="badge" data-for="l2" style="--b:#33507f"><span class="gem">▦</span><span class="nm">Coverage</span></li>
-      <li class="badge" data-for="l3" style="--b:#8a5a1c"><span class="gem">✎</span><span class="nm">Note Sheet</span></li>
-      <li class="badge" data-for="l4" style="--b:#8a3d5c"><span class="gem">!</span><span class="nm">No Surprises</span></li>
+      <li class="badge" data-for="l1" style="--b:#4a6b2a"><span class="gem">ƒ</span><span class="nm">The Function</span></li>
+      <li class="badge" data-for="l2" style="--b:#33507f"><span class="gem">±</span><span class="nm">Bias &amp; Variance</span></li>
+      <li class="badge" data-for="l3" style="--b:#1f6b6b"><span class="gem">k</span><span class="nm">Held Out</span></li>
+      <li class="badge" data-for="l4" style="--b:#7a3f52"><span class="gem">C</span><span class="nm">Boundaries</span></li>
+      <li class="badge" data-for="l5" style="--b:#1b5e7e"><span class="gem">β</span><span class="nm">The Baseline</span></li>
+      <li class="badge" data-for="l6" style="--b:#8a5a1c"><span class="gem">λ</span><span class="nm">Shrinkage</span></li>
+      <li class="badge" data-for="l7" style="--b:#2f6b52"><span class="gem">⑂</span><span class="nm">The Forest</span></li>
+      <li class="badge" data-for="l8" style="--b:#6e4a8c"><span class="gem">◇</span><span class="nm">No Answer Key</span></li>
       <li class="badge" data-for="*"  style="--b:#131b26"><span class="gem">★</span><span class="nm">Exam ready</span></li>
     </ul>
   </div>
 </header>
 
-<!-- ==================== SECTION 1 ==================== -->
-<section class="lesson" id="l1" data-short="How it's graded" style="--accent:#4a6b2a">
+<!-- ==================== TOPIC 1 ==================== -->
+<section class="lesson" id="l1" data-short="What a model is" style="--accent:#4a6b2a">
   <div class="lesson-head">
-    <span class="ln">Section 1</span>
-    <h2>How you are assessed</h2>
-    <p class="keyline">Three proctored quizzes decide 75% of the grade, so everything else — homework, the project, the syllabus quiz — is worth less combined than any single quiz.</p>
+    <span class="ln">Topic 1</span>
+    <h2>What a model estimates</h2>
+    <p class="keyline">Every method on this page estimates one unknown function linking predictors to a response, and what separates them is whether you want to predict the response or understand the function.</p>
   </div>
 
   <div class="row">
     <div class="main">
+      <h3>The one equation underneath everything</h3>
+      <div class="formula">
+        Y &nbsp;=&nbsp; f( X ) &nbsp;+&nbsp; ε
+        <span class="cap">X is the set of predictors, Y the response, f the systematic information X carries about Y, and ε a random error term independent of X with mean zero. Every method here is an attempt to estimate f.</span>
+      </div>
+      <p>Because ε cannot be predicted from X by construction, the error of any model splits in two:</p>
+      <div class="defn">
+        <span class="term">Reducible error</span>
+        <p>The part caused by your estimate <span class="m">f̂</span> differing from the true <span class="m">f</span>. Better methods and more data shrink it. This is the part you are paid to reduce.</p>
+      </div>
+      <div class="defn">
+        <span class="term">Irreducible error</span>
+        <p>The part caused by ε — unmeasured variables and genuine randomness. No model, however good, gets below it. On the chart at the top of this page it is the dashed floor.</p>
+      </div>
       <div class="callout">
-        <p class="tag">This page is not lecture content</p>
-        <p>Everything here comes from a course syllabus rather than from a lecture recording, and it has been rewritten in general terms with the institution, course code, instructor, platform names, contact details and calendar dates removed. Timings are given relative to the semester rather than as dates. <strong>Syllabus terms change between offerings.</strong> Treat this as a study aid and check every number against your own current syllabus before relying on it.</p>
+        <p class="tag">Why this distinction is examinable</p>
+        <p>It tells you when to stop. A model whose error has flattened just above the noise floor is finished, and further complexity will make it worse rather than better. A model far above the floor still has recoverable structure. Being unable to tell these apart is how people over-fit while believing they are improving.</p>
       </div>
 
-      <h3>The six things that are graded</h3>
-      <table>
-        <tr><th>Component</th><th>Weight</th><th>Format</th></tr>
-        <tr><td>Midterm quiz 1</td><td>25%</td><td>90 minutes, roughly 45–50 questions, proctored</td></tr>
-        <tr><td>Midterm quiz 2</td><td>25%</td><td>90 minutes, roughly 45–50 questions, proctored</td></tr>
-        <tr><td>Final quiz</td><td>25%</td><td>180 minutes, roughly 60 questions, proctored, comprehensive</td></tr>
-        <tr><td>Homework</td><td>15%</td><td>Most weeks; two lowest scores dropped; peer-graded on the median score</td></tr>
-        <tr><td>Course project</td><td>8%</td><td>One project, peer-graded on the median score</td></tr>
-        <tr><td>Syllabus quiz</td><td>2%</td><td>Retakeable until correct, before its deadline</td></tr>
+      <h3>Prediction or inference</h3>
+      <p>Two reasons to estimate f, and they pull in opposite directions.</p>
+      <table class="plain">
+        <tr><th>Goal</th><th>What you need</th><th>What you tolerate</th></tr>
+        <tr><td><strong>Prediction</strong></td><td>Accurate Ŷ for new X</td><td>f̂ can be a black box. Nobody has to understand it if it is right.</td></tr>
+        <tr><td><strong>Inference</strong></td><td>To know which predictors matter, in which direction, and how strongly</td><td>Some accuracy, in exchange for a form you can read and defend.</td></tr>
       </table>
-      <p>There is also an onboarding quiz. It carries no marks — its job is to verify identity and confirm that the proctoring software works on your machine. Doing it late is the classic way to discover a webcam problem on the morning of a midterm.</p>
+      <p>This is the trade behind almost every method comparison later: a flexible method usually predicts better and explains worse. Linear regression sits at one extreme — restrictive, but every coefficient means something. A boosted ensemble sits at the other.</p>
 
       <div class="defn">
-        <span class="term">What the weights imply for effort</span>
-        <p>Homework runs most weeks and the two lowest scores are dropped. With fourteen assignments and two dropped, twelve count, so each surviving homework is worth about 1.25% of the grade — roughly one twentieth of a single quiz. Homework is where the learning happens; it is not where the grade is.</p>
+        <span class="term">Parametric methods</span>
+        <p>Assume a form for f — a line, say — and then estimate a fixed, small number of parameters. Reduces the problem to estimating a handful of numbers, at the cost of being wrong if the assumed form is wrong.</p>
+      </div>
+      <div class="defn">
+        <span class="term">Non-parametric methods</span>
+        <p>Assume no particular form and let the data shape f̂. Avoids the risk of a badly chosen form, but needs far more observations to pin down a shape that a parametric method gets from an assumption.</p>
+      </div>
+
+      <div class="ix" data-match="exam-l1-match" data-win="Notice the pattern: each pair on the left buys something and pays for it on the right. There is no free position — which is why the course keeps asking what you want from a model before asking which model.">
+        <div class="ix-head"><span class="ix-kind">match the pairs</span><span class="ix-done">matched</span></div>
+        <p class="prompt">Tap a term, then what it buys or costs you, to pair them up.</p>
+        <div class="match">
+          <div class="col" data-side="a">
+            <h4>Term</h4>
+            <button class="cell" data-pair="1">Irreducible error</button>
+            <button class="cell" data-pair="2">Inference as the goal</button>
+            <button class="cell" data-pair="3">A parametric method</button>
+            <button class="cell" data-pair="4">A non-parametric method</button>
+          </div>
+          <div class="col" data-side="b">
+            <h4>What it means for you</h4>
+            <button class="cell" data-pair="1" data-fb="It sets the floor. Since ε is independent of X, no amount of modelling reaches below it — so a model already near the floor has nothing left to gain from complexity.">Sets a floor no model can beat</button>
+            <button class="cell" data-pair="2" data-fb="You need a readable form, so a black box is disqualified however well it predicts. This is why linear regression survives in a world of better predictors.">Rules out methods you can't interpret</button>
+            <button class="cell" data-pair="3" data-fb="Assuming a form collapses the problem to a few parameters, which is why it works on small samples — and why it fails badly when the assumed form is wrong.">Few parameters, but wrong if the assumed shape is wrong</button>
+            <button class="cell" data-pair="4" data-fb="Nothing is assumed about the shape, so nothing is misassumed — but the shape now has to come from the data, and that takes a lot of observations.">No shape assumed, so it needs far more data</button>
+          </div>
+        </div>
+        <p class="fb"></p>
       </div>
 
       <div class="ix" data-quiz="exam-l1-q1">
         <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
-        <p class="prompt">You have a week where work is impossible and something must give. Which choice costs least?</p>
+        <p class="prompt">Two models are compared on the same problem. Model A has test error 4.1; model B, far more flexible, has test error 4.0. The irreducible error is estimated at 3.9. What follows?</p>
         <div class="opts">
-          <button class="opt" data-fb="This is the expensive one. A quiz is 25% of the grade, missing it means no make-up, and at best a score may be imputed from your other quizzes — which is not something to plan around.">Skip a quiz and rely on the other two.</button>
-          <button class="opt" data-right data-fb="This is exactly what the two dropped scores exist for. One missed homework is worth about 1.25% and, if it is one of your two lowest, effectively zero. The catch is that skipping the peer assessments is not free — see Section 4.">Skip one homework, using one of your two drops.</button>
-          <button class="opt" data-fb="The project is 8% — four to six times a single homework — and there is only one of them, so there is nothing to drop it against. It is the second most expensive thing on this list after a quiz.">Submit the project late or not at all.</button>
+          <button class="opt" data-fb="It is better, but by 0.1 against a noise floor of 3.9 — that is a 0.2 reducible error versus 0.1. The size of the win is what matters, not its sign, and here almost nothing is left to win.">Model B is the better model, so use it.</button>
+          <button class="opt" data-right data-fb="Both models have almost eliminated the reducible error: 0.2 and 0.1 against a floor of 3.9. The remaining difference is negligible, so the simpler model wins on every other ground — interpretability, stability, cost — because there is no accuracy left to trade for them.">Both are close to the floor, so prefer A unless B is better for some non-accuracy reason.</button>
+          <button class="opt" data-fb="Nothing here indicates over-fitting. These are test errors, not training errors, and B's is lower. Over-fitting would show as a low training error alongside a test error that had turned back up.">Model B is over-fitting, since extra flexibility bought almost nothing.</button>
         </div>
         <p class="fb"></p>
       </div>
 
-      <h3>When things happen</h3>
-      <p>Content is released weekly across a fifteen-week teaching schedule, with the final quiz window running past the end of it. Each quiz opens once its material has been released and stays open for about eleven days — you pick your slot inside that window, but there is no extension beyond it.</p>
-
-      <figure>
-        <svg class="fig" viewBox="0 0 660 230" role="img" aria-label="A seventeen-week timeline. Content release runs from week one to week fifteen. Three quiz windows of equal length sit at roughly weeks eight, thirteen and sixteen, each spanning about eleven days.">
-          <line x1="60" y1="160" x2="620" y2="160" stroke="#131b26" stroke-width="1.5"/>
-          <g stroke="#c9d2db" stroke-width="1">
-            <line x1="60" y1="60" x2="60" y2="160"/><line x1="158.8" y1="60" x2="158.8" y2="160"/>
-            <line x1="290.6" y1="60" x2="290.6" y2="160"/><line x1="422.4" y1="60" x2="422.4" y2="160"/>
-            <line x1="554.1" y1="60" x2="554.1" y2="160"/>
-          </g>
-          <g font-family="IBM Plex Sans,sans-serif" font-size="11" fill="#4a5765" text-anchor="middle">
-            <text x="60" y="178">wk 1</text><text x="158.8" y="178">wk 4</text><text x="290.6" y="178">wk 8</text>
-            <text x="422.4" y="178">wk 12</text><text x="554.1" y="178">wk 16</text>
-          </g>
-          <rect x="60" y="128" width="493.8" height="16" fill="#9aa5b1" fill-opacity=".28"/>
-          <text x="66" y="140" font-family="IBM Plex Sans,sans-serif" font-size="11" fill="#4a5765">weekly content and homework</text>
-          <rect x="281.2" y="86" width="51.8" height="30" fill="#4a6b2a" fill-opacity=".8"/>
-          <rect x="445.9" y="86" width="51.8" height="30" fill="#4a6b2a" fill-opacity=".8"/>
-          <rect x="544.7" y="86" width="51.8" height="30" fill="#4a6b2a" fill-opacity=".8"/>
-          <g font-family="IBM Plex Sans,sans-serif" font-size="11" font-weight="600" fill="#4a6b2a" text-anchor="middle">
-            <text x="307.1" y="78">Midterm 1</text><text x="471.8" y="78">Midterm 2</text><text x="570.6" y="78">Final</text>
-          </g>
-          <g font-family="IBM Plex Sans,sans-serif" font-size="10.5" fill="#ffffff" text-anchor="middle">
-            <text x="307.1" y="105">11 days</text><text x="471.8" y="105">11 days</text><text x="570.6" y="105">11 days</text>
-          </g>
-          <text x="60" y="46" font-family="IBM Plex Sans,sans-serif" font-size="12.5" font-weight="600" fill="#131b26">The shape of the semester</text>
-          <text x="60" y="206" font-family="IBM Plex Sans,sans-serif" font-size="11.5" fill="#4a5765">Weekly homework is due about a week after release; peer assessments about four days after that.</text>
-        </svg>
-        <figcaption>All three windows are the same length. The two midterms sit inside the teaching schedule, so revision competes with new content; only the final has clear air in front of it.</figcaption>
-      </figure>
-
-      <div class="ix" data-match="exam-l1-match" data-win="Two patterns worth carrying away: everything peer-graded uses the median of your graders rather than an average, and only one assessment on this list can be retaken.">
-        <div class="ix-head"><span class="ix-kind">match the pairs</span><span class="ix-done">matched</span></div>
-        <p class="prompt">Tap an assessment, then the fact that distinguishes it, to pair them up.</p>
-        <div class="match">
-          <div class="col" data-side="a">
-            <h4>Assessment</h4>
-            <button class="cell" data-pair="1">Midterm quiz</button>
-            <button class="cell" data-pair="2">Final quiz</button>
-            <button class="cell" data-pair="3">Weekly homework</button>
-            <button class="cell" data-pair="4">Syllabus quiz</button>
-          </div>
-          <div class="col" data-side="b">
-            <h4>What sets it apart</h4>
-            <button class="cell" data-pair="1" data-fb="90 minutes for roughly 45–50 questions is 1.8 to 2.0 minutes each. That is the tightest time budget of the three quizzes.">90 minutes, one sheet of handwritten notes</button>
-            <button class="cell" data-pair="2" data-fb="180 minutes for roughly 60 questions is exactly three minutes each — half again as much thinking time per question as a midterm, or a little more, and twice the notes.">180 minutes, two sheets of notes, covers everything</button>
-            <button class="cell" data-pair="3" data-fb="Your score is the median of what your peer graders give you, not an average — so one hostile or one generous grader moves it very little.">Peer-graded on the median; two lowest dropped</button>
-            <button class="cell" data-pair="4" data-fb="The only assessment you can submit repeatedly until every answer is right. Everyone should be collecting the full 2%, provided they do it before the deadline.">Retakeable until every answer is correct</button>
-          </div>
-        </div>
-        <p class="fb"></p>
-      </div>
-
-      <div class="note">
-        <div class="note-head"><span class="lbl">My own deadlines and dates</span><span class="hint">click to type; saves automatically</span></div>
-        <div class="note-body" contenteditable="true" data-note="examl1" data-placeholder="Paste your actual quiz windows and homework deadlines from your current syllabus here — this page deliberately holds no dates."></div>
-      </div>
-    </div>
-    <aside class="check">
-      <span class="n">Worth noticing</span>
-      <p class="q">Why is the onboarding quiz worth zero marks and still important?</p>
-      <details><summary>Show answer</summary>
-        <p class="a">It is the only rehearsal of the proctoring setup you get. Every technical problem it can surface — camera, microphone, identity check, room scan — is a problem you would otherwise meet for the first time with a 25% quiz waiting behind it.</p>
-      </details>
-    </aside>
-  </div>
-</section>
-
-<!-- ==================== SECTION 2 ==================== -->
-<section class="lesson" id="l2" data-short="Coverage" style="--accent:#33507f">
-  <div class="lesson-head">
-    <span class="ln">Section 2</span>
-    <h2>What each quiz covers</h2>
-    <p class="keyline">Midterm 1 takes the first ten modules, midterm 2 focuses on the next six while still assuming the first ten, and the final is comprehensive — so the early modules are examined three times and the last few only once.</p>
-  </div>
-
-  <div class="row">
-    <div class="main">
-      <h3>The coverage map</h3>
-      <p>The course runs to twenty-one modules of lecture content. Coverage divides like this:</p>
-      <ul>
-        <li><strong>Midterm 1</strong> — modules 1 to 10.</li>
-        <li><strong>Midterm 2</strong> — primarily modules 11 to 16, but it requires knowledge from modules 1 to 10 as well.</li>
-        <li><strong>Final</strong> — comprehensive, covering every module.</li>
-      </ul>
-
-      <figure class="hotwrap" data-hotspot="exam-l2-hot">
-        <svg class="fig" viewBox="0 0 660 250" role="img" aria-label="A grid of twenty-one module columns and three quiz rows. The midterm one row is solid across modules one to ten. The midterm two row is solid across eleven to sixteen and shaded lightly across one to ten. The final row is solid across all twenty-one. Each row is clickable.">
-          <g font-family="IBM Plex Sans,sans-serif" font-size="11" fill="#4a5765" text-anchor="middle">
-            <text x="73.3" y="42">1</text><text x="180" y="42">5</text><text x="313.3" y="42">10</text>
-            <text x="340" y="42">11</text><text x="473.3" y="42">16</text><text x="606.6" y="42">21</text>
-          </g>
-          <text x="60" y="24" font-family="IBM Plex Sans,sans-serif" font-size="11.5" fill="#4a5765">module</text>
-          <line x1="326.7" y1="50" x2="326.7" y2="200" stroke="#131b26" stroke-width="1.2" stroke-dasharray="4 3"/>
-          <line x1="486.7" y1="50" x2="486.7" y2="200" stroke="#131b26" stroke-width="1.2" stroke-dasharray="4 3"/>
-
-          <rect x="60" y="56" width="266.7" height="36" fill="#33507f" fill-opacity=".8"/>
-          <text x="193.4" y="79" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="11.5" font-weight="600" fill="#ffffff">tested</text>
-          <text x="640" y="79" text-anchor="end" font-family="IBM Plex Sans,sans-serif" font-size="11.5" font-weight="600" fill="#33507f">Midterm 1</text>
-
-          <rect x="60" y="104" width="266.7" height="36" fill="#33507f" fill-opacity=".22"/>
-          <rect x="326.7" y="104" width="160" height="36" fill="#33507f" fill-opacity=".8"/>
-          <text x="193.4" y="127" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="11.5" fill="#33507f">assumed</text>
-          <text x="406.7" y="127" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="11.5" font-weight="600" fill="#ffffff">tested</text>
-          <text x="640" y="127" text-anchor="end" font-family="IBM Plex Sans,sans-serif" font-size="11.5" font-weight="600" fill="#33507f">Midterm 2</text>
-
-          <rect x="60" y="152" width="560" height="36" fill="#33507f" fill-opacity=".8"/>
-          <text x="340" y="175" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="11.5" font-weight="600" fill="#ffffff">tested — all twenty-one modules</text>
-          <text x="640" y="212" text-anchor="end" font-family="IBM Plex Sans,sans-serif" font-size="11.5" font-weight="600" fill="#33507f">Final</text>
-
-          <text x="60" y="234" font-family="IBM Plex Sans,sans-serif" font-size="11.5" fill="#4a5765">Modules 1–10 are examined three times. Modules 17–21 are examined once.</text>
-
-          <g class="hs" data-title="Midterm 1 — modules 1 to 10"
-             data-body="Roughly 45–50 questions over ten modules is about four or five questions each. This is the only quiz with a clean boundary: nothing beyond module 10 appears, so revision has a definite edge to it.">
-            <rect class="hit" x="60" y="56" width="560" height="36"/><rect class="ring" x="60" y="56" width="560" height="36" rx="3"/>
-          </g>
-          <g class="hs" data-title="Midterm 2 — the trap row"
-             data-body="The tested material is modules 11 to 16, but the paler band matters just as much: the syllabus says this quiz requires knowledge from modules 1 to 10 as well. Later topics are built on earlier ones — variable selection assumes regression and validation, advanced models assume classification — so a question about module 13 can still turn on something from module 3.">
-            <rect class="hit" x="60" y="104" width="560" height="36"/><rect class="ring" x="60" y="104" width="560" height="36" rx="3"/>
-          </g>
-          <g class="hs" data-title="Final — everything, at three minutes a question"
-             data-body="Roughly 60 questions across twenty-one modules is under three questions per module, so the final samples broadly rather than digging deep anywhere. Modules 17 to 21 — the case-based and summary material — appear here and nowhere else, which makes them easy to under-prepare and cheap to fix.">
-            <rect class="hit" x="60" y="152" width="560" height="36"/><rect class="ring" x="60" y="152" width="560" height="36" rx="3"/>
-          </g>
-        </svg>
-        <div class="hotpanel"><span class="hint">Three rows are clickable. Open all three to finish this activity.</span></div>
-      </figure>
-
-      <div class="ix" data-quiz="exam-l2-q1">
-        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
-        <p class="prompt">You did well on midterm 1 and are planning revision for midterm 2. What does the coverage description warrant?</p>
-        <div class="opts">
-          <button class="opt" data-fb="This is the trap the wording is designed to catch. “Primarily covers modules 11 to 16” is not “only covers modules 11 to 16” — the same sentence says it requires knowledge from modules 1 to 10 as well.">Revise modules 11 to 16 only, since midterm 1 already tested the earlier material.</button>
-          <button class="opt" data-right data-fb="The later modules are built on the earlier ones, so the earlier material arrives as the assumed foundation of a question rather than as a question of its own. Reviewing modules 1 to 10 for the ideas rather than the details is the efficient version.">Focus on modules 11 to 16, but keep modules 1 to 10 fresh, because the later material assumes them.</button>
-          <button class="opt" data-fb="Splitting effort evenly ignores where the questions are. Modules 11 to 16 are what the quiz is primarily about; the earlier material supports those questions rather than supplying its own share of them.">Split revision evenly across all sixteen modules, since both halves are examined.</button>
-        </div>
-        <p class="fb"></p>
-      </div>
-
-      <h3>Reading around the course</h3>
-      <p>The syllabus states plainly that <strong>there is no set textbook</strong> — all material is delivered online, and the quizzes are written from the lectures. A general statistical learning textbook is still useful for depth on the modelling topics, provided you treat it as background rather than as coverage.</p>
       <div class="callout">
-        <p class="tag">Where a statistics textbook helps, and where it doesn’t</p>
-        <p>An introductory statistical-learning text overlaps well with about half this course: classification, validation, clustering, regression, tree-based methods, variable selection and principal component analysis are all standard textbook material. It will give you almost nothing on change detection, classical time-series models, design of experiments, simulation, or optimization — those are operations-research topics that such books do not carry. Reading a chapter that has no counterpart in the lectures is time spent on material that cannot be examined.</p>
-      </div>
-      <p>The crosswalk below maps course topics to the chapters of <em>An Introduction to Statistical Learning</em> (second edition), by chapter number so you can find them without hunting.</p>
-      <table class="plain">
-        <tr><th>Course topic</th><th>Where to read</th></tr>
-        <tr><td>Overview, what a model is for</td><td>Ch. 1; Ch. 2 §2.1</td></tr>
-        <tr><td>Measuring model quality</td><td>Ch. 2 §2.2</td></tr>
-        <tr><td>Classification — SVM, k-nearest neighbours</td><td>Ch. 9 §9.1–9.4; Ch. 4 §4.1</td></tr>
-        <tr><td>Validation, cross-validation</td><td>Ch. 5 §5.1</td></tr>
-        <tr><td>Clustering</td><td>Ch. 12 §12.4</td></tr>
-        <tr><td>Outliers and data preparation</td><td>Ch. 3 §3.3 (regression diagnostics); Ch. 12 §12.3</td></tr>
-        <tr><td>Regression, basic and advanced</td><td>Ch. 3; Ch. 7 for non-linear extensions</td></tr>
-        <tr><td>Logistic regression, probability-based models</td><td>Ch. 4 §4.3</td></tr>
-        <tr><td>Tree-based models</td><td>Ch. 8</td></tr>
-        <tr><td>Variable selection and regularization</td><td>Ch. 6 §6.1–6.2</td></tr>
-        <tr><td>Principal component analysis</td><td>Ch. 12 §12.2; Ch. 6 §6.3</td></tr>
-        <tr><td>Missing data</td><td>Ch. 12 §12.3</td></tr>
-        <tr><td>Advanced models, neural networks</td><td>Ch. 10</td></tr>
-        <tr><td>Change detection, time series, design of experiments, simulation, optimization</td><td><strong>Not covered</strong> — rely on the lectures</td></tr>
-      </table>
-
-      <div class="ix" data-match="exam-l2-match" data-win="Notice how much of the reading is concentrated in a handful of chapters — and that the last pair has no chapter at all, which is the point of the crosswalk.">
-        <div class="ix-head"><span class="ix-kind">match the pairs</span><span class="ix-done">matched</span></div>
-        <p class="prompt">Tap a course topic, then the textbook chapter that backs it up, to pair them up.</p>
-        <div class="match">
-          <div class="col" data-side="a">
-            <h4>Course topic</h4>
-            <button class="cell" data-pair="1">Cross-validation</button>
-            <button class="cell" data-pair="2">Support vector machines</button>
-            <button class="cell" data-pair="3">Variable selection</button>
-            <button class="cell" data-pair="4">Change detection</button>
-          </div>
-          <div class="col" data-side="b">
-            <h4>Where to read</h4>
-            <button class="cell" data-pair="1" data-fb="Chapter 5, on resampling methods. It also covers the bootstrap, which the lectures do not — useful background, but not examinable here.">Chapter 5, §5.1</button>
-            <button class="cell" data-pair="2" data-fb="Chapter 9 builds SVM in the same order the lectures do: maximal margin first, then the soft classifier, then kernels for non-linear boundaries.">Chapter 9, §9.1–9.4</button>
-            <button class="cell" data-pair="3" data-fb="Chapter 6 on model selection and regularization. Subset selection and shrinkage methods are the two families the course names.">Chapter 6, §6.1–6.2</button>
-            <button class="cell" data-pair="4" data-fb="There is no chapter for it. Change detection is an operations-research topic rather than a statistical-learning one, so the lectures are your only source — which is exactly why the crosswalk is worth having.">No corresponding chapter</button>
-          </div>
-        </div>
-        <p class="fb"></p>
+        <p class="tag">What this page does and doesn’t cover</p>
+        <p>A statistical-learning textbook backs about half the course: everything on this page, plus missing data. It carries nothing on change detection, classical time-series models, design of experiments, simulation or optimization — those are operations-research topics with no chapter to read, so the lectures are the only source. Section pointers here refer to <em>An Introduction to Statistical Learning</em>, second edition.</p>
       </div>
 
       <div class="note">
-        <div class="note-head"><span class="lbl">My weak modules</span><span class="hint">click to type; saves automatically</span></div>
-        <div class="note-body" contenteditable="true" data-note="examl2" data-placeholder="List the modules you keep getting wrong, and which quiz each one lands on…"></div>
+        <div class="note-head"><span class="lbl">Notes — what a model estimates</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="examl1" data-placeholder="Reading: Ch. 1, §2.1. Anything the lectures framed differently…"></div>
       </div>
     </div>
     <aside class="check">
       <span class="n">Exam target</span>
-      <p class="q">Which modules get examined the most, and which the least?</p>
+      <p class="q">Write the decomposition of a model’s error and name both parts.</p>
       <details><summary>Show answer</summary>
-        <p class="a">Modules 1 to 10 appear on midterm 1, as assumed knowledge on midterm 2, and again on the final — three exposures. Modules 17 to 21 appear on the final only. If you are triaging revision, the early modules pay back three times and the late ones once.</p>
+        <p class="a">Y = f(X) + ε. Error splits into reducible error, from f̂ differing from f, which better methods and more data shrink; and irreducible error, from ε, which nothing shrinks because ε is independent of X by construction.</p>
       </details>
     </aside>
   </div>
 </section>
 
-<!-- ==================== SECTION 3 ==================== -->
-<section class="lesson" id="l3" data-short="Note sheet" style="--accent:#8a5a1c">
+<!-- ==================== TOPIC 2 ==================== -->
+<section class="lesson" id="l2" data-short="Measuring quality" style="--accent:#33507f">
   <div class="lesson-head">
-    <span class="ln">Section 3</span>
-    <h2>The note sheet</h2>
-    <p class="keyline">Notes must be handwritten on a fixed number of sheets, and the constraint is the point — what survives the squeeze is what you actually needed.</p>
+    <span class="ln">Topic 2</span>
+    <h2>Measuring model quality</h2>
+    <p class="keyline">Error on the data a model learned from always understates error on new data, and the gap is not noise — it is a systematic trade between bias and variance whose position you choose.</p>
   </div>
 
   <div class="row">
     <div class="main">
-      <h3>The rules</h3>
-      <table class="plain">
-        <tr><th>Quiz</th><th>What you may bring</th></tr>
-        <tr><td><strong>Midterm 1 and 2</strong></td><td>One sheet of paper, either 8.5″ × 11″ or A4, handwritten on both sides — two sides in total</td></tr>
-        <tr><td><strong>Final</strong></td><td>Two sheets of the same size, handwritten on both sides of each — four sides in total</td></tr>
-        <tr><td><strong>All quizzes</strong></td><td>Blank sheets of paper for scratch work. <strong>No calculators</strong> — no question requires one</td></tr>
-      </table>
+      <h3>Training error is not an estimate of anything useful</h3>
+      <div class="formula">
+        MSE &nbsp;=&nbsp; (1/n) &nbsp; Σᵢ &nbsp; ( yᵢ − f̂(xᵢ) )²
+        <span class="cap">Computed on the training data this is training MSE; computed on data the model never saw it is test MSE. Only the second answers the question you care about.</span>
+      </div>
+      <p>A flexible enough method drives training MSE toward zero by chasing the noise in the training set. That noise will not repeat in new data, so the same wiggles that lowered training error raise test error. This is <span class="key">overfitting</span>: not a moral failure, just the point past which extra flexibility is buying pattern that isn’t there.</p>
       <div class="callout">
-        <p class="tag">Handwritten, and shown on camera</p>
-        <p>Printed or typed notes do not qualify. Every sheet of notes and every sheet of scratch paper must be held up to the camera, both sides, during the pre-quiz room scan. A sheet that is not shown is a sheet you should assume you cannot use.</p>
+        <p class="tag">The shape to memorise</p>
+        <p>Training error falls monotonically with flexibility. Test error falls, bottoms out, and rises — the U in the chart at the top of this page. A minimum always exists somewhere, and finding it is what Topic 3 is for.</p>
+      </div>
+
+      <h3>Why the U exists</h3>
+      <div class="formula">
+        E( y₀ − f̂(x₀) )² &nbsp;=&nbsp; Var( f̂(x₀) ) &nbsp;+&nbsp; [ Bias( f̂(x₀) ) ]² &nbsp;+&nbsp; Var( ε )
+        <span class="cap">Expected test error at a point splits into three non-negative pieces, so minimising it means making the first two small at once. The third is the floor.</span>
+      </div>
+      <div class="defn">
+        <span class="term">Variance</span>
+        <p>How much f̂ would change if you refitted on a different training set from the same population. Flexible methods have high variance — move one point and the fit moves with it.</p>
+      </div>
+      <div class="defn">
+        <span class="term">Bias</span>
+        <p>Error from approximating a complicated reality with a simpler model. Restrictive methods have high bias — a straight line fitted to a curve is wrong in the same way every time, no matter how much data you give it.</p>
+      </div>
+      <p>More flexibility lowers bias and raises variance. The test-error minimum is where the two rates of change cancel, and it sits at different places for different problems — the more non-linear the truth, the further right the minimum lies.</p>
+
+      <h3>Measuring quality for classification</h3>
+      <p>For a categorical response, squared error makes no sense; count mistakes instead.</p>
+      <div class="formula">
+        error rate &nbsp;=&nbsp; (1/n) &nbsp; Σᵢ &nbsp; I( yᵢ ≠ ŷᵢ )
+        <span class="cap">I is 1 when the prediction is wrong and 0 when it is right. As with MSE, only the test version is informative.</span>
+      </div>
+      <p>A single error rate hides which mistakes are being made, which matters when the two errors cost differently. A confusion matrix separates them, and two rates come out of it:</p>
+      <table class="plain">
+        <tr><td><strong>Sensitivity</strong> (true positive rate)</td><td>Of the cases that really are positive, the fraction the model catches</td></tr>
+        <tr><td><strong>Specificity</strong> (true negative rate)</td><td>Of the cases that really are negative, the fraction the model leaves alone. 1 − specificity is the false positive rate</td></tr>
+      </table>
+      <p>Moving the probability threshold trades one against the other. The <span class="key">ROC curve</span> plots every trade at once, and the area under it summarises the classifier independently of any single threshold.</p>
+
+      <figure>
+        <svg class="fig" viewBox="0 0 660 280" role="img" aria-label="An ROC curve bowing above the diagonal, with the diagonal marked as the no-skill line and one operating point highlighted at a false positive rate of 0.21 and a true positive rate of 0.79.">
+          <line x1="80" y1="230" x2="520" y2="230" stroke="#131b26" stroke-width="1.4"/>
+          <line x1="80" y1="230" x2="80" y2="50" stroke="#131b26" stroke-width="1.4"/>
+          <line x1="80" y1="230" x2="520" y2="50" stroke="#9aa5b1" stroke-width="1.5" stroke-dasharray="6 4"/>
+          <polyline points="80.1,224.8 80.4,219.1 81.1,209.3 83.1,194.4 87.9,174.5 97.6,150.7 115.5,125.7 144.6,102.4 186.5,83.1 239.8,69.0 300.0,59.9 360.2,54.6 413.5,51.9 455.4,50.7 484.5,50.2 502.4,50.1 512.1,50.0 516.9,50.0 519.4,50.0 519.9,50.0"
+            fill="none" stroke="#33507f" stroke-width="2.8"/>
+          <circle cx="173.2" cy="88.1" r="5.5" fill="#8a3d5c"/>
+          <line x1="173.2" y1="88.1" x2="173.2" y2="230" stroke="#8a3d5c" stroke-width="1" stroke-dasharray="3 3"/>
+          <line x1="80" y1="88.1" x2="173.2" y2="88.1" stroke="#8a3d5c" stroke-width="1" stroke-dasharray="3 3"/>
+          <text x="184" y="84" font-family="IBM Plex Sans,sans-serif" font-size="11.5" fill="#8a3d5c">one threshold: catches 79%, false-alarms on 21%</text>
+          <text x="330" y="150" font-family="IBM Plex Sans,sans-serif" font-size="11.5" fill="#4a5765">no-skill diagonal</text>
+          <text x="300" y="120" font-family="IBM Plex Sans,sans-serif" font-size="12" font-weight="600" fill="#33507f">area under the curve = 0.87</text>
+          <text x="300" y="258" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="12" fill="#4a5765">false positive rate (1 − specificity)</text>
+          <text x="40" y="140" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="12" fill="#4a5765" transform="rotate(-90 40 140)">sensitivity</text>
+          <g font-family="IBM Plex Sans,sans-serif" font-size="11" fill="#4a5765">
+            <text x="80" y="248" text-anchor="middle">0</text><text x="520" y="248" text-anchor="middle">1</text>
+            <text x="68" y="234" text-anchor="end">0</text><text x="68" y="54" text-anchor="end">1</text>
+          </g>
+          <text x="545" y="200" font-family="IBM Plex Sans,sans-serif" font-size="11.5" fill="#4a5765">Every point on</text>
+          <text x="545" y="216" font-family="IBM Plex Sans,sans-serif" font-size="11.5" fill="#4a5765">the curve is one</text>
+          <text x="545" y="232" font-family="IBM Plex Sans,sans-serif" font-size="11.5" fill="#4a5765">threshold choice.</text>
+        </svg>
+        <figcaption>The curve is generated by sweeping the threshold from strict to permissive. A classifier with no information sits on the diagonal, with area 0.5; a perfect one reaches the top-left corner, with area 1. Choosing a point on the curve is a cost decision, not a statistical one.</figcaption>
+      </figure>
+
+      <div class="ix" data-quiz="exam-l2-q1">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">A colleague reports that a new, far more flexible model cut training MSE from 4.2 to 0.3. What have they demonstrated?</p>
+        <div class="opts">
+          <button class="opt" data-fb="It is evidence of flexibility, not of fit quality. A sufficiently flexible method can drive training MSE arbitrarily close to zero on any dataset, including one where the predictors carry no information at all.">That the new model fits the underlying relationship much better.</button>
+          <button class="opt" data-right data-fb="Training MSE falls monotonically with flexibility by construction, so the number cannot distinguish a genuine improvement from noise-chasing. Until it is measured on data the model never saw, it says nothing.">Only that the new model is more flexible — the comparison carries no information about test error.</button>
+          <button class="opt" data-fb="You cannot conclude that either. Overfitting is a claim about test error going up, and no test error has been measured. The result is uninformative in both directions.">That the new model is overfitting, since such a large drop is implausible.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="ix" data-match="exam-l2-match" data-win="Two of these are about a single model's mistakes and two are about how a model would behave if you refitted it. Keeping that distinction straight is most of what this topic asks.">
+        <div class="ix-head"><span class="ix-kind">match the pairs</span><span class="ix-done">matched</span></div>
+        <p class="prompt">Tap a quantity, then its description, to pair them up.</p>
+        <div class="match">
+          <div class="col" data-side="a">
+            <h4>Quantity</h4>
+            <button class="cell" data-pair="1">Bias</button>
+            <button class="cell" data-pair="2">Variance</button>
+            <button class="cell" data-pair="3">Sensitivity</button>
+            <button class="cell" data-pair="4">Area under the ROC curve</button>
+          </div>
+          <div class="col" data-side="b">
+            <h4>What it measures</h4>
+            <button class="cell" data-pair="1" data-fb="Systematic error from a model too simple for the truth. It does not shrink with more data — a straight line stays wrong about a curve however many points you feed it.">Error from approximating reality with a simpler form</button>
+            <button class="cell" data-pair="2" data-fb="How much the fitted model would move if you refitted it on a different sample. High for flexible methods, which is the other half of the U-shaped test error curve.">How much the fit would change on a different training sample</button>
+            <button class="cell" data-pair="3" data-fb="Of the genuinely positive cases, the share the model catches. Raising it by loosening the threshold costs specificity — that trade is the ROC curve.">The share of true positives the model catches</button>
+            <button class="cell" data-pair="4" data-fb="A single number summarising performance across every possible threshold. 0.5 means no information; 1 means perfect separation. It deliberately says nothing about which threshold you should use.">Performance across all thresholds at once</button>
+          </div>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="note">
+        <div class="note-head"><span class="lbl">Notes — measuring quality</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="examl2" data-placeholder="Reading: §2.2, §4.4.3 for the confusion matrix and ROC…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Exam target</span>
+      <p class="q">State the bias–variance decomposition and say which way each term moves as flexibility rises.</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Expected test MSE at a point = variance of f̂ + squared bias of f̂ + variance of ε. Rising flexibility lowers bias and raises variance; the irreducible term is constant. The minimum sits where the two rates of change cancel.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
+<!-- ==================== TOPIC 3 ==================== -->
+<section class="lesson" id="l3" data-short="Validation" style="--accent:#1f6b6b">
+  <div class="lesson-head">
+    <span class="ln">Topic 3</span>
+    <h2>Validation and resampling</h2>
+    <p class="keyline">Since test error cannot be observed, you manufacture it by holding data out — and k-fold cross-validation is the arrangement that wastes the least data while staying nearly unbiased.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>The simplest version, and what is wrong with it</h3>
+      <p>Split the data in two: fit on one half, measure error on the other. This <span class="key">validation set approach</span> is easy and has two real defects.</p>
+      <ul>
+        <li><strong>It is highly variable.</strong> Repeat the split with a different random half and the error estimate moves substantially. An estimate that depends on which coin you flipped is a weak basis for choosing a model.</li>
+        <li><strong>It overestimates error.</strong> The model is fitted on half the data, and methods generally do worse with less. So the estimate is pessimistic about the model you would actually deploy, which is fitted on everything.</li>
+      </ul>
+
+      <h3>k-fold cross-validation</h3>
+      <ol class="steps">
+        <li>Divide the observations at random into k groups of roughly equal size, called folds.</li>
+        <li>Hold out fold 1, fit the model on the remaining k − 1 folds, and record the error on fold 1.</li>
+        <li>Repeat, holding out each fold in turn, so every observation is used for validation exactly once.</li>
+        <li>Average the k error estimates. That average is the cross-validation estimate of test error.</li>
+      </ol>
+      <div class="formula">
+        CV<sub>(k)</sub> &nbsp;=&nbsp; (1/k) &nbsp; Σ<sup>k</sup><sub>i=1</sub> &nbsp; MSE<sub>i</sub>
+        <span class="cap">MSEᵢ is the error on fold i from a model fitted without it. For classification, substitute the error rate.</span>
       </div>
 
       <figure>
-        <svg class="fig" viewBox="0 0 660 230" role="img" aria-label="Two groups of paper outlines. On the left, one sheet shown front and back, labelled two sides for a midterm. On the right, two sheets each shown front and back, labelled four sides for the final.">
-          <text x="60" y="34" font-family="IBM Plex Sans,sans-serif" font-size="12.5" font-weight="600" fill="#131b26">Midterm — 1 sheet, 2 sides</text>
-          <rect x="60" y="50" width="86" height="112" fill="#ffffff" stroke="#8a5a1c" stroke-width="2"/>
-          <rect x="160" y="50" width="86" height="112" fill="#ffffff" stroke="#8a5a1c" stroke-width="2" stroke-dasharray="5 4"/>
-          <g stroke="#c9d2db" stroke-width="1">
-            <line x1="70" y1="70" x2="136" y2="70"/><line x1="70" y1="84" x2="136" y2="84"/><line x1="70" y1="98" x2="136" y2="98"/>
-            <line x1="70" y1="112" x2="136" y2="112"/><line x1="70" y1="126" x2="136" y2="126"/><line x1="70" y1="140" x2="120" y2="140"/>
-            <line x1="170" y1="70" x2="236" y2="70"/><line x1="170" y1="84" x2="236" y2="84"/><line x1="170" y1="98" x2="236" y2="98"/>
-            <line x1="170" y1="112" x2="236" y2="112"/><line x1="170" y1="126" x2="236" y2="126"/><line x1="170" y1="140" x2="220" y2="140"/>
-          </g>
-          <text x="103" y="182" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="11" fill="#4a5765">front</text>
-          <text x="203" y="182" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="11" fill="#4a5765">back</text>
+        <svg class="fig" viewBox="0 0 660 260" role="img" aria-label="Five rows of five blocks. In each row a different block is marked as the validation fold and the other four as training, so each fold is used for validation exactly once.">
+          <text x="70" y="42" font-family="IBM Plex Sans,sans-serif" font-size="12.5" font-weight="600" fill="#131b26">5-fold cross-validation — every observation validates exactly once</text>
+          <g font-family="IBM Plex Sans,sans-serif" font-size="10.5" text-anchor="middle">
+            <rect x="72" y="60" width="104" height="26" fill="#1f6b6b" fill-opacity=".85"/><text x="124" y="77" fill="#ffffff" font-weight="600">validate</text>
+            <rect x="180" y="60" width="104" height="26" fill="#c9d2db" fill-opacity=".5"/><text x="232" y="77" fill="#4a5765">train</text>
+            <rect x="288" y="60" width="104" height="26" fill="#c9d2db" fill-opacity=".5"/><text x="340" y="77" fill="#4a5765">train</text>
+            <rect x="396" y="60" width="104" height="26" fill="#c9d2db" fill-opacity=".5"/><text x="448" y="77" fill="#4a5765">train</text>
+            <rect x="504" y="60" width="104" height="26" fill="#c9d2db" fill-opacity=".5"/><text x="556" y="77" fill="#4a5765">train</text>
 
-          <line x1="300" y1="50" x2="300" y2="200" stroke="#c9d2db" stroke-width="1"/>
+            <rect x="72" y="96" width="104" height="26" fill="#c9d2db" fill-opacity=".5"/><text x="124" y="113" fill="#4a5765">train</text>
+            <rect x="180" y="96" width="104" height="26" fill="#1f6b6b" fill-opacity=".85"/><text x="232" y="113" fill="#ffffff" font-weight="600">validate</text>
+            <rect x="288" y="96" width="104" height="26" fill="#c9d2db" fill-opacity=".5"/><text x="340" y="113" fill="#4a5765">train</text>
+            <rect x="396" y="96" width="104" height="26" fill="#c9d2db" fill-opacity=".5"/><text x="448" y="113" fill="#4a5765">train</text>
+            <rect x="504" y="96" width="104" height="26" fill="#c9d2db" fill-opacity=".5"/><text x="556" y="113" fill="#4a5765">train</text>
 
-          <text x="340" y="34" font-family="IBM Plex Sans,sans-serif" font-size="12.5" font-weight="600" fill="#131b26">Final — 2 sheets, 4 sides</text>
-          <rect x="340" y="50" width="60" height="112" fill="#ffffff" stroke="#8a5a1c" stroke-width="2"/>
-          <rect x="410" y="50" width="60" height="112" fill="#ffffff" stroke="#8a5a1c" stroke-width="2" stroke-dasharray="5 4"/>
-          <rect x="490" y="50" width="60" height="112" fill="#ffffff" stroke="#8a5a1c" stroke-width="2"/>
-          <rect x="560" y="50" width="60" height="112" fill="#ffffff" stroke="#8a5a1c" stroke-width="2" stroke-dasharray="5 4"/>
-          <g stroke="#c9d2db" stroke-width="1">
-            <line x1="348" y1="70" x2="392" y2="70"/><line x1="348" y1="86" x2="392" y2="86"/><line x1="348" y1="102" x2="392" y2="102"/><line x1="348" y1="118" x2="392" y2="118"/><line x1="348" y1="134" x2="378" y2="134"/>
-            <line x1="418" y1="70" x2="462" y2="70"/><line x1="418" y1="86" x2="462" y2="86"/><line x1="418" y1="102" x2="462" y2="102"/><line x1="418" y1="118" x2="462" y2="118"/><line x1="418" y1="134" x2="448" y2="134"/>
-            <line x1="498" y1="70" x2="542" y2="70"/><line x1="498" y1="86" x2="542" y2="86"/><line x1="498" y1="102" x2="542" y2="102"/><line x1="498" y1="118" x2="542" y2="118"/><line x1="498" y1="134" x2="528" y2="134"/>
-            <line x1="568" y1="70" x2="612" y2="70"/><line x1="568" y1="86" x2="612" y2="86"/><line x1="568" y1="102" x2="612" y2="102"/><line x1="568" y1="118" x2="612" y2="118"/><line x1="568" y1="134" x2="598" y2="134"/>
+            <rect x="72" y="132" width="104" height="26" fill="#c9d2db" fill-opacity=".5"/><text x="124" y="149" fill="#4a5765">train</text>
+            <rect x="180" y="132" width="104" height="26" fill="#c9d2db" fill-opacity=".5"/><text x="232" y="149" fill="#4a5765">train</text>
+            <rect x="288" y="132" width="104" height="26" fill="#1f6b6b" fill-opacity=".85"/><text x="340" y="149" fill="#ffffff" font-weight="600">validate</text>
+            <rect x="396" y="132" width="104" height="26" fill="#c9d2db" fill-opacity=".5"/><text x="448" y="149" fill="#4a5765">train</text>
+            <rect x="504" y="132" width="104" height="26" fill="#c9d2db" fill-opacity=".5"/><text x="556" y="149" fill="#4a5765">train</text>
+
+            <rect x="72" y="168" width="104" height="26" fill="#c9d2db" fill-opacity=".5"/><text x="124" y="185" fill="#4a5765">train</text>
+            <rect x="180" y="168" width="104" height="26" fill="#c9d2db" fill-opacity=".5"/><text x="232" y="185" fill="#4a5765">train</text>
+            <rect x="288" y="168" width="104" height="26" fill="#c9d2db" fill-opacity=".5"/><text x="340" y="185" fill="#4a5765">train</text>
+            <rect x="396" y="168" width="104" height="26" fill="#1f6b6b" fill-opacity=".85"/><text x="448" y="185" fill="#ffffff" font-weight="600">validate</text>
+            <rect x="504" y="168" width="104" height="26" fill="#c9d2db" fill-opacity=".5"/><text x="556" y="185" fill="#4a5765">train</text>
+
+            <rect x="72" y="204" width="104" height="26" fill="#c9d2db" fill-opacity=".5"/><text x="124" y="221" fill="#4a5765">train</text>
+            <rect x="180" y="204" width="104" height="26" fill="#c9d2db" fill-opacity=".5"/><text x="232" y="221" fill="#4a5765">train</text>
+            <rect x="288" y="204" width="104" height="26" fill="#c9d2db" fill-opacity=".5"/><text x="340" y="221" fill="#4a5765">train</text>
+            <rect x="396" y="204" width="104" height="26" fill="#c9d2db" fill-opacity=".5"/><text x="448" y="221" fill="#4a5765">train</text>
+            <rect x="504" y="204" width="104" height="26" fill="#1f6b6b" fill-opacity=".85"/><text x="556" y="221" fill="#ffffff" font-weight="600">validate</text>
           </g>
-          <text x="405" y="182" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="11" fill="#4a5765">sheet 1</text>
-          <text x="555" y="182" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="11" fill="#4a5765">sheet 2</text>
-          <text x="60" y="214" font-family="IBM Plex Sans,sans-serif" font-size="11.5" fill="#4a5765">Handwritten only. Every side, plus every sheet of scratch paper, is shown in the room scan.</text>
+          <g font-family="IBM Plex Sans,sans-serif" font-size="10.5" fill="#9aa5b1" text-anchor="end">
+            <text x="66" y="77">round 1</text><text x="66" y="113">round 2</text><text x="66" y="149">round 3</text>
+            <text x="66" y="185">round 4</text><text x="66" y="221">round 5</text>
+          </g>
+          <text x="70" y="250" font-family="IBM Plex Sans,sans-serif" font-size="11.5" fill="#4a5765">Five fits, five error estimates, one average. Each fit uses 80% of the data rather than 50%.</text>
         </svg>
-        <figcaption>The final allows exactly twice the notes of a midterm while covering twice as many modules — so per module, your allowance is unchanged. Plan the final’s sheets as a compression of the two midterm sheets, not as a fresh start.</figcaption>
+        <figcaption>With k = 5, each model is trained on four fifths of the data, so the error estimate is much less pessimistic than a half-and-half split — and averaging five estimates removes most of the dependence on which particular split you drew.</figcaption>
       </figure>
 
-      <h3>What actually belongs on it</h3>
-      <p>With no calculators and around two minutes a question on a midterm, the sheet is not a place for worked arithmetic. It is a place for the things that are quick to look up and expensive to misremember.</p>
-      <ol class="steps">
-        <li><strong>Draft it while revising, not after.</strong> Deciding what earns a place is the revision — writing the sheet at the end wastes the mechanism.</li>
-        <li><strong>Put down what distinguishes methods, not what defines them.</strong> You will not forget what clustering is; you may well blank on what separates a hard from a soft classifier, or scaling from standardization.</li>
-        <li><strong>Include the formulas you would otherwise half-remember.</strong> Anything with a subtraction that could go either way, or a term that could sit in a numerator or a denominator.</li>
-        <li><strong>Include the direction of every parameter.</strong> Larger λ means what? Larger C? Larger k? These are pure recall and cheap to write down.</li>
-        <li><strong>Include the assumptions and failure modes.</strong> When a method breaks is more examinable than how it works.</li>
-        <li><strong>Leave off anything you have never once needed while practising.</strong> Space is the binding constraint; nostalgia is not a criterion.</li>
-      </ol>
+      <div class="defn">
+        <span class="term">Leave-one-out cross-validation (LOOCV)</span>
+        <p>The extreme case k = n: each fit leaves out a single observation. Almost unbiased, because each model sees nearly all the data — but it requires n fits, and the n estimates are highly correlated with each other because the training sets overlap almost completely. Averaging highly correlated quantities reduces variance very little.</p>
+      </div>
+      <div class="callout">
+        <p class="tag">Why k = 5 or 10 is the standard answer</p>
+        <p>LOOCV wins on bias and loses on variance and cost; a single validation split wins on cost and loses on both. Five or ten folds sit near the best of the three: little bias, because 80% or 90% of the data is used for each fit, and much less variance than LOOCV because the training sets overlap less and the estimates are therefore less correlated.</p>
+      </div>
 
-      <div class="ix" data-order="exam-l3-order" data-win="The ordering matters because step 1 is what makes the rest work: a sheet assembled at the end is a transcription exercise, while a sheet built during revision is a record of everything you actually got wrong.">
+      <div class="ix" data-order="exam-l3-order" data-win="Step 3 is the one people get wrong in practice: the fold is held out before the model is fitted, not after. Anything done to the whole dataset first — scaling, variable selection, imputation — leaks the held-out fold into training and quietly inflates the score.">
         <div class="ix-head"><span class="ix-kind">put in order</span><span class="ix-done">solved</span></div>
-        <p class="prompt">Drag a sensible way to build the sheet into sequence — or use the arrows.</p>
+        <p class="prompt">Drag one round of k-fold cross-validation into sequence — or use the arrows.</p>
         <ol class="order">
-          <li data-pos="1">Start a running draft when revision starts, not the night before</li>
-          <li data-pos="2">Add an entry each time practice reveals something you could not recall</li>
-          <li data-pos="3">Cut anything you have never once needed while practising</li>
-          <li data-pos="4">Rewrite it by hand at the allowed size, which forces the final cut</li>
-          <li data-pos="5">Do a timed practice run using only that sheet</li>
-          <li data-pos="6">Fix whatever the practice run showed was missing, and stop</li>
+          <li data-pos="1">Split the observations at random into k roughly equal folds</li>
+          <li data-pos="2">Choose one fold to hold out this round</li>
+          <li data-pos="3">Fit the model on the other k − 1 folds only, touching nothing in the held-out fold</li>
+          <li data-pos="4">Predict the held-out fold and record the error on it</li>
+          <li data-pos="5">Repeat until every fold has been held out exactly once</li>
+          <li data-pos="6">Average the k errors to estimate test error</li>
         </ol>
         <button class="btn check">Check the order</button>
         <p class="fb"></p>
@@ -408,180 +404,652 @@
 
       <div class="ix" data-quiz="exam-l3-q1">
         <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
-        <p class="prompt">Which of these would be the weakest use of space on a midterm note sheet?</p>
+        <p class="prompt">Why is LOOCV not simply the best choice, given it is nearly unbiased?</p>
         <div class="opts">
-          <button class="opt" data-fb="Direction-of-effect facts are the cheapest possible entries: one line each, pure recall, and easy to invert under time pressure. These earn their space.">A line recording which way each model parameter pushes — larger λ, larger C, larger k.</button>
-          <button class="opt" data-right data-fb="Calculators are not permitted precisely because no question needs one, so nothing on the quiz will require you to grind through arithmetic. A worked numerical example consumes a lot of space to rehearse a skill that is not being tested.">A fully worked numerical example, copied out with every intermediate arithmetic step.</button>
-          <button class="opt" data-fb="Distinctions between neighbouring methods are exactly what multiple-choice questions are built from, and they are easy to blur under time pressure. Worth the space.">A short list of what distinguishes each method from the one it is most often confused with.</button>
+          <button class="opt" data-fb="Being trained on n − 1 observations is exactly why LOOCV has low bias — each fit is almost the model you would deploy. That is its strength, not its weakness.">Because each model is fitted on too little data to be representative.</button>
+          <button class="opt" data-right data-fb="Any two of the n training sets differ by one observation, so the n error estimates are almost perfectly correlated. Averaging correlated quantities barely reduces variance, so LOOCV trades low bias for high variance — and costs n fits to do it.">Because its n estimates are almost perfectly correlated, so averaging them removes little variance.</button>
+          <button class="opt" data-fb="It is expensive, and for some models that alone rules it out — but cost is a practical objection rather than a statistical one. The statistical objection is about the variance of the estimate itself.">Because fitting the model n times is computationally impractical.</button>
         </div>
         <p class="fb"></p>
       </div>
 
       <div class="note">
-        <div class="note-head"><span class="lbl">Note-sheet draft</span><span class="hint">click to type; saves automatically</span></div>
-        <div class="note-body" contenteditable="true" data-note="examl3" data-placeholder="Keep the running draft here as you revise, then hand-copy it at the end. Add a line every time practice catches you out…"></div>
+        <div class="note-head"><span class="lbl">Notes — validation</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="examl3" data-placeholder="Reading: §5.1. The bootstrap in §5.2 is background, not lecture material…"></div>
       </div>
     </div>
     <aside class="check">
-      <span class="n">Check</span>
-      <p class="q">Why does the sheet have to be drafted during revision rather than after it?</p>
+      <span class="n">Cross-module link</span>
+      <p class="q">Where does cross-validation get used later on this page?</p>
       <details><summary>Show answer</summary>
-        <p class="a">Because choosing what deserves a place is itself the revision — it forces you to decide what you can and cannot recall. Written afterwards it becomes copying, which teaches nothing and tends to fill the space with things you already knew.</p>
+        <p class="a">Everywhere a tuning parameter appears. Choosing λ for ridge or lasso, the number of components for principal components regression, the depth of a tree, and the number of trees in boosting are all done by cross-validation. It is the mechanism that makes the whole flexibility trade operational.</p>
       </details>
     </aside>
   </div>
 </section>
 
-<!-- ==================== SECTION 4 ==================== -->
-<section class="lesson" id="l4" data-short="Rules" style="--accent:#8a3d5c">
+<!-- ==================== TOPIC 4 ==================== -->
+<section class="lesson" id="l4" data-short="Classification" style="--accent:#7a3f52">
   <div class="lesson-head">
-    <span class="ln">Section 4</span>
-    <h2>Rules that cost marks</h2>
-    <p class="keyline">Almost none of the avoidable losses in this course come from not knowing the material — they come from missed windows, skipped peer assessments, and proctoring set up too late.</p>
+    <span class="ln">Topic 4</span>
+    <h2>Classification</h2>
+    <p class="keyline">Each classifier is a different bet about the shape of the boundary, and the right bet depends on how much data you have relative to how complicated the truth is.</p>
   </div>
 
   <div class="row">
     <div class="main">
-      <h3>Proctoring</h3>
-      <p>Quizzes are remotely proctored and include a full scan of the room you are sitting in. Two consequences worth planning around:</p>
-      <ul>
-        <li>Anything in shot gets recorded. Either clear or cover what you would rather not have scanned, or take the quiz somewhere quiet and private — a library study room, for instance.</li>
-        <li>Notes and scratch paper are part of the scan. Have them ready to show, both sides.</li>
-      </ul>
+      <h3>Why not just run a regression?</h3>
+      <p>Code the response 0 and 1 and fit a line, and two things go wrong. The fitted values run below 0 and above 1, so they cannot be read as probabilities. And with three or more categories, any numeric coding imposes an ordering and equal spacing that the categories do not have.</p>
+
+      <figure>
+        <svg class="fig" viewBox="0 0 660 310" role="img" aria-label="Binary outcomes plotted at zero and one. A straight-line fit passes below zero on the left and above one on the right, while a logistic curve stays inside the range and approaches both bounds without crossing them.">
+          <line x1="70" y1="215" x2="640" y2="215" stroke="#9aa5b1" stroke-width="1.3" stroke-dasharray="5 4"/>
+          <line x1="70" y1="65" x2="640" y2="65" stroke="#9aa5b1" stroke-width="1.3" stroke-dasharray="5 4"/>
+          <text x="62" y="219" text-anchor="end" font-family="IBM Plex Sans,sans-serif" font-size="11" fill="#4a5765">0</text>
+          <text x="62" y="69" text-anchor="end" font-family="IBM Plex Sans,sans-serif" font-size="11" fill="#4a5765">1</text>
+          <line x1="70" y1="284.2" x2="584.9" y2="25" stroke="#8a3d5c" stroke-width="2" stroke-dasharray="7 4"/>
+          <polyline points="70.0,214.6 97.5,214.3 125.0,213.8 152.5,212.8 180.0,211.0 207.5,207.9 235.0,202.5 262.5,193.7 290.0,180.3 317.5,161.8 345.0,140.0 372.5,118.2 400.0,99.7 427.5,86.3 455.0,77.5 482.5,72.1 510.0,69.0 537.5,67.2 565.0,66.2 592.5,65.7 620.0,65.4"
+            fill="none" stroke="#7a3f52" stroke-width="3"/>
+          <g fill="#131b26">
+            <circle cx="125.0" cy="215" r="4.5"/><circle cx="180.0" cy="215" r="4.5"/><circle cx="235.0" cy="215" r="4.5"/>
+            <circle cx="262.5" cy="215" r="4.5"/><circle cx="290.0" cy="215" r="4.5"/><circle cx="317.5" cy="215" r="4.5"/>
+            <circle cx="345.0" cy="215" r="4.5"/>
+            <circle cx="372.5" cy="65" r="4.5"/><circle cx="400.0" cy="65" r="4.5"/><circle cx="427.5" cy="65" r="4.5"/>
+            <circle cx="455.0" cy="65" r="4.5"/><circle cx="510.0" cy="65" r="4.5"/><circle cx="565.0" cy="65" r="4.5"/>
+          </g>
+          <text x="86" y="272" font-family="IBM Plex Sans,sans-serif" font-size="11.5" fill="#8a3d5c">straight-line fit drops below 0…</text>
+          <text x="530" y="42" text-anchor="end" font-family="IBM Plex Sans,sans-serif" font-size="11.5" fill="#8a3d5c">…and rises above 1</text>
+          <text x="180" y="120" font-family="IBM Plex Sans,sans-serif" font-size="12" font-weight="600" fill="#7a3f52">logistic curve stays inside [0, 1]</text>
+          <text x="70" y="302" font-family="IBM Plex Sans,sans-serif" font-size="11.5" fill="#4a5765">Same data, two fits. Only one of them can be read as a probability.</text>
+        </svg>
+        <figcaption>The dots are observed outcomes at 0 and 1. The dashed line is a least-squares fit, which leaves the unit interval at both ends; the solid curve is logistic, which approaches 0 and 1 without reaching them.</figcaption>
+      </figure>
+
+      <h3>Logistic regression</h3>
+      <div class="formula">
+        p(X) &nbsp;=&nbsp; e^(β₀ + β₁X) / ( 1 + e^(β₀ + β₁X) )<br><br>
+        log ( p(X) / (1 − p(X)) ) &nbsp;=&nbsp; β₀ + β₁X
+        <span class="cap">The second line is the first rearranged. The quantity p/(1−p) is the odds; its logarithm is the log-odds, or logit, and it is linear in X. So the model is linear — just not in p.</span>
+      </div>
+      <p>Reading the coefficient correctly is a standard exam trap. A one-unit increase in X changes the <em>log-odds</em> by β₁, and multiplies the odds by e^β₁. It does <strong>not</strong> change p by a fixed amount: the effect on the probability depends on where you start, being largest near p = 0.5 and vanishing at the extremes. Coefficients are fitted by maximum likelihood rather than least squares.</p>
+
+      <h3>The other classifiers, and what each assumes</h3>
+      <table class="plain">
+        <tr><th>Method</th><th>The bet it makes</th></tr>
+        <tr><td><strong>Logistic regression</strong></td><td>The log-odds are linear in the predictors. Boundary is linear. Robust when classes overlap heavily</td></tr>
+        <tr><td><strong>Linear discriminant analysis</strong></td><td>Each class is normal with a shared covariance matrix. Also gives a linear boundary, and is more stable than logistic regression when classes are well separated or the sample is small</td></tr>
+        <tr><td><strong>Quadratic discriminant analysis</strong></td><td>Normal classes, but each with its own covariance. Boundary becomes quadratic — more flexible, more parameters, needs more data</td></tr>
+        <tr><td><strong>Naive Bayes</strong></td><td>Within a class, the predictors are independent of each other. Almost always false, and often works anyway, because it buys an enormous reduction in variance</td></tr>
+        <tr><td><strong>k-nearest neighbours</strong></td><td>Nothing about shape at all. Fully non-parametric, so it can approximate any boundary — and needs a lot of data to do it, with no coefficients to interpret at the end</td></tr>
+        <tr><td><strong>Support vector machines</strong></td><td>A boundary with the widest margin, optionally bent by a kernel. Determined only by the points near the boundary</td></tr>
+      </table>
       <div class="callout">
-        <p class="tag">The hard deadline</p>
-        <p>A missed quiz cannot be taken after its window closes, for any reason. In appropriate circumstances an instructor may impute a score from your other quiz results, but that is a discretionary remedy, not an entitlement, and it is not something to build a plan around. Book your slot early in the eleven-day window so a technical failure still leaves you days of room.</p>
+        <p class="tag">The rule that ties the table together</p>
+        <p>When the true boundary really is close to linear, the linear methods win, because they estimate fewer things and estimate them more precisely. When it is strongly non-linear, the flexible methods win, provided the sample is big enough to support them. There is no method that is best everywhere — that is the bias–variance trade of Topic 2 wearing different clothes.</p>
       </div>
 
-      <h3>Peer assessment is not optional</h3>
-      <div class="defn">
-        <span class="term">The rule that surprises people</span>
-        <p>Both the homework and the project are peer-graded, and you must grade others in return. Skip your peer assessments and you receive no credit for your own homework submission; skip them on the project and the project scores zero. The work being finished and submitted does not protect you.</p>
-      </div>
-      <p>Scores are the <em>median</em> of what your peer graders award, not the mean — so a single harsh or generous grader barely moves the result, and there is little value in agonising over one outlier grade.</p>
-
-      <div class="branch" data-branch="exam-l4-branch">
-        <div class="persona">
-          <span class="av">JM</span>
-          <span class="who"><b>Jordan Mensah</b><span>Part-time student, full-time job</span></span>
-        </div>
-        <div class="scene" data-step="1">
-          <p>A midterm window opened four days ago and runs for another seven. Jordan’s week just filled up with work travel, and there is also a homework due in three days plus its peer assessments after that.</p>
-          <p class="said">A classmate: “Just leave the quiz to the last day of the window — that way you get maximum revision time.”</p>
-          <p><strong>What should Jordan do?</strong></p>
-          <div class="choices">
-            <button class="choice" data-go="2" data-tone="bad" data-head="What it risks"
-              data-outcome="Extra revision is real, but so is the tail risk. Sitting a 25% quiz on the final day means a failed camera check, a hotel connection, or a proctoring queue has nowhere to spill into. There is no sitting after the window closes.">
-              Book the last day of the window to get the most revision time.
-            </button>
-            <button class="choice" data-go="2" data-tone="good" data-head="What it buys"
-              data-outcome="Sitting early costs some revision and buys days of margin. If anything goes wrong technically there is still a window left to sit in, and the quiz stops competing with the travel week for attention.">
-              Book a slot in the next two days, before the travel starts.
-            </button>
-            <button class="choice" data-go="2" data-tone="bad" data-head="What goes wrong"
-              data-outcome="Dropping the homework is the cheap move — that is what the two drops are for — but dropping the peer assessments is not the same thing. Skipping them means no credit for a submission he has already made, which is worse than not submitting at all.">
-              Skip the homework and its peer assessments entirely to clear the week.
-            </button>
+      <div class="ix" data-match="exam-l4-match" data-win="Read the right-hand column on its own and it is a list of assumptions in decreasing strength. The method you should choose is the strongest assumption you are willing to defend, because stronger assumptions mean lower variance.">
+        <div class="ix-head"><span class="ix-kind">match the pairs</span><span class="ix-done">matched</span></div>
+        <p class="prompt">Tap a method, then the assumption it rests on, to pair them up.</p>
+        <div class="match">
+          <div class="col" data-side="a">
+            <h4>Method</h4>
+            <button class="cell" data-pair="1">Logistic regression</button>
+            <button class="cell" data-pair="2">Linear discriminant analysis</button>
+            <button class="cell" data-pair="3">Naive Bayes</button>
+            <button class="cell" data-pair="4">k-nearest neighbours</button>
+          </div>
+          <div class="col" data-side="b">
+            <h4>What it assumes</h4>
+            <button class="cell" data-pair="1" data-fb="Linearity in the log-odds, and nothing about how the predictors are distributed. That makes it the safer of the two linear methods when the classes overlap a lot.">The log-odds are linear in the predictors</button>
+            <button class="cell" data-pair="2" data-fb="Normal classes sharing one covariance matrix. Strong assumptions, but they pay off in stability when the sample is small or the classes separate cleanly — a situation where logistic regression can become unstable.">Each class is normal with a common covariance</button>
+            <button class="cell" data-pair="3" data-fb="Predictors independent within each class. Rarely true, and it still works often, because the variance it saves outweighs the bias it introduces — a clean illustration of Topic 2.">The predictors are independent within each class</button>
+            <button class="cell" data-pair="4" data-fb="No assumption about shape at all. That flexibility is the whole appeal and the whole cost: any boundary is reachable, but only with enough data, and there is nothing to interpret afterwards.">Nothing about the shape of the boundary</button>
           </div>
         </div>
-        <div class="scene" data-step="2" data-end="1" hidden>
-          <p><strong>The quiz is done.</strong> The homework, though, is genuinely not going to happen this week — the travel ate it. Jordan has used neither of his two drops so far.</p>
-          <p><strong>What is the right call on the homework?</strong></p>
-          <div class="choices">
-            <button class="choice" data-tone="bad" data-head="What it costs"
-              data-outcome="Submitting something rushed and then skipping the peer assessments is the worst of both worlds: the effort is spent and the credit is withheld anyway. If the assessments are not going to get done, the submission does not help.">
-              Submit something rushed, and skip the peer grading he owes.
-            </button>
-            <button class="choice" data-tone="good" data-head="The right call"
-              data-outcome="Use a drop deliberately. One homework is worth around 1.25% and, as one of his two lowest, effectively nothing. He still does the exercises later without the deadline, because the material is examined three more times even if this week’s marks are not.">
-              Take the drop knowingly, and work through the exercises later without the deadline.
-            </button>
-            <button class="choice" data-tone="bad" data-head="What it misses"
-              data-outcome="Peer grading others without submitting your own work does not bank anything — the requirement protects your submission, it is not a currency. He has spent the time and gained nothing he could not have had by taking the drop cleanly.">
-              Skip his own submission but still peer-grade everyone else, to stay in credit.
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <h3>Integrity, and the AI rule in particular</h3>
-      <p>Two policies bear directly on how you work rather than on what you know:</p>
-      <ul>
-        <li><strong>Plagiarism.</strong> Submitted material must be your own, and any background material you draw on must be cited.</li>
-        <li><strong>AI use.</strong> Code or text produced with AI must be cited specifically — you must indicate which part of a submission it generated. The allowance is the same as for a snippet lifted from a programming forum: small, cited pieces are fine, and anything beyond that is not, unless an assignment says otherwise. You remain responsible for any error the tool introduces.</li>
-      </ul>
-      <div class="callout">
-        <p class="tag">Which includes these notes</p>
-        <p>This site was generated by an AI model. If anything from it ends up in a submission, that is exactly the case the citation rule is about — cite it, and check it against the lectures first, because the responsibility for an error lands on you rather than on the tool.</p>
+        <p class="fb"></p>
       </div>
 
       <div class="ix" data-quiz="exam-l4-q1">
         <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
-        <p class="prompt">You finish and submit a homework on time, then run out of time for the peer assessments you owe. What happens?</p>
+        <p class="prompt">A logistic regression reports a coefficient of 0.7 on a predictor. What does that mean?</p>
         <div class="opts">
-          <button class="opt" data-fb="There is no partial credit here. The peer-assessment requirement is a condition on receiving credit at all, not a separate small component that can be sacrificed.">You lose a small deduction for the missing assessments but keep your homework mark.</button>
-          <button class="opt" data-right data-fb="No credit for the submission. The work being finished and on time does not protect it — grading others is the condition attached to being graded yourself. On the project the same omission produces a zero.">You receive no credit for your own homework submission.</button>
-          <button class="opt" data-fb="Your own grade is the median of what your graders award, which does not depend on whether you graded anyone. The consequence is a rule, not an arithmetic side effect.">Your homework is graded by the instructor instead, using a stricter standard.</button>
+          <button class="opt" data-fb="This is the trap. The model is linear in the log-odds, not in the probability. A fixed change in probability is impossible in any case — it would eventually push p outside [0, 1], which is the very thing logistic regression exists to prevent.">A one-unit increase in the predictor raises the probability by 0.7.</button>
+          <button class="opt" data-right data-fb="A one-unit increase adds 0.7 to the log-odds, which multiplies the odds by e^0.7 ≈ 2.01. The effect on the probability itself depends on where you start — large near p = 0.5 and almost nothing near 0 or 1.">A one-unit increase adds 0.7 to the log-odds, roughly doubling the odds.</button>
+          <button class="opt" data-fb="Coefficient size is not a significance test, and 0.7 is not a p-value. Whether the predictor matters depends on the standard error alongside it, and on the scale the predictor is measured in.">The predictor is significant at the 70% confidence level.</button>
         </div>
         <p class="fb"></p>
       </div>
 
       <div class="note">
-        <div class="note-head"><span class="lbl">Logistics to sort out</span><span class="hint">click to type; saves automatically</span></div>
-        <div class="note-body" contenteditable="true" data-note="examl4" data-placeholder="Proctoring setup done? Quiet room booked? Peer assessments outstanding?…"></div>
+        <div class="note-head"><span class="lbl">Notes — classification</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="examl4" data-placeholder="Reading: §4.1–4.5 for logistic and the generative models, Ch. 9 for SVM…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Exam target</span>
+      <p class="q">Give two reasons not to fit a linear regression to a binary response.</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Fitted values fall outside [0, 1], so they cannot be probabilities. And with more than two categories, any numeric coding of the response invents an ordering and an equal spacing that the categories do not possess.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
+<!-- ==================== TOPIC 5 ==================== -->
+<section class="lesson" id="l5" data-short="Regression" style="--accent:#1b5e7e">
+  <div class="lesson-head">
+    <span class="ln">Topic 5</span>
+    <h2>Regression</h2>
+    <p class="keyline">Linear regression is the baseline every other method is measured against, and most of its practical difficulty lies in diagnosing when its assumptions have failed rather than in fitting it.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>The model and what it is fitted by</h3>
+      <div class="formula">
+        Y &nbsp;=&nbsp; β₀ &nbsp;+&nbsp; β₁X₁ &nbsp;+&nbsp; β₂X₂ &nbsp;+&nbsp; … &nbsp;+&nbsp; β<sub>p</sub>X<sub>p</sub> &nbsp;+&nbsp; ε
+        <span class="cap">Coefficients are chosen to minimise the residual sum of squares, Σ (yᵢ − ŷᵢ)² — the vertical distances from the points to the fitted surface, squared and added up.</span>
+      </div>
+      <div class="defn">
+        <span class="term">How to read a coefficient in multiple regression</span>
+        <p>β<sub>j</sub> is the average change in Y for a one-unit change in X<sub>j</sub> <em>with every other predictor held fixed</em>. That last clause is the whole difficulty: if the predictors move together in the real world, holding one fixed describes a situation that may never occur, and the coefficient becomes hard to interpret even though it is correctly estimated.</p>
+      </div>
+
+      <h3>The questions a regression output is answering</h3>
+      <table class="plain">
+        <tr><th>Question</th><th>What answers it</th></tr>
+        <tr><td>Is there any relationship at all?</td><td>The F-statistic, testing all coefficients jointly against zero. Ask this before looking at individual predictors</td></tr>
+        <tr><td>Which predictors matter?</td><td>Individual t-statistics and p-values — but with many predictors, some will look significant by chance alone</td></tr>
+        <tr><td>How well does the model fit?</td><td>R², the proportion of variance explained, and the residual standard error in the units of Y</td></tr>
+        <tr><td>How accurate is a prediction?</td><td>A confidence interval for the average response, or a prediction interval for one new observation. The prediction interval is always wider, because it must also absorb the irreducible error</td></tr>
+      </table>
+      <div class="callout">
+        <p class="tag">R² never falls when you add a predictor</p>
+        <p>Adding any predictor, even a column of random numbers, can only leave R² unchanged or raise it — so R² cannot be used to compare models with different numbers of predictors. This is exactly the training-error problem from Topic 2 in a different costume, and it is what motivates the adjusted criteria in Topic 6.</p>
+      </div>
+
+      <h3>When the assumptions fail</h3>
+      <p>Fitting is automatic; noticing that the fit is inappropriate is not. The standard failures, and the symptom each leaves behind:</p>
+      <table class="plain">
+        <tr><th>Problem</th><th>What you see</th></tr>
+        <tr><td><strong>Non-linearity</strong></td><td>A curved pattern in the residuals plotted against fitted values. The single most important diagnostic — if the relationship is not linear, every conclusion below is unreliable</td></tr>
+        <tr><td><strong>Correlated errors</strong></td><td>Residuals that track each other in sequence, common in time-ordered data. Standard errors come out too small, so predictors look more significant than they are</td></tr>
+        <tr><td><strong>Non-constant variance</strong></td><td>A funnel shape in the residual plot — spread growing with the fitted value. Often fixed by transforming the response with a log or a square root</td></tr>
+        <tr><td><strong>Outliers</strong></td><td>An unusual value of the <em>response</em>. Inflates the residual standard error and R² while often barely moving the line itself</td></tr>
+        <tr><td><strong>High-leverage points</strong></td><td>An unusual value of the <em>predictors</em>. These do move the line, sometimes a great deal, and are more dangerous than outliers for exactly that reason</td></tr>
+        <tr><td><strong>Collinearity</strong></td><td>Predictors carrying nearly the same information. Coefficients become unstable with inflated standard errors, so a genuinely useful predictor can appear insignificant</td></tr>
+      </table>
+      <div class="defn">
+        <span class="term">Extending beyond a straight line</span>
+        <p>Interaction terms let one predictor’s effect depend on another’s. Polynomial terms bend the fit. Splines fit separate low-degree polynomials on intervals of the predictor and join them smoothly, which usually behaves better than a single high-degree polynomial. All of these are still linear models — linear in the coefficients, not in the predictors.</p>
+      </div>
+
+      <div class="ix" data-match="exam-l5-match" data-win="Two of these distort the standard errors and two distort the fit itself. That is the distinction worth carrying into an exam: some problems make you wrong about the line, others make you wrong about your confidence in it.">
+        <div class="ix-head"><span class="ix-kind">match the pairs</span><span class="ix-done">matched</span></div>
+        <p class="prompt">Tap a problem, then the symptom that reveals it, to pair them up.</p>
+        <div class="match">
+          <div class="col" data-side="a">
+            <h4>Problem</h4>
+            <button class="cell" data-pair="1">Non-constant error variance</button>
+            <button class="cell" data-pair="2">A high-leverage point</button>
+            <button class="cell" data-pair="3">Collinearity</button>
+            <button class="cell" data-pair="4">Correlated errors</button>
+          </div>
+          <div class="col" data-side="b">
+            <h4>Symptom</h4>
+            <button class="cell" data-pair="1" data-fb="A funnel in the residual plot — spread widening as fitted values grow. Transforming the response with a log or square root usually pulls it back in.">A funnel shape in the residuals against fitted values</button>
+            <button class="cell" data-pair="2" data-fb="An unusual predictor value, which gives the point disproportionate pull on the fitted line. More dangerous than an outlier, because an outlier often leaves the line where it was.">One point with unusual predictors that visibly moves the line</button>
+            <button class="cell" data-pair="3" data-fb="Two predictors carrying nearly the same information cannot be separated, so their coefficients swing wildly and their standard errors inflate — and a genuinely useful predictor can test as insignificant.">Unstable coefficients with inflated standard errors</button>
+            <button class="cell" data-pair="4" data-fb="Residuals that track each other in sequence, typically in time-ordered data. The model believes it has more independent information than it does, so standard errors come out too small.">Residuals that follow each other in order</button>
+          </div>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="ix" data-quiz="exam-l5-q1">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">You add a predictor to a regression and R² rises from 0.61 to 0.63. What have you learned?</p>
+        <div class="opts">
+          <button class="opt" data-fb="You cannot conclude that. R² is guaranteed not to fall when a predictor is added — a column of random numbers would also raise it a little — so a rise on its own is not evidence of anything.">The new predictor explains additional variance, so it improves the model.</button>
+          <button class="opt" data-right data-fb="R² can only stay level or rise as predictors are added, which makes it useless for comparing models of different sizes. You need an adjusted criterion or, better, a cross-validated error estimate — the subject of Topic 6.">Essentially nothing — R² cannot fall when a predictor is added, so it can't compare models of different sizes.</button>
+          <button class="opt" data-fb="A 0.02 rise is not evidence of overfitting either. The point is that R² measured on training data cannot distinguish improvement from noise-chasing in either direction, whatever the size of the change.">That the model is beginning to overfit, since the gain is so small.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="note">
+        <div class="note-head"><span class="lbl">Notes — regression</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="examl5" data-placeholder="Reading: Ch. 3, and Ch. 7 for polynomials and splines…"></div>
       </div>
     </div>
     <aside class="check">
       <span class="n">Trap to avoid</span>
-      <p class="q">Which is worse: submitting no homework at all, or submitting one and skipping the peer assessments?</p>
+      <p class="q">Outlier or high-leverage point — which does more damage?</p>
       <details><summary>Show answer</summary>
-        <p class="a">They score the same — nothing — but the second costs you the time you spent on the submission. If the peer assessments genuinely cannot be done, taking one of your two drops cleanly is the cheaper decision.</p>
+        <p class="a">The high-leverage point, usually. An outlier is unusual in the response and mostly inflates the residual standard error and depresses R², often leaving the line roughly where it was. A high-leverage point is unusual in the predictors and can drag the whole fit, so it changes conclusions rather than just confidence in them.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
+<!-- ==================== TOPIC 6 ==================== -->
+<section class="lesson" id="l6" data-short="Selection" style="--accent:#8a5a1c">
+  <div class="lesson-head">
+    <span class="ln">Topic 6</span>
+    <h2>Variable selection and regularization</h2>
+    <p class="keyline">Shrinking coefficients toward zero trades a little bias for a large drop in variance, and whether the shrinkage can reach exactly zero decides whether you also get variable selection for free.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Why not keep every predictor?</h3>
+      <p>Because each additional predictor adds a coefficient that must be estimated, and every estimate carries variance. Predictors with no real relationship to the response contribute variance and no bias reduction, which is a losing trade. When the number of predictors approaches the number of observations, least squares becomes so unstable as to be useless; beyond that it has no unique solution at all.</p>
+
+      <h3>Approach one: choose a subset</h3>
+      <table class="plain">
+        <tr><td><strong>Best subset selection</strong></td><td>Fit every possible combination of predictors and pick the best. Exhaustive and honest, but the number of models is 2^p, so it becomes impossible past around forty predictors — and searching that many models makes it easy to find one that looks good by chance</td></tr>
+        <tr><td><strong>Forward stepwise</strong></td><td>Start with nothing and add the predictor that helps most, one at a time. Far cheaper, and usable when p exceeds n, but it can miss the best subset because an early choice is never revisited</td></tr>
+        <tr><td><strong>Backward stepwise</strong></td><td>Start with everything and drop the least useful predictor, one at a time. Requires n larger than p, since it has to fit the full model first</td></tr>
+      </table>
+      <div class="callout">
+        <p class="tag">How the winner is chosen matters</p>
+        <p>Comparing models of different sizes cannot be done with training error or R², for the reason in Topic 5. Either adjust for size with a criterion that penalises the number of predictors — C<sub>p</sub>, AIC, BIC, adjusted R² — or estimate test error directly by cross-validation. The second is more general and makes fewer assumptions, and is the approach the course leans on.</p>
+      </div>
+
+      <h3>Approach two: shrink instead of choose</h3>
+      <p>Rather than including a predictor or excluding it, fit all of them and penalise large coefficients. Both methods below minimise the residual sum of squares plus a penalty, and λ controls how hard the penalty bites.</p>
+      <div class="formula">
+        ridge: &nbsp; minimise &nbsp; RSS &nbsp;+&nbsp; λ Σⱼ βⱼ²<br>
+        lasso: &nbsp; minimise &nbsp; RSS &nbsp;+&nbsp; λ Σⱼ | βⱼ |
+        <span class="cap">At λ = 0 both reduce to least squares. As λ → ∞ both drive coefficients toward zero. The only difference is squared versus absolute value — and that difference changes everything.</span>
+      </div>
+      <p>The consequence: ridge shrinks coefficients smoothly toward zero but never reaches it, so every predictor stays in the model. The lasso can set a coefficient to exactly zero, which removes that predictor entirely — so the lasso performs variable selection as a side effect of shrinking, and produces a model you can read.</p>
+
+      <figure class="hotwrap" data-hotspot="exam-l6-hot">
+        <svg class="fig" viewBox="0 0 660 270" role="img" aria-label="Two panels of coefficient paths against increasing lambda. On the left, ridge, four coefficients decay smoothly toward the zero line without touching it. On the right, lasso, the same four coefficients travel in straight lines and each reaches exactly zero at a different point. Three regions are clickable.">
+          <text x="70" y="26" font-family="IBM Plex Sans,sans-serif" font-size="12.5" font-weight="600" fill="#131b26">Ridge</text>
+          <text x="390" y="26" font-family="IBM Plex Sans,sans-serif" font-size="12.5" font-weight="600" fill="#131b26">Lasso</text>
+          <line x1="70" y1="150" x2="320" y2="150" stroke="#131b26" stroke-width="1.4"/>
+          <line x1="390" y1="150" x2="640" y2="150" stroke="#131b26" stroke-width="1.4"/>
+          <line x1="70" y1="215" x2="70" y2="35" stroke="#c9d2db" stroke-width="1.2"/>
+          <line x1="390" y1="215" x2="390" y2="35" stroke="#c9d2db" stroke-width="1.2"/>
+          <text x="64" y="154" text-anchor="end" font-family="IBM Plex Sans,sans-serif" font-size="11" fill="#4a5765">0</text>
+          <text x="384" y="154" text-anchor="end" font-family="IBM Plex Sans,sans-serif" font-size="11" fill="#4a5765">0</text>
+
+          <polyline points="70.0,42.0 95.0,66.9 120.0,82.5 145.0,93.2 170.0,100.9 195.0,106.8 220.0,111.4 245.0,115.2 270.0,118.2 295.0,120.8 320.0,123.0" fill="none" stroke="#8a5a1c" stroke-width="2.2"/>
+          <polyline points="70.0,82.5 95.0,98.1 120.0,107.8 145.0,114.5 170.0,119.3 195.0,123.0 220.0,125.9 245.0,128.2 270.0,130.1 295.0,131.8 320.0,133.1" fill="none" stroke="#33507f" stroke-width="2.2"/>
+          <polyline points="70.0,123.0 95.0,129.2 120.0,133.1 145.0,135.8 170.0,137.7 195.0,139.2 220.0,140.4 245.0,141.3 270.0,142.1 295.0,142.7 320.0,143.2" fill="none" stroke="#2f6b52" stroke-width="2.2"/>
+          <polyline points="70.0,199.5 95.0,188.1 120.0,180.9 145.0,176.1 170.0,172.5 195.0,169.8 220.0,167.7 245.0,166.0 270.0,164.6 295.0,163.4 320.0,162.4" fill="none" stroke="#8a3d5c" stroke-width="2.2"/>
+
+          <polyline points="390.0,42.0 415.0,55.5 440.0,69.0 465.0,82.5 490.0,96.0 515.0,109.5 540.0,123.0 565.0,136.5 590.0,150.0 615.0,150.0 640.0,150.0" fill="none" stroke="#8a5a1c" stroke-width="2.2"/>
+          <polyline points="390.0,82.5 415.0,96.0 440.0,109.5 465.0,123.0 490.0,136.5 515.0,150.0 540.0,150.0 565.0,150.0 590.0,150.0 615.0,150.0 640.0,150.0" fill="none" stroke="#33507f" stroke-width="2.2"/>
+          <polyline points="390.0,123.0 415.0,136.5 440.0,150.0 465.0,150.0 490.0,150.0 515.0,150.0 540.0,150.0 565.0,150.0 590.0,150.0 615.0,150.0 640.0,150.0" fill="none" stroke="#2f6b52" stroke-width="2.2"/>
+          <polyline points="390.0,199.5 415.0,186.0 440.0,172.5 465.0,159.0 481.7,150.0 490.0,150.0 515.0,150.0 540.0,150.0 565.0,150.0 590.0,150.0 615.0,150.0 640.0,150.0" fill="none" stroke="#8a3d5c" stroke-width="2.2"/>
+          <g fill="#131b26">
+            <circle cx="440" cy="150" r="4"/><circle cx="481.7" cy="150" r="4"/><circle cx="515" cy="150" r="4"/><circle cx="590" cy="150" r="4"/>
+          </g>
+          <text x="530" y="176" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="11.5" fill="#131b26">each dot: a predictor leaves the model</text>
+          <text x="195" y="176" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="11.5" fill="#4a5765">all four survive at every λ</text>
+          <text x="355" y="240" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="12" fill="#4a5765">increasing λ →</text>
+
+          <g class="hs" data-title="Ridge — smooth decay, nothing removed"
+             data-body="Every path bends toward the zero line and none of them arrives. The squared penalty's derivative shrinks as a coefficient approaches zero, so the pressure to remove it vanishes exactly where removal would happen. Ridge is the right choice when you believe most predictors contribute something, because it keeps them all and simply damps them.">
+            <rect class="hit" x="70" y="32" width="250" height="130"/><rect class="ring" x="70" y="32" width="250" height="130" rx="3"/>
+          </g>
+          <g class="hs" data-title="Lasso — straight lines that hit zero and stay"
+             data-body="With an absolute-value penalty the paths are straight and each one meets the zero line at a λ equal to the size of its own least-squares coefficient. Once a coefficient reaches zero it stays there, so raising λ produces a sequence of ever-smaller models. Lasso is the right choice when you believe only some predictors matter, because it tells you which.">
+            <rect class="hit" x="390" y="32" width="250" height="130"/><rect class="ring" x="390" y="32" width="250" height="130" rx="3"/>
+          </g>
+          <g class="hs" data-title="The λ axis — and why it must be cross-validated"
+             data-body="At the far left both panels are identical, because λ = 0 is ordinary least squares: same coefficients, same variance problem. Moving right buys variance reduction and pays in bias. Nothing in the data says where to stop, so λ is chosen by cross-validation over a grid — which is Topic 3 doing the work that makes Topic 6 usable.">
+            <rect class="hit" x="70" y="222" width="570" height="34"/><rect class="ring" x="70" y="222" width="570" height="34" rx="3"/>
+          </g>
+        </svg>
+        <div class="hotpanel"><span class="hint">Three regions are clickable. Open all three to finish this activity.</span></div>
+        <figcaption>Both panels start from the same four least-squares coefficients at λ = 0. On the right, each coefficient reaches zero at a λ equal to its own starting magnitude, so the smallest coefficient is discarded first and the largest last.</figcaption>
+      </figure>
+
+      <div class="callout">
+        <p class="tag">Scale the predictors first</p>
+        <p>Both penalties add up coefficients, and a coefficient’s size depends on the units of its predictor. Measure one variable in dollars and another in thousands of dollars and the penalty will fall on them completely differently, for no reason connected to the data. Standardizing the predictors before fitting is not optional here — unlike in least squares, where rescaling a predictor simply rescales its coefficient and changes nothing.</p>
+      </div>
+
+      <h3>Approach three: reduce the dimensions</h3>
+      <p>Instead of selecting among the predictors, construct a small number of new ones as combinations of the originals, then regress on those. <span class="key">Principal components regression</span> uses the directions of greatest variance in the predictors, which are Topic 8’s principal components. It is a purely unsupervised construction: the response never influences which directions are chosen, which is both its safety and its weakness — the highest-variance direction is not guaranteed to be the one that predicts Y. Partial least squares fixes that by letting the response guide the construction.</p>
+
+      <div class="ix" data-quiz="exam-l6-q1">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">You have 300 predictors and believe only a handful genuinely matter. You want a model someone can read. Ridge or lasso?</p>
+        <div class="opts">
+          <button class="opt" data-fb="Ridge would shrink all 300 coefficients toward zero without removing any, leaving a model with 300 non-zero terms. It may predict perfectly well, but nobody can read it, and it does not tell you which handful mattered.">Ridge, because shrinking every coefficient controls variance across all 300.</button>
+          <button class="opt" data-right data-fb="Lasso can set coefficients to exactly zero, so with a suitable λ it discards the predictors that do not earn their place and hands back a short list. That matches both beliefs: sparsity in the truth, and a readable result.">Lasso, because it can zero out coefficients and hand back a short list of predictors.</button>
+          <button class="opt" data-fb="With 300 predictors, best subset selection would need to fit 2³⁰⁰ models — a number with about 90 digits. It is not slow, it is impossible, which is exactly why the shrinkage methods exist.">Best subset selection, since it is the only method guaranteed to find the true subset.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="note">
+        <div class="note-head"><span class="lbl">Notes — selection and regularization</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="examl6" data-placeholder="Reading: §6.1 subset selection, §6.2 ridge and lasso, §6.3 dimension reduction…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Exam target</span>
+      <p class="q">In one sentence, why can lasso zero a coefficient when ridge cannot?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">The absolute-value penalty keeps applying constant pressure as a coefficient approaches zero, so it can be pushed all the way there and held; the squared penalty’s pressure fades as the coefficient shrinks, so it approaches zero without arriving.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
+<!-- ==================== TOPIC 7 ==================== -->
+<section class="lesson" id="l7" data-short="Trees" style="--accent:#2f6b52">
+  <div class="lesson-head">
+    <span class="ln">Topic 7</span>
+    <h2>Tree-based models</h2>
+    <p class="keyline">A single tree is readable and unstable, and every improvement on it — bagging, random forests, boosting — buys accuracy by growing many trees and giving up the picture.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>One tree</h3>
+      <p>A decision tree splits the predictor space into rectangles by asking one yes-or-no question at a time, and predicts the same value everywhere inside a rectangle — the average response there for regression, the most common class for classification. Splits are chosen greedily: at each step, take the split that most reduces error right now, without looking ahead.</p>
+
+      <figure class="hotwrap" data-hotspot="exam-l7-hot">
+        <svg class="fig" viewBox="0 0 660 270" role="img" aria-label="On the left a decision tree with a root split on X1 less than 5, a left child splitting on X2 less than 3, a right child splitting on X1 less than 8, and four terminal nodes. On the right the same rules drawn as four rectangles partitioning the predictor space. Three regions are clickable.">
+          <g font-family="IBM Plex Sans,sans-serif" font-size="11.5" text-anchor="middle">
+            <rect x="140" y="30" width="92" height="30" fill="#ffffff" stroke="#2f6b52" stroke-width="2"/>
+            <text x="186" y="50" fill="#131b26">X₁ &lt; 5 ?</text>
+            <line x1="160" y1="60" x2="112" y2="94" stroke="#9aa5b1" stroke-width="1.4"/>
+            <line x1="212" y1="60" x2="260" y2="94" stroke="#9aa5b1" stroke-width="1.4"/>
+            <text x="125" y="82" font-size="10.5" fill="#4a5765">yes</text>
+            <text x="248" y="82" font-size="10.5" fill="#4a5765">no</text>
+            <rect x="66" y="94" width="92" height="30" fill="#ffffff" stroke="#2f6b52" stroke-width="2"/>
+            <text x="112" y="114" fill="#131b26">X₂ &lt; 3 ?</text>
+            <rect x="214" y="94" width="92" height="30" fill="#ffffff" stroke="#2f6b52" stroke-width="2"/>
+            <text x="260" y="114" fill="#131b26">X₁ &lt; 8 ?</text>
+            <line x1="90" y1="124" x2="70" y2="158" stroke="#9aa5b1" stroke-width="1.4"/>
+            <line x1="134" y1="124" x2="152" y2="158" stroke="#9aa5b1" stroke-width="1.4"/>
+            <line x1="238" y1="124" x2="220" y2="158" stroke="#9aa5b1" stroke-width="1.4"/>
+            <line x1="282" y1="124" x2="300" y2="158" stroke="#9aa5b1" stroke-width="1.4"/>
+            <g font-size="12" font-weight="600">
+              <circle cx="70" cy="172" r="15" fill="#2f6b52" fill-opacity=".18" stroke="#2f6b52" stroke-width="1.6"/><text x="70" y="177" fill="#2f6b52">A</text>
+              <circle cx="152" cy="172" r="15" fill="#2f6b52" fill-opacity=".18" stroke="#2f6b52" stroke-width="1.6"/><text x="152" y="177" fill="#2f6b52">B</text>
+              <circle cx="220" cy="172" r="15" fill="#2f6b52" fill-opacity=".18" stroke="#2f6b52" stroke-width="1.6"/><text x="220" y="177" fill="#2f6b52">C</text>
+              <circle cx="300" cy="172" r="15" fill="#2f6b52" fill-opacity=".18" stroke="#2f6b52" stroke-width="1.6"/><text x="300" y="177" fill="#2f6b52">D</text>
+            </g>
+            <text x="186" y="212" font-size="11.5" fill="#4a5765">four terminal nodes</text>
+          </g>
+
+          <rect x="360" y="60" width="260" height="170" fill="none" stroke="#131b26" stroke-width="1.4"/>
+          <rect x="360" y="145" width="130" height="85" fill="#2f6b52" fill-opacity=".10"/>
+          <rect x="360" y="60" width="130" height="85" fill="#2f6b52" fill-opacity=".22"/>
+          <rect x="490" y="60" width="78" height="170" fill="#2f6b52" fill-opacity=".34"/>
+          <rect x="568" y="60" width="52" height="170" fill="#2f6b52" fill-opacity=".46"/>
+          <line x1="490" y1="60" x2="490" y2="230" stroke="#2f6b52" stroke-width="2"/>
+          <line x1="568" y1="60" x2="568" y2="230" stroke="#2f6b52" stroke-width="2"/>
+          <line x1="360" y1="145" x2="490" y2="145" stroke="#2f6b52" stroke-width="2"/>
+          <g font-family="IBM Plex Sans,sans-serif" font-size="12" font-weight="600" fill="#2f6b52" text-anchor="middle">
+            <text x="425" y="192">A</text><text x="425" y="107">B</text><text x="529" y="150">C</text><text x="594" y="150">D</text>
+          </g>
+          <g font-family="IBM Plex Sans,sans-serif" font-size="11" fill="#4a5765">
+            <text x="490" y="248" text-anchor="middle">X₁ = 5</text>
+            <text x="568" y="248" text-anchor="middle">X₁ = 8</text>
+            <text x="354" y="149" text-anchor="end">X₂ = 3</text>
+          </g>
+          <text x="490" y="42" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="12" fill="#4a5765">the same rules, as regions</text>
+
+          <g class="hs" data-title="The root split is chosen greedily"
+             data-body="The algorithm picks whichever single split most reduces error at this moment, with no look-ahead. That is why trees are fast, and also why they are unstable: a slightly different sample can change this one split, and every split below it then differs too.">
+            <rect class="hit" x="138" y="28" width="96" height="34"/><rect class="ring" x="138" y="28" width="96" height="34" rx="3"/>
+          </g>
+          <g class="hs" data-title="Every path ends in one prediction"
+             data-body="A terminal node holds a single value used for every observation that lands there — the mean response for regression, the majority class for classification. That is why a tree's fitted surface is flat inside each rectangle and jumps at the boundaries, and why trees struggle to represent a smooth linear relationship.">
+            <rect class="hit" x="60" y="92" width="250" height="34"/><rect class="ring" x="60" y="92" width="250" height="34" rx="3"/>
+          </g>
+          <g class="hs" data-title="Splits are axis-parallel, always"
+             data-body="Each question involves one predictor, so every boundary is perpendicular to an axis. A diagonal relationship has to be approximated by a staircase of many splits, which is where a linear model would win easily. Choosing between a tree and a linear model is mostly a question of whether the true boundary is box-shaped or not.">
+            <rect class="hit" x="360" y="60" width="260" height="170"/><rect class="ring" x="360" y="60" width="260" height="170" rx="3"/>
+          </g>
+        </svg>
+        <div class="hotpanel"><span class="hint">Three regions are clickable. Open all three to finish this activity.</span></div>
+      </figure>
+
+      <div class="callout">
+        <p class="tag">Grow then prune, don’t stop early</p>
+        <p>Stopping as soon as a split fails to help is short-sighted: a weak split can be followed by a very good one. The standard remedy is to grow a large tree deliberately, then prune it back, using cross-validation to choose how far. A tree left unpruned fits the training data beautifully and generalises badly — Topic 2 again.</p>
+      </div>
+
+      <h3>Many trees</h3>
+      <p>One tree has high variance: refit it on a different sample and you can get a visibly different tree. Averaging fixes that, and the three standard ways of averaging differ in how they make the trees disagree.</p>
+      <table class="plain">
+        <tr><th>Method</th><th>How it works, and what it fixes</th></tr>
+        <tr><td><strong>Bagging</strong></td><td>Grow many deep trees on bootstrap resamples of the data and average their predictions. Averaging reduces variance, so the individual trees are left unpruned on purpose. The problem: if one predictor is dominant, every tree splits on it first and the trees are highly correlated, which limits how much averaging helps</td></tr>
+        <tr><td><strong>Random forests</strong></td><td>Bagging, plus one change — at each split, only a random subset of predictors is considered. This forces trees to use other predictors and decorrelates them, so averaging works much better. The subset size is the tuning parameter</td></tr>
+        <tr><td><strong>Boosting</strong></td><td>Grow small trees in sequence, each fitted to what the current ensemble still gets wrong, and add it in with a small learning rate. Nothing is resampled and nothing is averaged; the model is built up slowly. Usually the most accurate, and the only one of the three that can overfit if grown too long</td></tr>
+      </table>
+      <div class="defn">
+        <span class="term">What you lose, and the partial compensation</span>
+        <p>The moment there is more than one tree there is no diagram to show anyone. Variable importance measures — how much each predictor reduced error across all the trees — recover a ranking of predictors, but not a rule you can follow or a coefficient you can sign. If interpretation is the goal, a single pruned tree may still be the right answer despite being less accurate.</p>
+      </div>
+
+      <div class="ix" data-order="exam-l7-order" data-win="The ordering encodes the logic: each step exists to fix the specific weakness of the step before it. Knowing why random forests came after bagging is more examinable than knowing what either one does.">
+        <div class="ix-head"><span class="ix-kind">put in order</span><span class="ix-done">solved</span></div>
+        <p class="prompt">Drag the reasoning from one tree to a forest into sequence — or use the arrows.</p>
+        <ol class="order">
+          <li data-pos="1">Grow a single tree by splitting greedily, then prune it back by cross-validation</li>
+          <li data-pos="2">Notice that the tree is unstable — a different sample gives a visibly different tree</li>
+          <li data-pos="3">Grow many unpruned trees on bootstrap resamples and average them, to cut variance</li>
+          <li data-pos="4">Notice that a dominant predictor makes every tree split the same way, so they stay correlated</li>
+          <li data-pos="5">Restrict each split to a random subset of predictors, forcing the trees to differ</li>
+          <li data-pos="6">Average the now-decorrelated trees, and accept that the picture is gone</li>
+        </ol>
+        <button class="btn check">Check the order</button>
+        <p class="fb"></p>
+      </div>
+
+      <div class="note">
+        <div class="note-head"><span class="lbl">Notes — tree-based models</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="examl7" data-placeholder="Reading: §8.1 for single trees, §8.2 for bagging, forests and boosting…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Exam target</span>
+      <p class="q">What single change turns bagging into a random forest, and why does it help?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Only a random subset of predictors is considered at each split. This stops a dominant predictor being chosen first in every tree, so the trees are less correlated — and averaging correlated quantities reduces variance far less than averaging uncorrelated ones.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
+<!-- ==================== TOPIC 8 ==================== -->
+<section class="lesson" id="l8" data-short="Unsupervised" style="--accent:#6e4a8c">
+  <div class="lesson-head">
+    <span class="ln">Topic 8</span>
+    <h2>Unsupervised methods</h2>
+    <p class="keyline">With no response to predict there is nothing to validate against, so principal components and clusters are judged by whether their output is useful rather than by whether it is right.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>The difficulty that defines the whole topic</h3>
+      <p>Supervised methods have an answer key: hold data out, compare predictions to truth, get a number. Unsupervised methods have none. There is no cross-validation for a clustering, because there is nothing to be wrong about. This makes the analysis more subjective and the results harder to defend — which is why it usually appears as one step in a larger pipeline rather than as the deliverable.</p>
+
+      <h3>Principal component analysis</h3>
+      <div class="defn">
+        <span class="term">Principal component</span>
+        <p>A normalised linear combination of the predictors. The first principal component is the direction along which the data varies most; the second is the direction of greatest remaining variance among those perpendicular to the first, and so on. Each successive component is uncorrelated with all the ones before it.</p>
+      </div>
+      <p>Two equivalent readings, both worth having: the first component is the direction of maximum variance, and it is also the line closest to the data in squared-distance terms. PCA is therefore a way of representing many correlated predictors with a few uncorrelated ones — which is why it appears both as a visualisation tool and as the front end of principal components regression in Topic 6.</p>
+
+      <figure>
+        <svg class="fig" viewBox="0 0 660 270" role="img" aria-label="A scatter of ten correlated points with two perpendicular arrows through the centre. The long arrow follows the direction the points spread along and carries 97.6 percent of the variance; the short perpendicular arrow carries 2.4 percent.">
+          <line x1="70" y1="230" x2="322" y2="230" stroke="#131b26" stroke-width="1.3"/>
+          <line x1="70" y1="230" x2="70" y2="34" stroke="#131b26" stroke-width="1.3"/>
+          <line x1="128.9" y1="195.7" x2="274.3" y2="56.0" stroke="#6e4a8c" stroke-width="2.6"/>
+          <line x1="232.6" y1="158.2" x2="170.6" y2="93.5" stroke="#8a5a1c" stroke-width="2.2"/>
+          <g fill="#4a5765">
+            <circle cx="126.0" cy="190.8" r="4.2"/><circle cx="154.0" cy="157.2" r="4.2"/><circle cx="182.0" cy="146.0" r="4.2"/>
+            <circle cx="210.0" cy="106.8" r="4.2"/><circle cx="238.0" cy="101.2" r="4.2"/><circle cx="266.0" cy="62.0" r="4.2"/>
+            <circle cx="168.0" cy="179.6" r="4.2"/><circle cx="224.0" cy="84.4" r="4.2"/><circle cx="196.0" cy="140.4" r="4.2"/>
+            <circle cx="252.0" cy="90.0" r="4.2"/>
+          </g>
+          <circle cx="201.6" cy="125.8" r="4" fill="#131b26"/>
+          <text x="282" y="52" font-family="IBM Plex Sans,sans-serif" font-size="12" font-weight="600" fill="#6e4a8c">PC1</text>
+          <text x="150" y="88" font-family="IBM Plex Sans,sans-serif" font-size="12" font-weight="600" fill="#8a5a1c">PC2</text>
+          <text x="360" y="90" font-family="IBM Plex Sans,sans-serif" font-size="12.5" font-weight="600" fill="#131b26">Proportion of variance explained</text>
+          <rect x="360" y="106" width="251.8" height="22" fill="#6e4a8c" fill-opacity=".8"/>
+          <rect x="611.8" y="106" width="6.2" height="22" fill="#8a5a1c" fill-opacity=".8"/>
+          <text x="486" y="122" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="11.5" font-weight="600" fill="#ffffff">PC1 — 97.6%</text>
+          <text x="618" y="146" text-anchor="end" font-family="IBM Plex Sans,sans-serif" font-size="11.5" fill="#8a5a1c">PC2 — 2.4%</text>
+          <text x="360" y="180" font-family="IBM Plex Sans,sans-serif" font-size="11.5" fill="#4a5765">Two correlated predictors carry</text>
+          <text x="360" y="197" font-family="IBM Plex Sans,sans-serif" font-size="11.5" fill="#4a5765">almost one dimension of information.</text>
+          <text x="360" y="214" font-family="IBM Plex Sans,sans-serif" font-size="11.5" fill="#4a5765">Keeping PC1 alone loses 2.4%.</text>
+          <text x="70" y="256" font-family="IBM Plex Sans,sans-serif" font-size="11.5" fill="#4a5765">The two component directions are perpendicular by construction, and the black dot is the mean the analysis is centred on.</text>
+        </svg>
+        <figcaption>Ten points, two predictors. The first component follows the direction the cloud actually spreads along and accounts for 97.6% of the variance; the perpendicular second component accounts for the remaining 2.4%, so one number can stand in for two with little loss.</figcaption>
+      </figure>
+
+      <div class="callout">
+        <p class="tag">Scaling decides the answer</p>
+        <p>PCA maximises variance, and variance depends on units. A predictor measured in a large unit dominates the first component for no substantive reason. Unless every predictor is already in the same unit, standardize before running it — otherwise the components describe your measuring choices rather than your data. A scree plot of the proportion of variance explained is the usual way to choose how many components to keep, with the elbow taken as the cut-off.</p>
+      </div>
+
+      <h3>Clustering</h3>
+      <table class="plain">
+        <tr><th>Method</th><th>What you must decide first</th></tr>
+        <tr><td><strong>k-means</strong></td><td>The number of clusters, K, before you start. The algorithm assigns points to the nearest centre, recomputes the centres, and repeats until nothing moves. It finds a local optimum that depends on the random initialisation, so it should be run several times from different starts and the best result kept</td></tr>
+        <tr><td><strong>Hierarchical clustering</strong></td><td>Nothing up front — it builds a dendrogram of nested groupings, and you choose where to cut afterwards. But you must choose a dissimilarity measure and a linkage rule, and those choices change the answer as much as K does</td></tr>
+      </table>
+      <div class="defn">
+        <span class="term">Why clustering results are fragile</span>
+        <p>Whether the predictors were standardized, which dissimilarity measure was used, which linkage, what K is, and where the dendrogram is cut all change the output — and none of them can be settled by an error measure, because there is none. The honest practice is to try several settings, report what is stable across them, and treat clusters as a hypothesis rather than a finding.</p>
+      </div>
+
+      <div class="ix" data-quiz="exam-l8-q1">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">You run k-means twice on the same data with the same K and get two different clusterings. What has happened?</p>
+        <div class="opts">
+          <button class="opt" data-fb="A bug is possible but it is not the first explanation. This behaviour is expected: the algorithm is documented to converge to a local optimum that depends on where it started.">Something is wrong with the implementation — the algorithm is deterministic.</button>
+          <button class="opt" data-right data-fb="k-means converges to a local optimum, and which one it reaches depends on the random initial assignment. The standard remedy is to run it many times from different starts and keep the solution with the lowest within-cluster variation.">The algorithm found two different local optima, because it starts from a random assignment.</button>
+          <button class="opt" data-fb="Nothing here indicates that. Genuinely absent structure would show up as unstable clusters across many settings, not as two runs differing — which happens even when the structure is strong and obvious.">K was chosen badly, so there is no real cluster structure in the data.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="branch" data-branch="exam-l8-branch">
+        <div class="persona">
+          <span class="av">RT</span>
+          <span class="who"><b>Rina Tavares</b><span>Analyst, customer insight team</span></span>
+        </div>
+        <div class="scene" data-step="1">
+          <p>Rina has 40 predictors describing customers — spend in different units, visit counts, tenure in months — and is asked for customer segments. She runs k-means with K = 4 on the raw columns. Annual spend, which runs into the thousands, is the only variable that visibly separates the clusters.</p>
+          <p class="said">A stakeholder: “Four clean segments, and they’re clearly driven by spend. Let’s build the campaign around them.”</p>
+          <p><strong>What should Rina do first?</strong></p>
+          <div class="choices">
+            <button class="choice" data-go="2" data-tone="bad" data-head="What it misses"
+              data-outcome="The clusters look driven by spend because spend has the largest numbers, not because it carries the most information. Distance-based methods add up squared differences across columns, so a variable measured in thousands drowns out one measured in tens whatever either one means.">
+              Report the segments — the data clearly says spend is the dominant factor.
+            </button>
+            <button class="choice" data-go="2" data-tone="good" data-head="What it reveals"
+              data-outcome="Standardizing puts every predictor on comparable footing, and the clustering is worth rerunning from scratch afterwards. If the same four segments survive, the finding is real; if they dissolve, they were an artefact of the units all along.">
+              Standardize the predictors and rerun, before interpreting anything.
+            </button>
+            <button class="choice" data-go="2" data-tone="bad" data-head="What goes wrong"
+              data-outcome="Raising K does not address the problem. The distance measure is still dominated by whichever column has the biggest numbers, so more clusters simply subdivides the same spend axis more finely.">
+              Increase K to 8 so the smaller effects get their own clusters.
+            </button>
+          </div>
+        </div>
+        <div class="scene" data-step="2" data-end="1" hidden>
+          <p><strong>After standardizing</strong>, three of the four segments survive and one dissolves into the others. Repeated runs from different random starts agree on the three. Rina now wants to show the result to people who cannot read 40 dimensions.</p>
+          <p><strong>What is the reasonable next step?</strong></p>
+          <div class="choices">
+            <button class="choice" data-tone="bad" data-head="What it costs"
+              data-outcome="Picking two columns to plot discards 38 others and guarantees that whichever pair looks cleanest gets chosen. It is a presentation decision dressed as an analysis, and the picture will not reflect what the clustering actually used.">
+              Pick the two most interesting predictors and plot the clusters against those.
+            </button>
+            <button class="choice" data-tone="good" data-head="The right move"
+              data-outcome="Project onto the first two principal components and plot the clusters there. The axes are combinations of all 40 predictors rather than a chosen pair, and reporting the proportion of variance the two components carry tells the audience honestly how much of the picture they are seeing.">
+              Project onto the first two principal components and plot the clusters there.
+            </button>
+            <button class="choice" data-tone="bad" data-head="What it misses"
+              data-outcome="Cross-validation needs something to be right about, and a clustering has no held-out truth to check against. Stability across settings and random starts — which she already has — is the available evidence, and it is not the same thing as validation.">
+              Cross-validate the clustering to confirm the three segments are correct.
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-head"><span class="lbl">Notes — unsupervised methods</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="examl8" data-placeholder="Reading: §12.2 PCA, §12.4 clustering, §12.3 for missing values…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Cross-module link</span>
+      <p class="q">Where do principal components come back on this page?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">In Topic 6, as principal components regression. The components are constructed here without ever consulting the response, then used as predictors — which keeps the construction safe from overfitting and also means nothing guarantees the highest-variance direction is the one that predicts Y.</p>
       </details>
     </aside>
   </div>
 </section>
 
 <section class="close" style="--accent:#131b26">
-  <h2>How the pieces fit together</h2>
-  <p class="h2meta">The through-line across the four sections</p>
+  <h2>How the topics fit together</h2>
+  <p class="h2meta">The through-line across all eight</p>
   <ul class="thread">
-    <li><span class="dot" style="--d:#4a6b2a"></span><span class="lbl">Section 1</span><span>Establishes that three quizzes hold three quarters of the grade, which sets every priority that follows.</span></li>
-    <li><span class="dot" style="--d:#33507f"></span><span class="lbl">Section 2</span><span>Shows that the early modules are examined three times and the late ones once, so revision is not evenly valuable.</span></li>
-    <li><span class="dot" style="--d:#8a5a1c"></span><span class="lbl">Section 3</span><span>Turns a paper constraint into a revision method: what fits on the sheet is what you actually needed.</span></li>
-    <li><span class="dot" style="--d:#8a3d5c"></span><span class="lbl">Section 4</span><span>Covers the losses that have nothing to do with knowing the material.</span></li>
+    <li><span class="dot" style="--d:#4a6b2a"></span><span class="lbl">Topic 1</span><span>Establishes that every method estimates one unknown function, and that some error can never be removed.</span></li>
+    <li><span class="dot" style="--d:#33507f"></span><span class="lbl">Topic 2</span><span>Shows why more flexibility eventually makes things worse, and names the two forces behind it.</span></li>
+    <li><span class="dot" style="--d:#1f6b6b"></span><span class="lbl">Topic 3</span><span>Supplies the only honest way to find the turning point, by holding data out.</span></li>
+    <li><span class="dot" style="--d:#7a3f52"></span><span class="lbl">Topic 4</span><span>Applies the trade to boundaries: each classifier is a different assumption about shape.</span></li>
+    <li><span class="dot" style="--d:#1b5e7e"></span><span class="lbl">Topic 5</span><span>Sets the low-variance, high-bias baseline, and catalogues how its assumptions fail.</span></li>
+    <li><span class="dot" style="--d:#8a5a1c"></span><span class="lbl">Topic 6</span><span>Buys variance reduction with deliberate bias, and gets variable selection thrown in.</span></li>
+    <li><span class="dot" style="--d:#2f6b52"></span><span class="lbl">Topic 7</span><span>Takes the opposite route — high-variance models averaged until the variance goes away.</span></li>
+    <li><span class="dot" style="--d:#6e4a8c"></span><span class="lbl">Topic 8</span><span>Removes the response, and with it every method of checking whether you were right.</span></li>
   </ul>
 
   <h3 style="color:#131b26">Things worth noticing</h3>
   <ul>
-    <li><strong>The per-question time budget is the hidden difficulty setting.</strong> A midterm gives 1.8 to 2.0 minutes a question; the final gives three. The final covers twice as much material with at least half again as much thinking time per item — which usually makes it the more comfortable paper despite being comprehensive.</li>
-    <li><strong>The note sheet allowance scales with coverage, so it is not a bonus.</strong> Two midterm sheets cover ten and six modules; two final sheets cover twenty-one. Per module you have less room on the final, which is why it should be a compression of the midterm sheets rather than a fresh document.</li>
-    <li><strong>Coursework is worth less than it feels.</strong> Homework, project and syllabus quiz together are 25% — the weight of one quiz. That is not an argument for skipping homework, which is where the practice happens; it is an argument against letting homework crowd out quiz revision.</li>
-    <li><strong>Two rules produce zeroes rather than deductions.</strong> Missing a quiz window and skipping peer assessments. Neither is recoverable, and both are calendar problems rather than knowledge problems.</li>
-    <li><strong>The stated course goal is not recall.</strong> The syllabus says the aim is choosing an appropriate model for a question, specifying the data it needs, knowing what its answer will and will not tell you, and judging whether someone else’s modelling was reasonable. Questions written from that goal reward knowing when a method applies far more than knowing its derivation.</li>
+    <li><strong>Topic 2 is the whole page in one sentence.</strong> Regularization adds bias to remove variance. Random forests remove variance by averaging. Pruning removes variance by simplifying. Cross-validation locates the point where the trade turns. If you can only remember one thing, remember the U.</li>
+    <li><strong>Two opposite strategies, same target.</strong> Topic 6 takes a low-variance method and deliberately makes it more biased; Topic 7 takes high-variance trees and averages the variance away. They meet in the middle from opposite sides, and neither is universally better.</li>
+    <li><strong>Standardization is load-bearing in three separate places.</strong> Ridge and lasso penalties depend on units; PCA maximises variance, which depends on units; distance-based methods add up squared differences, which depend on units. It never affects ordinary least squares, which is why people forget it matters elsewhere.</li>
+    <li><strong>Training error is untrustworthy in the same way three times.</strong> Training MSE falls with flexibility, R² never falls when a predictor is added, and an unpruned tree fits perfectly. Three faces of one fact.</li>
+    <li><strong>Interpretability is a constraint, not a bonus.</strong> Logistic regression over a black box, a pruned tree over a forest, lasso over ridge — each is a case where the readable answer is chosen despite being less accurate. Knowing when that trade is right is what the course actually asks for.</li>
   </ul>
 
-  <h3 style="color:#131b26">Before each quiz</h3>
+  <h3 style="color:#131b26">Likely exam targets</h3>
   <ul>
-    <li>Confirm the proctoring setup works — well before the window, not on the day.</li>
-    <li>Book a slot early in the eleven-day window so a failure still leaves room to re-sit within it.</li>
-    <li>Hand-write the note sheet at the allowed size and do one timed run using only that sheet.</li>
-    <li>Have notes and blank scratch paper ready to show both sides during the room scan.</li>
-    <li>Leave the calculator in a drawer — none of the questions need one.</li>
-    <li>For midterm 2, refresh modules 1 to 10 for the ideas even though they are not the focus.</li>
-    <li>For the final, give modules 17 to 21 a proper pass — it is their only appearance.</li>
+    <li>Write Y = f(X) + ε and explain which part of the error is reducible and which is not.</li>
+    <li>State the bias–variance decomposition and describe the shape of training and test error against flexibility.</li>
+    <li>Give two defects of a single validation split, and say how k-fold fixes each.</li>
+    <li>Explain why LOOCV has low bias but high variance.</li>
+    <li>Give two reasons not to run linear regression on a binary response.</li>
+    <li>Interpret a logistic regression coefficient in terms of log-odds and odds.</li>
+    <li>Say what each of LDA, QDA, naive Bayes and k-nearest neighbours assumes, and when each wins.</li>
+    <li>Explain why R² cannot compare models with different numbers of predictors.</li>
+    <li>Distinguish an outlier from a high-leverage point, and say which does more damage.</li>
+    <li>Write both the ridge and lasso objectives and explain why only one can set a coefficient to zero.</li>
+    <li>Say why predictors must be standardized before ridge, lasso, PCA or k-means, but not before least squares.</li>
+    <li>Explain the single change from bagging to random forests, and why it improves on averaging alone.</li>
+    <li>Say why a clustering cannot be cross-validated, and what to report instead.</li>
   </ul>
 
   <div class="note">
-    <div class="note-head"><span class="lbl">Exam prep — my own plan</span><span class="hint">click to type; saves automatically</span></div>
-    <div class="note-body" contenteditable="true" data-note="examsummary" data-placeholder="Your dates, your slot bookings, what you still need to revise…"></div>
+    <div class="note-head"><span class="lbl">Exam prep — my own summary</span><span class="hint">click to type; saves automatically</span></div>
+    <div class="note-body" contenteditable="true" data-note="examsummary" data-placeholder="Write the topics back in your own words — the fastest way to find out what you don't actually know yet."></div>
   </div>
 
   <footer>
-    <span class="ai"><strong>Written by an AI model from a course syllabus.</strong> Not reviewed by any instructor or institution — verify everything here against your own current syllabus before relying on it, because assessment terms change between offerings.
+    <span class="ai"><strong>Written by an AI model.</strong> Not reviewed by any instructor or institution — verify anything you rely on against the lectures and the textbook itself.
     <br><br>
-    <strong>This page is administrative, not lecture content.</strong> Unlike the module pages, nothing here comes from a lecture recording. The institution, course code, instructor name, platform and forum names, contact details, links and all calendar dates have been removed; timings are expressed relative to the semester instead.
+    <strong>Where this page comes from.</strong> Unlike the module pages, none of this is drawn from lecture recordings. The topic order follows the course’s own topic list; the explanations are written here from the standard treatment of these methods and are not a reproduction, summary or translation of any textbook’s text. Section pointers to <em>An Introduction to Statistical Learning</em> (second edition) are given for further reading only — no passage, figure, dataset or example from it appears on this page. Every figure here was drawn from data generated for these notes: the bias–variance curves, the ROC curve, the logistic and least-squares fits, the ridge and lasso coefficient paths, the tree partition, and the principal component directions and their 97.6% / 2.4% split are all computed rather than copied.
     <br><br>
-    <strong>What goes beyond the syllabus.</strong> The syllabus supplies the weights, formats, question counts, durations, coverage, note-sheet rules, proctoring requirements and integrity policies. Everything else is added here: the per-question time arithmetic, the observation that the early modules are examined three times, the whole of “What actually belongs on it” and the note-sheet ordering activity, the Jordan Mensah scenario, which is invented, all quiz feedback and margin questions, and “Things worth noticing”. The textbook crosswalk in Section 2 lists chapter numbers of an introductory statistical-learning text for reference only — no textbook content is reproduced here, and the syllabus states that the course has no set textbook, so those chapters are background rather than examinable coverage.</span>
+    <strong>What is added rather than sourced.</strong> All quiz feedback, margin questions and exam targets; the Rina Tavares scenario, which is invented; the whole of “Things worth noticing”; and the framing of Topic 2 as the organising idea of the page. A general statistical-learning text covers roughly half this course — it carries nothing on change detection, classical time-series models, design of experiments, simulation or optimization, so for those topics the lectures are the only source.</span>
   </footer>
 </section>
 

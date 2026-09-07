@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Module 5: Preparing Data — Study Notes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="study.css">
+</head>
+<body data-page="m5">
+<div class="wrap">
+
+<div class="topbar">
+  <div class="topline">
+    <a class="brand" href="index.html">Analytics Modeling &middot; Study Notes</a>
+    <nav class="tabs" aria-label="Modules"></nav>
+    <div class="toolbar">
+      <button class="btn" id="exportBtn">Export</button>
+      <button class="btn" id="importBtn">Import</button>
+    </div>
+  </div>
+  <nav class="rail" id="rail" aria-label="Lessons in this module"></nav>
+</div>
+
+<header class="hero">
+  <h1>Module 5: Preparing Data</h1>
+  <p class="sub">Before a model sees your data, decide which of the points that don’t fit are mistakes — and which are the most useful observations you have.</p>
+
+  <svg class="plot" viewBox="0 0 660 330" role="img" aria-label="A time series of twenty readings that hover in a narrow band, with a single reading far above the others circled in red.">
+    <line x1="60" y1="280" x2="620" y2="280" stroke="#131b26" stroke-width="1.5"/>
+    <line x1="60" y1="280" x2="60" y2="60" stroke="#131b26" stroke-width="1.5"/>
+    <rect x="60" y="166.3" width="560" height="27.5" fill="#8a5a1c" fill-opacity=".07"/>
+    <text x="614" y="161" text-anchor="end" font-family="IBM Plex Sans,sans-serif" font-size="11.5" fill="#8a5a1c">where every other reading sits</text>
+    <polyline points="60.0,184.7 89.5,173.7 118.9,190.2 148.4,168.2 177.9,179.2 207.4,193.8 236.8,170.0 266.3,182.8 295.8,175.5 325.3,188.3 354.7,74.7 384.2,181.0 413.7,171.8 443.2,192.0 472.6,166.3 502.1,186.5 531.6,177.3 561.1,170.0 590.5,188.3 620.0,173.7"
+      fill="none" stroke="#4a5765" stroke-width="2"/>
+    <circle cx="354.7" cy="74.7" r="5.5" fill="#8a3d5c"/>
+    <circle cx="354.7" cy="74.7" r="13" fill="none" stroke="#8a3d5c" stroke-width="2"/>
+    <text x="374" y="70" font-family="IBM Plex Sans,sans-serif" font-size="12.5" font-weight="600" fill="#8a3d5c">a broken sensor? a typing error?</text>
+    <text x="374" y="88" font-family="IBM Plex Sans,sans-serif" font-size="12.5" font-weight="600" fill="#8a3d5c">or the one week that mattered?</text>
+    <text x="60" y="310" font-family="IBM Plex Sans,sans-serif" font-size="12" fill="#4a5765">Nothing in the picture answers the question. Lesson 3 says where the answer comes from.</text>
+  </svg>
+
+  <ul class="track">
+    <li style="--dot:#2f6b52"><a href="#l1"><span class="tnum">Lesson 1</span><span class="tname">Preparing data</span><span class="tq">Why can’t raw data go straight into a model?</span></a></li>
+    <li style="--dot:#33507f"><a href="#l2"><span class="tnum">Lesson 2</span><span class="tname">Finding outliers</span><span class="tq">What counts as a point that doesn’t fit?</span></a></li>
+    <li style="--dot:#8a3d5c"><a href="#l3"><span class="tnum">Lesson 3</span><span class="tname">Dealing with outliers</span><span class="tq">You found one. Now what?</span></a></li>
+  </ul>
+
+  <div class="badge-strip">
+    <p class="cap">Badges unlock when every activity in a lesson is finished.</p>
+    <ul class="badges">
+      <li class="badge" data-for="l1" style="--b:#2f6b52"><span class="gem">P</span><span class="nm">Prep Work</span></li>
+      <li class="badge" data-for="l2" style="--b:#33507f"><span class="gem">O</span><span class="nm">Spotter</span></li>
+      <li class="badge" data-for="l3" style="--b:#8a3d5c"><span class="gem">D</span><span class="nm">The Verdict</span></li>
+      <li class="badge" data-for="*"  style="--b:#131b26"><span class="gem">★</span><span class="nm">Module 5 complete</span></li>
+    </ul>
+  </div>
+</header>
+
+<!-- ==================== LESSON 1 ==================== -->
+<section class="lesson" id="l1" data-short="Preparing data" style="--accent:#2f6b52">
+  <div class="lesson-head">
+    <span class="ln">Lesson 1</span>
+    <h2>Preparing data</h2>
+    <p class="keyline">Three things can quietly wreck a model before it is even fitted — mismatched scales, a handful of extreme points, and columns carrying no information — and all three are fixable in advance.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <div class="callout">
+        <p class="tag">What this lesson is, and isn’t</p>
+        <p>The source lecture for this lesson is a short preview: it names the three problems, says each can be dealt with before modelling, and hands off to the lessons that follow. It contains no procedures. Everything below that goes past naming the three problems — the worked scale comparison, the pipeline diagram, and the pointers to where each problem is actually solved — is orientation material written for these notes, not lecture content. The <a href="#l1-check">margin questions</a> and both activities in this lesson are likewise written here rather than drawn from the recording.</p>
+      </div>
+
+      <h3>The gap between how we talk and what we do</h3>
+      <p>Throughout this course, data is described as though it went straight into the model: a <span class="key">predictor</span> in a regression, a <span class="key">factor</span> in a classification model. Credit score. Average daily temperature. Units sold at each event. The value of a share at five-second intervals. The concentration of a chemical in drinking water.</p>
+      <p>The notation encourages this. Writing <span class="m">x<sub>ij</sub></span> for attribute <em>j</em> of data point <em>i</em> makes it sound as though <span class="m">x<sub>ij</sub></span> is simply the number that was measured — the exact count of units sold, the exact share price.</p>
+      <div class="defn">
+        <span class="term">Data preparation</span>
+        <p>Everything done to a dataset between collecting it and handing it to a model. When a course says “assume the data is given”, this is the work it is assuming you already did.</p>
+      </div>
+      <p>Three problems make that assumption unsafe.</p>
+
+      <figure class="hotwrap" data-hotspot="m5l1-hot">
+        <svg class="fig" viewBox="0 0 660 260" role="img" aria-label="A flow diagram. Raw data on the left feeds three labelled problem boxes in the middle — mismatched scales, a few extreme points, and extraneous information — which then feed a model box on the right. All three middle boxes are clickable.">
+          <!-- raw data -->
+          <rect x="28" y="95" width="110" height="60" fill="#ffffff" stroke="#131b26" stroke-width="1.8"/>
+          <text x="83" y="120" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="12.5" font-weight="600" fill="#131b26">Raw data</text>
+          <text x="83" y="138" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="11" fill="#4a5765">as collected</text>
+          <!-- connectors in -->
+          <line x1="138" y1="125" x2="200" y2="67"  stroke="#9aa5b1" stroke-width="1.4"/>
+          <line x1="138" y1="125" x2="200" y2="125" stroke="#9aa5b1" stroke-width="1.4"/>
+          <line x1="138" y1="125" x2="200" y2="183" stroke="#9aa5b1" stroke-width="1.4"/>
+          <!-- three problems -->
+          <rect x="200" y="40"  width="230" height="54" fill="#f7f9fb" stroke="#2f6b52" stroke-width="1.5"/>
+          <text x="215" y="63"  font-family="IBM Plex Sans,sans-serif" font-size="12.5" font-weight="600" fill="#2f6b52">Mismatched scales</text>
+          <text x="215" y="81"  font-family="IBM Plex Sans,sans-serif" font-size="11" fill="#4a5765">income ≈ 10⁵, credit score ≈ 10²</text>
+          <rect x="200" y="98"  width="230" height="54" fill="#f7f9fb" stroke="#2f6b52" stroke-width="1.5"/>
+          <text x="215" y="121" font-family="IBM Plex Sans,sans-serif" font-size="12.5" font-weight="600" fill="#2f6b52">A few extreme points</text>
+          <text x="215" y="139" font-family="IBM Plex Sans,sans-serif" font-size="11" fill="#4a5765">one or two points bend the answer</text>
+          <rect x="200" y="156" width="230" height="54" fill="#f7f9fb" stroke="#2f6b52" stroke-width="1.5"/>
+          <text x="215" y="179" font-family="IBM Plex Sans,sans-serif" font-size="12.5" font-weight="600" fill="#2f6b52">Extraneous information</text>
+          <text x="215" y="197" font-family="IBM Plex Sans,sans-serif" font-size="11" fill="#4a5765">columns that add noise, not signal</text>
+          <!-- connectors out -->
+          <line x1="430" y1="67"  x2="490" y2="118" stroke="#9aa5b1" stroke-width="1.4"/>
+          <line x1="430" y1="125" x2="490" y2="125" stroke="#9aa5b1" stroke-width="1.4"/>
+          <line x1="430" y1="183" x2="490" y2="132" stroke="#9aa5b1" stroke-width="1.4"/>
+          <!-- model -->
+          <rect x="490" y="95" width="140" height="60" fill="#ffffff" stroke="#131b26" stroke-width="1.8"/>
+          <text x="560" y="120" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="12.5" font-weight="600" fill="#131b26">The model</text>
+          <text x="560" y="138" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="11" fill="#4a5765">regression, SVM, clustering…</text>
+
+          <g class="hs" data-title="Mismatched scales"
+             data-body="Household income is often measured at 10⁵ or higher; a credit score sits at about 10². Feeding both in raw lets the algorithm chase the attribute with the bigger numbers and effectively ignore the other. Module 2, Lesson 7 shows exactly why the sum-of-squared-coefficients term breaks, and gives the two fixes — scaling into a fixed range, and standardizing to mean 0 and standard deviation 1.">
+            <rect class="hit" x="200" y="40" width="230" height="54"/><rect class="ring" x="200" y="40" width="230" height="54" rx="3"/>
+          </g>
+          <g class="hs" data-title="A few extreme points"
+             data-body="One or two data points can have an effect on the overall solution that is magnified out of proportion, purely because they sit so far from everything else. These are outliers, and they take up Lessons 2 and 3 — first how to find them, then the harder question of what to do once you have.">
+            <rect class="hit" x="200" y="98" width="230" height="54"/><rect class="ring" x="200" y="98" width="230" height="54" rx="3"/>
+          </g>
+          <g class="hs" data-title="Extraneous information"
+             data-body="Columns that carry little or nothing relevant still complicate the model and make the fitted solution harder to interpret correctly. The remedies — variable selection and dimensionality reduction — are named in the source lecture as things the wider topic addresses, but no method for them appears in the recordings behind this module.">
+            <rect class="hit" x="200" y="156" width="230" height="54"/><rect class="ring" x="200" y="156" width="230" height="54" rx="3"/>
+          </g>
+        </svg>
+        <div class="hotpanel"><span class="hint">Three boxes are clickable. Open all three to finish this activity.</span></div>
+      </figure>
+    </div>
+    <aside class="check" id="l1-check">
+      <span class="n">Orientation</span>
+      <p class="q">Which of the three problems is actually taught inside this module?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Only the second. Scaling belongs to Module 2, Lesson 7; variable selection and dimensionality reduction are named but not covered anywhere in these recordings. Lessons 2 and 3 here handle extreme points. Module 6 then changes the question entirely, from one odd point to a shift in the whole process.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Why scale is a problem and not just an inconvenience</h3>
+      <p>Put average household income and credit score side by side. Income runs into the hundreds of thousands; a credit score runs to a few hundred. Nothing about that is wrong — the two quantities simply measure different things in different units.</p>
+      <p>The trouble is that many algorithms add up contributions from every attribute, and an attribute measured in larger numbers contributes larger numbers. The optimizer then spends its effort where the numbers are big, which is a fact about the units rather than about the world. That is what “leading our algorithms down the wrong path” means concretely.</p>
+      <div class="callout">
+        <p class="tag">A cross-reference, not a repeat</p>
+        <p>Module 2, Lesson 7 works this through with an SVM: coefficients of 5 and 700 on two attributes, and a 1% nudge to the larger one moving the objective as much as a 600% change to the smaller. Rather than restate it here, treat that lesson as the answer to the first box in the diagram above.</p>
+      </div>
+
+      <div class="ix" data-quiz="m5l1-q1">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">What makes data preparation a distinct stage rather than part of modelling?</p>
+        <div class="opts">
+          <button class="opt" data-fb="Tempting, because preparation does usually happen first. But some of it can’t: which attributes are extraneous is often only clear once a model has been fitted, and the choice between scaling and standardizing may come down to trying both. Order isn’t the defining feature.">It always happens before any model is fitted, so it is chronologically separate.</button>
+          <button class="opt" data-right data-fb="Every model downstream inherits whatever you did or failed to do here, and the same three problems break regression, classification and clustering alike. That is why the fixes are taught once rather than restated in each modelling topic.">The same problems and the same fixes apply across every model, so they are dealt with once rather than per method.</button>
+          <button class="opt" data-fb="Preparation is not confined to repairing faults. Data can be perfectly correct — accurately recorded income and credit scores — and still need scaling, because the problem is the mismatch between units rather than any error in them.">It is about correcting errors in the data, whereas modelling is about the data that is correct.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="note">
+        <div class="note-head"><span class="lbl">Class discussion — Lesson 1</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="m5l1" data-placeholder="Which preparation steps your own datasets have needed, tooling, anything the TA emphasised…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Worth noticing</span>
+      <p class="q">Two of the three problems are about values, and one isn’t. Which, and why does that matter?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Scale and extreme points are properties of the numbers in a column. Extraneous information is a property of which columns you kept at all — so it is fixed by removing or combining columns rather than by transforming values. That is why it needs a different family of methods.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
+<!-- ==================== LESSON 2 ==================== -->
+<section class="lesson" id="l2" data-short="Finding outliers" style="--accent:#33507f">
+  <div class="lesson-head">
+    <span class="ln">Lesson 2</span>
+    <h2>Finding outliers</h2>
+    <p class="keyline">An outlier is a point that doesn’t fit its context — which is why there are several kinds of them, and no single test that finds them all.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>The definition, and immediately a complication</h3>
+      <div class="defn">
+        <span class="term">Outlier</span>
+        <p>A data point that is very different from the rest of the dataset.</p>
+      </div>
+      <p>The obvious case is a single value far from everything else. That is what most people picture when they hear the word, and it has a name: a <span class="key">point outlier</span>.</p>
+      <p>But suppose that alongside one far-flung value there is also a small huddle of two or three points, well away from the mass of the data though not as extreme as the single one. Are those outliers too? There are only a few of them, and they are clearly different from the overwhelming majority — which is the definition. Yet they might have a perfectly good reason for being there.</p>
+      <div class="callout">
+        <p class="tag">Why the answer is “it depends”, and more so here than usual</p>
+        <p>Outliers carry philosophical questions as well as statistical ones. Deciding that a point “doesn’t belong” is a claim about what the dataset is supposed to represent, and no amount of arithmetic settles that. Lesson 3 is entirely about this problem; the rest of this lesson only covers spotting candidates.</p>
+      </div>
+      <p>Two further kinds show up once the data has a time attribute.</p>
+
+      <figure class="hotwrap" data-hotspot="m5l2-hot">
+        <svg class="fig" viewBox="0 0 660 260" role="img" aria-label="Three panels showing kinds of outlier. Left: a scatter with one very distant point and a pair of moderately distant points. Middle: a seasonal temperature curve with a mid-winter reading equal to the mid-summer normal. Right: an ECG-style spike train with one beat missing in the middle. Each panel is clickable.">
+          <!-- P1 point outlier -->
+          <text x="30" y="26" font-family="IBM Plex Sans,sans-serif" font-size="12.5" font-weight="600" fill="#131b26">Point outlier</text>
+          <line x1="30" y1="205" x2="230" y2="205" stroke="#c9d2db" stroke-width="1.4"/>
+          <g fill="#4a5765">
+            <circle cx="45.0" cy="177.1" r="4"/><circle cx="56.3" cy="168.6" r="4"/><circle cx="67.7" cy="183.6" r="4"/>
+            <circle cx="79.0" cy="162.1" r="4"/><circle cx="90.3" cy="172.9" r="4"/><circle cx="101.7" cy="155.7" r="4"/>
+            <circle cx="113.0" cy="179.3" r="4"/><circle cx="124.3" cy="166.4" r="4"/><circle cx="135.7" cy="185.7" r="4"/>
+            <circle cx="147.0" cy="160.0" r="4"/><circle cx="158.3" cy="170.7" r="4"/><circle cx="169.7" cy="175.0" r="4"/>
+            <circle cx="181.0" cy="164.3" r="4"/><circle cx="192.3" cy="181.4" r="4"/>
+          </g>
+          <circle cx="141.3" cy="63.6" r="5" fill="#8a3d5c"/>
+          <text x="152" y="68" font-family="IBM Plex Sans,sans-serif" font-size="11.5" fill="#8a3d5c">clearly out</text>
+          <g fill="#a2621f">
+            <circle cx="203.7" cy="112.9" r="5"/><circle cx="215.0" cy="108.6" r="5"/>
+          </g>
+          <text x="196" y="97" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="11.5" fill="#a2621f">a few, but out</text>
+
+          <!-- P2 contextual -->
+          <text x="250" y="26" font-family="IBM Plex Sans,sans-serif" font-size="12.5" font-weight="600" fill="#131b26">Contextual outlier</text>
+          <line x1="250" y1="205" x2="450" y2="205" stroke="#c9d2db" stroke-width="1.4"/>
+          <polyline points="255.0,190.0 271.8,182.0 288.6,160.0 305.5,130.0 322.3,100.0 339.1,78.0 355.9,70.0 372.7,78.0 389.5,100.0 406.4,130.0 423.2,160.0 440.0,182.0"
+            fill="none" stroke="#33507f" stroke-width="2"/>
+          <line x1="255" y1="70" x2="355.9" y2="70" stroke="#8a3d5c" stroke-width="1.3" stroke-dasharray="4 4"/>
+          <circle cx="355.9" cy="70" r="4" fill="#33507f"/>
+          <circle cx="255" cy="70" r="5" fill="#8a3d5c"/>
+          <circle cx="255" cy="70" r="10" fill="none" stroke="#8a3d5c" stroke-width="1.8"/>
+          <text x="262" y="46" font-family="IBM Plex Sans,sans-serif" font-size="11.5" fill="#8a3d5c">same value, wrong month</text>
+          <text x="255" y="222" font-family="IBM Plex Sans,sans-serif" font-size="11" fill="#4a5765">Jan</text>
+          <text x="350" y="222" font-family="IBM Plex Sans,sans-serif" font-size="11" fill="#4a5765">Jul</text>
+          <text x="428" y="222" font-family="IBM Plex Sans,sans-serif" font-size="11" fill="#4a5765">Dec</text>
+
+          <!-- P3 collective -->
+          <text x="470" y="26" font-family="IBM Plex Sans,sans-serif" font-size="12.5" font-weight="600" fill="#131b26">Collective outlier</text>
+          <line x1="470" y1="180" x2="640" y2="180" stroke="#c9d2db" stroke-width="1.4"/>
+          <g fill="none" stroke="#2f6b52" stroke-width="2">
+            <path d="M483.4,180 L487.4,80 L491.4,180"/>
+            <path d="M502.7,180 L506.7,80 L510.7,180"/>
+            <path d="M522.0,180 L526.0,80 L530.0,180"/>
+            <path d="M541.3,180 L545.3,80 L549.3,180"/>
+            <path d="M560.7,180 L564.7,80 L568.7,180"/>
+            <path d="M599.3,180 L603.3,80 L607.3,180"/>
+            <path d="M618.6,180 L622.6,80 L626.6,180"/>
+          </g>
+          <rect x="570" y="72" width="26" height="116" fill="#8a3d5c" fill-opacity=".10" stroke="#8a3d5c" stroke-width="1.5" stroke-dasharray="4 3"/>
+          <text x="584" y="62" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="11.5" fill="#8a3d5c">nothing here</text>
+          <text x="470" y="205" font-family="IBM Plex Sans,sans-serif" font-size="11" fill="#4a5765">no single value is wrong</text>
+
+          <g class="hs" data-title="Point outlier — and the argument about the pair"
+             data-body="The single high value is what everyone means by an outlier: its own value is far from everything else. The pair to its right is the interesting case. There are only a few of them and they are clearly separated from the bulk of the data, which fits the definition — but a small group is exactly what a genuine second population looks like too. Nothing in the picture settles it.">
+            <rect class="hit" x="30" y="40" width="200" height="170"/><rect class="ring" x="30" y="40" width="200" height="170" rx="3"/>
+          </g>
+          <g class="hs" data-title="Contextual outlier"
+             data-body="The circled January reading is 27 degrees. That value is not extreme — the dashed line runs to July, where the same value is completely ordinary. What makes it an outlier is when it occurs. It is called contextual because it relies on the context the surrounding points provide; look at the value alone and there is nothing to see.">
+            <rect class="hit" x="250" y="40" width="200" height="170"/><rect class="ring" x="250" y="40" width="200" height="170" rx="3"/>
+          </g>
+          <g class="hs" data-title="Collective outlier — an outlier by omission"
+             data-body="In this heartbeat trace a large beat should appear inside the dashed box, and doesn’t. No individual reading is wrong, and it is hard to say which points should be called faulty — the points collectively look wrong. Reframing helps: track the time between beats instead, and most gaps are about 1,000 milliseconds while this one is about 2,000, which is an ordinary point outlier in the derived series.">
+            <rect class="hit" x="470" y="40" width="170" height="170"/><rect class="ring" x="470" y="40" width="170" height="170" rx="3"/>
+          </g>
+        </svg>
+        <div class="hotpanel"><span class="hint">Three panels are clickable. Open all three to finish this activity.</span></div>
+        <figcaption style="font-family:var(--sans);font-size:.83rem;color:var(--ink-soft);margin-top:9px;max-width:62ch;line-height:1.5">The middle panel is the one to hold on to: the January value is drawn at exactly the height of the July value, so the picture shows a point that is only an outlier because of where it sits in time.</figcaption>
+      </figure>
+    </div>
+    <aside class="check">
+      <span class="n">Vocabulary</span>
+      <p class="q">Why is a contextual outlier called contextual?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Because the surrounding points supply the context that makes it anomalous. Its own value is unremarkable; only its position relative to the rest of the series — the time at which it occurs — makes it stand out.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <div class="ix" data-match="m5l2-match" data-win="Notice that only the first is about a value. The other two are about position and about absence — which is why a single numeric test can’t catch all three.">
+        <div class="ix-head"><span class="ix-kind">match the pairs</span><span class="ix-done">matched</span></div>
+        <p class="prompt">Tap a kind of outlier, then the case that illustrates it, to pair them up.</p>
+        <div class="match">
+          <div class="col" data-side="a">
+            <h4>Kind of outlier</h4>
+            <button class="cell" data-pair="1">Point outlier</button>
+            <button class="cell" data-pair="2">Contextual outlier</button>
+            <button class="cell" data-pair="3">Collective outlier</button>
+          </div>
+          <div class="col" data-side="b">
+            <h4>The case</h4>
+            <button class="cell" data-pair="1" data-fb="The value itself is far from every other value. This is the only one of the three you can detect by looking at a single number in isolation.">A single reading sits far above every other reading in the column</button>
+            <button class="cell" data-pair="2" data-fb="Nothing is wrong with the number — 27 degrees is ordinary in July. It is anomalous only because of when it appears, which is what makes it contextual.">A mid-winter temperature equal to a perfectly normal mid-summer one</button>
+            <button class="cell" data-pair="3" data-fb="An outlier by omission: no individual point is wrong, and it is hard to name which ones are faulty. The points are only anomalous taken together.">A stretch of heartbeat data where an expected beat never appears</button>
+          </div>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <h3>Finding them automatically: one dimension</h3>
+      <p>Eyeballing pictures is the easy part. For a single quantitative attribute there is a standard tool.</p>
+      <div class="defn">
+        <span class="term">Box and whisker plot</span>
+        <p>The top and bottom of the box are the 75th and 25th percentiles; the line through the box is the median, the 50th. The whiskers run out to whatever you consider a reasonable range — the 10th and 90th percentiles, say, or the 5th and 95th. Every value beyond the whiskers is plotted individually, and those points are the possible outliers.</p>
+      </div>
+
+      <figure>
+        <svg class="fig" viewBox="0 0 660 220" role="img" aria-label="A horizontal box and whisker plot of twenty delivery times. The box runs from 44.75 to 53.5 with the median at 47.5, whiskers reach 41.9 and 62.9, and four values are plotted beyond the whiskers at 38, 41, 71 and 96 minutes.">
+          <!-- axis -->
+          <line x1="60" y1="170" x2="580" y2="170" stroke="#131b26" stroke-width="1.5"/>
+          <g font-family="IBM Plex Sans,sans-serif" font-size="11" fill="#4a5765" text-anchor="middle">
+            <text x="60"  y="190">30</text><text x="134.3" y="190">40</text><text x="208.6" y="190">50</text>
+            <text x="282.9" y="190">60</text><text x="357.1" y="190">70</text><text x="431.4" y="190">80</text>
+            <text x="505.7" y="190">90</text><text x="580" y="190">100</text>
+          </g>
+          <g stroke="#131b26" stroke-width="1.2">
+            <line x1="60" y1="170" x2="60" y2="175"/><line x1="134.3" y1="170" x2="134.3" y2="175"/>
+            <line x1="208.6" y1="170" x2="208.6" y2="175"/><line x1="282.9" y1="170" x2="282.9" y2="175"/>
+            <line x1="357.1" y1="170" x2="357.1" y2="175"/><line x1="431.4" y1="170" x2="431.4" y2="175"/>
+            <line x1="505.7" y1="170" x2="505.7" y2="175"/><line x1="580" y1="170" x2="580" y2="175"/>
+          </g>
+          <text x="320" y="211" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="11.5" fill="#4a5765">minutes to fulfil an order</text>
+          <!-- whisker line -->
+          <line x1="148.4" y1="95" x2="304.4" y2="95" stroke="#33507f" stroke-width="1.5"/>
+          <line x1="148.4" y1="78" x2="148.4" y2="112" stroke="#33507f" stroke-width="2"/>
+          <line x1="304.4" y1="78" x2="304.4" y2="112" stroke="#33507f" stroke-width="2"/>
+          <!-- box -->
+          <rect x="169.6" y="70" width="65" height="50" fill="#33507f" fill-opacity=".10" stroke="#33507f" stroke-width="2"/>
+          <line x1="190" y1="70" x2="190" y2="120" stroke="#131b26" stroke-width="2.5"/>
+          <!-- flagged points -->
+          <g fill="#8a3d5c">
+            <circle cx="119.4" cy="95" r="5"/><circle cx="141.7" cy="95" r="5"/>
+            <circle cx="364.6" cy="95" r="5"/><circle cx="550.3" cy="95" r="5"/>
+          </g>
+          <!-- labels -->
+          <g font-family="IBM Plex Sans,sans-serif" font-size="11" fill="#4a5765" text-anchor="middle">
+            <text x="169.6" y="60">25th = 44.75</text>
+            <text x="190" y="140">median 47.5</text>
+            <text x="242" y="60">75th = 53.5</text>
+            <text x="148.4" y="132">10th = 41.9</text>
+            <text x="304.4" y="132">90th = 62.9</text>
+          </g>
+          <text x="457" y="78" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="11.5" fill="#8a3d5c">plotted individually — possible outliers</text>
+          <text x="130" y="45" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="11.5" fill="#8a3d5c">38, 41</text>
+          <text x="364.6" y="78" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="11" fill="#8a3d5c">71</text>
+          <text x="550.3" y="118" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="11" fill="#8a3d5c">96</text>
+        </svg>
+        <figcaption>Twenty order-fulfilment times, ranging from 38 to 96 minutes. With whiskers set at the 10th and 90th percentiles, four values fall outside and get plotted as individual dots. Where you put the whiskers decides how many points you are asked to think about — the plot does not decide it for you.</figcaption>
+      </figure>
+
+      <div class="callout">
+        <p class="tag">A convention this lesson doesn’t mention</p>
+        <p>Most statistical software does not use percentile whiskers by default. It extends them to the furthest point within 1.5 × IQR of the box, where IQR is the 75th minus the 25th percentile. For the data above that gives 44.75 − 1.5 × 8.75 = 31.6 and 53.5 + 1.5 × 8.75 = 66.6, so only 71 and 96 get flagged — half as many points as the percentile rule. Same data, same plot type, different answer. Know which convention your software used before you report a count of outliers.</p>
+      </div>
+
+      <div class="ix" data-quiz="m5l2-q1">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">A colleague reports that a box plot “found four outliers” in the order-time data. What is the first thing to ask?</p>
+        <div class="opts">
+          <button class="opt" data-fb="Sample size is worth knowing, but it doesn’t change what the plot did. Twenty points or twenty thousand, the box plot flags whatever falls beyond wherever the whiskers were placed.">How many data points there were in total.</button>
+          <button class="opt" data-right data-fb="The count is a consequence of the whisker rule. Percentile whiskers at the 10th and 90th flag four points here; the 1.5 × IQR convention flags two. Neither is wrong, but “four outliers” is not a property of the data on its own.">Where the whiskers were set, since that alone changes the count.</button>
+          <button class="opt" data-fb="A box plot never tells you this, and no detection method does. Whether a flagged point is an error or a genuine rarity is settled by investigation outside the dataset — which is Lesson 3.">Whether the four points were errors or real values.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Exam target</span>
+      <p class="q">Name every element of a box and whisker plot and say what each shows.</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Box edges: the 25th and 75th percentiles. Line inside the box: the median, the 50th percentile. Whiskers: out to a chosen reasonable range, such as the 10th and 90th or 5th and 95th percentiles. Individual dots beyond the whiskers: the possible outliers.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Finding them automatically: more than one dimension</h3>
+      <p>There is no good all-purpose method for detecting multi-dimensional outliers, or the other types, before modelling. That is a genuine gap rather than an omission from the lesson.</p>
+      <p>What you can do is turn the problem around: <strong>fit a model first, then look at where it is most wrong</strong>. Fit an exponential smoothing model to a time series, and in most periods the difference between the actual value and the model’s estimate will be small, because the fitted function is smooth. At an outlier it will not be. The model expects a point sitting on the smooth curve, and the actual value is nowhere near it.</p>
+
+      <figure>
+        <svg class="fig" viewBox="0 0 660 260" role="img" aria-label="A smooth wave-shaped fitted curve with observed points sitting on it, except for one observation far below the curve, joined to it by a vertical line marking a large error.">
+          <line x1="60" y1="240" x2="620" y2="240" stroke="#131b26" stroke-width="1.4"/>
+          <polyline points="60.0,135.5 80.7,114.9 101.5,98.4 122.2,89.2 143.0,89.2 163.7,98.4 184.4,114.9 205.2,135.5 225.9,156.1 246.7,172.6 267.4,181.8 288.1,181.8 308.9,172.6 329.6,156.1 350.4,135.5 371.1,114.9 391.9,98.4 412.6,89.2 433.3,89.2 454.1,98.4 474.8,114.9 495.6,135.5 516.3,156.1 537.0,172.6 557.8,181.8 578.5,181.8 599.3,172.6 620.0,156.1"
+            fill="none" stroke="#33507f" stroke-width="2.2"/>
+          <g fill="#4a5765">
+            <circle cx="60.0" cy="135.5" r="3.6"/><circle cx="101.5" cy="98.4" r="3.6"/><circle cx="143.0" cy="89.2" r="3.6"/>
+            <circle cx="184.4" cy="114.9" r="3.6"/><circle cx="225.9" cy="156.1" r="3.6"/><circle cx="267.4" cy="181.8" r="3.6"/>
+            <circle cx="308.9" cy="172.6" r="3.6"/><circle cx="350.4" cy="135.5" r="3.6"/><circle cx="433.3" cy="89.2" r="3.6"/>
+            <circle cx="474.8" cy="114.9" r="3.6"/><circle cx="516.3" cy="156.1" r="3.6"/><circle cx="557.8" cy="181.8" r="3.6"/>
+            <circle cx="599.3" cy="172.6" r="3.6"/>
+          </g>
+          <line x1="391.9" y1="98.4" x2="391.9" y2="177.3" stroke="#8a3d5c" stroke-width="1.6" stroke-dasharray="4 3"/>
+          <circle cx="391.9" cy="98.4" r="4" fill="none" stroke="#33507f" stroke-width="1.8"/>
+          <circle cx="391.9" cy="177.3" r="5.5" fill="#8a3d5c"/>
+          <text x="404" y="145" font-family="IBM Plex Sans,sans-serif" font-size="11.5" fill="#8a3d5c">large error — the model expected the hollow point</text>
+          <text x="60" y="34" font-family="IBM Plex Sans,sans-serif" font-size="12" fill="#4a5765">fitted exponential smoothing model</text>
+        </svg>
+        <figcaption>Every filled dot sits on the fitted curve, so the model’s error there is near zero. One observation sits far below it, and that error is what flags the point — no threshold on the raw values would have found it, since the value itself falls inside the range the series visits elsewhere.</figcaption>
+      </figure>
+
+      <div class="callout">
+        <p class="tag">Only half the battle</p>
+        <p>Everything in this lesson produces candidates. Not one of these methods tells you whether a flagged point is a mistake, a rare but genuine event, or the most informative observation in the dataset. That question is Lesson 3’s, and it cannot be answered from inside the dataset.</p>
+      </div>
+
+      <div class="note">
+        <div class="note-head"><span class="lbl">Class discussion — Lesson 2</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="m5l2" data-placeholder="boxplot() defaults, IQR rules, multi-dimensional detection methods mentioned in office hours…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Worth noticing</span>
+      <p class="q">Why does the model-error approach catch contextual outliers when a box plot can’t?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">A box plot sees only the distribution of values, so a mid-winter reading equal to a normal summer one sits comfortably inside the box. A fitted time-series model expects a particular value <em>at that time</em>, so the same reading produces a large error. The model supplies exactly the context the word “contextual” refers to.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
+<!-- ==================== LESSON 3 ==================== -->
+<section class="lesson" id="l3" data-short="Dealing with them" style="--accent:#8a3d5c">
+  <div class="lesson-head">
+    <span class="ln">Lesson 3</span>
+    <h2>Dealing with outliers</h2>
+    <p class="keyline">Finding an outlier is the easy half — deciding whether it is an error, a real rarity worth modelling, or a real event you can’t model, takes investigation outside the dataset.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>First question: what caused it?</h3>
+      <p>Everything else follows from this. Often an outlier is simply bad data:</p>
+      <ul>
+        <li>A sensor malfunctioned</li>
+        <li>A wireless transmission between sensor and receiver failed</li>
+        <li>An experiment was contaminated — bacteria accidentally introduced into a medical test, say</li>
+        <li>A person entered the wrong figure, or copied the wrong value across</li>
+      </ul>
+      <p>But sometimes an outlier reflects something real in the system. Then you need to find out what caused it and decide whether the model should account for it.</p>
+      <div class="callout">
+        <p class="tag">The uncomfortable part</p>
+        <p>Answering either question — is it real or an error, and if real what to do — usually requires investigation. Where did the data come from? How was it compiled? What was unusual about the circumstances of that particular point? This means looking beyond a dataset and a model. It is also a fast way to make your results actually worth something to whoever asked for them.</p>
+      </div>
+
+      <ol class="steps">
+        <li>Flag the candidate, by any of the methods in Lesson 2.</li>
+        <li>Trace it: where the value came from, how it was recorded, and what was going on at the time.</li>
+        <li>Decide whether it is an error or real. This step happens outside the dataset.</li>
+        <li>If it is an error, omit the point — or, if you need a value in that slot, impute one.</li>
+        <li>If it is real, ask whether the thing it represents can be predicted at all.</li>
+        <li>If it can, decide whether your model should represent it, or whether a second model should.</li>
+        <li>If it can’t, you may still have to remove it — but now you know what you are removing.</li>
+      </ol>
+
+      <div class="ix" data-order="m5l3-order" data-win="The step people skip is the third — and it is the only one that can’t be done from a keyboard. Detection methods hand you a candidate; nothing but investigation turns a candidate into a decision.">
+        <div class="ix-head"><span class="ix-kind">put in order</span><span class="ix-done">solved</span></div>
+        <p class="prompt">Drag the steps into sequence — or use the arrows.</p>
+        <ol class="order">
+          <li data-pos="1">Flag a candidate point using a detection method</li>
+          <li data-pos="2">Trace where the value came from and what happened at the time</li>
+          <li data-pos="3">Decide whether it is an error or a real observation</li>
+          <li data-pos="4">If it is an error, omit the point or impute a value</li>
+          <li data-pos="5">If it is real, ask whether the event behind it is predictable</li>
+          <li data-pos="6">Choose how the model should treat it — represent it, split it into a second model, or remove it knowingly</li>
+        </ol>
+        <button class="btn check">Check the order</button>
+        <p class="fb"></p>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Exam target</span>
+      <p class="q">Give four causes of an outlier that is simply bad data.</p>
+      <details><summary>Show answer</summary>
+        <p class="a">A malfunctioning sensor; a failed transmission between sensor and receiver; a contaminated experiment; and human error in entering or copying a value.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>If it is real: expect some of them</h3>
+      <p>Some outliers are nothing but true randomness. With enough data, extreme values are not merely possible — they are guaranteed.</p>
+      <div class="formula">
+        normally distributed noise:<br>
+        P( |x − μ| &gt; 2σ ) &nbsp;=&nbsp; 4.55%<br>
+        P( |x − μ| &gt; 3σ ) &nbsp;=&nbsp; 0.270% &nbsp;→&nbsp; about 2,700 points in a million
+        <span class="cap">Both figures are two-sided — they count values that are extreme in either direction. Rounding the second to “about 2,000” undercounts it; if you want the one-sided figure, values more than 3σ <em>above</em> the mean, that is roughly 1,350 in a million.</span>
+      </div>
+      <p>So in a dataset of a million points, thousands of them being far from expectation is not evidence of anything wrong. It is what the distribution says should happen. The question then is not whether these points are legitimate but whether they matter to the model.</p>
+      <div class="defn">
+        <span class="term">The test to apply</span>
+        <p>If the magnitude of your model’s error is part of how its value is judged, then rare large values may belong in the dataset. Throw them out and the model becomes too optimistic, and reality will supply some bad surprises.</p>
+      </div>
+      <p>Take a supply chain moving perishable medicine from a manufacturing site to clinics in a remote region. Most shipments take a predictable time. Occasionally severe weather or a border disruption makes one take far longer. Those points are real, they recur, and the cost of underestimating them lands on patients. Deleting them would produce a model that is right about the ordinary case and silent about the case that matters.</p>
+
+      <h3>Splitting one model into two</h3>
+      <p>You do not have to choose between including outliers and discarding them. A common alternative is to model the two regimes separately:</p>
+      <ol class="steps">
+        <li>Build one model — logistic regression, for example — estimating the probability that an outlying event occurs under given conditions.</li>
+        <li>Build a second model estimating the outcome under normal conditions, fitted to data with the outliers removed.</li>
+        <li>Combine them when forecasting: how likely is the disruption, and how long does each case take.</li>
+      </ol>
+      <div class="callout">
+        <p class="tag">Why this often beats a single model</p>
+        <p>A single model fitted to both regimes is pulled between them and describes neither well. Splitting lets each model see a coherent population. The price is that you now have two models to validate, and a probability estimate that is itself uncertain.</p>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Check</span>
+      <p class="q">In a million normally distributed observations, roughly how many sit more than three standard deviations from the mean?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">About 2,700, counting both tails — 0.27% of the data. Roughly 1,350 of those are on the high side. Either way, the point is that thousands of extreme values in a large dataset are expected rather than suspicious.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Real, and still unusable</h3>
+      <p>The last case is the awkward one: an outlier that is genuine data but describes something that will not happen again in any predictable way. Sometimes such points have to be removed even though they are correct.</p>
+      <p>What makes this case dangerous is that it looks exactly like bad data from the outside. The scenario below is one version of how that goes wrong.</p>
+
+      <div class="branch" data-branch="m5l3-branch">
+        <div class="persona">
+          <span class="av">PR</span>
+          <span class="who"><b>Priya Raman</b><span>Demand analyst, regional grocery chain</span></span>
+        </div>
+        <div class="scene" data-step="1">
+          <p>Priya is fitting a weekly sales model for a single product line. Three years of data look clean except for one week, where sales spike to roughly four times anything else in the series. Every other column that week looks normal.</p>
+          <p class="said">A teammate: “That’s obviously a data error — probably a duplicated import. Drop it and refit; we’re already behind.”</p>
+          <p><strong>What should Priya do?</strong></p>
+          <div class="choices">
+            <button class="choice" data-go="2" data-tone="bad" data-head="What it costs her"
+              data-outcome="The refit is quick and the model looks better without the spike. But she now has a model whose behaviour depends on an assumption she never checked. If the spike was real and repeatable, she has deleted the single most valuable week in the dataset and will not find out until the pattern recurs.">
+              Drop it. A fourfold spike with no supporting change in any other column is almost certainly an import error.
+            </button>
+            <button class="choice" data-go="2" data-tone="good" data-head="What the call turns up"
+              data-outcome="Ten minutes with someone in the business is enough. That week a national news story drove a short-lived surge in demand for the category, and the stores genuinely sold what the data says they sold. The point is real. What to do about it is now a different question — and one she can answer honestly.">
+              Ask someone in the business what happened that week, before touching anything.
+            </button>
+            <button class="choice" data-go="2" data-tone="bad" data-head="What goes wrong"
+              data-outcome="Winsorising hides the decision rather than making it. The model now trains on a value that never occurred, chosen by a rule rather than by anything about the week itself — and the record of an unusual event is quietly gone from the dataset.">
+              Cap the value at the 99th percentile so it stops dominating the fit, and move on.
+            </button>
+          </div>
+        </div>
+        <div class="scene" data-step="2" data-end="1" hidden>
+          <p><strong>The point is confirmed as real.</strong> It was driven by a one-off news cycle. Nothing in Priya’s available data — price, promotion, season, store count — would have predicted it, and nobody expects it to recur.</p>
+          <p><strong>Now what?</strong></p>
+          <div class="choices">
+            <button class="choice" data-tone="bad" data-head="What happens"
+              data-outcome="The week is real, so keeping it feels principled. But the model now has to explain a fourfold spike using predictors that carry no information about it, so it spreads that pull across ordinary weeks and forecasts them worse. Being real is not sufficient reason to model something.">
+              Keep it in. It is real data, and removing real data biases the model.
+            </button>
+            <button class="choice" data-tone="good" data-head="The right call"
+              data-outcome="Remove it — but for the correct reason, and with the reason recorded. It is excluded because it is unpredictable from the available data and is not expected to recur, not because it was assumed to be a mistake. That distinction is what makes the exclusion defensible to whoever reads the model later, and it leaves a note behind if the pattern ever does return.">
+              Remove it, and document that it was a verified one-off rather than an error.
+            </button>
+            <button class="choice" data-tone="bad" data-head="What it misses"
+              data-outcome="A second model is the right instrument when the outlying events are predictable from something — weather, holidays, known disruptions. Here nothing available predicts the spike, so a probability model would be fitted to one event with no usable drivers. The two-model split solves a different problem than this one.">
+              Build a second model for spike weeks, as the perishable-medicine example did.
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout">
+        <p class="tag">The lesson underneath the story</p>
+        <p>Even when you are confident you know what an odd data point is, it is worth asking. The cost of one conversation is small; the cost of deleting the most informative row in a dataset is not. And note that checking changed the reason for removing the point without changing the decision — which is still a better position to be in.</p>
+      </div>
+
+      <div class="note">
+        <div class="note-head"><span class="lbl">Class discussion — Lesson 3</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="m5l3" data-placeholder="Imputation methods, when you’ve had to justify removing a point, what the grader expected…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Worth noticing</span>
+      <p class="q">Two of the three destinations for an outlier end in removing it. What distinguishes them?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">The reason, and therefore what you write down. An erroneous point is removed because it never happened. A verified one-off is removed because it happened but cannot be predicted from the data you have. Only the second obliges you to record the event somewhere, in case it stops being a one-off.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
+<section class="close" style="--accent:#131b26">
+  <h2>How the module fits together</h2>
+  <p class="h2meta">The through-line across the three lessons</p>
+  <ul class="thread">
+    <li><span class="dot" style="--d:#2f6b52"></span><span class="lbl">Lesson 1</span><span>Names the three things that break a model before it is fitted, and hands two of them to other topics.</span></li>
+    <li><span class="dot" style="--d:#33507f"></span><span class="lbl">Lesson 2</span><span>Shows that “doesn’t fit” has several meanings, and that detection produces candidates rather than verdicts.</span></li>
+    <li><span class="dot" style="--d:#8a3d5c"></span><span class="lbl">Lesson 3</span><span>Turns the candidates into decisions, using information that isn’t in the dataset.</span></li>
+  </ul>
+
+  <h3 style="color:#131b26">Things worth noticing</h3>
+  <ul>
+    <li><strong>The module narrows as it goes.</strong> Lesson 1 names three problems, Lessons 2 and 3 pursue exactly one of them, and by the end you are looking at a single data point and asking a question no algorithm can settle. That funnel is the shape of the topic.</li>
+    <li><strong>Detection and judgement are strictly separate.</strong> Nothing in Lesson 2 tells you whether a flagged point is an error. Nothing in Lesson 3 helps you find one. Confusing the two is how people end up deleting real data because software drew a dot outside a whisker.</li>
+    <li><strong>Every threshold here is chosen, not derived.</strong> Where the whiskers go, what counts as “a lot of error” in a fitted model — both are settings. Module 3’s validation material is what turns such choices into defensible ones, and no lesson here says so out loud.</li>
+    <li><strong>Lesson 2’s model-error trick reappears in Module 6.</strong> Fitting a model of what the data should look like and then watching the residual is exactly what CUSUM does, except that CUSUM accumulates the residual instead of examining each one alone.</li>
+  </ul>
+
+  <h3 style="color:#131b26">Likely exam targets</h3>
+  <ul>
+    <li>Define point, contextual and collective outliers, with an example of each.</li>
+    <li>Explain why a contextual outlier can be invisible to a box plot but obvious to a fitted time-series model.</li>
+    <li>Name every element of a box and whisker plot and what it represents.</li>
+    <li>List four causes of an outlier that is bad data, and say what to do in each case.</li>
+    <li>Explain when a real outlier should be kept, when it should be split into a second model, and when it should be removed anyway.</li>
+    <li>Say roughly what fraction of normally distributed data falls beyond two and three standard deviations, and why that matters for large datasets.</li>
+    <li>Name the three data-preparation problems and say where each is dealt with.</li>
+  </ul>
+
+  <div class="note">
+    <div class="note-head"><span class="lbl">Module 5 — my own summary</span><span class="hint">click to type; saves automatically</span></div>
+    <div class="note-body" contenteditable="true" data-note="m5summary" data-placeholder="Write the module back in your own words — the fastest way to find out what you don't actually know yet."></div>
+  </div>
+
+  <footer>
+    <span class="ai"><strong>Written by an AI model from lecture recordings.</strong> Not reviewed by any instructor or institution — verify anything you rely on against the original lectures.
+    <br><br>
+    <strong>Lesson 1 is not lecture content in the usual sense.</strong> Its source recording is a short preview that names three data-preparation problems and covers no method. The pipeline diagram, the worked comparison of scales, the pointers to where each problem is solved, and both activities in that lesson are orientation material written for these notes.
+    <br><br>
+    <strong>What else goes beyond the transcripts.</strong> Every illustration has been replaced with a generic one, so none of the examples here are the ones used in class. The following are additions rather than lecture content: the 1.5 × IQR whisker convention and the twenty-value order-fulfilment dataset in Lesson 2; the perishable-medicine supply chain in Lesson 3; the Priya Raman scenario, which is invented entirely; all cross-references to Modules 2, 3 and 6; and the whole of “Things worth noticing”. One arithmetic figure has been corrected against the recording: the share of normally distributed data beyond three standard deviations is 0.27%, about 2,700 points per million rather than the rounder figure given in the lecture. All quiz feedback, margin questions and exam targets are written here rather than drawn from the recordings.</span>
+  </footer>
+</section>
+
+</div>
+
+<dialog id="dlg">
+  <div class="dlg-in">
+    <h3 id="dlgTitle">Your notes</h3>
+    <p id="dlgHelp" style="font-family:var(--sans);font-size:.88rem;color:var(--ink-soft);max-width:none">Copy this text and keep it somewhere safe.</p>
+    <textarea id="dlgText" spellcheck="false"></textarea>
+    <div class="dlg-row">
+      <button class="btn" id="dlgCopy">Copy to clipboard</button>
+      <button class="btn" id="dlgLoad" hidden>Load these notes</button>
+      <button class="btn" id="dlgClose">Close</button>
+      <span class="status" id="dlgStatus"></span>
+    </div>
+  </div>
+</dialog>
+
+<script src="study.js"></script>
+</body>
+</html>

@@ -35,9 +35,6 @@ var MODULES = [
 
   /* Not a lecture module — textbook material arranged by course topic.
      `label` overrides the "Module N" caption on the index card. */
-  { id:"exam", file:"exam-prep.html", tab:"Study tools — Exam Prep",
-    title:"Exam Prep", colour:"#4a6b2a", label:"Exam prep",
-    blurb:"The textbook half of the course on one page: bias and variance, cross-validation, the classifiers and what each assumes, regression diagnostics, ridge and lasso, forests, PCA and clustering." }
 
   /* , { id:"m7", file:"module-7-something.html", tab:"Module 7 — Title",
        title:"Title", colour:"#2f6b52", blurb:"One line about the module." } */

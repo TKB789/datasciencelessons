@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Module 6: Change Detection — Study Notes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="study.css">
+</head>
+<body data-page="m6">
+<div class="wrap">
+
+<div class="topbar">
+  <div class="topline">
+    <a class="brand" href="index.html">Analytics Modeling &middot; Study Notes</a>
+    <nav class="tabs" aria-label="Modules"></nav>
+    <div class="toolbar">
+      <button class="btn" id="exportBtn">Export</button>
+      <button class="btn" id="importBtn">Import</button>
+    </div>
+  </div>
+  <nav class="rail" id="rail" aria-label="Lessons in this module"></nav>
+</div>
+
+<header class="hero">
+  <h1>Module 6: Change Detection</h1>
+  <p class="sub">Deciding whether a process has moved — and doing it early enough to act, which means accepting that some of the alarms will be false.</p>
+
+  <svg class="plot" viewBox="0 0 660 330" role="img" aria-label="Two panels. Left: fourteen raw observations scattering around an expected level, then jumping clear above that level from the eleventh. Right: the cumulative sum of those observations, flat for ten periods and then climbing through a threshold line at the fourteenth.">
+    <!-- panel A: the raw data -->
+    <line x1="50" y1="250" x2="305" y2="250" stroke="#131b26" stroke-width="1.5"/>
+    <line x1="50" y1="250" x2="50" y2="55" stroke="#131b26" stroke-width="1.5"/>
+    <line x1="50" y1="197.2" x2="305" y2="197.2" stroke="#9aa5b1" stroke-width="1.3" stroke-dasharray="5 4"/>
+    <text x="54" y="192" font-family="IBM Plex Sans,sans-serif" font-size="11" fill="#4a5765">expected level</text>
+    <polyline points="50.0,178.2 69.6,170.8 89.2,206.7 108.8,174.0 128.5,164.5 148.1,212.0 167.7,168.7 187.3,177.2 206.9,233.1 226.5,220.4 246.2,86.4 265.8,103.3 285.4,76.9 305.0,98.0"
+      fill="none" stroke="#4a5765" stroke-width="2"/>
+    <line x1="246.2" y1="55" x2="246.2" y2="250" stroke="#8a3d5c" stroke-width="1.3" stroke-dasharray="3 4"/>
+    <text x="50" y="284" font-family="IBM Plex Sans,sans-serif" font-size="12.5" font-weight="600" fill="#131b26">Something moved</text>
+    <text x="50" y="302" font-family="IBM Plex Sans,sans-serif" font-size="11.5" fill="#4a5765">No single reading proves it — the noise is that big.</text>
+
+    <!-- panel B: the running total -->
+    <line x1="385" y1="250" x2="640" y2="250" stroke="#131b26" stroke-width="1.5"/>
+    <line x1="385" y1="250" x2="385" y2="55" stroke="#131b26" stroke-width="1.5"/>
+    <line x1="385" y1="79" x2="640" y2="79" stroke="#9d3b3b" stroke-width="1.6" stroke-dasharray="6 4"/>
+    <text x="640" y="72" text-anchor="end" font-family="IBM Plex Sans,sans-serif" font-size="11.5" fill="#9d3b3b">threshold T</text>
+    <polyline points="385.0,243.2 404.6,233.7 424.2,237.1 443.8,228.7 463.5,216.9 483.1,222.3 502.7,212.0 522.3,204.8 541.9,217.7 561.5,226.1 581.2,186.2 600.8,152.3 620.4,109.0 640.0,73.3"
+      fill="none" stroke="#6e4a8c" stroke-width="2.5"/>
+    <circle cx="640" cy="73.3" r="5" fill="#6e4a8c"/>
+    <text x="385" y="284" font-family="IBM Plex Sans,sans-serif" font-size="12.5" font-weight="600" fill="#131b26">Accumulate, then decide</text>
+    <text x="385" y="302" font-family="IBM Plex Sans,sans-serif" font-size="11.5" fill="#4a5765">Where you draw the line prices two mistakes.</text>
+  </svg>
+
+  <ul class="track">
+    <li style="--dot:#6e4a8c"><a href="#l1"><span class="tnum">Lesson 1</span><span class="tname">Change detection</span><span class="tq">Has the process itself moved?</span></a></li>
+    <li style="--dot:#8a5a1c"><a href="#l2"><span class="tnum">Lesson 2</span><span class="tname">CUSUM</span><span class="tq">How do you notice quickly without crying wolf?</span></a></li>
+  </ul>
+
+  <div class="badge-strip">
+    <p class="cap">Badges unlock when every activity in a lesson is finished.</p>
+    <ul class="badges">
+      <li class="badge" data-for="l1" style="--b:#6e4a8c"><span class="gem">Δ</span><span class="nm">Something Moved</span></li>
+      <li class="badge" data-for="l2" style="--b:#8a5a1c"><span class="gem">Σ</span><span class="nm">Cumulative Sum</span></li>
+      <li class="badge" data-for="*"  style="--b:#131b26"><span class="gem">★</span><span class="nm">Module 6 complete</span></li>
+    </ul>
+  </div>
+</header>
+
+<!-- ==================== LESSON 1 ==================== -->
+<section class="lesson" id="l1" data-short="Change detection" style="--accent:#6e4a8c">
+  <div class="lesson-head">
+    <span class="ln">Lesson 1</span>
+    <h2>Change detection</h2>
+    <p class="keyline">When the unusual points stop being unusual, the question changes from Module 5’s “is this point wrong?” to “has the whole process moved?” — and the answer has to arrive early enough to act on.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>What it is</h3>
+      <div class="defn">
+        <span class="term">Change detection</span>
+        <p>Determining whether something has changed. Because change is the subject, the data is nearly always a time series, or at least carries some time attribute.</p>
+      </div>
+      <p>The questions it answers fall into three families.</p>
+      <table class="plain">
+        <tr><th>Family</th><th>Examples</th></tr>
+        <tr><td><strong>Do we need to do something?</strong></td><td>Does a machine showing variation in performance need maintenance, or is this just random variation? Has global temperature changed? Have sales of a product fallen because a new competitor arrived?</td></tr>
+        <tr><td><strong>Did the action we took have an effect?</strong></td><td>Did a policy change produce the intended result — did lowering business tax rates lead firms to hire more people? Did a discount promotion actually move sales?</td></tr>
+        <tr><td><strong>What has drifted over time?</strong></td><td>Have voting patterns shifted? Anything where the point is to understand the change in order to plan or analyse for the future.</td></tr>
+      </table>
+      <p>The first family is the demanding one, because acting late is expensive. The other two can usually be answered at leisure with all the data in hand.</p>
+
+      <div class="ix" data-match="m6l1-match" data-win="The families differ in when the answer is needed, not in what makes something a change. Only the first is under time pressure — which is exactly the constraint that shapes the method in Lesson 2.">
+        <div class="ix-head"><span class="ix-kind">match the pairs</span><span class="ix-done">matched</span></div>
+        <p class="prompt">Tap a question, then the family it belongs to, to pair them up.</p>
+        <div class="match">
+          <div class="col" data-side="a">
+            <h4>The question</h4>
+            <button class="cell" data-pair="1">Is this machine’s performance drifting, or is it just noise?</button>
+            <button class="cell" data-pair="2">Did last quarter’s discount move sales at all?</button>
+            <button class="cell" data-pair="3">Have voting patterns shifted over the last four cycles?</button>
+          </div>
+          <div class="col" data-side="b">
+            <h4>Family</h4>
+            <button class="cell" data-pair="1" data-fb="Do we need to do something? The answer triggers maintenance or doesn’t, and every period you spend deciding is a period the machine keeps running as it is.">Something may need to be acted on now</button>
+            <button class="cell" data-pair="2" data-fb="Did our action have an effect? The action is already taken and the data is already collected, so the analysis can be done carefully and after the fact.">An intervention already happened, and we want to know if it worked</button>
+            <button class="cell" data-pair="3" data-fb="What has drifted? Nobody is waiting on the answer to press a button — it feeds planning and future analysis rather than an immediate decision.">Understanding a trend to plan against it</button>
+          </div>
+        </div>
+        <p class="fb"></p>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Check</span>
+      <p class="q">Why is time-series data almost always involved?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Because a change is a difference between before and after. Without a time attribute there is no before and after to compare, only a distribution of values.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Detecting a problem that isn’t a problem yet</h3>
+      <p>One class of application is harder than it looks: you need to detect a change now that predicts trouble later, even though nothing is wrong at the moment.</p>
+      <p>Traffic on a busy stretch of motorway is the standard illustration. Loop sensors in the road report vehicle counts and average speeds every few seconds. A jam does not appear from nowhere — density builds, speeds start to vary more, and gaps between vehicles shorten, for several minutes before flow actually collapses. By the time speed has dropped, the queue exists and the options for preventing it are gone. The useful question is therefore not “is traffic bad now?” but “is what I am seeing the beginning of a build-up that will be bad in five minutes?”</p>
+      <div class="callout">
+        <p class="tag">Why this is a change-detection problem rather than a prediction problem</p>
+        <p>You are not forecasting a number. You are asking whether the current stream of readings still comes from the same regime it did an hour ago. Once you accept that framing, the method has to work on a running basis, with the data that has arrived so far and no more.</p>
+      </div>
+
+      <h3>The noise problem, and why a hypothesis test isn’t enough</h3>
+      <p>Consider condition monitoring on a rotating machine — a large pump or motor, with a temperature probe on the bearing housing. Bearings usually fail gradually, and temperature rises before they seize. If the rise can be caught early enough, the machine can be stopped and the bearing replaced during planned downtime instead of failing in service and taking the line with it.</p>
+      <p>In the ideal case the first high reading would be a reliable warning: the temperature is genuinely elevated, the machine comes out of service, and the failure is prevented.</p>
+      <p>Real sensor readings do not behave like that. There is a great deal of random fluctuation between readings — ambient temperature, load, probe contact, plain measurement noise. Individual high readings appear routinely and mean nothing. The difficulty is symmetrical: react to every high reading and you stop a healthy machine repeatedly, but wait until you are really sure and the bearing may already have failed.</p>
+
+      <figure>
+        <svg class="fig" viewBox="0 0 660 280" role="img" aria-label="Two panels of bearing temperature over sixteen readings with an alarm line at 60 degrees. Left, the ideal case: readings sit near 40 then rise cleanly above the line from reading 13 onwards. Right, the real case: three isolated readings cross the line before any fault, and the genuine rise starts at reading 14.">
+          <!-- ideal panel -->
+          <text x="45" y="28" font-family="IBM Plex Sans,sans-serif" font-size="12.5" font-weight="600" fill="#131b26">Ideal: the first high reading means something</text>
+          <line x1="45" y1="230" x2="285" y2="230" stroke="#131b26" stroke-width="1.4"/>
+          <line x1="45" y1="230" x2="45" y2="55" stroke="#131b26" stroke-width="1.4"/>
+          <line x1="45" y1="145" x2="285" y2="145" stroke="#9d3b3b" stroke-width="1.5" stroke-dasharray="6 4"/>
+          <text x="285" y="139" text-anchor="end" font-family="IBM Plex Sans,sans-serif" font-size="11" fill="#9d3b3b">alarm level</text>
+          <polyline points="45.0,187.5 61.0,185.4 77.0,189.6 93.0,187.5 109.0,183.2 125.0,187.5 141.0,189.6 157.0,185.4 173.0,187.5 189.0,183.2 205.0,187.5 221.0,185.4 237.0,106.8 253.0,89.8 269.0,77.0 285.0,64.2"
+            fill="none" stroke="#6e4a8c" stroke-width="2"/>
+          <circle cx="237" cy="106.8" r="5" fill="#2f6b45"/>
+          <text x="231" y="98" text-anchor="end" font-family="IBM Plex Sans,sans-serif" font-size="11" fill="#2f6b45">act here</text>
+          <text x="45" y="252" font-family="IBM Plex Sans,sans-serif" font-size="11" fill="#4a5765">one crossing, and it is the real one</text>
+
+          <!-- real panel -->
+          <text x="385" y="28" font-family="IBM Plex Sans,sans-serif" font-size="12.5" font-weight="600" fill="#131b26">Real: high readings arrive all the time</text>
+          <line x1="385" y1="230" x2="625" y2="230" stroke="#131b26" stroke-width="1.4"/>
+          <line x1="385" y1="230" x2="385" y2="55" stroke="#131b26" stroke-width="1.4"/>
+          <line x1="385" y1="145" x2="625" y2="145" stroke="#9d3b3b" stroke-width="1.5" stroke-dasharray="6 4"/>
+          <text x="625" y="139" text-anchor="end" font-family="IBM Plex Sans,sans-serif" font-size="11" fill="#9d3b3b">alarm level</text>
+          <polyline points="385.0,191.8 401.0,138.6 417.0,185.4 433.0,193.9 449.0,149.2 465.0,179.0 481.0,132.2 497.0,189.6 513.0,181.1 529.0,142.9 545.0,187.5 561.0,176.9 577.0,151.4 593.0,121.6 609.0,85.5 625.0,62.1"
+            fill="none" stroke="#6e4a8c" stroke-width="2"/>
+          <g fill="#a2621f">
+            <circle cx="401" cy="138.6" r="4.5"/><circle cx="481" cy="132.2" r="4.5"/><circle cx="529" cy="142.9" r="4.5"/>
+          </g>
+          <circle cx="593" cy="121.6" r="5" fill="#2f6b45"/>
+          <text x="385" y="252" font-family="IBM Plex Sans,sans-serif" font-size="11" fill="#a2621f">three false crossings before the real rise</text>
+        </svg>
+        <figcaption>Same alarm level in both panels. On the left the first reading to cross it is the fault. On the right three healthy readings cross it first, and the genuine rise only becomes unambiguous a reading or two before failure — by which time acting may be too late.</figcaption>
+      </figure>
+
+      <p>A natural first attempt is a hypothesis test: has the mean temperature risen, at the usual level of significance? The trouble is timing. Waiting until a test meets a standard threshold means waiting for enough evidence to be confident, and with data this noisy that can take longer than the component has left. The test gives the right answer too late to be worth anything.</p>
+      <div class="defn">
+        <span class="term">The trade that defines the topic</span>
+        <p>What is needed is a method that identifies potential problems sooner, on the explicit understanding that some of its alarms will be false. Accepting false positives is not a weakness of the approach — it is the price of an answer arriving in time.</p>
+      </div>
+
+      <div class="ix" data-quiz="m6l1-q1">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Why is a standard hypothesis test a poor fit for the bearing-temperature problem?</p>
+        <div class="opts">
+          <button class="opt" data-fb="Hypothesis tests handle noisy data perfectly well — accounting for randomness is what they are for. The problem is not that noise defeats the test, it is how much data the test needs before it will commit.">Because the sensor readings are too noisy for any statistical test to work on.</button>
+          <button class="opt" data-right data-fb="Meeting a conventional significance threshold requires accumulating enough evidence to be confident, and with fluctuation this large that can take longer than the bearing has left. The verdict is correct and useless. Trading some confidence for speed is the only way out.">Because reaching the usual significance threshold takes longer than the component survives.</button>
+          <button class="opt" data-fb="It applies fine — a rise in the mean is exactly the sort of hypothesis a test is built for, and the data is a legitimate sample. The obstacle is the deadline, not the statistics.">Because a hypothesis test can only compare two fixed groups, and this data arrives continuously.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="note">
+        <div class="note-head"><span class="lbl">Class discussion — Lesson 1</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="m6l1" data-placeholder="Other change-detection methods mentioned, how false-alarm costs get quantified in practice…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Exam target</span>
+      <p class="q">State the central trade-off of change detection in one sentence.</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Detecting a change sooner means accepting more false alarms, and demanding fewer false alarms means detecting real changes later — so the settings you choose depend on which of the two mistakes costs more.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
+<!-- ==================== LESSON 2 ==================== -->
+<section class="lesson" id="l2" data-short="CUSUM" style="--accent:#8a5a1c">
+  <div class="lesson-head">
+    <span class="ln">Lesson 2</span>
+    <h2>CUSUM</h2>
+    <p class="keyline">CUSUM accumulates how far above expectation the data has been running, with C setting how much evidence is dismissed as noise and T setting how much is needed before you call it a change.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>The question it answers</h3>
+      <div class="defn">
+        <span class="term">CUSUM — cumulative sum</span>
+        <p>A running-total method that answers one question: has the mean of the observed distribution gone beyond a critical level? It can detect a move to a higher level, a move to a lower level, or both at once.</p>
+      </div>
+      <p>Set up the notation. Let <span class="m">x<sub>t</sub></span> be the observed value at time <em>t</em> — a share price on day <em>t</em>, a bearing temperature at reading <em>t</em>, a reaction time on trial <em>t</em>. Let <span class="m">μ</span> be the expected value of those observations if nothing has changed. Then <span class="m">x<sub>t</sub> − μ</span> is how far above expectation the process ran at time <em>t</em>.</p>
+      <div class="formula">
+        S<sub>t</sub> &nbsp;=&nbsp; max &#123; 0 , &nbsp; S<sub>t−1</sub> + ( x<sub>t</sub> − μ − C ) &#125; &nbsp;&nbsp; with S<sub>0</sub> = 0<br><br>
+        declare a change when &nbsp; S<sub>t</sub> ≥ T
+        <span class="cap">Three moving parts. The running total carries evidence forward; C subtracts a little each period so ordinary noise doesn’t accumulate; the max with zero throws the total away whenever it would go negative.</span>
+      </div>
+
+      <h3>Why each piece is there</h3>
+      <ol class="steps">
+        <li><strong>The running total.</strong> A single high reading proves nothing; several in a row is evidence. Adding each period’s excess to the previous total is what turns a sequence of weak signals into a strong one.</li>
+        <li><strong>The reset at zero.</strong> If the total would go below zero, set it to zero instead. A run of lower-than-expected observations is irrelevant to the question of whether an increase happens later, and letting it bank negative credit would delay the eventual detection. This is what lets CUSUM react quickly.</li>
+        <li><strong>The constant C.</strong> Roughly half the time, an observation will exceed the expectation purely at random. Without something pulling the total down, that noise alone would eventually push S<sub>t</sub> past any threshold. C is the amount of excess dismissed as noise each period.</li>
+      </ol>
+      <div class="callout">
+        <p class="tag">How the two parameters behave</p>
+        <p>The bigger C is, the harder it is for S<sub>t</sub> to get large, and the less sensitive the method. The smaller C is, the more sensitive, because S<sub>t</sub> grows faster. T works the same way in the other place: a high threshold means more evidence before an alarm, so later detection and fewer false ones. Neither has a formula — they are model parameters you fit to data.</p>
+      </div>
+
+      <div class="ix" data-order="m6l2-order" data-win="Step 4 is the one that distinguishes CUSUM from a plain cumulative sum. Delete it and a long quiet stretch would bank negative credit that the method then has to climb back out of before it could ever report an increase.">
+        <div class="ix-head"><span class="ix-kind">put in order</span><span class="ix-done">solved</span></div>
+        <p class="prompt">Drag one period of the CUSUM calculation into sequence — or use the arrows.</p>
+        <ol class="order">
+          <li data-pos="1">Observe x<sub>t</sub>, the value at this time period</li>
+          <li data-pos="2">Work out x<sub>t</sub> − μ, how far above expectation it ran</li>
+          <li data-pos="3">Subtract C from that, then add the result to the previous total S<sub>t−1</sub></li>
+          <li data-pos="4">If the result is below zero, reset the total to zero</li>
+          <li data-pos="5">Compare the new total S<sub>t</sub> against the threshold T</li>
+          <li data-pos="6">Declare a change if S<sub>t</sub> has reached T; otherwise wait for the next period</li>
+        </ol>
+        <button class="btn check">Check the order</button>
+        <p class="fb"></p>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Exam target</span>
+      <p class="q">Write the CUSUM recursion for detecting an increase, from memory.</p>
+      <details><summary>Show answer</summary>
+        <p class="a">S<sub>t</sub> = max{0, S<sub>t−1</sub> + (x<sub>t</sub> − μ − C)}, starting from S<sub>0</sub> = 0, with a change declared as soon as S<sub>t</sub> ≥ T.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Choosing C and T is a cost question</h3>
+      <p>There is no simple answer for what C and T should be. Part of the decision is statistical, and part of it is about which mistake hurts more.</p>
+      <p>Take a chip manufacturing process where a machine has begun placing a component slightly too far to the left. Every chip produced between the moment the drift starts and the moment it is detected has to be scrapped, so late detection costs material and time. But if CUSUM calls a change when the machine is fine, production stops while a crew inspects and adjusts equipment that was working. Setting C and T is trading those two costs against each other.</p>
+      <table class="plain">
+        <tr><th>If you…</th><th>Then…</th></tr>
+        <tr><td><strong>Lower C or lower T</strong></td><td>Changes are detected sooner, and false alarms become more frequent. Right when late detection is the expensive mistake.</td></tr>
+        <tr><td><strong>Raise C or raise T</strong></td><td>False alarms become rarer, and real changes take longer to surface. Right when interrupting a healthy process is the expensive mistake.</td></tr>
+      </table>
+
+      <h3>A worked example</h3>
+      <p>Reaction times are measured on the same participant over 18 trials, in milliseconds, to test whether reaction time slows after a while. The expected value with no change is <span class="m">μ = 300</span>. To check that the method works, 100 ms has been added artificially to every observation from <span class="m">t = 11</span> onward — so the correct answer is known, and the only question is how long CUSUM takes to notice.</p>
+      <table>
+        <tr><th>t</th><th>x<sub>t</sub></th><th>x<sub>t</sub> − μ</th><th>S<sub>t</sub> with C = 0</th><th>S<sub>t</sub> with C = 15</th></tr>
+        <tr><td>1</td><td>318</td><td>+18</td><td>18</td><td>3</td></tr>
+        <tr><td>2</td><td>325</td><td>+25</td><td>43</td><td>13</td></tr>
+        <tr><td>3</td><td>291</td><td>−9</td><td>34</td><td>0</td></tr>
+        <tr><td>4</td><td>322</td><td>+22</td><td>56</td><td>7</td></tr>
+        <tr><td>5</td><td>331</td><td>+31</td><td>87</td><td>23</td></tr>
+        <tr><td>6</td><td>286</td><td>−14</td><td>73</td><td>0</td></tr>
+        <tr><td>7</td><td>327</td><td>+27</td><td>100</td><td>12</td></tr>
+        <tr><td>8</td><td>319</td><td>+19</td><td><strong>119</strong></td><td>16</td></tr>
+        <tr><td>9</td><td>266</td><td>−34</td><td>85</td><td>0</td></tr>
+        <tr><td>10</td><td>278</td><td>−22</td><td>63</td><td>0</td></tr>
+        <tr><td>11</td><td>405</td><td>+105</td><td>168</td><td>90</td></tr>
+        <tr><td>12</td><td>389</td><td>+89</td><td>257</td><td>164</td></tr>
+        <tr><td>13</td><td>414</td><td>+114</td><td>371</td><td>263</td></tr>
+        <tr><td>14</td><td>394</td><td>+94</td><td>465</td><td>342</td></tr>
+      </table>
+      <p>Read three different methods off the same table:</p>
+      <ul>
+        <li><strong>C = 0, T = 450</strong> — the alarm fires at <em>t</em> = 14, four periods after the change. Slow, but the highest the total ever reached before the change was 119, so a false alarm was never remotely close.</li>
+        <li><strong>C = 0, T = 150</strong> — the alarm fires at <em>t</em> = 11, the very first period after the change. Much faster, but the total had already reached 119 at <em>t</em> = 8 while nothing was wrong: 79% of the way to the threshold on noise alone.</li>
+        <li><strong>C = 15, T = 150</strong> — the alarm fires at <em>t</em> = 12, one period later than the previous setting, and the total never exceeded 23 before the change. Almost all of the speed, with the near-miss removed.</li>
+      </ul>
+
+      <figure class="hotwrap" data-hotspot="m6l2-hot">
+        <svg class="fig" viewBox="0 0 660 300" role="img" aria-label="A control chart of the cumulative sum over fourteen periods for two settings, with horizontal threshold lines at 150 and 450. The C equals zero line climbs to 119 before the change and crosses 150 at period 11 and 450 at period 14; the C equals 15 line stays under 23 before the change and crosses 150 at period 12. Four regions are clickable.">
+          <!-- axes -->
+          <line x1="70" y1="260" x2="640" y2="260" stroke="#131b26" stroke-width="1.5"/>
+          <line x1="70" y1="260" x2="70" y2="30" stroke="#131b26" stroke-width="1.5"/>
+          <text x="352" y="292" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="11.5" fill="#4a5765">time period t</text>
+          <text x="26" y="145" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="11.5" fill="#4a5765" transform="rotate(-90 26 145)">S(t)</text>
+          <!-- change point -->
+          <line x1="500.8" y1="30" x2="500.8" y2="260" stroke="#9aa5b1" stroke-width="1.2" stroke-dasharray="3 4"/>
+          <text x="505" y="44" font-family="IBM Plex Sans,sans-serif" font-size="11" fill="#4a5765">change starts at t = 11</text>
+          <!-- thresholds -->
+          <line x1="70" y1="191" x2="640" y2="191" stroke="#9d3b3b" stroke-width="1.5" stroke-dasharray="6 4"/>
+          <text x="640" y="185" text-anchor="end" font-family="IBM Plex Sans,sans-serif" font-size="11" fill="#9d3b3b">T = 150</text>
+          <line x1="70" y1="53" x2="640" y2="53" stroke="#9d3b3b" stroke-width="1.5" stroke-dasharray="6 4"/>
+          <text x="640" y="47" text-anchor="end" font-family="IBM Plex Sans,sans-serif" font-size="11" fill="#9d3b3b">T = 450</text>
+          <!-- series -->
+          <polyline points="70.0,251.7 113.1,240.2 156.2,244.4 199.2,234.2 242.3,220.0 285.4,226.4 328.5,214.0 371.5,205.3 414.6,220.9 457.7,231.0 500.8,182.7 543.8,141.8 586.9,89.3 630.0,46.1"
+            fill="none" stroke="#8a5a1c" stroke-width="2.5"/>
+          <polyline points="70.0,258.6 113.1,254.0 156.2,260.0 199.2,256.8 242.3,249.4 285.4,260.0 328.5,254.5 371.5,252.6 414.6,260.0 457.7,260.0 500.8,218.6 543.8,184.6 586.9,139.0 630.0,102.7"
+            fill="none" stroke="#1f6b6b" stroke-width="2.2" stroke-dasharray="6 4"/>
+          <circle cx="371.5" cy="205.3" r="4.5" fill="#8a5a1c"/>
+          <circle cx="500.8" cy="182.7" r="5" fill="#8a5a1c"/>
+          <circle cx="630.0" cy="46.1" r="5" fill="#8a5a1c"/>
+          <circle cx="543.8" cy="184.6" r="5" fill="#1f6b6b"/>
+          <text x="100" y="243" font-family="IBM Plex Sans,sans-serif" font-size="11" fill="#8a5a1c">C = 0</text>
+          <text x="100" y="274" font-family="IBM Plex Sans,sans-serif" font-size="11" fill="#1f6b6b">C = 15</text>
+
+          <g class="hs" data-title="The near miss at t = 8"
+             data-body="With C = 0 the running total reached 119 while nothing had changed, purely from a run of ordinary above-average readings. Against a threshold of 150 that is 79% of the way to a false alarm. Against 450 it is not close. The same series is safe or dangerous depending only on where T sits.">
+            <rect class="hit" x="345" y="185" width="55" height="45"/><rect class="ring" x="345" y="185" width="55" height="45" rx="3"/>
+          </g>
+          <g class="hs" data-title="Crossing T = 150 at t = 11"
+             data-body="One period after the change begins, the C = 0 total reaches 168 and clears the low threshold. This is the fastest detection available here — and it is fast for the same reason it nearly cried wolf at t = 8. Speed and false alarms are not separate dials.">
+            <rect class="hit" x="474" y="165" width="50" height="45"/><rect class="ring" x="474" y="165" width="50" height="45" rx="3"/>
+          </g>
+          <g class="hs" data-title="Crossing T = 450 at t = 14"
+             data-body="With the high threshold the same C = 0 series takes four periods to fire, reaching 465. In the chip-placement example that is four periods of scrap. What you buy for it is a total that never came within a factor of three of the threshold while the process was healthy.">
+            <rect class="hit" x="604" y="30" width="50" height="48"/><rect class="ring" x="604" y="30" width="50" height="48" rx="3"/>
+          </g>
+          <g class="hs" data-title="What C bought"
+             data-body="The dashed line subtracts 15 from every period’s excess. Before the change it is pinned near zero, peaking at 23 instead of 119 — the noise never accumulates. After the change it still crosses T = 150 at t = 12, only one period behind. Tuning C rather than T removed almost all the false-alarm risk for almost none of the delay.">
+            <rect class="hit" x="530" y="168" width="50" height="45"/><rect class="ring" x="530" y="168" width="50" height="45" rx="3"/>
+          </g>
+        </svg>
+        <div class="hotpanel"><span class="hint">Four regions are clickable. Open all four to finish this activity.</span></div>
+        <figcaption style="font-family:var(--sans);font-size:.83rem;color:var(--ink-soft);margin-top:9px;max-width:62ch;line-height:1.5">This kind of picture is called a control chart: plot S<sub>t</sub> over time, draw the threshold, and a change is declared wherever the line crosses it. Both series use the same 14 observations from the table; only C differs.</figcaption>
+      </figure>
+    </div>
+    <aside class="check">
+      <span class="n">Check</span>
+      <p class="q">Both the C = 0 and C = 15 settings detect the change against T = 150. Why prefer the second?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">It costs one extra period of delay and removes almost all the false-alarm risk: the pre-change total peaks at 23 rather than 119. Whether that trade is right depends on the costs, but here it is cheap.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Detecting decreases, and both at once</h3>
+      <p>Nothing about the method is specific to increases. Flip the sign inside the sum and the same machinery looks for a drop:</p>
+      <div class="formula">
+        increase: &nbsp; S<sub>t</sub> &nbsp;=&nbsp; max &#123; 0 , &nbsp; S<sub>t−1</sub> + ( x<sub>t</sub> − μ − C ) &#125;<br>
+        decrease: &nbsp; S<sub>t</sub> &nbsp;=&nbsp; max &#123; 0 , &nbsp; S<sub>t−1</sub> + ( μ − x<sub>t</sub> − C ) &#125;
+        <span class="cap">Same threshold comparison in both cases. To watch for a change in either direction, run both recursions simultaneously on the same data and alarm if either one reaches its threshold.</span>
+      </div>
+      <p>CUSUM is mathematically simple enough to implement in a spreadsheet — one column for the observations, one for the excess, one for the running total, and a comparison against T. That simplicity is a large part of why it is the method taught first.</p>
+
+      <div class="ix" data-quiz="m6l2-q1">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Your CUSUM keeps raising alarms on a process that turns out to be fine every time. You want fewer false alarms without abandoning the method. What does raising C do?</p>
+        <div class="opts">
+          <button class="opt" data-fb="It reduces false alarms, but not by changing what counts as a change — μ still defines that. C subtracts a fixed amount from every period’s contribution, so ordinary above-average readings no longer accumulate. The definition of the baseline is untouched.">It raises the level the process must reach before the method treats it as changed.</button>
+          <button class="opt" data-right data-fb="Each period contributes x − μ − C instead of x − μ, so a period has to exceed expectation by more than C before it adds anything at all. Ordinary noise gets absorbed, the total stays near zero while the process is healthy, and real changes still accumulate — just from a lower starting point, which is why detection is slightly later.">It subtracts more from each period’s contribution, so ordinary noise stops accumulating.</button>
+          <button class="opt" data-fb="Nothing here is smoothed or averaged. Every observation still enters the total exactly once, at full weight, minus C. Raising C changes how much of each excess survives, not how many periods are considered.">It averages each reading with the previous ones, so single high readings matter less.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="callout">
+        <p class="tag">What to take from this lesson</p>
+        <p>CUSUM is one method among several, and the course does not attempt to cover the rest. What generalises is the underlying idea — accumulate evidence over time rather than judging each observation alone — and the trade-off between early detection and false detection, which every change-detection method has to make somewhere.</p>
+      </div>
+
+      <div class="note">
+        <div class="note-head"><span class="lbl">Class discussion — Lesson 2</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="m6l2" data-placeholder="Spreadsheet formulas, how to estimate μ, other detection methods raised in class…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Cross-module link</span>
+      <p class="q">How would you actually choose C and T for a real process?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">The same way as any other model parameter: try candidate values, measure how each performs on data where you know the answer, and pick using validation rather than intuition — Module 3’s material. The extra ingredient here is that “performs well” has two components, detection delay and false-alarm rate, whose relative weight comes from the costs rather than from the data.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
+<section class="close" style="--accent:#131b26">
+  <h2>How the module fits together</h2>
+  <p class="h2meta">The through-line across the two lessons</p>
+  <ul class="thread">
+    <li><span class="dot" style="--d:#6e4a8c"></span><span class="lbl">Lesson 1</span><span>Poses the question, and adds the constraint that makes it hard: the answer has to arrive in time to act on.</span></li>
+    <li><span class="dot" style="--d:#8a5a1c"></span><span class="lbl">Lesson 2</span><span>Gives one concrete method for meeting that deadline, with two dials that price the two mistakes.</span></li>
+  </ul>
+
+  <h3 style="color:#131b26">Things worth noticing</h3>
+  <ul>
+    <li><strong>This is Module 5’s question at a different time scale.</strong> An outlier is one point that doesn’t fit its context; a change is every subsequent point failing to fit the old context. Module 5’s contextual outlier and this module’s level shift differ mainly in how many points are involved.</li>
+    <li><strong>CUSUM is the residual trick with a memory.</strong> Module 5 found outliers by fitting a model and looking at where the error was large. CUSUM does the same thing — μ is the model, x<sub>t</sub> − μ is the residual — except that it accumulates residuals instead of judging each one alone. That is the entire difference, and it is what buys early detection.</li>
+    <li><strong>The reset at zero is the whole idea, compressed.</strong> Evidence for an increase is worth keeping; evidence against one is thrown away, because the question is only ever “has it gone up?”. That asymmetry is what makes CUSUM fast, and it is also why C has to exist.</li>
+    <li><strong>Neither lesson tells you how to set anything.</strong> C, T and μ are all left to you. Module 3’s validation material is the missing piece, with one twist: “performs well” here has two components — detection delay and false-alarm rate — whose relative weight comes from costs rather than from data.</li>
+    <li><strong>Statistical correctness is not the goal.</strong> Lesson 1 rejects hypothesis testing even though it gives the right answer. That is unusual enough to be worth remembering: a method can be correct and still useless, if the deadline is part of the problem.</li>
+  </ul>
+
+  <h3 style="color:#131b26">Likely exam targets</h3>
+  <ul>
+    <li>Give three kinds of question change detection answers, with an example of each.</li>
+    <li>Explain why time-series data is almost always involved.</li>
+    <li>Explain why hypothesis testing can be the wrong tool even when it is statistically correct.</li>
+    <li>State the central trade-off between early detection and false detection.</li>
+    <li>Write the CUSUM recursion for an increase and for a decrease, and say what each symbol does.</li>
+    <li>Explain why the running total resets to zero rather than going negative.</li>
+    <li>Describe the effect on detection delay and on false alarms of raising C, and of raising T.</li>
+    <li>Sketch a control chart and mark where a change would be declared.</li>
+  </ul>
+
+  <div class="note">
+    <div class="note-head"><span class="lbl">Module 6 — my own summary</span><span class="hint">click to type; saves automatically</span></div>
+    <div class="note-body" contenteditable="true" data-note="m6summary" data-placeholder="Write the module back in your own words — the fastest way to find out what you don't actually know yet."></div>
+  </div>
+
+  <footer>
+    <span class="ai"><strong>Written by an AI model from lecture recordings.</strong> Not reviewed by any instructor or institution — verify anything you rely on against the original lectures.
+    <br><br>
+    <strong>What goes beyond the transcripts.</strong> Every illustration has been replaced with a generic one, so none of the examples here are the ones used in class — in particular the motorway-congestion and bearing-temperature illustrations in Lesson 1 stand in for the specific examples used in class. The following are additions rather than lecture content: the eighteen-trial reaction-time dataset in Lesson 2 and every number computed from it, including the whole C = 15 comparison and the control chart; the ideal-versus-real sensor figure; all cross-references to Modules 3 and 5; and the whole of “Things worth noticing”. All quiz feedback, margin questions and exam targets are written here rather than drawn from the recordings.</span>
+  </footer>
+</section>
+
+</div>
+
+<dialog id="dlg">
+  <div class="dlg-in">
+    <h3 id="dlgTitle">Your notes</h3>
+    <p id="dlgHelp" style="font-family:var(--sans);font-size:.88rem;color:var(--ink-soft);max-width:none">Copy this text and keep it somewhere safe.</p>
+    <textarea id="dlgText" spellcheck="false"></textarea>
+    <div class="dlg-row">
+      <button class="btn" id="dlgCopy">Copy to clipboard</button>
+      <button class="btn" id="dlgLoad" hidden>Load these notes</button>
+      <button class="btn" id="dlgClose">Close</button>
+      <span class="status" id="dlgStatus"></span>
+    </div>
+  </div>
+</dialog>
+
+<script src="study.js"></script>
+</body>
+</html>

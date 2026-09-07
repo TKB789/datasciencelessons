@@ -23,10 +23,24 @@ var MODULES = [
 
   { id:"m4", file:"module-4-clustering.html", tab:"Module 4 — Clustering",
     title:"Clustering", colour:"#1b5e7e",
-    blurb:"Grouping similar points, measuring what “close” means, running k-means, and telling clustering apart from classification." }
+    blurb:"Grouping similar points, measuring what “close” means, running k-means, and telling clustering apart from classification." },
 
-  /* , { id:"m5", file:"module-5-something.html", tab:"Module 5 — Title",
-       title:"Title", colour:"#8a5a1c", blurb:"One line about the module." } */
+  { id:"m5", file:"module-5-preparing-data.html", tab:"Module 5 — Preparing Data",
+    title:"Preparing Data", colour:"#8a5a1c",
+    blurb:"Getting data fit to model: the three things that break a fit before it starts, how to find the points that don’t belong, and how to decide what they mean." },
+
+  { id:"m6", file:"module-6-change-detection.html", tab:"Module 6 — Change Detection",
+    title:"Change Detection", colour:"#6e4a8c",
+    blurb:"Telling a real shift from noise, early enough to act on: why hypothesis testing arrives too late, and how CUSUM trades false alarms for speed." },
+
+  /* Not a lecture module — built from the syllabus. `label` overrides the
+     "Module N" caption on the index card; every other page omits it. */
+  { id:"exam", file:"exam-prep.html", tab:"Study tools — Exam Prep",
+    title:"Exam Prep", colour:"#4a6b2a", label:"Exam prep",
+    blurb:"Weights, formats and coverage for the three proctored quizzes, what belongs on the note sheet, and the rules that cost marks rather than knowledge." }
+
+  /* , { id:"m7", file:"module-7-something.html", tab:"Module 7 — Title",
+       title:"Title", colour:"#2f6b52", blurb:"One line about the module." } */
 ];
 
 (function(){

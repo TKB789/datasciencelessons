@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Analytics Modeling — Study Notes</title>
 <meta name="robots" content="noindex">
+<title>Analytics Modeling — Study Notes</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
@@ -23,26 +23,20 @@
       <button class="btn" id="resetBtn">Reset</button>
     </div>
   </div>
+  <nav class="rail" id="rail" aria-label="Lessons in this module"></nav>
 </div>
 
-<header class="hero" style="padding-bottom:36px">
-  <p class="course">Personal revision notes</p>
-  <h1>Analytics modeling</h1>
-  <p class="sub">Lecture material reworked into something you can actually revise from — one page per module, with activities that tell you straight away whether you understood it.</p>
-
-  <div class="disclosure">
-    <b>These notes were written by an AI model. Verify before you rely on them.</b>
-    <p>They summarise lecture recordings and have not been checked by any instructor or institution. They may contain errors, omissions, oversimplifications, or claims the lectures never made — several pages add connections and worked examples that go beyond the source material, and say so in their footers. Treat this as one person’s revision aid, not as course material, and check anything that matters against the original lectures and your own notes.</p>
-  </div>
-
-  <ul class="modgrid" id="modgrid"></ul>
-
-  <p style="font-family:var(--sans);font-size:.85rem;color:var(--ink-soft);max-width:64ch;margin:0">
-    Answers and typed notes are stored in this browser and shared across every module page.
-    Use <strong>Export</strong> to back them up or move them to another device — some browsers block
-    storage for files opened straight from disk, and Export always works either way.
-  </p>
+<header class="hero">
+  <h1>Analytics Modeling</h1>
+  <p class="sub">Study notes written from lecture recordings — one page per module, with the activities that make the ideas stick.</p>
 </header>
+
+<div class="disclosure">
+  <b>Written by an AI model</b>
+  <p>These pages were generated from lecture recordings by an AI model. They have not been reviewed by any instructor or institution, and the examples in them are generic illustrations rather than the ones used in class. Verify anything you rely on against the original lectures. Your answers and typed notes are stored in this browser only — use Export to keep a copy.</p>
+</div>
+
+<ul class="modgrid" id="modgrid"></ul>
 
 </div>
 
@@ -61,25 +55,41 @@
 </dialog>
 
 <script>
-/* Number of interactive activities on each module page.
-   Update when you add or remove one, so the progress bars stay honest. */
-window.MODULE_ITEM_COUNTS = { m1: 11, m2: 15, m3: 10, m4: 7 };
+/* ============================================================
+   Number of interactive activities on each module page.
+   Used only to turn "activities finished" into a percentage on
+   the cards below. If you add or remove an activity on a module
+   page, update its number here.
+
+   Counted directly from the page source:
+     m2 = 15   (7 quizzes, 2 orders, 3 matches, 2 hotspots, 1 branch)
+     m5   =  7   (2 quizzes, 1 order, 1 match, 2 hotspots, 1 branch)
+     m6   =  5   (2 quizzes, 1 order, 1 match, 1 hotspot)
+     exam =  9   (4 quizzes, 1 order, 2 matches, 1 hotspot, 1 branch)
+   ============================================================ */
+window.MODULE_ITEM_COUNTS = {
+  m1: 12,   /* CHECK — carry over from your existing index.html */
+  m2: 15,
+  m3: 12,   /* CHECK — carry over from your existing index.html */
+  m4: 12,   /* CHECK — carry over from your existing index.html */
+  m5: 7,
+  m6: 5,
+  exam: 9
+};
 
 function buildIndex(mods){
   var grid = document.getElementById("modgrid");
   if (!grid) return;
   var html = "";
-  mods.forEach(function(m){
-    html +=
-      '<li>' +
-        '<a class="modcard" data-mod="' + m.id + '" style="--c:' + m.colour + '" href="' + m.file + '">' +
-          '<span class="mnum">' + m.tab.split("—")[0].trim() + '</span>' +
-          '<h3>' + m.title + '</h3>' +
-          '<p>' + m.blurb + '</p>' +
-          '<div class="bar"><i></i></div><div class="pct">Not started</div>' +
-          '<span class="go">Open module &rarr;</span>' +
-        '</a>' +
-      '</li>';
+  mods.forEach(function(m, i){
+    html += '<li><a class="modcard" href="' + m.file + '" data-mod="' + m.id + '" style="--c:' + m.colour + '">' +
+              '<span class="mnum">' + (m.label || ("Module " + (i + 1))) + '</span>' +
+              '<h3>' + m.title + '</h3>' +
+              '<p>' + m.blurb + '</p>' +
+              '<span class="bar"><i></i></span>' +
+              '<span class="pct">Not started</span>' +
+              '<span class="go">Open module &rarr;</span>' +
+            '</a></li>';
   });
   grid.innerHTML = html;
 }

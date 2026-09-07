@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Exam Prep — Study Notes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="study.css">
+</head>
+<body data-page="exam">
+<div class="wrap">
+
+<div class="topbar">
+  <div class="topline">
+    <a class="brand" href="index.html">Analytics Modeling &middot; Study Notes</a>
+    <nav class="tabs" aria-label="Modules"></nav>
+    <div class="toolbar">
+      <button class="btn" id="exportBtn">Export</button>
+      <button class="btn" id="importBtn">Import</button>
+    </div>
+  </div>
+  <nav class="rail" id="rail" aria-label="Sections on this page"></nav>
+</div>
+
+<header class="hero">
+  <h1>Exam Prep</h1>
+  <p class="sub">Three quizzes carry three quarters of the grade. Everything here is about how they are structured, what they cover, and the rules that quietly cost people marks.</p>
+
+  <svg class="plot" viewBox="0 0 660 250" role="img" aria-label="A stacked bar showing how the course grade divides: three quizzes at twenty-five percent each filling the first three quarters of the bar, then homework at fifteen percent, the project at eight, and the syllabus quiz at two.">
+    <text x="60" y="46" font-family="IBM Plex Sans,sans-serif" font-size="12.5" font-weight="600" fill="#131b26">Where the grade comes from</text>
+    <rect x="60"    y="62" width="140"  height="52" fill="#4a6b2a" fill-opacity=".85"/>
+    <rect x="200"   y="62" width="140"  height="52" fill="#4a6b2a" fill-opacity=".68"/>
+    <rect x="340"   y="62" width="140"  height="52" fill="#4a6b2a" fill-opacity=".51"/>
+    <rect x="480"   y="62" width="84"   height="52" fill="#8a5a1c" fill-opacity=".55"/>
+    <rect x="564"   y="62" width="44.8" height="52" fill="#33507f" fill-opacity=".55"/>
+    <rect x="608.8" y="62" width="11.2" height="52" fill="#8a3d5c" fill-opacity=".65"/>
+    <g font-family="IBM Plex Sans,sans-serif" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle">
+      <text x="130" y="93">25%</text><text x="270" y="93">25%</text><text x="410" y="93">25%</text><text x="522" y="93">15%</text>
+    </g>
+    <g font-family="IBM Plex Sans,sans-serif" font-size="11.5" fill="#4a5765" text-anchor="middle">
+      <text x="130" y="133">Midterm 1</text>
+      <text x="270" y="133">Midterm 2</text>
+      <text x="410" y="133">Final</text>
+      <text x="522" y="133">Homework</text>
+      <text x="586.4" y="133">Project</text>
+      <text x="586.4" y="149">8%</text>
+    </g>
+    <line x1="614.4" y1="118" x2="614.4" y2="140" stroke="#8a3d5c" stroke-width="1.2"/>
+    <text x="620" y="152" text-anchor="end" font-family="IBM Plex Sans,sans-serif" font-size="11.5" fill="#8a3d5c">Syllabus quiz 2%</text>
+    <line x1="60" y1="176" x2="480" y2="176" stroke="#4a6b2a" stroke-width="2"/>
+    <line x1="60" y1="171" x2="60" y2="181" stroke="#4a6b2a" stroke-width="2"/>
+    <line x1="480" y1="171" x2="480" y2="181" stroke="#4a6b2a" stroke-width="2"/>
+    <text x="270" y="196" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="12.5" font-weight="600" fill="#4a6b2a">75% is decided by three proctored quizzes</text>
+    <line x1="480" y1="176" x2="620" y2="176" stroke="#9aa5b1" stroke-width="2"/>
+    <line x1="620" y1="171" x2="620" y2="181" stroke="#9aa5b1" stroke-width="2"/>
+    <text x="550" y="196" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="11.5" fill="#4a5765">25% is coursework</text>
+    <text x="60" y="228" font-family="IBM Plex Sans,sans-serif" font-size="11.5" fill="#4a5765">The syllabus quiz is the only piece you can retake until it is right.</text>
+  </svg>
+
+  <ul class="track">
+    <li style="--dot:#4a6b2a"><a href="#l1"><span class="tnum">Section 1</span><span class="tname">How you are assessed</span><span class="tq">What is graded, and how much is it worth?</span></a></li>
+    <li style="--dot:#33507f"><a href="#l2"><span class="tnum">Section 2</span><span class="tname">What each quiz covers</span><span class="tq">Which modules appear on which quiz?</span></a></li>
+    <li style="--dot:#8a5a1c"><a href="#l3"><span class="tnum">Section 3</span><span class="tname">The note sheet</span><span class="tq">What is allowed, and what should go on it?</span></a></li>
+    <li style="--dot:#8a3d5c"><a href="#l4"><span class="tnum">Section 4</span><span class="tname">Rules that cost marks</span><span class="tq">Where do people actually lose points?</span></a></li>
+  </ul>
+
+  <div class="badge-strip">
+    <p class="cap">Badges unlock when every activity in a section is finished.</p>
+    <ul class="badges">
+      <li class="badge" data-for="l1" style="--b:#4a6b2a"><span class="gem">%</span><span class="nm">The Weights</span></li>
+      <li class="badge" data-for="l2" style="--b:#33507f"><span class="gem">▦</span><span class="nm">Coverage</span></li>
+      <li class="badge" data-for="l3" style="--b:#8a5a1c"><span class="gem">✎</span><span class="nm">Note Sheet</span></li>
+      <li class="badge" data-for="l4" style="--b:#8a3d5c"><span class="gem">!</span><span class="nm">No Surprises</span></li>
+      <li class="badge" data-for="*"  style="--b:#131b26"><span class="gem">★</span><span class="nm">Exam ready</span></li>
+    </ul>
+  </div>
+</header>
+
+<!-- ==================== SECTION 1 ==================== -->
+<section class="lesson" id="l1" data-short="How it's graded" style="--accent:#4a6b2a">
+  <div class="lesson-head">
+    <span class="ln">Section 1</span>
+    <h2>How you are assessed</h2>
+    <p class="keyline">Three proctored quizzes decide 75% of the grade, so everything else — homework, the project, the syllabus quiz — is worth less combined than any single quiz.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <div class="callout">
+        <p class="tag">This page is not lecture content</p>
+        <p>Everything here comes from a course syllabus rather than from a lecture recording, and it has been rewritten in general terms with the institution, course code, instructor, platform names, contact details and calendar dates removed. Timings are given relative to the semester rather than as dates. <strong>Syllabus terms change between offerings.</strong> Treat this as a study aid and check every number against your own current syllabus before relying on it.</p>
+      </div>
+
+      <h3>The six things that are graded</h3>
+      <table>
+        <tr><th>Component</th><th>Weight</th><th>Format</th></tr>
+        <tr><td>Midterm quiz 1</td><td>25%</td><td>90 minutes, roughly 45–50 questions, proctored</td></tr>
+        <tr><td>Midterm quiz 2</td><td>25%</td><td>90 minutes, roughly 45–50 questions, proctored</td></tr>
+        <tr><td>Final quiz</td><td>25%</td><td>180 minutes, roughly 60 questions, proctored, comprehensive</td></tr>
+        <tr><td>Homework</td><td>15%</td><td>Most weeks; two lowest scores dropped; peer-graded on the median score</td></tr>
+        <tr><td>Course project</td><td>8%</td><td>One project, peer-graded on the median score</td></tr>
+        <tr><td>Syllabus quiz</td><td>2%</td><td>Retakeable until correct, before its deadline</td></tr>
+      </table>
+      <p>There is also an onboarding quiz. It carries no marks — its job is to verify identity and confirm that the proctoring software works on your machine. Doing it late is the classic way to discover a webcam problem on the morning of a midterm.</p>
+
+      <div class="defn">
+        <span class="term">What the weights imply for effort</span>
+        <p>Homework runs most weeks and the two lowest scores are dropped. With fourteen assignments and two dropped, twelve count, so each surviving homework is worth about 1.25% of the grade — roughly one twentieth of a single quiz. Homework is where the learning happens; it is not where the grade is.</p>
+      </div>
+
+      <div class="ix" data-quiz="exam-l1-q1">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">You have a week where work is impossible and something must give. Which choice costs least?</p>
+        <div class="opts">
+          <button class="opt" data-fb="This is the expensive one. A quiz is 25% of the grade, missing it means no make-up, and at best a score may be imputed from your other quizzes — which is not something to plan around.">Skip a quiz and rely on the other two.</button>
+          <button class="opt" data-right data-fb="This is exactly what the two dropped scores exist for. One missed homework is worth about 1.25% and, if it is one of your two lowest, effectively zero. The catch is that skipping the peer assessments is not free — see Section 4.">Skip one homework, using one of your two drops.</button>
+          <button class="opt" data-fb="The project is 8% — four to six times a single homework — and there is only one of them, so there is nothing to drop it against. It is the second most expensive thing on this list after a quiz.">Submit the project late or not at all.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <h3>When things happen</h3>
+      <p>Content is released weekly across a fifteen-week teaching schedule, with the final quiz window running past the end of it. Each quiz opens once its material has been released and stays open for about eleven days — you pick your slot inside that window, but there is no extension beyond it.</p>
+
+      <figure>
+        <svg class="fig" viewBox="0 0 660 230" role="img" aria-label="A seventeen-week timeline. Content release runs from week one to week fifteen. Three quiz windows of equal length sit at roughly weeks eight, thirteen and sixteen, each spanning about eleven days.">
+          <line x1="60" y1="160" x2="620" y2="160" stroke="#131b26" stroke-width="1.5"/>
+          <g stroke="#c9d2db" stroke-width="1">
+            <line x1="60" y1="60" x2="60" y2="160"/><line x1="158.8" y1="60" x2="158.8" y2="160"/>
+            <line x1="290.6" y1="60" x2="290.6" y2="160"/><line x1="422.4" y1="60" x2="422.4" y2="160"/>
+            <line x1="554.1" y1="60" x2="554.1" y2="160"/>
+          </g>
+          <g font-family="IBM Plex Sans,sans-serif" font-size="11" fill="#4a5765" text-anchor="middle">
+            <text x="60" y="178">wk 1</text><text x="158.8" y="178">wk 4</text><text x="290.6" y="178">wk 8</text>
+            <text x="422.4" y="178">wk 12</text><text x="554.1" y="178">wk 16</text>
+          </g>
+          <rect x="60" y="128" width="493.8" height="16" fill="#9aa5b1" fill-opacity=".28"/>
+          <text x="66" y="140" font-family="IBM Plex Sans,sans-serif" font-size="11" fill="#4a5765">weekly content and homework</text>
+          <rect x="281.2" y="86" width="51.8" height="30" fill="#4a6b2a" fill-opacity=".8"/>
+          <rect x="445.9" y="86" width="51.8" height="30" fill="#4a6b2a" fill-opacity=".8"/>
+          <rect x="544.7" y="86" width="51.8" height="30" fill="#4a6b2a" fill-opacity=".8"/>
+          <g font-family="IBM Plex Sans,sans-serif" font-size="11" font-weight="600" fill="#4a6b2a" text-anchor="middle">
+            <text x="307.1" y="78">Midterm 1</text><text x="471.8" y="78">Midterm 2</text><text x="570.6" y="78">Final</text>
+          </g>
+          <g font-family="IBM Plex Sans,sans-serif" font-size="10.5" fill="#ffffff" text-anchor="middle">
+            <text x="307.1" y="105">11 days</text><text x="471.8" y="105">11 days</text><text x="570.6" y="105">11 days</text>
+          </g>
+          <text x="60" y="46" font-family="IBM Plex Sans,sans-serif" font-size="12.5" font-weight="600" fill="#131b26">The shape of the semester</text>
+          <text x="60" y="206" font-family="IBM Plex Sans,sans-serif" font-size="11.5" fill="#4a5765">Weekly homework is due about a week after release; peer assessments about four days after that.</text>
+        </svg>
+        <figcaption>All three windows are the same length. The two midterms sit inside the teaching schedule, so revision competes with new content; only the final has clear air in front of it.</figcaption>
+      </figure>
+
+      <div class="ix" data-match="exam-l1-match" data-win="Two patterns worth carrying away: everything peer-graded uses the median of your graders rather than an average, and only one assessment on this list can be retaken.">
+        <div class="ix-head"><span class="ix-kind">match the pairs</span><span class="ix-done">matched</span></div>
+        <p class="prompt">Tap an assessment, then the fact that distinguishes it, to pair them up.</p>
+        <div class="match">
+          <div class="col" data-side="a">
+            <h4>Assessment</h4>
+            <button class="cell" data-pair="1">Midterm quiz</button>
+            <button class="cell" data-pair="2">Final quiz</button>
+            <button class="cell" data-pair="3">Weekly homework</button>
+            <button class="cell" data-pair="4">Syllabus quiz</button>
+          </div>
+          <div class="col" data-side="b">
+            <h4>What sets it apart</h4>
+            <button class="cell" data-pair="1" data-fb="90 minutes for roughly 45–50 questions is 1.8 to 2.0 minutes each. That is the tightest time budget of the three quizzes.">90 minutes, one sheet of handwritten notes</button>
+            <button class="cell" data-pair="2" data-fb="180 minutes for roughly 60 questions is exactly three minutes each — half again as much thinking time per question as a midterm, or a little more, and twice the notes.">180 minutes, two sheets of notes, covers everything</button>
+            <button class="cell" data-pair="3" data-fb="Your score is the median of what your peer graders give you, not an average — so one hostile or one generous grader moves it very little.">Peer-graded on the median; two lowest dropped</button>
+            <button class="cell" data-pair="4" data-fb="The only assessment you can submit repeatedly until every answer is right. Everyone should be collecting the full 2%, provided they do it before the deadline.">Retakeable until every answer is correct</button>
+          </div>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="note">
+        <div class="note-head"><span class="lbl">My own deadlines and dates</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="examl1" data-placeholder="Paste your actual quiz windows and homework deadlines from your current syllabus here — this page deliberately holds no dates."></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Worth noticing</span>
+      <p class="q">Why is the onboarding quiz worth zero marks and still important?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">It is the only rehearsal of the proctoring setup you get. Every technical problem it can surface — camera, microphone, identity check, room scan — is a problem you would otherwise meet for the first time with a 25% quiz waiting behind it.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
+<!-- ==================== SECTION 2 ==================== -->
+<section class="lesson" id="l2" data-short="Coverage" style="--accent:#33507f">
+  <div class="lesson-head">
+    <span class="ln">Section 2</span>
+    <h2>What each quiz covers</h2>
+    <p class="keyline">Midterm 1 takes the first ten modules, midterm 2 focuses on the next six while still assuming the first ten, and the final is comprehensive — so the early modules are examined three times and the last few only once.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>The coverage map</h3>
+      <p>The course runs to twenty-one modules of lecture content. Coverage divides like this:</p>
+      <ul>
+        <li><strong>Midterm 1</strong> — modules 1 to 10.</li>
+        <li><strong>Midterm 2</strong> — primarily modules 11 to 16, but it requires knowledge from modules 1 to 10 as well.</li>
+        <li><strong>Final</strong> — comprehensive, covering every module.</li>
+      </ul>
+
+      <figure class="hotwrap" data-hotspot="exam-l2-hot">
+        <svg class="fig" viewBox="0 0 660 250" role="img" aria-label="A grid of twenty-one module columns and three quiz rows. The midterm one row is solid across modules one to ten. The midterm two row is solid across eleven to sixteen and shaded lightly across one to ten. The final row is solid across all twenty-one. Each row is clickable.">
+          <g font-family="IBM Plex Sans,sans-serif" font-size="11" fill="#4a5765" text-anchor="middle">
+            <text x="73.3" y="42">1</text><text x="180" y="42">5</text><text x="313.3" y="42">10</text>
+            <text x="340" y="42">11</text><text x="473.3" y="42">16</text><text x="606.6" y="42">21</text>
+          </g>
+          <text x="60" y="24" font-family="IBM Plex Sans,sans-serif" font-size="11.5" fill="#4a5765">module</text>
+          <line x1="326.7" y1="50" x2="326.7" y2="200" stroke="#131b26" stroke-width="1.2" stroke-dasharray="4 3"/>
+          <line x1="486.7" y1="50" x2="486.7" y2="200" stroke="#131b26" stroke-width="1.2" stroke-dasharray="4 3"/>
+
+          <rect x="60" y="56" width="266.7" height="36" fill="#33507f" fill-opacity=".8"/>
+          <text x="193.4" y="79" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="11.5" font-weight="600" fill="#ffffff">tested</text>
+          <text x="640" y="79" text-anchor="end" font-family="IBM Plex Sans,sans-serif" font-size="11.5" font-weight="600" fill="#33507f">Midterm 1</text>
+
+          <rect x="60" y="104" width="266.7" height="36" fill="#33507f" fill-opacity=".22"/>
+          <rect x="326.7" y="104" width="160" height="36" fill="#33507f" fill-opacity=".8"/>
+          <text x="193.4" y="127" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="11.5" fill="#33507f">assumed</text>
+          <text x="406.7" y="127" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="11.5" font-weight="600" fill="#ffffff">tested</text>
+          <text x="640" y="127" text-anchor="end" font-family="IBM Plex Sans,sans-serif" font-size="11.5" font-weight="600" fill="#33507f">Midterm 2</text>
+
+          <rect x="60" y="152" width="560" height="36" fill="#33507f" fill-opacity=".8"/>
+          <text x="340" y="175" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="11.5" font-weight="600" fill="#ffffff">tested — all twenty-one modules</text>
+          <text x="640" y="212" text-anchor="end" font-family="IBM Plex Sans,sans-serif" font-size="11.5" font-weight="600" fill="#33507f">Final</text>
+
+          <text x="60" y="234" font-family="IBM Plex Sans,sans-serif" font-size="11.5" fill="#4a5765">Modules 1–10 are examined three times. Modules 17–21 are examined once.</text>
+
+          <g class="hs" data-title="Midterm 1 — modules 1 to 10"
+             data-body="Roughly 45–50 questions over ten modules is about four or five questions each. This is the only quiz with a clean boundary: nothing beyond module 10 appears, so revision has a definite edge to it.">
+            <rect class="hit" x="60" y="56" width="560" height="36"/><rect class="ring" x="60" y="56" width="560" height="36" rx="3"/>
+          </g>
+          <g class="hs" data-title="Midterm 2 — the trap row"
+             data-body="The tested material is modules 11 to 16, but the paler band matters just as much: the syllabus says this quiz requires knowledge from modules 1 to 10 as well. Later topics are built on earlier ones — variable selection assumes regression and validation, advanced models assume classification — so a question about module 13 can still turn on something from module 3.">
+            <rect class="hit" x="60" y="104" width="560" height="36"/><rect class="ring" x="60" y="104" width="560" height="36" rx="3"/>
+          </g>
+          <g class="hs" data-title="Final — everything, at three minutes a question"
+             data-body="Roughly 60 questions across twenty-one modules is under three questions per module, so the final samples broadly rather than digging deep anywhere. Modules 17 to 21 — the case-based and summary material — appear here and nowhere else, which makes them easy to under-prepare and cheap to fix.">
+            <rect class="hit" x="60" y="152" width="560" height="36"/><rect class="ring" x="60" y="152" width="560" height="36" rx="3"/>
+          </g>
+        </svg>
+        <div class="hotpanel"><span class="hint">Three rows are clickable. Open all three to finish this activity.</span></div>
+      </figure>
+
+      <div class="ix" data-quiz="exam-l2-q1">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">You did well on midterm 1 and are planning revision for midterm 2. What does the coverage description warrant?</p>
+        <div class="opts">
+          <button class="opt" data-fb="This is the trap the wording is designed to catch. “Primarily covers modules 11 to 16” is not “only covers modules 11 to 16” — the same sentence says it requires knowledge from modules 1 to 10 as well.">Revise modules 11 to 16 only, since midterm 1 already tested the earlier material.</button>
+          <button class="opt" data-right data-fb="The later modules are built on the earlier ones, so the earlier material arrives as the assumed foundation of a question rather than as a question of its own. Reviewing modules 1 to 10 for the ideas rather than the details is the efficient version.">Focus on modules 11 to 16, but keep modules 1 to 10 fresh, because the later material assumes them.</button>
+          <button class="opt" data-fb="Splitting effort evenly ignores where the questions are. Modules 11 to 16 are what the quiz is primarily about; the earlier material supports those questions rather than supplying its own share of them.">Split revision evenly across all sixteen modules, since both halves are examined.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <h3>Reading around the course</h3>
+      <p>The syllabus states plainly that <strong>there is no set textbook</strong> — all material is delivered online, and the quizzes are written from the lectures. A general statistical learning textbook is still useful for depth on the modelling topics, provided you treat it as background rather than as coverage.</p>
+      <div class="callout">
+        <p class="tag">Where a statistics textbook helps, and where it doesn’t</p>
+        <p>An introductory statistical-learning text overlaps well with about half this course: classification, validation, clustering, regression, tree-based methods, variable selection and principal component analysis are all standard textbook material. It will give you almost nothing on change detection, classical time-series models, design of experiments, simulation, or optimization — those are operations-research topics that such books do not carry. Reading a chapter that has no counterpart in the lectures is time spent on material that cannot be examined.</p>
+      </div>
+      <p>The crosswalk below maps course topics to the chapters of <em>An Introduction to Statistical Learning</em> (second edition), by chapter number so you can find them without hunting.</p>
+      <table class="plain">
+        <tr><th>Course topic</th><th>Where to read</th></tr>
+        <tr><td>Overview, what a model is for</td><td>Ch. 1; Ch. 2 §2.1</td></tr>
+        <tr><td>Measuring model quality</td><td>Ch. 2 §2.2</td></tr>
+        <tr><td>Classification — SVM, k-nearest neighbours</td><td>Ch. 9 §9.1–9.4; Ch. 4 §4.1</td></tr>
+        <tr><td>Validation, cross-validation</td><td>Ch. 5 §5.1</td></tr>
+        <tr><td>Clustering</td><td>Ch. 12 §12.4</td></tr>
+        <tr><td>Outliers and data preparation</td><td>Ch. 3 §3.3 (regression diagnostics); Ch. 12 §12.3</td></tr>
+        <tr><td>Regression, basic and advanced</td><td>Ch. 3; Ch. 7 for non-linear extensions</td></tr>
+        <tr><td>Logistic regression, probability-based models</td><td>Ch. 4 §4.3</td></tr>
+        <tr><td>Tree-based models</td><td>Ch. 8</td></tr>
+        <tr><td>Variable selection and regularization</td><td>Ch. 6 §6.1–6.2</td></tr>
+        <tr><td>Principal component analysis</td><td>Ch. 12 §12.2; Ch. 6 §6.3</td></tr>
+        <tr><td>Missing data</td><td>Ch. 12 §12.3</td></tr>
+        <tr><td>Advanced models, neural networks</td><td>Ch. 10</td></tr>
+        <tr><td>Change detection, time series, design of experiments, simulation, optimization</td><td><strong>Not covered</strong> — rely on the lectures</td></tr>
+      </table>
+
+      <div class="ix" data-match="exam-l2-match" data-win="Notice how much of the reading is concentrated in a handful of chapters — and that the last pair has no chapter at all, which is the point of the crosswalk.">
+        <div class="ix-head"><span class="ix-kind">match the pairs</span><span class="ix-done">matched</span></div>
+        <p class="prompt">Tap a course topic, then the textbook chapter that backs it up, to pair them up.</p>
+        <div class="match">
+          <div class="col" data-side="a">
+            <h4>Course topic</h4>
+            <button class="cell" data-pair="1">Cross-validation</button>
+            <button class="cell" data-pair="2">Support vector machines</button>
+            <button class="cell" data-pair="3">Variable selection</button>
+            <button class="cell" data-pair="4">Change detection</button>
+          </div>
+          <div class="col" data-side="b">
+            <h4>Where to read</h4>
+            <button class="cell" data-pair="1" data-fb="Chapter 5, on resampling methods. It also covers the bootstrap, which the lectures do not — useful background, but not examinable here.">Chapter 5, §5.1</button>
+            <button class="cell" data-pair="2" data-fb="Chapter 9 builds SVM in the same order the lectures do: maximal margin first, then the soft classifier, then kernels for non-linear boundaries.">Chapter 9, §9.1–9.4</button>
+            <button class="cell" data-pair="3" data-fb="Chapter 6 on model selection and regularization. Subset selection and shrinkage methods are the two families the course names.">Chapter 6, §6.1–6.2</button>
+            <button class="cell" data-pair="4" data-fb="There is no chapter for it. Change detection is an operations-research topic rather than a statistical-learning one, so the lectures are your only source — which is exactly why the crosswalk is worth having.">No corresponding chapter</button>
+          </div>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="note">
+        <div class="note-head"><span class="lbl">My weak modules</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="examl2" data-placeholder="List the modules you keep getting wrong, and which quiz each one lands on…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Exam target</span>
+      <p class="q">Which modules get examined the most, and which the least?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Modules 1 to 10 appear on midterm 1, as assumed knowledge on midterm 2, and again on the final — three exposures. Modules 17 to 21 appear on the final only. If you are triaging revision, the early modules pay back three times and the late ones once.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
+<!-- ==================== SECTION 3 ==================== -->
+<section class="lesson" id="l3" data-short="Note sheet" style="--accent:#8a5a1c">
+  <div class="lesson-head">
+    <span class="ln">Section 3</span>
+    <h2>The note sheet</h2>
+    <p class="keyline">Notes must be handwritten on a fixed number of sheets, and the constraint is the point — what survives the squeeze is what you actually needed.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>The rules</h3>
+      <table class="plain">
+        <tr><th>Quiz</th><th>What you may bring</th></tr>
+        <tr><td><strong>Midterm 1 and 2</strong></td><td>One sheet of paper, either 8.5″ × 11″ or A4, handwritten on both sides — two sides in total</td></tr>
+        <tr><td><strong>Final</strong></td><td>Two sheets of the same size, handwritten on both sides of each — four sides in total</td></tr>
+        <tr><td><strong>All quizzes</strong></td><td>Blank sheets of paper for scratch work. <strong>No calculators</strong> — no question requires one</td></tr>
+      </table>
+      <div class="callout">
+        <p class="tag">Handwritten, and shown on camera</p>
+        <p>Printed or typed notes do not qualify. Every sheet of notes and every sheet of scratch paper must be held up to the camera, both sides, during the pre-quiz room scan. A sheet that is not shown is a sheet you should assume you cannot use.</p>
+      </div>
+
+      <figure>
+        <svg class="fig" viewBox="0 0 660 230" role="img" aria-label="Two groups of paper outlines. On the left, one sheet shown front and back, labelled two sides for a midterm. On the right, two sheets each shown front and back, labelled four sides for the final.">
+          <text x="60" y="34" font-family="IBM Plex Sans,sans-serif" font-size="12.5" font-weight="600" fill="#131b26">Midterm — 1 sheet, 2 sides</text>
+          <rect x="60" y="50" width="86" height="112" fill="#ffffff" stroke="#8a5a1c" stroke-width="2"/>
+          <rect x="160" y="50" width="86" height="112" fill="#ffffff" stroke="#8a5a1c" stroke-width="2" stroke-dasharray="5 4"/>
+          <g stroke="#c9d2db" stroke-width="1">
+            <line x1="70" y1="70" x2="136" y2="70"/><line x1="70" y1="84" x2="136" y2="84"/><line x1="70" y1="98" x2="136" y2="98"/>
+            <line x1="70" y1="112" x2="136" y2="112"/><line x1="70" y1="126" x2="136" y2="126"/><line x1="70" y1="140" x2="120" y2="140"/>
+            <line x1="170" y1="70" x2="236" y2="70"/><line x1="170" y1="84" x2="236" y2="84"/><line x1="170" y1="98" x2="236" y2="98"/>
+            <line x1="170" y1="112" x2="236" y2="112"/><line x1="170" y1="126" x2="236" y2="126"/><line x1="170" y1="140" x2="220" y2="140"/>
+          </g>
+          <text x="103" y="182" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="11" fill="#4a5765">front</text>
+          <text x="203" y="182" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="11" fill="#4a5765">back</text>
+
+          <line x1="300" y1="50" x2="300" y2="200" stroke="#c9d2db" stroke-width="1"/>
+
+          <text x="340" y="34" font-family="IBM Plex Sans,sans-serif" font-size="12.5" font-weight="600" fill="#131b26">Final — 2 sheets, 4 sides</text>
+          <rect x="340" y="50" width="60" height="112" fill="#ffffff" stroke="#8a5a1c" stroke-width="2"/>
+          <rect x="410" y="50" width="60" height="112" fill="#ffffff" stroke="#8a5a1c" stroke-width="2" stroke-dasharray="5 4"/>
+          <rect x="490" y="50" width="60" height="112" fill="#ffffff" stroke="#8a5a1c" stroke-width="2"/>
+          <rect x="560" y="50" width="60" height="112" fill="#ffffff" stroke="#8a5a1c" stroke-width="2" stroke-dasharray="5 4"/>
+          <g stroke="#c9d2db" stroke-width="1">
+            <line x1="348" y1="70" x2="392" y2="70"/><line x1="348" y1="86" x2="392" y2="86"/><line x1="348" y1="102" x2="392" y2="102"/><line x1="348" y1="118" x2="392" y2="118"/><line x1="348" y1="134" x2="378" y2="134"/>
+            <line x1="418" y1="70" x2="462" y2="70"/><line x1="418" y1="86" x2="462" y2="86"/><line x1="418" y1="102" x2="462" y2="102"/><line x1="418" y1="118" x2="462" y2="118"/><line x1="418" y1="134" x2="448" y2="134"/>
+            <line x1="498" y1="70" x2="542" y2="70"/><line x1="498" y1="86" x2="542" y2="86"/><line x1="498" y1="102" x2="542" y2="102"/><line x1="498" y1="118" x2="542" y2="118"/><line x1="498" y1="134" x2="528" y2="134"/>
+            <line x1="568" y1="70" x2="612" y2="70"/><line x1="568" y1="86" x2="612" y2="86"/><line x1="568" y1="102" x2="612" y2="102"/><line x1="568" y1="118" x2="612" y2="118"/><line x1="568" y1="134" x2="598" y2="134"/>
+          </g>
+          <text x="405" y="182" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="11" fill="#4a5765">sheet 1</text>
+          <text x="555" y="182" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="11" fill="#4a5765">sheet 2</text>
+          <text x="60" y="214" font-family="IBM Plex Sans,sans-serif" font-size="11.5" fill="#4a5765">Handwritten only. Every side, plus every sheet of scratch paper, is shown in the room scan.</text>
+        </svg>
+        <figcaption>The final allows exactly twice the notes of a midterm while covering twice as many modules — so per module, your allowance is unchanged. Plan the final’s sheets as a compression of the two midterm sheets, not as a fresh start.</figcaption>
+      </figure>
+
+      <h3>What actually belongs on it</h3>
+      <p>With no calculators and around two minutes a question on a midterm, the sheet is not a place for worked arithmetic. It is a place for the things that are quick to look up and expensive to misremember.</p>
+      <ol class="steps">
+        <li><strong>Draft it while revising, not after.</strong> Deciding what earns a place is the revision — writing the sheet at the end wastes the mechanism.</li>
+        <li><strong>Put down what distinguishes methods, not what defines them.</strong> You will not forget what clustering is; you may well blank on what separates a hard from a soft classifier, or scaling from standardization.</li>
+        <li><strong>Include the formulas you would otherwise half-remember.</strong> Anything with a subtraction that could go either way, or a term that could sit in a numerator or a denominator.</li>
+        <li><strong>Include the direction of every parameter.</strong> Larger λ means what? Larger C? Larger k? These are pure recall and cheap to write down.</li>
+        <li><strong>Include the assumptions and failure modes.</strong> When a method breaks is more examinable than how it works.</li>
+        <li><strong>Leave off anything you have never once needed while practising.</strong> Space is the binding constraint; nostalgia is not a criterion.</li>
+      </ol>
+
+      <div class="ix" data-order="exam-l3-order" data-win="The ordering matters because step 1 is what makes the rest work: a sheet assembled at the end is a transcription exercise, while a sheet built during revision is a record of everything you actually got wrong.">
+        <div class="ix-head"><span class="ix-kind">put in order</span><span class="ix-done">solved</span></div>
+        <p class="prompt">Drag a sensible way to build the sheet into sequence — or use the arrows.</p>
+        <ol class="order">
+          <li data-pos="1">Start a running draft when revision starts, not the night before</li>
+          <li data-pos="2">Add an entry each time practice reveals something you could not recall</li>
+          <li data-pos="3">Cut anything you have never once needed while practising</li>
+          <li data-pos="4">Rewrite it by hand at the allowed size, which forces the final cut</li>
+          <li data-pos="5">Do a timed practice run using only that sheet</li>
+          <li data-pos="6">Fix whatever the practice run showed was missing, and stop</li>
+        </ol>
+        <button class="btn check">Check the order</button>
+        <p class="fb"></p>
+      </div>
+
+      <div class="ix" data-quiz="exam-l3-q1">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Which of these would be the weakest use of space on a midterm note sheet?</p>
+        <div class="opts">
+          <button class="opt" data-fb="Direction-of-effect facts are the cheapest possible entries: one line each, pure recall, and easy to invert under time pressure. These earn their space.">A line recording which way each model parameter pushes — larger λ, larger C, larger k.</button>
+          <button class="opt" data-right data-fb="Calculators are not permitted precisely because no question needs one, so nothing on the quiz will require you to grind through arithmetic. A worked numerical example consumes a lot of space to rehearse a skill that is not being tested.">A fully worked numerical example, copied out with every intermediate arithmetic step.</button>
+          <button class="opt" data-fb="Distinctions between neighbouring methods are exactly what multiple-choice questions are built from, and they are easy to blur under time pressure. Worth the space.">A short list of what distinguishes each method from the one it is most often confused with.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="note">
+        <div class="note-head"><span class="lbl">Note-sheet draft</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="examl3" data-placeholder="Keep the running draft here as you revise, then hand-copy it at the end. Add a line every time practice catches you out…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Check</span>
+      <p class="q">Why does the sheet have to be drafted during revision rather than after it?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Because choosing what deserves a place is itself the revision — it forces you to decide what you can and cannot recall. Written afterwards it becomes copying, which teaches nothing and tends to fill the space with things you already knew.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
+<!-- ==================== SECTION 4 ==================== -->
+<section class="lesson" id="l4" data-short="Rules" style="--accent:#8a3d5c">
+  <div class="lesson-head">
+    <span class="ln">Section 4</span>
+    <h2>Rules that cost marks</h2>
+    <p class="keyline">Almost none of the avoidable losses in this course come from not knowing the material — they come from missed windows, skipped peer assessments, and proctoring set up too late.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Proctoring</h3>
+      <p>Quizzes are remotely proctored and include a full scan of the room you are sitting in. Two consequences worth planning around:</p>
+      <ul>
+        <li>Anything in shot gets recorded. Either clear or cover what you would rather not have scanned, or take the quiz somewhere quiet and private — a library study room, for instance.</li>
+        <li>Notes and scratch paper are part of the scan. Have them ready to show, both sides.</li>
+      </ul>
+      <div class="callout">
+        <p class="tag">The hard deadline</p>
+        <p>A missed quiz cannot be taken after its window closes, for any reason. In appropriate circumstances an instructor may impute a score from your other quiz results, but that is a discretionary remedy, not an entitlement, and it is not something to build a plan around. Book your slot early in the eleven-day window so a technical failure still leaves you days of room.</p>
+      </div>
+
+      <h3>Peer assessment is not optional</h3>
+      <div class="defn">
+        <span class="term">The rule that surprises people</span>
+        <p>Both the homework and the project are peer-graded, and you must grade others in return. Skip your peer assessments and you receive no credit for your own homework submission; skip them on the project and the project scores zero. The work being finished and submitted does not protect you.</p>
+      </div>
+      <p>Scores are the <em>median</em> of what your peer graders award, not the mean — so a single harsh or generous grader barely moves the result, and there is little value in agonising over one outlier grade.</p>
+
+      <div class="branch" data-branch="exam-l4-branch">
+        <div class="persona">
+          <span class="av">JM</span>
+          <span class="who"><b>Jordan Mensah</b><span>Part-time student, full-time job</span></span>
+        </div>
+        <div class="scene" data-step="1">
+          <p>A midterm window opened four days ago and runs for another seven. Jordan’s week just filled up with work travel, and there is also a homework due in three days plus its peer assessments after that.</p>
+          <p class="said">A classmate: “Just leave the quiz to the last day of the window — that way you get maximum revision time.”</p>
+          <p><strong>What should Jordan do?</strong></p>
+          <div class="choices">
+            <button class="choice" data-go="2" data-tone="bad" data-head="What it risks"
+              data-outcome="Extra revision is real, but so is the tail risk. Sitting a 25% quiz on the final day means a failed camera check, a hotel connection, or a proctoring queue has nowhere to spill into. There is no sitting after the window closes.">
+              Book the last day of the window to get the most revision time.
+            </button>
+            <button class="choice" data-go="2" data-tone="good" data-head="What it buys"
+              data-outcome="Sitting early costs some revision and buys days of margin. If anything goes wrong technically there is still a window left to sit in, and the quiz stops competing with the travel week for attention.">
+              Book a slot in the next two days, before the travel starts.
+            </button>
+            <button class="choice" data-go="2" data-tone="bad" data-head="What goes wrong"
+              data-outcome="Dropping the homework is the cheap move — that is what the two drops are for — but dropping the peer assessments is not the same thing. Skipping them means no credit for a submission he has already made, which is worse than not submitting at all.">
+              Skip the homework and its peer assessments entirely to clear the week.
+            </button>
+          </div>
+        </div>
+        <div class="scene" data-step="2" data-end="1" hidden>
+          <p><strong>The quiz is done.</strong> The homework, though, is genuinely not going to happen this week — the travel ate it. Jordan has used neither of his two drops so far.</p>
+          <p><strong>What is the right call on the homework?</strong></p>
+          <div class="choices">
+            <button class="choice" data-tone="bad" data-head="What it costs"
+              data-outcome="Submitting something rushed and then skipping the peer assessments is the worst of both worlds: the effort is spent and the credit is withheld anyway. If the assessments are not going to get done, the submission does not help.">
+              Submit something rushed, and skip the peer grading he owes.
+            </button>
+            <button class="choice" data-tone="good" data-head="The right call"
+              data-outcome="Use a drop deliberately. One homework is worth around 1.25% and, as one of his two lowest, effectively nothing. He still does the exercises later without the deadline, because the material is examined three more times even if this week’s marks are not.">
+              Take the drop knowingly, and work through the exercises later without the deadline.
+            </button>
+            <button class="choice" data-tone="bad" data-head="What it misses"
+              data-outcome="Peer grading others without submitting your own work does not bank anything — the requirement protects your submission, it is not a currency. He has spent the time and gained nothing he could not have had by taking the drop cleanly.">
+              Skip his own submission but still peer-grade everyone else, to stay in credit.
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <h3>Integrity, and the AI rule in particular</h3>
+      <p>Two policies bear directly on how you work rather than on what you know:</p>
+      <ul>
+        <li><strong>Plagiarism.</strong> Submitted material must be your own, and any background material you draw on must be cited.</li>
+        <li><strong>AI use.</strong> Code or text produced with AI must be cited specifically — you must indicate which part of a submission it generated. The allowance is the same as for a snippet lifted from a programming forum: small, cited pieces are fine, and anything beyond that is not, unless an assignment says otherwise. You remain responsible for any error the tool introduces.</li>
+      </ul>
+      <div class="callout">
+        <p class="tag">Which includes these notes</p>
+        <p>This site was generated by an AI model. If anything from it ends up in a submission, that is exactly the case the citation rule is about — cite it, and check it against the lectures first, because the responsibility for an error lands on you rather than on the tool.</p>
+      </div>
+
+      <div class="ix" data-quiz="exam-l4-q1">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">You finish and submit a homework on time, then run out of time for the peer assessments you owe. What happens?</p>
+        <div class="opts">
+          <button class="opt" data-fb="There is no partial credit here. The peer-assessment requirement is a condition on receiving credit at all, not a separate small component that can be sacrificed.">You lose a small deduction for the missing assessments but keep your homework mark.</button>
+          <button class="opt" data-right data-fb="No credit for the submission. The work being finished and on time does not protect it — grading others is the condition attached to being graded yourself. On the project the same omission produces a zero.">You receive no credit for your own homework submission.</button>
+          <button class="opt" data-fb="Your own grade is the median of what your graders award, which does not depend on whether you graded anyone. The consequence is a rule, not an arithmetic side effect.">Your homework is graded by the instructor instead, using a stricter standard.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="note">
+        <div class="note-head"><span class="lbl">Logistics to sort out</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="examl4" data-placeholder="Proctoring setup done? Quiet room booked? Peer assessments outstanding?…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Trap to avoid</span>
+      <p class="q">Which is worse: submitting no homework at all, or submitting one and skipping the peer assessments?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">They score the same — nothing — but the second costs you the time you spent on the submission. If the peer assessments genuinely cannot be done, taking one of your two drops cleanly is the cheaper decision.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
+<section class="close" style="--accent:#131b26">
+  <h2>How the pieces fit together</h2>
+  <p class="h2meta">The through-line across the four sections</p>
+  <ul class="thread">
+    <li><span class="dot" style="--d:#4a6b2a"></span><span class="lbl">Section 1</span><span>Establishes that three quizzes hold three quarters of the grade, which sets every priority that follows.</span></li>
+    <li><span class="dot" style="--d:#33507f"></span><span class="lbl">Section 2</span><span>Shows that the early modules are examined three times and the late ones once, so revision is not evenly valuable.</span></li>
+    <li><span class="dot" style="--d:#8a5a1c"></span><span class="lbl">Section 3</span><span>Turns a paper constraint into a revision method: what fits on the sheet is what you actually needed.</span></li>
+    <li><span class="dot" style="--d:#8a3d5c"></span><span class="lbl">Section 4</span><span>Covers the losses that have nothing to do with knowing the material.</span></li>
+  </ul>
+
+  <h3 style="color:#131b26">Things worth noticing</h3>
+  <ul>
+    <li><strong>The per-question time budget is the hidden difficulty setting.</strong> A midterm gives 1.8 to 2.0 minutes a question; the final gives three. The final covers twice as much material with at least half again as much thinking time per item — which usually makes it the more comfortable paper despite being comprehensive.</li>
+    <li><strong>The note sheet allowance scales with coverage, so it is not a bonus.</strong> Two midterm sheets cover ten and six modules; two final sheets cover twenty-one. Per module you have less room on the final, which is why it should be a compression of the midterm sheets rather than a fresh document.</li>
+    <li><strong>Coursework is worth less than it feels.</strong> Homework, project and syllabus quiz together are 25% — the weight of one quiz. That is not an argument for skipping homework, which is where the practice happens; it is an argument against letting homework crowd out quiz revision.</li>
+    <li><strong>Two rules produce zeroes rather than deductions.</strong> Missing a quiz window and skipping peer assessments. Neither is recoverable, and both are calendar problems rather than knowledge problems.</li>
+    <li><strong>The stated course goal is not recall.</strong> The syllabus says the aim is choosing an appropriate model for a question, specifying the data it needs, knowing what its answer will and will not tell you, and judging whether someone else’s modelling was reasonable. Questions written from that goal reward knowing when a method applies far more than knowing its derivation.</li>
+  </ul>
+
+  <h3 style="color:#131b26">Before each quiz</h3>
+  <ul>
+    <li>Confirm the proctoring setup works — well before the window, not on the day.</li>
+    <li>Book a slot early in the eleven-day window so a failure still leaves room to re-sit within it.</li>
+    <li>Hand-write the note sheet at the allowed size and do one timed run using only that sheet.</li>
+    <li>Have notes and blank scratch paper ready to show both sides during the room scan.</li>
+    <li>Leave the calculator in a drawer — none of the questions need one.</li>
+    <li>For midterm 2, refresh modules 1 to 10 for the ideas even though they are not the focus.</li>
+    <li>For the final, give modules 17 to 21 a proper pass — it is their only appearance.</li>
+  </ul>
+
+  <div class="note">
+    <div class="note-head"><span class="lbl">Exam prep — my own plan</span><span class="hint">click to type; saves automatically</span></div>
+    <div class="note-body" contenteditable="true" data-note="examsummary" data-placeholder="Your dates, your slot bookings, what you still need to revise…"></div>
+  </div>
+
+  <footer>
+    <span class="ai"><strong>Written by an AI model from a course syllabus.</strong> Not reviewed by any instructor or institution — verify everything here against your own current syllabus before relying on it, because assessment terms change between offerings.
+    <br><br>
+    <strong>This page is administrative, not lecture content.</strong> Unlike the module pages, nothing here comes from a lecture recording. The institution, course code, instructor name, platform and forum names, contact details, links and all calendar dates have been removed; timings are expressed relative to the semester instead.
+    <br><br>
+    <strong>What goes beyond the syllabus.</strong> The syllabus supplies the weights, formats, question counts, durations, coverage, note-sheet rules, proctoring requirements and integrity policies. Everything else is added here: the per-question time arithmetic, the observation that the early modules are examined three times, the whole of “What actually belongs on it” and the note-sheet ordering activity, the Jordan Mensah scenario, which is invented, all quiz feedback and margin questions, and “Things worth noticing”. The textbook crosswalk in Section 2 lists chapter numbers of an introductory statistical-learning text for reference only — no textbook content is reproduced here, and the syllabus states that the course has no set textbook, so those chapters are background rather than examinable coverage.</span>
+  </footer>
+</section>
+
+</div>
+
+<dialog id="dlg">
+  <div class="dlg-in">
+    <h3 id="dlgTitle">Your notes</h3>
+    <p id="dlgHelp" style="font-family:var(--sans);font-size:.88rem;color:var(--ink-soft);max-width:none">Copy this text and keep it somewhere safe.</p>
+    <textarea id="dlgText" spellcheck="false"></textarea>
+    <div class="dlg-row">
+      <button class="btn" id="dlgCopy">Copy to clipboard</button>
+      <button class="btn" id="dlgLoad" hidden>Load these notes</button>
+      <button class="btn" id="dlgClose">Close</button>
+      <span class="status" id="dlgStatus"></span>
+    </div>
+  </div>
+</dialog>
+
+<script src="study.js"></script>
+</body>
+</html>

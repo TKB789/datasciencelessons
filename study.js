@@ -33,11 +33,11 @@ var MODULES = [
     title:"Change Detection", colour:"#6e4a8c",
     blurb:"Telling a real shift from noise, early enough to act on: why hypothesis testing arrives too late, and how CUSUM trades false alarms for speed." },
 
-  /* Not a lecture module — built from the syllabus. `label` overrides the
-     "Module N" caption on the index card; every other page omits it. */
+  /* Not a lecture module — textbook material arranged by course topic.
+     `label` overrides the "Module N" caption on the index card. */
   { id:"exam", file:"exam-prep.html", tab:"Study tools — Exam Prep",
     title:"Exam Prep", colour:"#4a6b2a", label:"Exam prep",
-    blurb:"Weights, formats and coverage for the three proctored quizzes, what belongs on the note sheet, and the rules that cost marks rather than knowledge." }
+    blurb:"The textbook half of the course on one page: bias and variance, cross-validation, the classifiers and what each assumes, regression diagnostics, ridge and lasso, forests, PCA and clustering." }
 
   /* , { id:"m7", file:"module-7-something.html", tab:"Module 7 — Title",
        title:"Title", colour:"#2f6b52", blurb:"One line about the module." } */

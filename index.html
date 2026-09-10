@@ -62,18 +62,24 @@
    page, update its number here.
 
    Counted directly from the page source:
-     m2 = 15   (7 quizzes, 2 orders, 3 matches, 2 hotspots, 1 branch)
-     m5   =  7   (2 quizzes, 1 order, 1 match, 2 hotspots, 1 branch)
-     m6   =  5   (2 quizzes, 1 order, 1 match, 1 hotspot)
-     exam = 16   (7 quizzes, 2 orders, 4 matches, 2 hotspots, 1 branch)
+     m1   =  21  (16 quizzes, 2 hotspots — the matches and the ordering
+                  activity were rebuilt as multiple choice)
+     m2   =  15  (7 quizzes, 2 orders, 3 matches, 2 hotspots, 1 branch)
+     m5   =   7  (2 quizzes, 1 order, 1 match, 2 hotspots, 1 branch)
+     m6   =   5  (2 quizzes, 1 order, 1 match, 1 hotspot)
+     disc =  12  (12 quizzes; the 5 open prompts are not scored)
+     exam = 103  (16 original activities + 87 bank questions in Topics 9–11;
+                  the 12 written answers are not scored)
    ============================================================ */
 window.MODULE_ITEM_COUNTS = {
-  m1: 12,   /* CHECK — carry over from your existing index.html */
+  m1: 21,
   m2: 15,
   m3: 12,   /* CHECK — carry over from your existing index.html */
   m4: 12,   /* CHECK — carry over from your existing index.html */
   m5: 7,
-  m6: 5
+  m6: 5,
+  disc: 12,
+  exam: 103
 };
 
 function buildIndex(mods){

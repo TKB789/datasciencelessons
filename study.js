@@ -33,8 +33,16 @@ var MODULES = [
     title:"Change Detection", colour:"#6e4a8c",
     blurb:"Telling a real shift from noise, early enough to act on: why hypothesis testing arrives too late, and how CUSUM trades false alarms for speed." },
 
-  /* Not a lecture module — textbook material arranged by course topic.
+  /* Not lecture modules — study tools arranged by topic rather than by lecture.
      `label` overrides the "Module N" caption on the index card. */
+  { id:"disc", file:"discussion.html", tab:"Study tools — Discussion",
+    title:"Discussion", colour:"#5a3d7a", label:"Discussion",
+    blurb:"The four points the instructor came back to in the forums and expanded on: why a wider margin helps, scaling against standardization, what really decides between KNN and SVM, and why the units you recorded in weight every distance." },
+
+
+  { id:"exam", file:"exam-prep.html", tab:"Study tools — Exam Prep",
+    title:"Exam Prep", colour:"#4a6b2a", label:"Exam prep",
+    blurb:"The textbook half of the course on one page: bias and variance, cross-validation, the classifiers and what each assumes, regression diagnostics, ridge and lasso, forests, PCA and clustering." }
 
   /* , { id:"m7", file:"module-7-something.html", tab:"Module 7 — Title",
        title:"Title", colour:"#2f6b52", blurb:"One line about the module." } */

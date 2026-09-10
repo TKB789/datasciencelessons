@@ -251,24 +251,24 @@
       <h3>When you’d actually want it: the warehouse</h3>
       <p>A warehouse has an automated storage and retrieval system. In each aisle a machine moves horizontally along the aisle, and also stretches vertically to reach the right height. If it moves, stops, then stretches, the total is the sum of the two times — a 1-norm. If it stretches <em>while</em> it moves, the total is whichever takes longer — an ∞-norm.</p>
 
-      <div class="ix" data-match="m4l2-match" data-win="The pattern to carry away: sequential steps add, parallel steps take a maximum, and the metric should follow the physics.">
-        <div class="ix-head"><span class="ix-kind">match the pairs</span><span class="ix-done">matched</span></div>
-        <p class="prompt">Tap a situation, then the norm it calls for, to pair them up.</p>
-        <div class="match">
-          <div class="col" data-side="a">
-            <h4>Situation</h4>
-            <button class="cell" data-pair="1">Driving to a shop across a city laid out in a grid</button>
-            <button class="cell" data-pair="2">A drone flying directly to the same shop</button>
-            <button class="cell" data-pair="3">A crane that lifts and slides at the same time</button>
-            <button class="cell" data-pair="4">A crane that lifts, stops, then slides</button>
-          </div>
-          <div class="col" data-side="b">
-            <h4>Norm</h4>
-            <button class="cell" data-pair="1" data-fb="Streets force axis-aligned travel, so the legs add: this is the 1-norm, which is why it is nicknamed Manhattan distance.">1-norm — the legs add up</button>
-            <button class="cell" data-pair="2" data-fb="No grid constraint, so it takes the straight line: the ordinary 2-norm.">2-norm — straight-line flight</button>
-            <button class="cell" data-pair="3" data-fb="Two motions running in parallel finish when the slower one finishes, which is exactly max() — the ∞-norm.">∞-norm — whichever motion is slower</button>
-            <button class="cell" data-pair="4" data-fb="Sequential motion means the times stack, so this is a 1-norm even though the machine is the same one.">1-norm again — sequential motion stacks</button>
-          </div>
+      <div class="ix" data-quiz="m4l2-q1">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">The warehouse machine stretches vertically <em>while</em> it moves along the aisle. Which norm gives the retrieval time?</p>
+        <div class="opts">
+          <button class="opt" data-fb="That would be right if the machine moved, stopped, then stretched. Sequential motion stacks; simultaneous motion does not.">1-norm — the two legs add up.</button>
+          <button class="opt" data-fb="The machine is not travelling in a straight line through the racking. The 2-norm measures a path neither motion actually takes.">2-norm — the straight-line distance.</button>
+          <button class="opt" data-right data-fb="Two motions running in parallel finish when the slower one finishes, which is exactly max() — the ∞-norm. The metric should follow the physics.">∞-norm — whichever of the two motions is slower.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="ix" data-quiz="m4l2-q2">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Driving to a shop across a city laid out in a grid, versus a drone flying to the same shop. Which pairing is right?</p>
+        <div class="opts">
+          <button class="opt" data-fb="The car cannot cut the corner. A metric has to describe the path that is actually available, not the shortest one imaginable.">Both are 2-norm — distance is distance, whatever is travelling.</button>
+          <button class="opt" data-right data-fb="Streets force axis-aligned travel, so the legs add — the 1-norm, nicknamed Manhattan distance for exactly this reason. The drone has no grid constraint, so it takes the straight line.">Grid driving is a 1-norm; the drone is a 2-norm.</button>
+          <button class="opt" data-fb="Both halves are inverted. The ∞-norm would say the trip costs only as much as the longer of the two legs, which is true only when the legs happen simultaneously.">Grid driving is an ∞-norm; the drone is a 1-norm.</button>
         </div>
         <p class="fb"></p>
       </div>
@@ -354,18 +354,14 @@
         <figcaption>The two boxes are the expectation and maximization halves of the name. You leave the loop from the assignment step, because that is where “nothing changed” can first be observed.</figcaption>
       </figure>
 
-      <div class="ix" data-order="m4l3-order" data-win="Steps 3 and 4 are the loop; everything before is setup and everything after is the exit condition.">
-        <div class="ix-head"><span class="ix-kind">put in order</span><span class="ix-done">solved</span></div>
-        <p class="prompt">Drag the steps of k-means into sequence — or use the arrows if you prefer the keyboard.</p>
-        <ol class="order">
-          <li data-pos="1">Decide how many clusters you want</li>
-          <li data-pos="2">Pick k points inside the range of the data as starting centers</li>
-          <li data-pos="3">Assign each data point to the center it is closest to</li>
-          <li data-pos="4">Replace each center with the centroid of the points assigned to it</li>
-          <li data-pos="5">Repeat the assign-and-recompute pair until no point changes cluster</li>
-          <li data-pos="6">Report the final clusters</li>
-        </ol>
-        <button class="btn check">Check the order</button>
+      <div class="ix" data-quiz="m4l3-q2">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Which description of k-means is correct?</p>
+        <div class="opts">
+          <button class="opt" data-right data-fb="Steps three and four are the loop; everything before is setup and everything after is the exit condition. You leave from the assignment step, because that is where “nothing changed” can first be observed.">Choose k, pick k starting centers, assign each point to its nearest center, replace each center with the centroid of its points, and repeat those two steps until no point changes cluster.</button>
+          <button class="opt" data-fb="A fixed round count is not the stopping rule. k-means stops when membership stabilises — at that point the centroids are identical to last round and nothing further can change.">Choose k, assign every point to a cluster at random, compute the centroids, and stop after a fixed number of rounds.</button>
+          <button class="opt" data-fb="Leaving from the recompute step means you stop without knowing whether the new centers would have moved anyone. The observable condition — no point changed cluster — belongs to the assignment step.">Choose k, pick k starting centers, recompute each center from the points nearest it, then assign points, exiting from the recompute step.</button>
+        </div>
         <p class="fb"></p>
       </div>
     </div>

@@ -490,26 +490,27 @@
 
   <div class="row">
     <div class="main">
-      <h3>Match each approach to what it does</h3>
+      <h3>What each approach actually gives you</h3>
 
-      <div class="ix" data-match="m3l3-match" data-win="Random risks uneven coverage, rotation risks systematic bias, and the stratified compromise takes the good half of each.">
-        <div class="ix-head"><span class="ix-kind">match the pairs</span><span class="ix-done">matched</span></div>
-        <p class="prompt">Tap an approach, then its consequence, to pair them up.</p>
-        <div class="match">
-          <div class="col" data-side="a">
-            <h4>Approach</h4>
-            <button class="cell" data-pair="1">Simple random selection</button>
-            <button class="cell" data-pair="2">Fixed rotation through the sets</button>
-            <button class="cell" data-pair="3">Random within each category</button>
-            <button class="cell" data-pair="4">Training large, others large enough</button>
-          </div>
-          <div class="col" data-side="b">
-            <h4>What it gives you</h4>
-            <button class="cell" data-pair="1" data-fb="Nothing systematic can go wrong, but nothing guarantees even coverage either — one set may end up heavy on early years.">Even-handed on average, but coverage of any period is left to chance</button>
-            <button class="cell" data-pair="2" data-fb="Guarantees each part of the data is equally separated — and creates a new bias whenever the cycle lines up with a pattern in the data.">Equal spread across the data, at the risk of a cycle-aligned bias</button>
-            <button class="cell" data-pair="3" data-fb="Take 60% of Mondays, 60% of Tuesdays, and so on: every category appears in every set in the right proportion.">Every category represented in every set, in proportion</button>
-            <button class="cell" data-pair="4" data-fb="Not a mechanism for splitting — it's the sizing principle that applies whichever mechanism you choose.">The sizing principle, whichever mechanism you use</button>
-          </div>
+      <div class="ix" data-quiz="m3l3-q2">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">You split a time-ordered dataset by fixed rotation: point 1 to training, point 2 to validation, point 3 to test, then repeat. What have you bought and what have you risked?</p>
+        <div class="opts">
+          <button class="opt" data-fb="That is the profile of simple random selection. Rotation is the opposite: its coverage is guaranteed, and the guarantee is where the danger lives.">Even-handed on average, but the coverage of any one period is left to chance.</button>
+          <button class="opt" data-right data-fb="Rotation guarantees each part of the data is equally separated — and creates a fresh bias the moment the cycle matches a period in the data. A 3-cycle on data with a 3-day rhythm sends every Monday to the same set.">Equal spread across the data, at the risk of a bias whenever the cycle lines up with a pattern.</button>
+          <button class="opt" data-fb="That is stratified selection — random within each category. Rotation is blind to category; it only counts positions.">Every category represented in every set, in the right proportion.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="ix" data-quiz="m3l3-q3">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Sales data where Mondays behave nothing like Saturdays. Which approach keeps all three sets representative?</p>
+        <div class="opts">
+          <button class="opt" data-fb="Nothing systematic can go wrong, but nothing guarantees even coverage either — one set may end up heavy on weekends purely by luck.">Simple random selection across all the rows.</button>
+          <button class="opt" data-right data-fb="Stratified selection. Take 60% of Mondays, 60% of Tuesdays, and so on: every category appears in every set in the right proportion.">Random selection within each day of the week.</button>
+          <button class="opt" data-fb="With a 7-day pattern and a 3-way rotation the cycles interact, and some days land disproportionately in one set. Rotation is exactly the wrong tool when the data has a rhythm.">Fixed rotation through the three sets.</button>
+          <button class="opt" data-fb="Not a mechanism for splitting at all — it is the sizing principle, and it applies whichever mechanism you choose.">Make the training set large and the other two just large enough.</button>
         </div>
         <p class="fb"></p>
       </div>
@@ -643,19 +644,14 @@
         <p class="fb"></p>
       </div>
 
-      <div class="ix" data-order="m3l4-order" data-win="Note that the split happens before anything else and the refit happens after the choice — those two ends are where people usually go wrong.">
-        <div class="ix-head"><span class="ix-kind">put in order</span><span class="ix-done">solved</span></div>
-        <p class="prompt">Drag the steps into the right sequence — or use the arrows if you prefer the keyboard.</p>
-        <ol class="order">
-          <li data-pos="1">Set aside roughly 20% of the data as a test set and leave it alone</li>
-          <li data-pos="2">Split the remaining 80% into k parts of equal size</li>
-          <li data-pos="3">For each part in turn, train on the other k−1 parts and evaluate on the one held out</li>
-          <li data-pos="4">Average the k evaluations to get one quality estimate per candidate model</li>
-          <li data-pos="5">Choose the model with the best average</li>
-          <li data-pos="6">Retrain that model on all k parts together</li>
-          <li data-pos="7">Score the retrained model once on the untouched test set</li>
-        </ol>
-        <button class="btn check">Check the order</button>
+      <div class="ix" data-quiz="m3l4-q2">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Which sequence describes cross-validation done properly, start to finish?</p>
+        <div class="opts">
+          <button class="opt" data-fb="The test set has to be set aside before anything else touches the data. Carved out at the end, it is made of points that already took part in fitting and choosing, so its score carries the same inflation you were trying to escape.">Split into k parts, train and evaluate k times, average, choose the best model, then carve out a test set to score it.</button>
+          <button class="opt" data-fb="Everything is right until the last step. The model you score should not be one of the k fold models — each was trained on only k−1 parts, and picking one throws away data you are entitled to use.">Hold out a test set, split the rest into k parts, train and evaluate k times, average, choose the best model, then score that fold’s model on the test set.</button>
+          <button class="opt" data-right data-fb="The split happens before anything else and the refit happens after the choice — those two ends are where people usually go wrong. Cross-validation chooses and estimates; it does not produce the deliverable.">Hold out a test set, split the rest into k parts, train and evaluate k times, average, choose, retrain the winner on all k parts, then score once on the test set.</button>
+        </div>
         <p class="fb"></p>
       </div>
 

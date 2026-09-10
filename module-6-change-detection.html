@@ -92,22 +92,24 @@
       </table>
       <p>The first family is the demanding one, because acting late is expensive. The other two can usually be answered at leisure with all the data in hand.</p>
 
-      <div class="ix" data-match="m6l1-match" data-win="The families differ in when the answer is needed, not in what makes something a change. Only the first is under time pressure — which is exactly the constraint that shapes the method in Lesson 2.">
-        <div class="ix-head"><span class="ix-kind">match the pairs</span><span class="ix-done">matched</span></div>
-        <p class="prompt">Tap a question, then the family it belongs to, to pair them up.</p>
-        <div class="match">
-          <div class="col" data-side="a">
-            <h4>The question</h4>
-            <button class="cell" data-pair="1">Is this machine’s performance drifting, or is it just noise?</button>
-            <button class="cell" data-pair="2">Did last quarter’s discount move sales at all?</button>
-            <button class="cell" data-pair="3">Have voting patterns shifted over the last four cycles?</button>
-          </div>
-          <div class="col" data-side="b">
-            <h4>Family</h4>
-            <button class="cell" data-pair="1" data-fb="Do we need to do something? The answer triggers maintenance or doesn’t, and every period you spend deciding is a period the machine keeps running as it is.">Something may need to be acted on now</button>
-            <button class="cell" data-pair="2" data-fb="Did our action have an effect? The action is already taken and the data is already collected, so the analysis can be done carefully and after the fact.">An intervention already happened, and we want to know if it worked</button>
-            <button class="cell" data-pair="3" data-fb="What has drifted? Nobody is waiting on the answer to press a button — it feeds planning and future analysis rather than an immediate decision.">Understanding a trend to plan against it</button>
-          </div>
+      <div class="ix" data-quiz="m6l1-q2">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Three change-detection questions. Which one is under genuine time pressure?</p>
+        <div class="opts">
+          <button class="opt" data-right data-fb="Do we need to do something? The answer triggers maintenance or it doesn’t, and every period spent deciding is a period the machine keeps running as it is.">Is this machine’s performance drifting, or is it just noise?</button>
+          <button class="opt" data-fb="Did our action have an effect? The action is already taken and the data already collected, so the analysis can be done carefully and after the fact.">Did last quarter’s discount move sales at all?</button>
+          <button class="opt" data-fb="What has drifted? Nobody is waiting on the answer to press a button — it feeds planning and future analysis rather than an immediate decision.">Have voting patterns shifted over the last four cycles?</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="ix" data-quiz="m6l1-q3">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">What actually separates the three families of change-detection question?</p>
+        <div class="opts">
+          <button class="opt" data-fb="The definition is the same throughout: a difference between before and after. Splitting them by definition would not give you three usable groups.">What counts as a change — each family uses a different definition.</button>
+          <button class="opt" data-right data-fb="Only the first family is under time pressure, and that constraint is exactly what shapes the method in Lesson 2. The other two can be answered at leisure with all the data in hand.">When the answer is needed.</button>
+          <button class="opt" data-fb="All three rest on time-series data. Without a time attribute there is no before and after to compare, only a distribution of values.">Whether the data is a time series.</button>
         </div>
         <p class="fb"></p>
       </div>
@@ -232,18 +234,25 @@
         <p>The bigger C is, the harder it is for S<sub>t</sub> to get large, and the less sensitive the method. The smaller C is, the more sensitive, because S<sub>t</sub> grows faster. T works the same way in the other place: a high threshold means more evidence before an alarm, so later detection and fewer false ones. Neither has a formula — they are model parameters you fit to data.</p>
       </div>
 
-      <div class="ix" data-order="m6l2-order" data-win="Step 4 is the one that distinguishes CUSUM from a plain cumulative sum. Delete it and a long quiet stretch would bank negative credit that the method then has to climb back out of before it could ever report an increase.">
-        <div class="ix-head"><span class="ix-kind">put in order</span><span class="ix-done">solved</span></div>
-        <p class="prompt">Drag one period of the CUSUM calculation into sequence — or use the arrows.</p>
-        <ol class="order">
-          <li data-pos="1">Observe x<sub>t</sub>, the value at this time period</li>
-          <li data-pos="2">Work out x<sub>t</sub> − μ, how far above expectation it ran</li>
-          <li data-pos="3">Subtract C from that, then add the result to the previous total S<sub>t−1</sub></li>
-          <li data-pos="4">If the result is below zero, reset the total to zero</li>
-          <li data-pos="5">Compare the new total S<sub>t</sub> against the threshold T</li>
-          <li data-pos="6">Declare a change if S<sub>t</sub> has reached T; otherwise wait for the next period</li>
-        </ol>
-        <button class="btn check">Check the order</button>
+      <div class="ix" data-quiz="m6l2-q2">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Which sequence describes one period of the CUSUM calculation?</p>
+        <div class="opts">
+          <button class="opt" data-right data-fb="Observation, deviation, discounted accumulation, floor at zero, then the threshold test. Declare a change as soon as the total reaches T; otherwise wait for the next period.">Observe x<sub>t</sub>; work out x<sub>t</sub> − μ; subtract C and add to S<sub>t−1</sub>; reset to zero if the result is negative; compare S<sub>t</sub> against T.</button>
+          <button class="opt" data-fb="This tests the single observation against the threshold, which is what CUSUM exists to avoid. The threshold applies to the accumulated total, so that small persistent deviations can add up to evidence.">Observe x<sub>t</sub>; compare it against the threshold T; if it exceeds T, add x<sub>t</sub> − μ − C to the running total.</button>
+          <button class="opt" data-fb="Two things are wrong: μ has gone missing, so the total drifts with the level of the series rather than the deviation from it, and the reset fires on the alarm condition instead of on a negative total.">Observe x<sub>t</sub>; subtract C from the previous total S<sub>t−1</sub>; add x<sub>t</sub>; reset to zero if the result exceeds T.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="ix" data-quiz="m6l2-q3">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">What would break if you dropped the “reset to zero when the total goes negative” step?</p>
+        <div class="opts">
+          <button class="opt" data-fb="It still could, given a large enough increase. The damage is slower and subtler than that.">The method could never raise an alarm at all, since S<sub>t</sub> would never reach T.</button>
+          <button class="opt" data-right data-fb="This is the step that distinguishes CUSUM from a plain cumulative sum. The floor at zero means each new stretch of data starts from a clean slate rather than from a debt earned during a calm period.">A long quiet stretch would bank negative credit the method has to climb back out of before it could report an increase.</button>
+          <button class="opt" data-fb="The opposite. Without the floor the total starts each rise from below zero, so detection is later, not earlier.">The method would become more sensitive, raising alarms too readily.</button>
+        </div>
         <p class="fb"></p>
       </div>
     </div>

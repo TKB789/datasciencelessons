@@ -274,22 +274,24 @@
 
   <div class="row">
     <div class="main">
-      <div class="ix" data-match="m5l2-match" data-win="Notice that only the first is about a value. The other two are about position and about absence — which is why a single numeric test can’t catch all three.">
-        <div class="ix-head"><span class="ix-kind">match the pairs</span><span class="ix-done">matched</span></div>
-        <p class="prompt">Tap a kind of outlier, then the case that illustrates it, to pair them up.</p>
-        <div class="match">
-          <div class="col" data-side="a">
-            <h4>Kind of outlier</h4>
-            <button class="cell" data-pair="1">Point outlier</button>
-            <button class="cell" data-pair="2">Contextual outlier</button>
-            <button class="cell" data-pair="3">Collective outlier</button>
-          </div>
-          <div class="col" data-side="b">
-            <h4>The case</h4>
-            <button class="cell" data-pair="1" data-fb="The value itself is far from every other value. This is the only one of the three you can detect by looking at a single number in isolation.">A single reading sits far above every other reading in the column</button>
-            <button class="cell" data-pair="2" data-fb="Nothing is wrong with the number — 27 degrees is ordinary in July. It is anomalous only because of when it appears, which is what makes it contextual.">A mid-winter temperature equal to a perfectly normal mid-summer one</button>
-            <button class="cell" data-pair="3" data-fb="An outlier by omission: no individual point is wrong, and it is hard to name which ones are faulty. The points are only anomalous taken together.">A stretch of heartbeat data where an expected beat never appears</button>
-          </div>
+      <div class="ix" data-quiz="m5l2-q2">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">A mid-winter temperature reading equal to a perfectly ordinary mid-summer one. What kind of outlier is it?</p>
+        <div class="opts">
+          <button class="opt" data-fb="A point outlier sits far from every other value in the column. This reading does not — the identical number is unremarkable six months earlier.">A point outlier.</button>
+          <button class="opt" data-right data-fb="Nothing is wrong with the number: 27 degrees is ordinary in July. It is anomalous only because of when it appears, and the surrounding points supply the context that makes it so.">A contextual outlier.</button>
+          <button class="opt" data-fb="Collective outliers are anomalous only as a group. Here a single reading is the problem, and it is identifiable on its own once you know the date.">A collective outlier.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="ix" data-quiz="m5l2-q3">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">A stretch of heartbeat data where an expected beat simply never appears. Which kind is this, and why does it matter for detection?</p>
+        <div class="opts">
+          <button class="opt" data-fb="There is no offending value to be far from anything. The anomaly is an absence, which no test on a single number can see.">A point outlier — the missing beat is a value far from the others.</button>
+          <button class="opt" data-fb="Close, but contextual outliers still involve a value you can point at. Here you cannot name which reading is the faulty one.">A contextual outlier — an ordinary value in the wrong place.</button>
+          <button class="opt" data-right data-fb="No individual point is wrong and it is hard to name which ones are faulty; the points are anomalous only taken together. Only the first of the three kinds is about a value — the other two are about position and about absence, which is why one numeric test cannot catch all three.">A collective outlier — an anomaly by omission, visible only across the group.</button>
         </div>
         <p class="fb"></p>
       </div>
@@ -451,18 +453,25 @@
         <li>If it can’t, you may still have to remove it — but now you know what you are removing.</li>
       </ol>
 
-      <div class="ix" data-order="m5l3-order" data-win="The step people skip is the third — and it is the only one that can’t be done from a keyboard. Detection methods hand you a candidate; nothing but investigation turns a candidate into a decision.">
-        <div class="ix-head"><span class="ix-kind">put in order</span><span class="ix-done">solved</span></div>
-        <p class="prompt">Drag the steps into sequence — or use the arrows.</p>
-        <ol class="order">
-          <li data-pos="1">Flag a candidate point using a detection method</li>
-          <li data-pos="2">Trace where the value came from and what happened at the time</li>
-          <li data-pos="3">Decide whether it is an error or a real observation</li>
-          <li data-pos="4">If it is an error, omit the point or impute a value</li>
-          <li data-pos="5">If it is real, ask whether the event behind it is predictable</li>
-          <li data-pos="6">Choose how the model should treat it — represent it, split it into a second model, or remove it knowingly</li>
-        </ol>
-        <button class="btn check">Check the order</button>
+      <div class="ix" data-quiz="m5l3-q1">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">A detection method flags a point as an outlier. What is the next step?</p>
+        <div class="opts">
+          <button class="opt" data-fb="Detection hands you a candidate, not a verdict. Removing on the strength of the flag alone deletes real observations along with the errors, and leaves no record of which was which.">Remove it — that is what a detection method flagging it is telling you.</button>
+          <button class="opt" data-fb="Imputation is a legitimate treatment for a point you have established is an error. Applied first, it hides the decision rather than making it.">Impute a replacement from the neighbouring values so the series stays complete.</button>
+          <button class="opt" data-right data-fb="The step people skip — and the only one that cannot be done from a keyboard. Nothing but investigation turns a candidate into a decision.">Trace where the value came from and what happened at the time.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="ix" data-quiz="m5l3-q2">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">You establish the flagged point is a real observation, not an error. What question comes next?</p>
+        <div class="opts">
+          <button class="opt" data-right data-fb="If it is, decide whether this model should represent it or whether a second model should. If it is not, you may still remove it — but now you know what you are removing and why.">Whether the event behind it is predictable from the data you have.</button>
+          <button class="opt" data-fb="That is a detection test, and you are past detection. Re-running it tells you what you already know: the point is unusual.">Whether it is far enough from the median to fail the 1.5×IQR rule.</button>
+          <button class="opt" data-fb="Fit will almost always improve when you delete an awkward point. That is a reason to distrust the criterion, not to use it.">Whether removing it improves the model’s fit.</button>
+        </div>
         <p class="fb"></p>
       </div>
     </div>

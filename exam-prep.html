@@ -46,7 +46,7 @@
 
 <header class="hero">
   <h1>Exam Prep: Statistical Learning</h1>
-  <p class="sub">The textbook side of the course, arranged by course topic rather than by chapter — one page covering the ideas every model here is judged by. Topics 9 to 11 add the full question bank for the lecture modules.</p>
+  <p class="sub">The textbook side of the course, arranged by course topic rather than by chapter — one page covering the ideas every model here is judged by. Topics 9 to 13 add the full question bank for the lecture modules and the instructor&rsquo;s posted notes.</p>
 
   <svg class="plot" viewBox="0 0 660 330" role="img" aria-label="Error against model flexibility. Training error falls steadily toward zero. Test error is U-shaped, reaching its minimum at moderate flexibility. Squared bias falls and variance rises, and a horizontal line marks the irreducible error floor.">
     <line x1="70" y1="250" x2="640" y2="250" stroke="#131b26" stroke-width="1.5"/>
@@ -87,6 +87,8 @@
     <li style="--dot:#7a3f52"><a href="#l9"><span class="tnum">Topic 9</span><span class="tname">Foundations bank</span><span class="tq">Question types, the workflow, the three senses of &ldquo;model&rdquo;</span></a></li>
     <li style="--dot:#5a3d7a"><a href="#l10"><span class="tnum">Topic 10</span><span class="tname">Margins &amp; scaling bank</span><span class="tq">Margin width, scaling, KNN against SVM</span></a></li>
     <li style="--dot:#131b26"><a href="#l11"><span class="tnum">Topic 11</span><span class="tname">Mixed comprehensive</span><span class="tq">Everything, unsorted, the way it is actually asked</span></a></li>
+    <li style="--dot:#8a3d5c"><a href="#l12"><span class="tnum">Topic 12</span><span class="tname">Classification bank</span><span class="tq">All of Module 2: SVM, scaling, KNN</span></a></li>
+    <li style="--dot:#a8552b"><a href="#l13"><span class="tnum">Topic 13</span><span class="tname">Validation bias bank</span><span class="tq">Selection bias, the test set, and clustering</span></a></li>
   </ul>
 
   <div class="badge-strip">
@@ -103,6 +105,8 @@
       <li class="badge" data-for="l9" style="--b:#7a3f52"><span class="gem">Q</span><span class="nm">Foundations Bank</span></li>
       <li class="badge" data-for="l10" style="--b:#5a3d7a"><span class="gem">P</span><span class="nm">Professor&rsquo;s Bank</span></li>
       <li class="badge" data-for="l11" style="--b:#4a6b2a"><span class="gem">∑</span><span class="nm">Full Paper</span></li>
+      <li class="badge" data-for="l12" style="--b:#8a3d5c"><span class="gem">M2</span><span class="nm">Module 2 Bank</span></li>
+      <li class="badge" data-for="l13" style="--b:#a8552b"><span class="gem">B</span><span class="nm">Selection Bias</span></li>
       <li class="badge" data-for="*"  style="--b:#131b26"><span class="gem">★</span><span class="nm">Exam ready</span></li>
     </ul>
   </div>
@@ -1039,8 +1043,6 @@
         <p>These questions test the Module 1 material rather than the textbook material on the rest of this page. They are collected here so the module page can stay focused on the content and this page can carry the testing.</p>
       </div>
 
-
-
       <div class="ix" data-quiz="exam-m1l1-b01">
         <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
         <p class="prompt">Which of these is <strong>not</strong> one of the three parts of analytics modeling?</p>
@@ -1209,7 +1211,6 @@
         </details>
       </div>
 
-
       <div class="ix" data-quiz="exam-m1l2-b01">
         <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
         <p class="prompt">Which set contains <strong>only</strong> classification methods?</p>
@@ -1374,7 +1375,6 @@
         </details>
       </div>
 
-
       <div class="ix" data-quiz="exam-m1l3-b01">
         <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
         <p class="prompt">Which stage of a real project typically consumes the largest share of the time?</p>
@@ -1519,7 +1519,6 @@
           <p>Others worth credit: duplicate records, inconsistent categorical coding, timestamps in mixed time zones, and class imbalance.</p></div>
         </details>
       </div>
-
 
       <div class="ix" data-quiz="exam-m1l4-b01">
         <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
@@ -2005,8 +2004,6 @@
         <p>Do this section cold, without revising first — it is the closest thing here to sitting the real paper, and getting a question wrong under those conditions tells you more than getting it right after a re-read.</p>
       </div>
 
-
-
   <div class="ix" data-quiz="exam-m1f-01">
     <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
     <p class="prompt">“Given our fleet and a two-hour service window, which depots should serve which customers?” Classify it, then say what the answer looks like.</p>
@@ -2250,6 +2247,1480 @@
   </div>
 </section>
 
+<!-- ==================== TOPIC 12 ==================== -->
+<section class="lesson" id="l12" data-short="Module 2 bank" style="--accent:#8a3d5c">
+  <div class="lesson-head">
+    <span class="ln">Topic 12</span>
+    <h2>Classification, SVM and KNN &mdash; question bank</h2>
+    <p class="keyline">The full bank for Module 2: what classification is, choosing a classifier, data vocabulary, the SVM formulation, support vectors, the four extensions, scaling, k-nearest neighbours, and a mixed set across all of it.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <div class="callout">
+        <p class="tag">About this topic</p>
+        <p>These questions test the Module 2 lecture material rather than the textbook material on the rest of this page. The content itself is on the <a href="module-2-classification.html">Module 2</a> page, which keeps one check per lesson; everything else was moved here so the module page can stay focused on the explanation. Sets A to H follow the eight lessons in order; Set I mixes them.</p>
+      </div>
+
+  <div class="qbank">
+    <h4>Set A &middot; Lesson 1 — What classification is</h4>
+
+    <div class="ix" data-quiz="exam-m2a-01">
+      <div class="ix-head"><span class="ix-kind">A1</span><span class="ix-done">answered</span></div>
+      <p class="prompt">What does “classification” mean in analytics?</p>
+      <div class="opts">
+        <button class="opt" data-fb="No special technical meaning is intended — the everyday sense is the right one.">A formal statistical procedure distinct from its everyday meaning</button>
+        <button class="opt" data-fb="That describes regression on a continuous response, not classification.">Predicting a continuous number for each case</button>
+        <button class="opt" data-fb="Ranking is a different task — it orders cases rather than sorting them into groups.">Ranking cases from most to least likely to succeed</button>
+        <button class="opt" data-right data-fb="Putting things into categories, in exactly the everyday sense of the word.">Putting things into categories, with its ordinary everyday meaning</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="ix" data-quiz="exam-m2a-02">
+      <div class="ix-head"><span class="ix-kind">A2</span><span class="ix-done">answered</span></div>
+      <p class="prompt">Why does the donor-organ example need a model rather than just a laboratory test?</p>
+      <div class="opts">
+        <button class="opt" data-right data-fb="A very recent infection may not be detectable yet, so a negative result isn't conclusive; the model uses other attributes to estimate the risk the test can't yet see.">Because a recent infection may not yet show up, so a negative result isn't conclusive</button>
+        <button class="opt" data-fb="Categories aren't the problem here — safe or infectious is a clean two-class question.">Because there are too many categories for a test to report</button>
+        <button class="opt" data-fb="Test accuracy in general isn't the issue — the specific gap is about timing.">Because laboratory tests are unreliable in general</button>
+        <button class="opt" data-fb="Cost and turnaround aren't the stated reason, and neither would justify a model on its own.">Because the test is too expensive to run on every donor</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="ix" data-quiz="exam-m2a-03">
+      <div class="ix-head"><span class="ix-kind">A3</span><span class="ix-done">answered</span></div>
+      <p class="prompt">Two ingredients are needed from historical data before a classification model can be built. Which pair?</p>
+      <div class="opts">
+        <button class="opt" data-fb="Equal class sizes are convenient but not a requirement, and nothing in the lesson demands them.">Equal numbers of cases in each category, and a distance metric</button>
+        <button class="opt" data-right data-fb="The attributes of each past case, and the observed outcome for each. Without the second it would be clustering.">The attributes of each case, and the observed outcome for each</button>
+        <button class="opt" data-fb="A validation split matters for choosing among models, but it isn't what makes the data usable for classification in the first place.">The attributes of each case, and a validation split</button>
+        <button class="opt" data-fb="Two attributes is a drawing convenience only — real problems use many more.">Exactly two attributes, so the problem can be drawn</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="ix" data-quiz="exam-m2a-04">
+      <div class="ix-head"><span class="ix-kind">A4</span><span class="ix-done">answered</span></div>
+      <p class="prompt">The module draws every example in two dimensions. Why?</p>
+      <div class="opts">
+        <button class="opt" data-fb="Overfitting is a separate concern and isn't the reason for the two-dimensional pictures.">Because two attributes avoid overfitting</button>
+        <button class="opt" data-fb="Adding attributes doesn't break the maths — it only removes the picture.">Because more than two attributes makes the optimization unsolvable</button>
+        <button class="opt" data-right data-fb="Purely because two dimensions can be drawn. Real problems use many attributes, each one another dimension.">Purely because two dimensions can be drawn on a page</button>
+        <button class="opt" data-fb="Nothing about SVM or k-nearest-neighbours is limited to two attributes.">Because the methods only work with two attributes</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="disc">
+      <div class="disc-head"><span class="disc-kind">discussion</span><span class="disc-tag">write, then compare</span></div>
+      <p class="prompt">Explain why “infinitely many lines separate these points” is a problem rather than a convenience, and what that implies about using training accuracy to choose a classifier.</p>
+      <div class="note">
+        <div class="note-head"><span class="lbl">Your answer</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="exam-m2a-d05" data-placeholder="Write your answer before opening the model answer…"></div>
+      </div>
+      <details><summary>Show a strong answer</summary>
+        <div class="a"><p>Every separating line classifies the known data identically — all of them score perfectly — so the training data alone cannot rank them. They differ only on new points, which is exactly where the decision has consequences. It follows that a perfect training score carries no information about which classifier to choose; some other criterion, such as distance from error, has to break the tie.</p></div>
+      </details>
+    </div>
+
+    <div class="disc">
+      <div class="disc-head"><span class="disc-kind">discussion</span><span class="disc-tag">write, then compare</span></div>
+      <p class="prompt">Give one classification problem from your own work or study. Name the response, at least three attributes, the number of categories, and say which of the two errors would cost more.</p>
+      <div class="note">
+        <div class="note-head"><span class="lbl">Your answer</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="exam-m2a-d06" data-placeholder="Response, attributes, categories, cost asymmetry…"></div>
+      </div>
+      <details><summary>Show a strong answer</summary>
+        <div class="a"><p>No single right answer, but a complete one names a response column that is genuinely observed for past cases (not something the model invents), attributes that were knowable <em>before</em> the outcome, and an explicit statement of which error is worse and roughly by how much — the cost ratio is what Lesson 2 and Lesson 6 need in order to place the boundary.</p></div>
+      </details>
+    </div>
+    <div class="ix" data-quiz="exam-m2l1-x3">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">A palaeontologist wants to assign a newly found bone to one of many known species. What does this example establish?</p>
+        <div class="opts">
+          <button class="opt" data-fb="Two-class problems are the common case and the easiest to draw, but nothing in the definition of classification restricts you to two.">That classification is formally defined only for two categories, so this must be approximated</button>
+          <button class="opt" data-right data-fb="The number of categories is a property of the question, not of the method. Lesson 8's k-nearest-neighbours handles many classes without needing a boundary drawn between every pair of species.">That the number of categories is set by the question, and methods exist that handle many at once</button>
+          <button class="opt" data-fb="Dimensions are attributes — the columns of the table. The number of categories is a property of the response column, which is a separate thing entirely.">That each additional species adds another dimension to the data</button>
+          <button class="opt" data-fb="It isn't a different problem type — it's still classification, just with more than two categories. The response is still a known label attached to each past specimen.">That the problem is really clustering, because there are too many categories to label</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+  </div>
+
+  <div class="qbank">
+    <h4>Set B &middot; Lesson 2 — Choosing a classifier</h4>
+
+    <div class="ix" data-quiz="exam-m2b-01">
+      <div class="ix-head"><span class="ix-kind">B1</span><span class="ix-done">answered</span></div>
+      <p class="prompt">Two classifiers both separate the training data perfectly. One passes within a whisker of a point on each side; the other sits well clear. Why prefer the second?</p>
+      <div class="opts">
+        <button class="opt" data-fb="Computation isn't the criterion, and both are equally cheap to evaluate.">Because it is faster to compute</button>
+        <button class="opt" data-fb="They score identically on the training data — that's what 'both separate perfectly' means.">Because it classifies more of the training points correctly</button>
+        <button class="opt" data-fb="Coefficient count is set by the number of attributes, which is the same for both.">Because it uses fewer coefficients</button>
+        <button class="opt" data-right data-fb="The input data is inexact, so a small recording error could flip a decision under the narrow line. The wide line tolerates much larger errors before misclassifying anything.">Because it would take a much larger error in the data before it misclassified anything</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="ix" data-quiz="exam-m2b-02">
+      <div class="ix-head"><span class="ix-kind">B2</span><span class="ix-done">answered</span></div>
+      <p class="prompt">Hard classifier versus soft classifier — what is the distinction?</p>
+      <div class="opts">
+        <button class="opt" data-right data-fb="A hard classifier separates the classes perfectly; a soft one accepts some misclassification and aims for the best available separation.">A hard classifier separates perfectly; a soft one accepts some misclassification</button>
+        <button class="opt" data-fb="Verdicts versus probabilities is the SVM/logistic-regression contrast, a different question.">A hard classifier returns a verdict; a soft one returns a probability</button>
+        <button class="opt" data-fb="Both are fitted on training data; neither is defined by which dataset it sees.">A hard classifier is fitted on training data; a soft one on validation data</button>
+        <button class="opt" data-fb="Straight versus curved is the linear/kernel distinction, not hard versus soft.">A hard classifier is a straight line; a soft one curves</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="ix" data-quiz="exam-m2b-03">
+      <div class="ix-head"><span class="ix-kind">B3</span><span class="ix-done">answered</span></div>
+      <p class="prompt">Missing an infectious donor organ is far costlier than rejecting a safe one. Which way should the boundary move?</p>
+      <div class="opts">
+        <button class="opt" data-fb="Leaving it centred is the implicit claim that both errors cost the same, which is exactly what's been contradicted.">It shouldn't move; the boundary is set by the data, not by costs</button>
+        <button class="opt" data-right data-fb="Away from the costly side, so ambiguous cases land on the cheap-error side and get rejected.">Away from the costly error, so ambiguous cases are treated as unsafe</button>
+        <button class="opt" data-fb="That does the opposite of what you want — it makes the expensive error more likely, not less.">Toward the costly error, to give those cases more room</button>
+        <button class="opt" data-fb="Rotation changes which attributes drive the decision. Cost asymmetry calls for a shift, not a turn.">It should be rotated rather than shifted</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="ix" data-quiz="exam-m2b-04">
+      <div class="ix-head"><span class="ix-kind">B4</span><span class="ix-done">answered</span></div>
+      <p class="prompt">Why do medical screening programmes deliberately set an aggressive first test and then confirm positives with a second one?</p>
+      <div class="opts">
+        <button class="opt" data-fb="Cheapness may be true of the first test, but it isn't the reason the threshold is set aggressively.">Because the first test is cheaper, so it should be run on everyone</button>
+        <button class="opt" data-fb="Balancing the two error types equally is exactly what this design refuses to do.">Because it balances the two error types equally</button>
+        <button class="opt" data-right data-fb="A missed infection is very costly, since someone may unknowingly infect others — so the threshold is pushed toward false positives, which the confirmatory test then clears up.">Because a missed case is very costly, so the threshold is pushed toward false positives</button>
+        <button class="opt" data-fb="A confirmatory test doesn't make the first one more accurate; it changes the cost of the first one's errors.">Because running two tests makes the first one more accurate</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="ix" data-quiz="exam-m2b-05">
+      <div class="ix-head"><span class="ix-kind">B5</span><span class="ix-done">answered</span></div>
+      <p class="prompt">Even when the data is perfectly separable, a forager may deliberately misclassify some safe plants. Why is that not a mistake?</p>
+      <div class="opts">
+        <button class="opt" data-fb="It isn't about the sample being unrepresentative — it's about the consequences of the two errors.">Because the sample of plants is too small to trust</button>
+        <button class="opt" data-fb="Future data may well overlap, but the forager's reasoning holds even if it never does.">Because the data will certainly overlap once more plants are collected</button>
+        <button class="opt" data-fb="Nothing about deliberate misclassification simplifies the boundary; the shift is a cost decision, not a complexity one.">Because a simpler boundary is always preferable</button>
+        <button class="opt" data-right data-fb="With a life at stake, pushing the boundary further from the dangerous class buys safety at the price of some cheap errors — a trade worth making.">Because pushing the boundary further from the dangerous class buys safety at the cost of cheap errors</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="ix" data-quiz="exam-m2b-06">
+      <div class="ix-head"><span class="ix-kind">B6</span><span class="ix-done">answered</span></div>
+      <p class="prompt">A fitted classifier runs almost parallel to the vertical axis. What follows?</p>
+      <div class="opts">
+        <button class="opt" data-right data-fb="The boundary varies almost entirely with the horizontal attribute, so the vertical attribute is barely affecting the decision and may be droppable.">The vertical attribute is doing very little work</button>
+        <button class="opt" data-fb="Both attributes being essential would show up as a boundary genuinely tilted between the axes.">Both attributes are equally essential</button>
+        <button class="opt" data-fb="Orientation of the boundary says nothing about whether the data was scaled, though scaling is required before reading coefficients this way.">The data has certainly not been scaled</button>
+        <button class="opt" data-fb="Read the direction the line <em>varies</em> in, not the axis it lies along — a line parallel to the vertical axis changes with the horizontal attribute.">The horizontal attribute is doing very little work</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="ix" data-quiz="exam-m2b-07">
+      <div class="ix-head"><span class="ix-kind">B7</span><span class="ix-done">answered</span></div>
+      <p class="prompt">When no line separates the classes at all, what is the tradeoff a soft classifier has to make?</p>
+      <div class="opts">
+        <button class="opt" data-fb="Speed is not one of the two competing goals here.">Between fitting quickly and fitting accurately</button>
+        <button class="opt" data-right data-fb="A line with the fewest outright errors may sit close to many near-misses; tilting it trades one for the other.">Between the number of outright errors and how close the line sits to many near-misses</button>
+        <button class="opt" data-fb="The choice of dataset isn't a modelling tradeoff — you use the training data to fit.">Between fitting on training data and fitting on test data</button>
+        <button class="opt" data-fb="Attribute count is a variable-selection question, not the soft-classification tradeoff.">Between using more attributes and using fewer</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="ix" data-quiz="exam-m2b-08">
+      <div class="ix-head"><span class="ix-kind">B8</span><span class="ix-done">answered</span></div>
+      <p class="prompt">Sam's classifier scores 100% on five years of history, and finance says a default costs four times a wrongly declined applicant. What should he do?</p>
+      <div class="opts">
+        <button class="opt" data-fb="Re-centring to minimise the raw error count optimises a number that ignores the four-to-one cost ratio entirely.">Re-centre the line to minimise the total number of misclassifications</button>
+        <button class="opt" data-fb="Dropping an attribute changes which lines are available, not where within the gap the chosen one sits.">Drop the weakest attribute to make the boundary more robust</button>
+        <button class="opt" data-right data-fb="He is free to move within the gap without losing any accuracy on the history, and cost is what should decide where: shift toward the repaid side so ambiguous applicants get declined.">Shift the line toward the repaid side, using the freedom the gap gives him</button>
+        <button class="opt" data-fb="A perfect score says nothing about where in the gap the line should sit — every line inside the gap scores 100%.">Nothing — a perfect score means the boundary is already correct</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="disc">
+      <div class="disc-head"><span class="disc-kind">discussion</span><span class="disc-tag">write, then compare</span></div>
+      <p class="prompt">A colleague says: “Our classifier gets 100% of historical cases right, so there is nothing left to improve.” Write the reply you would give, using the ideas of margin and cost.</p>
+      <div class="note">
+        <div class="note-head"><span class="lbl">Your answer</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="exam-m2b-d09" data-placeholder="Margin, cost asymmetry, what a perfect score does and doesn't tell you…"></div>
+      </div>
+      <details><summary>Show a strong answer</summary>
+        <div class="a"><p>A perfect historical score is compatible with infinitely many boundaries, including ones passing within a whisker of a point on each side. Because the recorded data is inexact, a narrow-margin line can flip a decision on a trivial measurement error, so margin width still matters even at 100%. And since every line in the gap scores identically, the position within the gap is free — which means it should be decided by the relative cost of the two errors rather than left wherever the fit happened to land.</p></div>
+      </details>
+    </div>
+
+    <div class="disc">
+      <div class="disc-head"><span class="disc-kind">discussion</span><span class="disc-tag">write, then compare</span></div>
+      <p class="prompt">Six months later the classes overlap and no line separates them. Sam's cost-shifted boundary now misclassifies several applicants who did repay. Should he re-centre the line? Justify your answer.</p>
+      <div class="note">
+        <div class="note-head"><span class="lbl">Your answer</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="exam-m2b-d10" data-placeholder="What objective is being optimised, and by whose measure…"></div>
+      </div>
+      <details><summary>Show a strong answer</summary>
+        <div class="a"><p>No. Re-centring minimises the raw count of misclassified points, but the raw count is the wrong objective when the two errors cost different amounts — it optimises a number the business doesn't care about. The declined-but-would-have-repaid cases are cheap errors he is deliberately buying, and at a four-to-one ratio buying them is correct. The right move under soft classification is to keep the asymmetry and weight the two error types differently in the objective, so the model is less willing to make the expensive error.</p></div>
+      </details>
+    </div>
+
+    <div class="disc">
+      <div class="disc-head"><span class="disc-kind">discussion</span><span class="disc-tag">write, then compare</span></div>
+      <p class="prompt">Explain why the inexactness of recorded data is the underlying justification for preferring a wide margin. What would change if attributes could be measured perfectly?</p>
+      <div class="note">
+        <div class="note-head"><span class="lbl">Your answer</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="exam-m2b-d11" data-placeholder="Measurement error, robustness, what margin is buying…"></div>
+      </div>
+      <details><summary>Show a strong answer</summary>
+        <div class="a"><p>A recorded income or credit score may be a little off, and a narrow-margin line converts a small recording error into a flipped decision. Distance from the boundary is therefore a tolerance budget for error in the inputs. If attributes were measured perfectly and the training sample were the whole population, margin would matter far less — but sampling variation would still mean future points fall where none have yet been seen, so a wide margin remains a defensible bet even under perfect measurement.</p></div>
+      </details>
+    </div>
+  </div>
+
+  <div class="qbank">
+    <h4>Set C &middot; Lesson 3 — Data definitions</h4>
+
+    <div class="ix" data-quiz="exam-m2c-01">
+      <div class="ix-head"><span class="ix-kind">C1</span><span class="ix-done">answered</span></div>
+      <p class="prompt">In the standard data table, what is a row and what is a column?</p>
+      <div class="opts">
+        <button class="opt" data-fb="Reversed — rows hold observations, columns hold the things measured about them.">Rows are attributes; columns are data points</button>
+        <button class="opt" data-fb="Training and validation are splits of rows, not the definition of rows and columns.">Rows are training data; columns are validation data</button>
+        <button class="opt" data-fb="Only one column is the response; the rest are attributes.">Rows are predictors; columns are responses</button>
+        <button class="opt" data-right data-fb="A row is a data point — one applicant, one day of sales. A column is an attribute.">Rows are data points; columns are attributes</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="ix" data-quiz="exam-m2c-02">
+      <div class="ix-head"><span class="ix-kind">C2</span><span class="ix-done">answered</span></div>
+      <p class="prompt">Which list gives four names for the same thing?</p>
+      <div class="opts">
+        <button class="opt" data-right data-fb="Attribute, feature, covariate, predictor — four words for a column, with covariate and predictor depending on how the column is being used.">Attribute, feature, covariate, predictor</button>
+        <button class="opt" data-fb="Response and outcome name the special column, not an ordinary one.">Attribute, feature, response, outcome</button>
+        <button class="opt" data-fb="These are data types, not synonyms for a column.">Quantitative, categorical, binary, structured</button>
+        <button class="opt" data-fb="Data point and observation name a row; the other two name a column.">Data point, observation, attribute, feature</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="ix" data-quiz="exam-m2c-03">
+      <div class="ix-head"><span class="ix-kind">C3</span><span class="ix-done">answered</span></div>
+      <p class="prompt">For loan applicants, which of these could serve as a response?</p>
+      <div class="opts">
+        <button class="opt" data-fb="A model's own prediction can't be the response — the response is what was actually observed.">The model's predicted class for that applicant</button>
+        <button class="opt" data-right data-fb="Whether they repaid the full loan — or, if you want a number rather than a category, the fraction repaid from 0 to 100%.">Whether they repaid the full loan, or the fraction repaid</button>
+        <button class="opt" data-fb="Credit score is an attribute known before the outcome — it's a predictor, not the answer being predicted.">The applicant's credit score</button>
+        <button class="opt" data-fb="The postcode is an attribute, and a categorical one at that.">The applicant's postcode</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="ix" data-quiz="exam-m2c-04">
+      <div class="ix-head"><span class="ix-kind">C4</span><span class="ix-done">answered</span></div>
+      <p class="prompt">Which best describes unstructured data?</p>
+      <div class="opts">
+        <button class="opt" data-fb="Unsorted rows are still perfectly structured; the term isn't about ordering.">Data whose rows are not in any particular order</button>
+        <button class="opt" data-fb="Numeric codes for categories are structured data — awkward to model, but neatly stored.">Data stored as numbers that stand for categories</button>
+        <button class="opt" data-right data-fb="Data that isn't easily described and stored — free text being the most common case, needing parsing before any trend can be found.">Data that can't be stored neatly, such as free-written text</button>
+        <button class="opt" data-fb="Missing values can occur in structured data too, and don't define the term.">Data with missing values scattered through it</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="ix" data-quiz="exam-m2c-05">
+      <div class="ix-head"><span class="ix-kind">C5</span><span class="ix-done">answered</span></div>
+      <p class="prompt">Which statement about binary data is correct?</p>
+      <div class="opts">
+        <button class="opt" data-fb="Binary columns are common as attributes too — a holiday indicator, for instance.">It can only ever be the response, never an attribute</button>
+        <button class="opt" data-fb="Treating it as a number is often perfectly acceptable, which is what makes it the friendliest categorical type.">It must never be treated as a number under any circumstances</button>
+        <button class="opt" data-fb="It is a special case of categorical data, not a kind of quantitative data.">It is a special case of quantitative data</button>
+        <button class="opt" data-right data-fb="Binary is a special case of categorical with exactly two values, and it can sometimes be treated as quantitative even though it is categorical.">It is categorical with two values, and can sometimes be treated as quantitative</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="ix" data-quiz="exam-m2c-06">
+      <div class="ix-head"><span class="ix-kind">C6</span><span class="ix-done">answered</span></div>
+      <p class="prompt">Must a time series be recorded at equal intervals?</p>
+      <div class="opts">
+        <button class="opt" data-right data-fb="Often it is — daily sales, a stock price every two seconds, a child's height each birthday — but equal spacing isn't required. What matters is that the data points are related in time.">No — it often is, but what matters is that the points are related in time</button>
+        <button class="opt" data-fb="Equal spacing is common but not part of the definition.">Yes — unequal spacing makes it something else</button>
+        <button class="opt" data-fb="Frequency isn't the criterion; a yearly series is as much a time series as a per-second one.">Only if the interval is shorter than a day</button>
+        <button class="opt" data-fb="Time series can be used with many methods; the definition is about the data, not the model.">Only when the data will be used for classification</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="disc">
+      <div class="disc-head"><span class="disc-kind">discussion</span><span class="disc-tag">write, then compare</span></div>
+      <p class="prompt">Define quantitative, categorical and binary data, give an example of each, and explain the specific danger of feeding a categorical column stored as an integer into a distance-based model.</p>
+      <div class="note">
+        <div class="note-head"><span class="lbl">Your answer</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="exam-m2c-d07" data-placeholder="Definitions, examples, and the postcode trap…"></div>
+      </div>
+      <details><summary>Show a strong answer</summary>
+        <div class="a"><p>Quantitative: the numbers carry magnitude — higher means more. Income, age, temperature, daily sales. Categorical: the number only names a group; postcode is the classic case, since moving from 10001 to 20002 doesn't mean anything increased. Binary: categorical with exactly two values — repaid or not, holiday or not — and often safe to treat as a number. The danger with an integer postcode is that a distance-based model reads the numeric gap as a magnitude, so two regions that happen to have adjacent codes are treated as similar and two neighbouring regions with distant codes are treated as far apart. The arithmetic is meaningless no matter how precisely the codes are recorded.</p></div>
+      </details>
+    </div>
+
+    <div class="disc">
+      <div class="disc-head"><span class="disc-kind">discussion</span><span class="disc-tag">write, then compare</span></div>
+      <p class="prompt">Explain what makes a dataset suitable for classification rather than clustering, in terms of the table's columns.</p>
+      <div class="note">
+        <div class="note-head"><span class="lbl">Your answer</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="exam-m2c-d08" data-placeholder="The response column, and what its absence means…"></div>
+      </div>
+      <details><summary>Show a strong answer</summary>
+        <div class="a"><p>Classification requires a response column: an observed correct answer for every row, recorded independently of the predictors. Take that column away and the algorithm has nothing to learn against, which is clustering. The response is also a genuinely different variable from the predictors — repaid-or-not is not a function of income and credit score in the data, it is a separate fact about each case — whereas clusters have no existence outside the model that derives them from the predictors.</p></div>
+      </details>
+    </div>
+    <div class="ix" data-quiz="exam-m2l3-x3">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">What is the single question that decides whether a numeric column is quantitative or categorical?</p>
+        <div class="opts">
+          <button class="opt" data-fb="Integers can be either. Postcodes are integers and categorical; a count of dependents is an integer and quantitative.">Whether the values are whole numbers or can take decimals</button>
+          <button class="opt" data-right data-fb="Exactly — does a bigger value mean more of something, or does it just name a different group? That single question separates the two types every time.">Whether a larger value means more of something, or only names a different group</button>
+          <button class="opt" data-fb="Missingness is a data-quality issue that applies to every type of column, and says nothing about what the numbers mean.">Whether the column has missing values</button>
+          <button class="opt" data-fb="Range size is irrelevant. A two-value column can be quantitative and a thousand-value column can be categorical.">How many distinct values the column contains</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+    <div class="ix" data-quiz="exam-m2l3-x4">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Which of these datasets is a time series?</p>
+        <div class="opts">
+          <button class="opt" data-fb="Rows related by geography, not by time. Ordering rows by postcode doesn't make the sequence meaningful.">One row per postcode, with the average income in that region</button>
+          <button class="opt" data-fb="Each applicant is a different person, and the rows are unrelated to one another. Reading down the column tells you nothing about a sequence.">One row per loan applicant, with income and credit score</button>
+          <button class="opt" data-right data-fb="The rows are related in time — reading down the column shows sales day after day. Equal intervals are common but not required.">One row per day, holding that day's total sales, in chronological order</button>
+          <button class="opt" data-fb="Free text is unstructured data. Whether it's also a time series depends on whether the rows are ordered in time, which isn't stated here.">One row per incident report, holding the free-text description</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+  </div>
+
+  <div class="qbank">
+    <h4>Set D &middot; Lesson 4 — Support vector machines</h4>
+
+    <div class="ix" data-quiz="exam-m2d-01">
+      <div class="ix-head"><span class="ix-kind">D1</span><span class="ix-done">answered</span></div>
+      <p class="prompt">In the module's notation, what do m and n stand for?</p>
+      <div class="opts">
+        <button class="opt" data-fb="Reversed. Rows are counted by m, columns by n.">m = number of attributes; n = number of data points</button>
+        <button class="opt" data-right data-fb="m is the number of data points, n the number of attributes per point.">m = number of data points; n = number of attributes</button>
+        <button class="opt" data-fb="Splits aren't part of this notation at all.">m = training points; n = validation points</button>
+        <button class="opt" data-fb="Classes aren't counted by either symbol in this notation.">m = number of classes; n = number of coefficients</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="ix" data-quiz="exam-m2d-02">
+      <div class="ix-head"><span class="ix-kind">D2</span><span class="ix-done">answered</span></div>
+      <p class="prompt">What does x<sub>ij</sub> refer to?</p>
+      <div class="opts">
+        <button class="opt" data-fb="The response is y<sub>i</sub>, one value per data point.">The response of data point i</button>
+        <button class="opt" data-fb="Coefficients are the a's; the x's are data values.">The coefficient on attribute j</button>
+        <button class="opt" data-right data-fb="The jth attribute of data point i — so x<sub>i1</sub> is person i's credit score and x<sub>i2</sub> their income.">The jth attribute of data point i</button>
+        <button class="opt" data-fb="Distance isn't part of the SVM notation — that's k-nearest-neighbours.">The distance between points i and j</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="ix" data-quiz="exam-m2d-03">
+      <div class="ix-head"><span class="ix-kind">D3</span><span class="ix-done">answered</span></div>
+      <p class="prompt">Which single constraint expresses “every point is on its correct side”?</p>
+      <div class="opts">
+        <button class="opt" data-fb="Equality would force every point onto the boundary lines themselves.">y<sub>i</sub>(Σⱼ aⱼx<sub>ij</sub> + a₀) = 1 for all i</button>
+        <button class="opt" data-fb="Without the y<sub>i</sub> multiplier this only states the blue condition, and the red points would violate it.">Σⱼ aⱼx<sub>ij</sub> + a₀ ≥ 1 for all i</button>
+        <button class="opt" data-fb="This is the boundary equation, which describes the line rather than constraining the points.">Σⱼ aⱼx<sub>ij</sub> + a₀ = 0 for all i</button>
+        <button class="opt" data-right data-fb="y<sub>i</sub>(Σⱼ aⱼx<sub>ij</sub> + a₀) ≥ 1, required for every data point i.">y<sub>i</sub>(Σⱼ aⱼx<sub>ij</sub> + a₀) ≥ 1 for all i</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="ix" data-quiz="exam-m2d-04">
+      <div class="ix-head"><span class="ix-kind">D4</span><span class="ix-done">answered</span></div>
+      <p class="prompt">Why would coding the classes as 1 and 0 rather than +1 and −1 break the merged constraint?</p>
+      <div class="opts">
+        <button class="opt" data-right data-fb="Multiplying by −1 is what flips ≤ −1 into ≥ 1 so both classes share one inequality. Multiplying by 0 annihilates the expression instead of flipping it.">Because multiplying by 0 annihilates the expression instead of flipping the inequality</button>
+        <button class="opt" data-fb="The margin formula involves the coefficients, not the response coding.">Because the margin formula depends on the response values</button>
+        <button class="opt" data-fb="Symmetry around zero is a pleasant side effect, not the working part.">Because the classes would no longer be symmetric around zero</button>
+        <button class="opt" data-fb="Zero-mean inputs are Lesson 7's standardization, and they apply to the attributes rather than the response.">Because models require inputs centred on zero</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="ix" data-quiz="exam-m2d-05">
+      <div class="ix-head"><span class="ix-kind">D5</span><span class="ix-done">answered</span></div>
+      <p class="prompt">The margin equals 2 / √(Σⱼ aⱼ²). What follows?</p>
+      <div class="opts">
+        <button class="opt" data-fb="The intercept doesn't appear in the margin formula; it slides the line without changing the gap between the boundary lines.">The margin is controlled by the intercept</button>
+        <button class="opt" data-right data-fb="The coefficients sit in the denominator, so shrinking them widens the gap — which is why maximising the margin is the same as minimising the sum of squared coefficients.">Maximising the margin is the same as minimising the sum of squared coefficients</button>
+        <button class="opt" data-fb="Data point count doesn't appear in the formula at all.">The margin grows with the number of data points</button>
+        <button class="opt" data-fb="Backwards — larger coefficients enlarge the denominator and squeeze the gap shut.">Maximising the margin means making the coefficients as large as possible</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="ix" data-quiz="exam-m2d-06">
+      <div class="ix-head"><span class="ix-kind">D6</span><span class="ix-done">answered</span></div>
+      <p class="prompt">In the error term max{0, 1 − y<sub>i</sub>(Σⱼ aⱼx<sub>ij</sub> + a₀)}, what does the max with zero accomplish?</p>
+      <div class="opts">
+        <button class="opt" data-fb="Scaling of the attributes is handled before fitting, not by this term.">It rescales the attributes to a common range</button>
+        <button class="opt" data-fb="It doesn't cap anything — the penalty grows without limit as a point sits further onto the wrong side.">It caps how large any single error can become</button>
+        <button class="opt" data-right data-fb="Points comfortably on the correct side contribute nothing, while points on the wrong side contribute an amount that grows with how far wrong they are.">It charges nothing for points that are comfortably correct</button>
+        <button class="opt" data-fb="Negative coefficients are perfectly legitimate and are not what's being clipped.">It prevents the coefficients from going negative</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="ix" data-quiz="exam-m2d-07">
+      <div class="ix-head"><span class="ix-kind">D7</span><span class="ix-done">answered</span></div>
+      <p class="prompt">In the soft-classification objective, what happens as λ becomes very large?</p>
+      <div class="opts">
+        <button class="opt" data-fb="The constraint set doesn't change with λ — soft classification has no hard separation requirement to enforce.">The constraints become impossible to satisfy</button>
+        <button class="opt" data-fb="λ trades the two goals off; it doesn't remove either term from the objective.">The error term is removed from the objective entirely</button>
+        <button class="opt" data-fb="That describes λ heading toward zero, where avoiding mistakes dominates.">The model chases a perfect fit on the training data</button>
+        <button class="opt" data-right data-fb="Margin width outweighs avoiding mistakes, so the model accepts more misclassified training points in exchange for a wider gap.">The model accepts more training errors in exchange for a wider margin</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="ix" data-quiz="exam-m2d-08">
+      <div class="ix-head"><span class="ix-kind">D8</span><span class="ix-done">answered</span></div>
+      <p class="prompt">Why does a misclassified point far from the line count as a bigger error than one just barely on the wrong side?</p>
+      <div class="opts">
+        <button class="opt" data-right data-fb="The quantity y<sub>i</sub>(Σaⱼx<sub>ij</sub> + a₀) − 1 goes more negative the further wrong the point sits, and how negative it is is how big the mistake is.">Because the quantity being measured goes further negative the further wrong the point is</button>
+        <button class="opt" data-fb="Nothing in the objective counts points; it sums a continuous measure of wrongness.">Because the objective counts points rather than measuring them</button>
+        <button class="opt" data-fb="Distant points are not automatically support vectors; support vectors are the points the boundaries rest against.">Because distant points are always support vectors</button>
+        <button class="opt" data-fb="The error term measures distance from the boundary condition, not confidence expressed as a probability — SVM doesn't produce probabilities.">Because the model is more confident about distant points</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="ix" data-quiz="exam-m2d-09">
+      <div class="ix-head"><span class="ix-kind">D9</span><span class="ix-done">answered</span></div>
+      <p class="prompt">The lesson notes that the 1 in “≥ 1” could be any number. Why?</p>
+      <div class="opts">
+        <button class="opt" data-fb="It isn't arbitrary in the sense of not mattering to the algebra — it fixes the scale, and everything else adjusts around it.">Because the constraint is not actually enforced by the solver</button>
+        <button class="opt" data-right data-fb="It is there for scaling. Changing it rescales the coefficients correspondingly without changing which boundary the model picks.">Because it sets a scale, and the coefficients rescale to match</button>
+        <button class="opt" data-fb="Class balance has nothing to do with the choice of that constant.">Because it depends on how many points are in each class</button>
+        <button class="opt" data-fb="The response coding is ±1 for a separate reason — to merge the two conditions — and isn't what makes the constant flexible.">Because the response is coded ±1, so the constraint must use 1</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="disc">
+      <div class="disc-head"><span class="disc-kind">discussion</span><span class="disc-tag">write, then compare</span></div>
+      <p class="prompt">State the hard-separation SVM problem from memory — objective and constraint — and explain in words what each part is asking for.</p>
+      <div class="note">
+        <div class="note-head"><span class="lbl">Your answer</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="exam-m2d-d10" data-placeholder="Objective, constraint, and the plain-English reading of each…"></div>
+      </div>
+      <details><summary>Show a strong answer</summary>
+        <div class="a"><p>Minimise Σⁿ<sub>j=1</sub> aⱼ² over a₀…aₙ, subject to y<sub>i</sub>(Σⁿ<sub>j=1</sub> aⱼx<sub>ij</sub> + a₀) ≥ 1 for every point i. The objective asks for the widest possible gap between the two parallel boundary lines, since the margin is 2/√(Σaⱼ²) and shrinking the coefficients enlarges it. The constraint asks that every data point sit on its own side of its boundary line, with the ±1 coding letting one inequality cover both classes. Together: the widest separation available among the coefficient sets that classify everything correctly.</p></div>
+      </details>
+    </div>
+
+    <div class="disc">
+      <div class="disc-head"><span class="disc-kind">discussion</span><span class="disc-tag">write, then compare</span></div>
+      <p class="prompt">Derive the merged constraint from the two separate class conditions, and explain why the ±1 coding is doing algebraic rather than cosmetic work.</p>
+      <div class="note">
+        <div class="note-head"><span class="lbl">Your answer</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="exam-m2d-d11" data-placeholder="Start from the blue and red conditions…"></div>
+      </div>
+      <details><summary>Show a strong answer</summary>
+        <div class="a"><p>Blue points must satisfy Σaⱼx<sub>ij</sub> + a₀ ≥ 1 and red points Σaⱼx<sub>ij</sub> + a₀ ≤ −1. Multiplying the red condition through by −1 reverses the inequality and gives −(Σaⱼx<sub>ij</sub> + a₀) ≥ 1. Since y<sub>i</sub> is +1 for blue and −1 for red, both cases are exactly y<sub>i</sub>(Σaⱼx<sub>ij</sub> + a₀) ≥ 1. The coding is algebraic because it is the multiplication by −1 that performs the flip; coding red as 0 would multiply the whole expression to zero and destroy the constraint rather than reverse it.</p></div>
+      </details>
+    </div>
+
+    <div class="disc">
+      <div class="disc-head"><span class="disc-kind">discussion</span><span class="disc-tag">write, then compare</span></div>
+      <p class="prompt">Compare the hard-separation problem with the soft-classification objective. What is a constraint in one becomes what in the other, and what does that change about how you use the model?</p>
+      <div class="note">
+        <div class="note-head"><span class="lbl">Your answer</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="exam-m2d-d12" data-placeholder="Constraint versus penalty, and what λ controls…"></div>
+      </div>
+      <details><summary>Show a strong answer</summary>
+        <div class="a"><p>Under hard separation, correct classification is an absolute constraint and margin width is the objective; the problem is infeasible if no line separates the classes. Under soft classification, the classification requirement becomes a penalty term — the sum of max{0, 1 − y<sub>i</sub>(Σaⱼx<sub>ij</sub> + a₀)} — added to λ·Σaⱼ², so violations are priced rather than forbidden. This makes the model usable on overlapping data, and it hands you a parameter: large λ favours a wide margin at the cost of training errors, λ near zero chases a perfect training fit. λ therefore becomes something to choose by validation, with all the selection bias that implies.</p></div>
+      </details>
+    </div>
+    <div class="ix" data-quiz="exam-m2l4-x3">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">In the hard-separation problem, which part is the objective and which is the constraint?</p>
+        <div class="opts">
+          <button class="opt" data-fb="Reversed. Correct classification is what you demand absolutely; margin width is what you optimise among the options that satisfy the demand.">Objective: classify every point correctly. Constraint: the sum of squared coefficients</button>
+          <button class="opt" data-right data-fb="The geometric wish becomes the objective, and the classification requirement becomes the constraint. Nearly every optimization model in this course has that shape.">Objective: minimise Σaⱼ². Constraint: yᵢ(Σaⱼxᵢⱼ + a₀) ≥ 1 for every point</button>
+          <button class="opt" data-fb="Both would be objectives only in the soft-classification version, where the two goals are traded against each other through λ. Under hard separation the classification requirement is absolute.">Both are objectives, traded off against each other by a parameter</button>
+          <button class="opt" data-fb="The intercept is a decision variable, not a constraint — it's one of the things being solved for. Note it doesn't appear in the objective at all.">Objective: minimise the intercept. Constraint: every coefficient must be positive</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+  </div>
+
+  <div class="qbank">
+    <h4>Set E &middot; Lesson 5 — Support vectors</h4>
+
+    <div class="ix" data-quiz="exam-m2e-01">
+      <div class="ix-head"><span class="ix-kind">E1</span><span class="ix-done">answered</span></div>
+      <p class="prompt">What is a support vector?</p>
+      <div class="opts">
+        <button class="opt" data-fb="The coefficients define the boundary's direction; they aren't data points.">The vector of coefficients that defines the boundary</button>
+        <button class="opt" data-fb="Misclassified points are a soft-classification concept and are not what the name refers to.">Any point that the model misclassifies</button>
+        <button class="opt" data-right data-fb="A data point that the boundary comes to rest against — the point supporting the shape, in the picture of a hull balanced on a line.">A data point that one of the boundary lines rests against</button>
+        <button class="opt" data-fb="The centre of a class plays no role in SVM; nothing is averaged.">The centre of each class in attribute space</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="ix" data-quiz="exam-m2e-02">
+      <div class="ix-head"><span class="ix-kind">E2</span><span class="ix-done">answered</span></div>
+      <p class="prompt">Why “vector” rather than “point”?</p>
+      <div class="opts">
+        <button class="opt" data-fb="Direction of support isn't fixed — a support vector can hold the shape from below, the side, or above.">Because support always acts in one fixed direction</button>
+        <button class="opt" data-fb="Vector arithmetic isn't what names the method; the name comes from the geometry of support.">Because the points are added together during fitting</button>
+        <button class="opt" data-fb="Speed of the solver has nothing to do with the terminology.">Because vector operations make the solver faster</button>
+        <button class="opt" data-right data-fb="Because each data point is a vector of attribute values — one number per attribute.">Because each data point is a vector of attribute values</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="ix" data-quiz="exam-m2e-03">
+      <div class="ix-head"><span class="ix-kind">E3</span><span class="ix-done">answered</span></div>
+      <p class="prompt">Delete a data point sitting well inside the blue cloud and refit. What changes?</p>
+      <div class="opts">
+        <button class="opt" data-right data-fb="Nothing. Only the points the boundaries rest against constrain the solution, which is what makes SVM robust to changes far from the boundary.">Nothing at all</button>
+        <button class="opt" data-fb="Interior points are already comfortably satisfying the constraint, so removing one doesn't relax anything.">The boundary moves slightly toward the blue side</button>
+        <button class="opt" data-fb="The margin is set by the support vectors, which this point is not.">The margin narrows because there is less data</button>
+        <button class="opt" data-fb="Coefficient signs are determined by the separating geometry, not by the count of interior points.">The coefficients change sign</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="ix" data-quiz="exam-m2e-04">
+      <div class="ix-head"><span class="ix-kind">E4</span><span class="ix-done">answered</span></div>
+      <p class="prompt">What is the irony in the name “support vector machine”?</p>
+      <div class="opts">
+        <button class="opt" data-fb="Support vectors are precisely the points that do constrain the solution; the interior points are the ones that don't.">The support vectors have no effect on the solution</button>
+        <button class="opt" data-right data-fb="The classifier the model returns runs midway between the two boundary lines, so it touches none of the support vectors the method is named after.">The returned classifier touches none of the support vectors</button>
+        <button class="opt" data-fb="The method is fully automatic — that's where the word 'machine' comes from.">Nothing about the method is automatic, despite the word 'machine'</button>
+        <button class="opt" data-fb="Support vectors are very much real data points, not artificial constructs.">The support vectors are artificial points, not real data</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="ix" data-quiz="exam-m2e-05">
+      <div class="ix-head"><span class="ix-kind">E5</span><span class="ix-done">answered</span></div>
+      <p class="prompt">Where does the word “machine” in the name come from?</p>
+      <div class="opts">
+        <button class="opt" data-fb="Manual placement is exactly what the method removes.">From the analyst manually positioning the boundary</button>
+        <button class="opt" data-fb="Convex hulls are a way of picturing support, not the source of the name.">From the convex hull construction used to find the points</button>
+        <button class="opt" data-right data-fb="From the model automatically determining where the two boundary lines go and which points support them — nobody places them by hand.">From the model automatically determining the boundaries and the supporting points</button>
+        <button class="opt" data-fb="Hardware has nothing to do with it.">From the specialised hardware the method originally required</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="disc">
+      <div class="disc-head"><span class="disc-kind">discussion</span><span class="disc-tag">write, then compare</span></div>
+      <p class="prompt">Define a support vector, explain why the returned classifier touches none of them, and say what that implies about the model's sensitivity to the training data.</p>
+      <div class="note">
+        <div class="note-head"><span class="lbl">Your answer</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="exam-m2e-d06" data-placeholder="Definition, the midway classifier, and robustness…"></div>
+      </div>
+      <details><summary>Show a strong answer</summary>
+        <div class="a"><p>A support vector is a data point that one of the two parallel boundary lines comes to rest against — the points that hold the separation open. The classifier the model returns runs midway between those two boundaries, so it touches neither support vector, which is the irony in the name. The implication is that only the support vectors constrain the solution: points comfortably inside their own class could be moved or deleted without changing the fitted model, so SVM is robust to changes far from the boundary and correspondingly sensitive to a handful of points near it.</p></div>
+      </details>
+    </div>
+
+    <div class="disc">
+      <div class="disc-head"><span class="disc-kind">discussion</span><span class="disc-tag">write, then compare</span></div>
+      <p class="prompt">SVM stores a handful of coefficients; k-nearest-neighbours stores every training point. Discuss what that difference means for a system serving millions of predictions a day.</p>
+      <div class="note">
+        <div class="note-head"><span class="lbl">Your answer</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="exam-m2e-d07" data-placeholder="Where the work happens, and what it costs…"></div>
+      </div>
+      <details><summary>Show a strong answer</summary>
+        <div class="a"><p>SVM compresses the training data into one coefficient per attribute plus an intercept, so a prediction is a single weighted sum regardless of how much data was used to fit it — cheap and constant-time at serving. k-nearest-neighbours does no fitting at all and keeps every point, so every prediction requires measuring distance to the whole training set; cost grows with the data and all of it lands at prediction time. At high volume that favours SVM, or at least requires indexing structures and sampling to make k-nearest-neighbours viable. The compensating advantage is that k-nearest-neighbours absorbs new data instantly, with no refitting.</p></div>
+      </details>
+    </div>
+  </div>
+
+  <div class="qbank">
+    <h4>Set F &middot; Lesson 6 — Extending SVM</h4>
+
+    <div class="ix" data-quiz="exam-m2f-01">
+      <div class="ix-head"><span class="ix-kind">F1</span><span class="ix-done">answered</span></div>
+      <p class="prompt">Under hard separation, over what range can the intercept move without misclassifying any known point?</p>
+      <div class="opts">
+        <button class="opt" data-fb="Unbounded movement would eventually put every point on one side.">Over any range at all, since the intercept doesn't affect classification</button>
+        <button class="opt" data-fb="It is not pinned. Every value inside the gap classifies the known data perfectly, which is exactly the freedom cost weighting exploits.">Nowhere — the intercept is uniquely determined</button>
+        <button class="opt" data-fb="The coefficients set the direction; they aren't the range over which the intercept slides.">From a₁ to aₙ</button>
+        <button class="opt" data-right data-fb="Anywhere from a₀ − 1 to a₀ + 1 — the whole width of the gap between the two boundary lines.">From a₀ − 1 to a₀ + 1</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="ix" data-quiz="exam-m2f-02">
+      <div class="ix-head"><span class="ix-kind">F2</span><span class="ix-done">answered</span></div>
+      <p class="prompt">A bad loan costs twice what a wrongly rejected good applicant does. The lesson's blend gives an intercept of ⅔(a₀ − 1) + ⅓(a₀ + 1). What is the logic?</p>
+      <div class="opts">
+        <button class="opt" data-right data-fb="A weighted blend of the two extremes of the free range, pulled toward the costly side in proportion to the cost.">A weighted average of the two extremes, pulled toward the costly side</button>
+        <button class="opt" data-fb="The weights come from the cost ratio, not from how many points fall in each class.">The value that equalises the number of points on each side</button>
+        <button class="opt" data-fb="Nothing here maximises the margin — the margin is fixed once the coefficients are set, and only the intercept is in play.">The value that maximises the margin</button>
+        <button class="opt" data-fb="The midpoint would be the equal-cost choice, which is what the two-to-one ratio rules out.">The midpoint of the range, since the data cannot distinguish within it</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="ix" data-quiz="exam-m2f-03">
+      <div class="ix-head"><span class="ix-kind">F3</span><span class="ix-done">answered</span></div>
+      <p class="prompt">How are unequal costs handled under soft classification rather than hard separation?</p>
+      <div class="opts">
+        <button class="opt" data-fb="Removing points to force separability throws away real information and doesn't address cost.">By deleting points until the classes separate, then shifting the intercept</button>
+        <button class="opt" data-right data-fb="By adding an extra multiplier for each error type — the larger the penalty on a given error, the less willing the model is to make it.">By adding a different multiplier to each type of error in the objective</button>
+        <button class="opt" data-fb="λ trades margin against total error; it doesn't distinguish between the two error types.">By raising λ until the expensive errors disappear</button>
+        <button class="opt" data-fb="Scaling puts attributes on a common footing and has nothing to do with error costs.">By scaling the attributes so the costly class dominates</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="ix" data-quiz="exam-m2f-04">
+      <div class="ix-head"><span class="ix-kind">F4</span><span class="ix-done">answered</span></div>
+      <p class="prompt">When is a near-zero coefficient good evidence that an attribute can be dropped?</p>
+      <div class="opts">
+        <button class="opt" data-fb="Coefficients are equally readable in high dimensions — that's precisely why the rule is useful where you can't draw the picture.">Only in two dimensions, where you can check it against the picture</button>
+        <button class="opt" data-fb="On raw data a coefficient can be tiny purely because its attribute is measured in large units.">Always — a small coefficient means a small influence</button>
+        <button class="opt" data-right data-fb="Only after scaling, when coefficient magnitudes are comparable across attributes.">Only when the data was scaled before fitting</button>
+        <button class="opt" data-fb="Sample size doesn't make unscaled coefficients comparable.">Only when the dataset is large enough</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="ix" data-quiz="exam-m2f-05">
+      <div class="ix-head"><span class="ix-kind">F5</span><span class="ix-done">answered</span></div>
+      <p class="prompt">What does a kernel method change about SVM?</p>
+      <div class="opts">
+        <button class="opt" data-fb="Scaling remains necessary with kernels; nothing about them fixes mismatched units.">It removes the need to scale the data</button>
+        <button class="opt" data-fb="Multi-class handling is what k-nearest-neighbours gives almost for free, not what kernels are for.">It lets the model handle more than two classes</button>
+        <button class="opt" data-fb="Kernels don't produce probabilities; that's logistic regression.">It returns a probability instead of a verdict</button>
+        <button class="opt" data-right data-fb="It allows a non-linear boundary — the separator can curve rather than being a straight line or flat hyperplane, while the rest of the machinery stays the same.">It allows the boundary to curve rather than being straight</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="ix" data-quiz="exam-m2f-06">
+      <div class="ix-head"><span class="ix-kind">F6</span><span class="ix-done">answered</span></div>
+      <p class="prompt">Which of the four “questions you were probably about to ask” does logistic regression answer?</p>
+      <div class="opts">
+        <button class="opt" data-right data-fb="Whether you can get a probability rather than a verdict — say a 37% chance of default — and decide from that.">Whether you can get a probability instead of a verdict</button>
+        <button class="opt" data-fb="Higher dimensions work essentially unchanged in plain SVM; no new method is needed.">Whether SVM works beyond two dimensions</button>
+        <button class="opt" data-fb="Curved boundaries are the kernel answer.">Whether the boundary must be straight</button>
+        <button class="opt" data-fb="More than two classes points to k-nearest-neighbours in this module.">Whether more than two classes can be handled</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="ix" data-quiz="exam-m2f-07">
+      <div class="ix-head"><span class="ix-kind">F7</span><span class="ix-done">answered</span></div>
+      <p class="prompt">Lesson 2 noticed that a boundary nearly parallel to an axis reveals an unimportant attribute. What does Lesson 6 add?</p>
+      <div class="opts">
+        <button class="opt" data-fb="It doesn't restrict the idea to two attributes — it removes that restriction.">That the idea only applies when there are exactly two attributes</button>
+        <button class="opt" data-right data-fb="A version that works in dimensions you can't draw: read the coefficient magnitudes instead of the picture — valid only after scaling.">The same insight read off the coefficients, which works in any number of dimensions</button>
+        <button class="opt" data-fb="The observation isn't retracted; it's generalised.">That the observation was wrong and should be discarded</button>
+        <button class="opt" data-fb="Nothing about this requires a kernel; it is about which attributes matter, not the boundary's shape.">That a kernel is required before the observation holds</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="disc">
+      <div class="disc-head"><span class="disc-kind">discussion</span><span class="disc-tag">write, then compare</span></div>
+      <p class="prompt">Show how unequal error costs change the intercept under hard separation, and explain why this is a legitimate move rather than fiddling with the model.</p>
+      <div class="note">
+        <div class="note-head"><span class="lbl">Your answer</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="exam-m2f-d08" data-placeholder="The free range, the weighted blend, and why the data can't decide…"></div>
+      </div>
+      <details><summary>Show a strong answer</summary>
+        <div class="a"><p>Under hard separation the intercept can take any value from a₀ − 1 to a₀ + 1 without misclassifying a single known point, so the training data is genuinely indifferent across that range. Cost is then the right tie-breaker: if a bad loan costs twice a wrongly rejected good applicant, take a weighted blend such as ⅔(a₀ − 1) + ⅓(a₀ + 1), pulling the boundary toward the costly side so ambiguous cases fall on the cheap-error side. This isn't fiddling, because no accuracy on known data is being sacrificed — the choice was always unconstrained, and leaving it at the midpoint is itself a decision that both errors cost the same.</p></div>
+      </details>
+    </div>
+
+    <div class="disc">
+      <div class="disc-head"><span class="disc-kind">discussion</span><span class="disc-tag">write, then compare</span></div>
+      <p class="prompt">A fitted SVM shows a coefficient of 0.003 on income and 2.1 on credit score. Write the full analysis you would give a stakeholder who asks whether income can be dropped.</p>
+      <div class="note">
+        <div class="note-head"><span class="lbl">Your answer</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="exam-m2f-d09" data-placeholder="What you can conclude, what you need to check first…"></div>
+      </div>
+      <details><summary>Show a strong answer</summary>
+        <div class="a"><p>Nothing can be concluded until you know whether the data was scaled before fitting. Income runs into six figures and credit score into three, so a small coefficient on income may be doing exactly as much work — it simply multiplies much larger numbers. On raw data the comparison is meaningless. Scale or standardize every attribute, refit, and then compare: if the income coefficient is still near zero relative to the others, income probably isn't relevant for classification and can be dropped. Note also that a large coefficient is not evidence of a fitting error; both numbers are perfectly plausible for unscaled data.</p></div>
+      </details>
+    </div>
+
+    <div class="disc">
+      <div class="disc-head"><span class="disc-kind">discussion</span><span class="disc-tag">write, then compare</span></div>
+      <p class="prompt">Three of the four “questions you were probably about to ask” point at other topics. Name each question, its answer, and the topic it hands off to.</p>
+      <div class="note">
+        <div class="note-head"><span class="lbl">Your answer</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="exam-m2f-d10" data-placeholder="Four questions, four answers, three handoffs…"></div>
+      </div>
+      <details><summary>Show a strong answer</summary>
+        <div class="a"><p>Does SVM work beyond two dimensions? Yes, essentially unchanged — a 148-attribute dataset works the same way; only the drawing is lost, and this hands off to nothing. Must the classifier be a straight line? No — kernel methods give non-linear boundaries, handed off to kernels. Can I get a probability instead of a verdict? Yes — handed off to logistic regression. What about more than two classes? Yes — handed off to k-nearest-neighbours in the next lesson, which handles many classes without a boundary between every pair.</p></div>
+      </details>
+    </div>
+    <div class="ix" data-quiz="exam-m2l6-x3">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Your dataset has 148 attributes rather than two. What does that change about SVM?</p>
+        <div class="opts">
+          <button class="opt" data-right data-fb="Essentially nothing changes — the same objective and the same constraint, with sums running over 148 terms instead of two. The only real loss is that you can no longer draw it.">Essentially nothing, except that you can no longer draw the picture</button>
+          <button class="opt" data-fb="Nothing forces a kernel. Kernels answer the question of whether the boundary must be <em>straight</em>, which is independent of how many dimensions it lives in.">Nothing works until you apply a kernel, because straight boundaries only exist in two dimensions</button>
+          <button class="opt" data-fb="Both stay meaningful. The margin is still 2/√(Σaⱼ²) with the sum running over all 148 coefficients, and support vectors are still the points the boundaries rest against.">The margin and the support vectors stop being defined</button>
+          <button class="opt" data-fb="Scaling matters just as much in 148 dimensions as in two — arguably more, since you can't eyeball which attribute is dominating the sum of squares.">Scaling stops mattering, because no single attribute can dominate 148 others</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+  </div>
+
+  <div class="qbank">
+    <h4>Set G &middot; Lesson 7 — Scaling and standardization</h4>
+
+    <div class="ix" data-quiz="exam-m2g-01">
+      <div class="ix-head"><span class="ix-kind">G1</span><span class="ix-done">answered</span></div>
+      <p class="prompt">Give the scaling formula.</p>
+      <div class="opts">
+        <button class="opt" data-fb="Dividing by the max alone doesn't move the lower end to zero unless the minimum is already zero.">x / x<sub>max</sub></button>
+        <button class="opt" data-fb="That is standardization — mean and standard deviation, not min and max.">(x − μ) / σ</button>
+        <button class="opt" data-right data-fb="(x − x<sub>min</sub>) / (x<sub>max</sub> − x<sub>min</sub>), applied per attribute using that attribute's own min and max.">(x − x<sub>min</sub>) / (x<sub>max</sub> − x<sub>min</sub>)</button>
+        <button class="opt" data-fb="Dividing by the mean neither bounds the range nor standardizes the spread.">x / μ</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="ix" data-quiz="exam-m2g-02">
+      <div class="ix-head"><span class="ix-kind">G2</span><span class="ix-done">answered</span></div>
+      <p class="prompt">What does standardization produce?</p>
+      <div class="opts">
+        <button class="opt" data-fb="A bounded 0-to-1 range is what scaling produces.">Values guaranteed to lie between 0 and 1</button>
+        <button class="opt" data-fb="Standardization changes units, not the shape of the distribution — a skewed attribute stays skewed.">A perfectly normal distribution regardless of the original shape</button>
+        <button class="opt" data-fb="Negative values are entirely normal after standardization — anything below the mean.">Values that are always positive</button>
+        <button class="opt" data-right data-fb="A mean of 0 and a standard deviation of 1 — each value expressed as how many standard deviations it sits from the mean, unbounded by construction.">A mean of 0 and a standard deviation of 1, with no bound on the values</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="ix" data-quiz="exam-m2g-03">
+      <div class="ix-head"><span class="ix-kind">G3</span><span class="ix-done">answered</span></div>
+      <p class="prompt">A neural network requires every input between 0 and 1. Which method?</p>
+      <div class="opts">
+        <button class="opt" data-right data-fb="Only scaling can guarantee a bounded range, and a hard bound is exactly what this requirement is.">Scaling</button>
+        <button class="opt" data-fb="Standardization is unbounded — plenty of values land outside 0 to 1, and some go negative.">Standardization</button>
+        <button class="opt" data-fb="Neither would leave the inputs in violation of a stated requirement.">Neither is needed if the model converges</button>
+        <button class="opt" data-fb="Here they genuinely aren't interchangeable; the hard bound decides it.">Either — they're interchangeable</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="ix" data-quiz="exam-m2g-04">
+      <div class="ix-head"><span class="ix-kind">G4</span><span class="ix-done">answered</span></div>
+      <p class="prompt">Which two methods does the lesson name as working better with standardized data?</p>
+      <div class="opts">
+        <button class="opt" data-fb="k-nearest-neighbours needs comparable scales, but it isn't one of the two named standardization examples.">k-nearest-neighbours and regression</button>
+        <button class="opt" data-right data-fb="Principal component analysis and clustering are the two named examples.">Principal component analysis and clustering</button>
+        <button class="opt" data-fb="Neural networks are the scaling example, because of their bounded-input requirement.">Neural networks and time-series models</button>
+        <button class="opt" data-fb="Kernels and logistic regression are Lesson 6 topics, and neither is the named example here.">Kernel SVM and logistic regression</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="ix" data-quiz="exam-m2g-05">
+      <div class="ix-head"><span class="ix-kind">G5</span><span class="ix-done">answered</span></div>
+      <p class="prompt">Which data types are naturally suited to scaling because they are already bounded?</p>
+      <div class="opts">
+        <button class="opt" data-fb="Income and sales counts are unbounded above, so no natural bound exists to scale into.">Household income and daily sales counts</button>
+        <button class="opt" data-fb="Postcodes are categorical — scaling them would treat meaningless gaps as magnitudes.">Postcodes and other regional codes</button>
+        <button class="opt" data-right data-fb="Batting averages between 0 and 1, RGB intensities 0 to 255, certain test scores 200 to 800 — all naturally bounded.">Batting averages, RGB intensities, and bounded test scores</button>
+        <button class="opt" data-fb="Free text isn't numeric at all until it has been parsed into features.">Free-text incident reports</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="ix" data-quiz="exam-m2g-06">
+      <div class="ix-head"><span class="ix-kind">G6</span><span class="ix-done">answered</span></div>
+      <p class="prompt">In the worked table, moving the credit-score coefficient from 700 to 701 shifts the objective by about the same amount as moving the income coefficient from 5 to 37.8. Why does that matter?</p>
+      <div class="opts">
+        <button class="opt" data-fb="Both coefficient sets are legitimate; neither indicates a bug.">Because one of the two coefficient sets must be a fitting error</button>
+        <button class="opt" data-fb="Floating-point precision is not the issue; the effect would persist at any precision.">Because floating-point rounding will dominate sums this large</button>
+        <button class="opt" data-fb="The arithmetic is fine — that's the point. The problem is what the equal movement corresponds to geometrically.">Because the arithmetic in the table is misleading</button>
+        <button class="opt" data-right data-fb="Equal movement in the objective corresponds to a trivial change in one line and a drastic one in the other, so the optimizer steers almost entirely by credit score.">Because equal movement in the objective means wildly unequal movement of the boundary</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="ix" data-quiz="exam-m2g-07">
+      <div class="ix-head"><span class="ix-kind">G7</span><span class="ix-done">answered</span></div>
+      <p class="prompt">You have training, validation and test sets. Where should the min, max, mean and standard deviation used for scaling come from?</p>
+      <div class="opts">
+        <button class="opt" data-right data-fb="From the training data only, then applied unchanged to validation and test. Anything else leaks information from data the model isn't supposed to have seen.">From the training data only, then applied to the other two</button>
+        <button class="opt" data-fb="The test set is the last place these should come from — it is the one set that must stay untouched.">From the test set, since it represents new data</button>
+        <button class="opt" data-fb="Computing them across everything lets information from the held-out data leak into training, which is what invalidates a quality estimate.">From all three sets combined, for the most accurate statistics</button>
+        <button class="opt" data-fb="Scaling each set by its own statistics puts them on different footings, so a value means something different in each.">From each set's own statistics, computed separately</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="ix" data-quiz="exam-m2g-08">
+      <div class="ix-head"><span class="ix-kind">G8</span><span class="ix-done">answered</span></div>
+      <p class="prompt">How widely does the scaling advice apply?</p>
+      <div class="opts">
+        <button class="opt" data-fb="Software sometimes does it automatically and sometimes doesn't, which is a reason to check rather than to assume.">Only when the software doesn't do it automatically, which is rare</button>
+        <button class="opt" data-right data-fb="To most models in the course — classification, clustering, prediction, selection and others. It won't be repeated every time it applies.">To most models in the course, whether or not it is mentioned again</button>
+        <button class="opt" data-fb="Distance-based methods are one important case, but not the only one.">Only to distance-based methods such as k-nearest-neighbours</button>
+        <button class="opt" data-fb="It applies well beyond SVM — the lesson makes a point of saying so.">Only to SVM, because of the sum-of-squares objective</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="disc">
+      <div class="disc-head"><span class="disc-kind">discussion</span><span class="disc-tag">write, then compare</span></div>
+      <p class="prompt">Explain in one paragraph why unscaled data breaks an SVM, then give both formulas and state when each is appropriate.</p>
+      <div class="note">
+        <div class="note-head"><span class="lbl">Your answer</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="exam-m2g-d09" data-placeholder="The mechanism, then the two formulas and their use cases…"></div>
+      </div>
+      <details><summary>Show a strong answer</summary>
+        <div class="a"><p>Attributes on different scales produce coefficients on different scales, and because the objective sums their squares, it responds far more to one attribute than another — so it stops measuring the margin fairly and the optimizer effectively ignores the small-coefficient attribute. Scaling: (x − x<sub>min</sub>)/(x<sub>max</sub> − x<sub>min</sub>), usually into 0 to 1, and for a range [a, b] multiply by (b − a) and add a. Standardization: (x − μ)/σ, giving mean 0 and standard deviation 1. Reach for scaling when a bounded range matters — neural network inputs, optimization feasibility, or naturally bounded data such as batting averages or RGB intensities. Reach for standardization when the model simply works better with it, principal component analysis and clustering being the named examples. When it isn't clear, try both and compare.</p></div>
+      </details>
+    </div>
+
+    <div class="disc">
+      <div class="disc-head"><span class="disc-kind">discussion</span><span class="disc-tag">write, then compare</span></div>
+      <p class="prompt">Scaling is described as “load-bearing twice over” in SVM. Name both jobs it does and explain what fails, silently, if you skip it.</p>
+      <div class="note">
+        <div class="note-head"><span class="lbl">Your answer</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="exam-m2g-d10" data-placeholder="Two jobs, two silent failures…"></div>
+      </div>
+      <details><summary>Show a strong answer</summary>
+        <div class="a"><p>First, it rescues the margin term: without it the sum of squared coefficients is dominated by whichever attribute has the larger units, so the quantity being minimised no longer corresponds to the geometric margin. Second, it makes coefficient magnitudes comparable, which is what licenses reading variable importance off them. Both failures are quiet — the model still fits, still returns coefficients, still produces predictions, and nothing announces that the optimizer steered by one attribute or that a near-zero coefficient was an artefact of units. You get a plausible-looking model and a variable-selection conclusion that is simply wrong.</p></div>
+      </details>
+    </div>
+
+    <div class="disc">
+      <div class="disc-head"><span class="disc-kind">discussion</span><span class="disc-tag">write, then compare</span></div>
+      <p class="prompt">A teammate scales the full dataset before splitting it into training, validation and test. Explain what is wrong, and what the consequence is for the reported performance figure.</p>
+      <div class="note">
+        <div class="note-head"><span class="lbl">Your answer</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="exam-m2g-d11" data-placeholder="Leakage, and which number becomes untrustworthy…"></div>
+      </div>
+      <details><summary>Show a strong answer</summary>
+        <div class="a"><p>The min, max, mean and standard deviation would then be computed using the held-out data, so information about the test set has entered the training pipeline — the model has, in a small way, seen data it was supposed to be measured against. The correct procedure is to compute those statistics on the training data alone and apply the same numbers to validation and test. The consequence is that the reported test performance is no longer a clean estimate of performance on genuinely new data; it will tend to be optimistic, and the degree of optimism can't be quantified from the results themselves.</p></div>
+      </details>
+    </div>
+  </div>
+
+  <div class="qbank">
+    <h4>Set H &middot; Lesson 8 — k-nearest neighbours</h4>
+
+    <div class="ix" data-quiz="exam-m2h-01">
+      <div class="ix-head"><span class="ix-kind">H1</span><span class="ix-done">answered</span></div>
+      <p class="prompt">What assumption is k-nearest-neighbours built on?</p>
+      <div class="opts">
+        <button class="opt" data-fb="Normality of the attributes plays no part in the method.">That the attributes are normally distributed</button>
+        <button class="opt" data-fb="No boundary is assumed, straight or otherwise — that's the method SVM uses.">That a straight line separates the classes</button>
+        <button class="opt" data-right data-fb="That each new point resembles the previous points closest to it.">That a new point resembles the known points nearest to it</button>
+        <button class="opt" data-fb="Class balance is not assumed, though heavily imbalanced data does affect the vote.">That the classes contain equal numbers of points</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="ix" data-quiz="exam-m2h-02">
+      <div class="ix-head"><span class="ix-kind">H2</span><span class="ix-done">answered</span></div>
+      <p class="prompt">Among a new point's seven nearest neighbours there are four red, two amber and one green. What is the prediction?</p>
+      <div class="opts">
+        <button class="opt" data-fb="Nothing in the method blends classes — the vote returns one of them.">A blend weighted 4:2:1</button>
+        <button class="opt" data-fb="A majority of more than half isn't required; the most common class wins.">No prediction, since red is not a majority of seven</button>
+        <button class="opt" data-fb="Green is the least represented class among the neighbours.">Green</button>
+        <button class="opt" data-right data-fb="Red — the most common class among the k closest. Multi-class needs no extra machinery at all.">Red</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="ix" data-quiz="exam-m2h-03">
+      <div class="ix-head"><span class="ix-kind">H3</span><span class="ix-done">answered</span></div>
+      <p class="prompt">How should k be chosen?</p>
+      <div class="opts">
+        <button class="opt" data-right data-fb="Try several values and measure how well each performs, using validation — and measure on data the model didn't learn from.">Try several values and measure each by validation</button>
+        <button class="opt" data-fb="A tidy-sounding rule, but no such formula is given — and any fixed rule ignores the structure of the particular dataset.">Square root of the number of data points, rounded to an odd number</button>
+        <button class="opt" data-fb="k = 1 makes the prediction depend entirely on a single nearest point, which is maximally sensitive to noise.">Always 1, so the closest known case decides</button>
+        <button class="opt" data-fb="Push k to the size of the dataset and every point gets assigned to whichever class is most common overall.">As large as the dataset allows, since more neighbours means more information</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="ix" data-quiz="exam-m2h-04">
+      <div class="ix-head"><span class="ix-kind">H4</span><span class="ix-done">answered</span></div>
+      <p class="prompt">What happens if you set k equal to the number of data points?</p>
+      <div class="opts">
+        <button class="opt" data-fb="It runs perfectly well — it just stops being useful.">The algorithm fails to run</button>
+        <button class="opt" data-right data-fb="Every new point gets assigned to whichever class is most common in the dataset overall, regardless of where it sits.">Every point is assigned to the most common class overall</button>
+        <button class="opt" data-fb="k-nearest-neighbours never produces a boundary described by coefficients.">The model reduces to a straight-line boundary</button>
+        <button class="opt" data-fb="Accuracy doesn't improve — all local information is destroyed.">The model becomes maximally accurate</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="ix" data-quiz="exam-m2h-05">
+      <div class="ix-head"><span class="ix-kind">H5</span><span class="ix-done">answered</span></div>
+      <p class="prompt">Which is <em>not</em> one of the complications the lesson lists for k-nearest-neighbours?</p>
+      <div class="opts">
+        <button class="opt" data-fb="It is listed — straight-line distance is the most common measure, but not the only one.">There is more than one way to measure distance</button>
+        <button class="opt" data-fb="It is listed — weighting each dimension differently, with larger weights giving more influence.">Some attributes should count more than others</button>
+        <button class="opt" data-right data-fb="Not listed, and not true of the method: k-nearest-neighbours handles many classes with no extra machinery, which is one of its selling points.">The method cannot handle more than two classes</button>
+        <button class="opt" data-fb="It is listed — in the extreme, unimportant attributes can be removed entirely.">Some attributes can be removed altogether</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="ix" data-quiz="exam-m2h-06">
+      <div class="ix-head"><span class="ix-kind">H6</span><span class="ix-done">answered</span></div>
+      <p class="prompt">Three different k's appear across the course. What does each count?</p>
+      <div class="opts">
+        <button class="opt" data-fb="None of the three k's counts iterations or coefficients.">Iterations; coefficients; support vectors</button>
+        <button class="opt" data-fb="Error types and cost ratios aren't denoted by k anywhere in the course.">Error types; cost ratios; margin widths</button>
+        <button class="opt" data-fb="Attributes are counted by n and data points by m in this module's notation.">Attributes; data points; classes</button>
+        <button class="opt" data-right data-fb="k-nearest-neighbours: how many neighbours vote. k-means: how many clusters. k-fold cross-validation: how many parts the data is split into.">Neighbours that vote; clusters; parts the data is split into</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="ix" data-quiz="exam-m2h-07">
+      <div class="ix-head"><span class="ix-kind">H7</span><span class="ix-done">answered</span></div>
+      <p class="prompt">Why is k-nearest-neighbours described as doing all its work at prediction time?</p>
+      <div class="opts">
+        <button class="opt" data-right data-fb="There is no fitting step, no coefficients and no boundary. Every distance is measured when a new point arrives.">Because nothing is computed until a new point needs classifying</button>
+        <button class="opt" data-fb="k is chosen once by validation, not per prediction.">Because k is recomputed for every new point</button>
+        <button class="opt" data-fb="There is no fitting step to be slow — that's the whole point.">Because fitting the model is computationally expensive</button>
+        <button class="opt" data-fb="Scaling is a preprocessing step and can be done well in advance.">Because the data must be rescaled for each prediction</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="disc">
+      <div class="disc-head"><span class="disc-kind">discussion</span><span class="disc-tag">write, then compare</span></div>
+      <p class="prompt">Walk through the k-nearest-neighbours procedure step by step, then name its three complications and where each is dealt with.</p>
+      <div class="note">
+        <div class="note-head"><span class="lbl">Your answer</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="exam-m2h-d08" data-placeholder="The procedure, then the complications and their handoffs…"></div>
+      </div>
+      <details><summary>Show a strong answer</summary>
+        <div class="a"><p>Choose a value of k and a way of measuring distance; take the new point; measure its distance to every known data point; keep the k closest; count how many of those fall in each class; assign the new point to whichever class appears most. The complications: distance can be measured in more than one way, with straight-line being the most common — handled by the distance metrics material and the p-norms in Module 4. Some attributes matter more than others, so each dimension's distance can be weighted, with finding the right weights possibly needing regression. And in the extreme some attributes barely matter and can be dropped, which is variable selection. The fourth open question — how to find the right k — is answered by validation.</p></div>
+      </details>
+    </div>
+
+    <div class="disc">
+      <div class="disc-head"><span class="disc-kind">discussion</span><span class="disc-tag">write, then compare</span></div>
+      <p class="prompt">Compare SVM and k-nearest-neighbours on: what they store, where the computation happens, how they handle many classes, and how each responds to a new data point being added.</p>
+      <div class="note">
+        <div class="note-head"><span class="lbl">Your answer</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="exam-m2h-d09" data-placeholder="Four axes of comparison…"></div>
+      </div>
+      <details><summary>Show a strong answer</summary>
+        <div class="a"><p>Storage: SVM compresses the training data into one coefficient per attribute plus an intercept; k-nearest-neighbours keeps every training point. Computation: SVM does the work once at fitting time and predicts with a single weighted sum; k-nearest-neighbours does no fitting and measures distance to the whole training set at every prediction. Many classes: SVM needs extra machinery, such as a boundary between every pair; k-nearest-neighbours gets it free by counting colours among the neighbours. New data: SVM must be refitted, though nothing changes unless the new point disturbs the support vectors; k-nearest-neighbours absorbs the point immediately at the cost of a slightly slower prediction.</p></div>
+      </details>
+    </div>
+
+    <div class="disc">
+      <div class="disc-head"><span class="disc-kind">discussion</span><span class="disc-tag">write, then compare</span></div>
+      <p class="prompt">Explain what happens to a k-nearest-neighbours model as k goes from 1 to the size of the dataset, and why the middle of that range is where a useful value lives.</p>
+      <div class="note">
+        <div class="note-head"><span class="lbl">Your answer</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="exam-m2h-d10" data-placeholder="Both extremes, then the tradeoff between them…"></div>
+      </div>
+      <details><summary>Show a strong answer</summary>
+        <div class="a"><p>At k = 1 the prediction is dictated by a single nearest point, so any noise or mislabelling in that one observation flips the answer — the model tracks the training data's random patterns closely. At k equal to the dataset size, every point receives the overall most common class and all local structure is gone. In between, increasing k smooths the decision by averaging over more neighbours, trading sensitivity to noise against sensitivity to genuine local structure. Nothing improves monotonically, which is why k is chosen by trying values and measuring performance on data the model didn't learn from.</p></div>
+      </details>
+    </div>
+    <div class="ix" data-quiz="exam-m2l8-x3">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Which of the following does k-nearest-neighbours <em>not</em> require?</p>
+        <div class="opts">
+          <button class="opt" data-right data-fb="No boundary is ever built. SVM compresses the data into coefficients describing a line; k-nearest-neighbours keeps every point and answers each query by looking at them directly.">A fitted boundary described by coefficients</button>
+          <button class="opt" data-fb="It does require this. Every known point's class label is needed, since the prediction is a vote among the labels of the nearest points.">A response value for every known data point</button>
+          <button class="opt" data-fb="It does require this — and the same scaling logic as SVM applies, since an attribute in large units will otherwise dominate every distance calculation.">Attributes on comparable scales</button>
+          <button class="opt" data-fb="It does require this. Distance has to be measured somehow, and the choice of metric is one of the method's three complications.">A way of measuring distance between points</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+  </div>
+
+  <div class="qbank">
+    <h4>Set I &middot; Across Module 2</h4>
+
+    <div class="ix" data-quiz="exam-m2k-01">
+      <div class="ix-head"><span class="ix-kind">K1</span><span class="ix-done">answered</span></div>
+      <p class="prompt">Which pairing of model and cross-cutting concept is correct?</p>
+      <div class="opts">
+        <button class="opt" data-right data-fb="Models: SVM and k-nearest-neighbours. Cross-cutting: the data dictionary, scaling and standardization, distance metrics, and validation — all of which apply far beyond classification.">Models: SVM, k-nearest-neighbours. Cross-cutting: data types, scaling, distance, validation</button>
+        <button class="opt" data-fb="Kernels and logistic regression are named as extensions and handoffs, not as the module's two models.">Models: kernels, logistic regression. Cross-cutting: SVM, k-nearest-neighbours</button>
+        <button class="opt" data-fb="Confusion matrices are a cross-cutting evaluation tool, not a model.">Models: confusion matrices, validation. Cross-cutting: SVM, kernels</button>
+        <button class="opt" data-fb="Scaling is not a model — it is a preprocessing step that most models in the course need.">Models: SVM, scaling. Cross-cutting: k-nearest-neighbours, validation</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="ix" data-quiz="exam-m2k-02">
+      <div class="ix-head"><span class="ix-kind">K2</span><span class="ix-done">answered</span></div>
+      <p class="prompt">Which statement is true of both SVM and k-nearest-neighbours?</p>
+      <div class="opts">
+        <button class="opt" data-fb="Only k-nearest-neighbours does its work at prediction time; SVM does it once at fitting time.">Both defer all computation to prediction time</button>
+        <button class="opt" data-right data-fb="Both are basic machine learning algorithms, both need a labelled response, and both need attributes on comparable scales.">Both need a labelled response and attributes on comparable scales</button>
+        <button class="opt" data-fb="Only k-nearest-neighbours handles many classes without extra machinery.">Both handle many classes without any extra machinery</button>
+        <button class="opt" data-fb="Only SVM produces coefficients; k-nearest-neighbours produces none at all.">Both produce a coefficient for each attribute</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="ix" data-quiz="exam-m2k-03">
+      <div class="ix-head"><span class="ix-kind">K3</span><span class="ix-done">answered</span></div>
+      <p class="prompt">A perfect score on the training data is best described as:</p>
+      <div class="opts">
+        <button class="opt" data-fb="It's achievable and common; the question is what it tells you, which is very little.">Impossible in practice</button>
+        <button class="opt" data-fb="It is not strong evidence of anything, since infinitely many boundaries achieve it.">Strong evidence that the model will perform well</button>
+        <button class="opt" data-right data-fb="Compatible with infinitely many boundaries of very different quality — and, in the soft-classification case, often a sign of chasing the training set's random patterns.">Compatible with many boundaries of very different quality, and no evidence of a good classifier</button>
+        <button class="opt" data-fb="It isn't proof of an error either — under hard separation it's exactly what the constraint demands.">Proof that the model has been fitted incorrectly</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="ix" data-quiz="exam-m2k-04">
+      <div class="ix-head"><span class="ix-kind">K4</span><span class="ix-done">answered</span></div>
+      <p class="prompt">Which sequence of steps is correct for a project using SVM?</p>
+      <div class="opts">
+        <button class="opt" data-fb="Selecting on the test set destroys the one unbiased estimate you had.">Scale on all data, select the model on the test set, report the test score</button>
+        <button class="opt" data-fb="Reporting the validation score of the winner overstates quality, since that score is what selected it.">Fit candidates, select on validation, report the winner's validation score</button>
+        <button class="opt" data-fb="Scaling after fitting is too late — the fit itself is what mismatched units distort.">Fit the model, then scale the attributes, then choose λ on the test set</button>
+        <button class="opt" data-right data-fb="Scale using training statistics, fit candidate models, choose among them on validation, then measure the chosen one once on the untouched test set.">Scale using training statistics, fit candidates, select on validation, measure on test</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="ix" data-quiz="exam-m2k-05">
+      <div class="ix-head"><span class="ix-kind">K5</span><span class="ix-done">answered</span></div>
+      <p class="prompt">Where does cost asymmetry enter each of the two models?</p>
+      <div class="opts">
+        <button class="opt" data-right data-fb="In SVM, by shifting the intercept within the free range or by weighting the two error types in the objective. In k-nearest-neighbours, by changing what vote share is required to assign the costly class.">SVM: the intercept or error weights. k-nearest-neighbours: the threshold the vote must clear</button>
+        <button class="opt" data-fb="Neither model handles cost by discarding data.">Both handle it by deleting points from the cheaper class</button>
+        <button class="opt" data-fb="Cost asymmetry is a decision problem, not something either model discovers from the data.">Neither model can express cost asymmetry</button>
+        <button class="opt" data-fb="Scaling puts attributes on a common footing and has nothing to do with error costs.">Both handle it through the scaling step</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="ix" data-quiz="exam-m2k-06">
+      <div class="ix-head"><span class="ix-kind">K6</span><span class="ix-done">answered</span></div>
+      <p class="prompt">Which pair of concepts is most often confused, and what is the actual distinction?</p>
+      <div class="opts">
+        <button class="opt" data-fb="Support vectors are the points the boundaries rest against; the classifier is the line returned between them.">Support vectors and classifiers — they are the same thing</button>
+        <button class="opt" data-right data-fb="Scaling squeezes into a bounded interval, usually 0 to 1; standardization recentres to mean 0 and standard deviation 1 and is unbounded.">Scaling and standardization — one bounds the range, the other sets mean and spread</button>
+        <button class="opt" data-fb="Hard and soft classification differ in whether perfect separation is required, not in boundary shape.">Hard and soft classifiers — one is linear, the other curved</button>
+        <button class="opt" data-fb="These are two names for the same column, not a distinction to draw.">Attribute and feature — one is numeric, the other categorical</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="disc">
+      <div class="disc-head"><span class="disc-kind">discussion</span><span class="disc-tag">write, then compare</span></div>
+      <p class="prompt">Write the module back in your own words in under 300 words, covering: the problem classification solves, the two models, the two things that must be done to the data first, and the two things that must be true of how you evaluate.</p>
+      <div class="note">
+        <div class="note-head"><span class="lbl">Your answer</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="exam-m2k-d07" data-placeholder="The whole module, compressed…"></div>
+      </div>
+      <details><summary>Show a strong answer</summary>
+        <div class="a"><p>Classification sorts cases into known categories using attributes of past cases together with their observed outcomes. Infinitely many boundaries separate any separable dataset, so something must break the tie: prefer the boundary furthest from error, which SVM formalises as minimising the sum of squared coefficients subject to every point satisfying y<sub>i</sub>(Σaⱼx<sub>ij</sub> + a₀) ≥ 1, with a soft version that prices violations against margin width through λ. k-nearest-neighbours abandons boundaries entirely and takes a vote among the k closest known points, handling many classes for free at the cost of keeping all the data and working at prediction time. Before either: put the attributes on a common footing by scaling or standardizing, using training-set statistics only, and check whether numeric columns are genuinely quantitative rather than categorical codes. On evaluation: choices such as k, λ and kernel must be made on data the model didn't learn from, and the final quality estimate must come from data that took no part in that selection — otherwise the figure quoted is optimistic. Cost asymmetry runs through all of it, because the boundary's position within the region the data can't distinguish should be decided by what the two errors cost.</p></div>
+      </details>
+    </div>
+
+    <div class="disc">
+      <div class="disc-head"><span class="disc-kind">discussion</span><span class="disc-tag">write, then compare</span></div>
+      <p class="prompt">Take one problem from your own field. Specify it fully as a classification problem, choose SVM or k-nearest-neighbours with a justification, state how you would scale, how you would choose the model's parameter, and how you would report its quality honestly.</p>
+      <div class="note">
+        <div class="note-head"><span class="lbl">Your answer</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="exam-m2k-d08" data-placeholder="Problem, model, scaling, parameter selection, reporting…"></div>
+      </div>
+      <details><summary>Show a strong answer</summary>
+        <div class="a"><p>A complete answer names the response and confirms it was observed independently of the predictors; lists attributes that were knowable before the outcome; justifies the model on concrete grounds — SVM where predictions are frequent and the data large, k-nearest-neighbours where classes are many or the boundary is irregular; specifies scaling or standardization with a reason, computed on the training split only; describes selecting k or λ across a range of candidate values by validation; and reports the chosen model's performance on a test set that played no part in that selection, with an explicit note if the top candidates were close, since the winner may then be best only by a narrow probability.</p></div>
+      </details>
+    </div>
+
+    <div class="disc">
+      <div class="disc-head"><span class="disc-kind">discussion</span><span class="disc-tag">write, then compare</span></div>
+      <p class="prompt">The module says the two models “fail in opposite directions”. Explain what that means and how it should influence a choice between them at scale.</p>
+      <div class="note">
+        <div class="note-head"><span class="lbl">Your answer</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="exam-m2k-d09" data-placeholder="What each stores, what each costs, and when that decides it…"></div>
+      </div>
+      <details><summary>Show a strong answer</summary>
+        <div class="a"><p>SVM compresses the training data into a handful of coefficients, so it discards everything except the geometry of the boundary — cheap to serve, but the fit rests on a small number of support vectors and must be redone as data arrives. k-nearest-neighbours keeps every point and does all its work at prediction time — nothing is discarded and new data is absorbed instantly, but every prediction costs a pass over the dataset. At scale, that trade usually decides it: high prediction volume with stable data favours SVM, while streaming data with modest prediction volume, or many classes, favours k-nearest-neighbours.</p></div>
+      </details>
+    </div>
+  </div>
+    </div>
+    <aside class="check">
+      <span class="n">How to use this</span>
+      <p class="q">Which of these are most likely to be examined?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Stating the hard-separation problem from memory, explaining why the response is coded &plusmn;1, both scaling formulas with a case for each, defining a support vector, and walking through k-nearest-neighbours with its three complications. The cost-asymmetry questions turn up as scenarios rather than definitions.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
+<!-- ==================== TOPIC 13 ==================== -->
+<section class="lesson" id="l13" data-short="Validation bias bank" style="--accent:#a8552b">
+  <div class="lesson-head">
+    <span class="ln">Topic 13</span>
+    <h2>Validation bias and clustering &mdash; question bank</h2>
+    <p class="keyline">Why selecting on validation inflates the score you selected with, what pooling validation and test costs you, and where classification stops and clustering starts.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <div class="callout">
+        <p class="tag">About this topic</p>
+        <p>This bank tests a second set of the instructor&rsquo;s posted notes. The reasoning behind these questions, in the instructor&rsquo;s own framing, is on the <a href="discussion.html#t5">Discussion</a> page as Topics 5 and 6 &mdash; read that first, then come back and test yourself here.</p>
+      </div>
+
+  <div class="qbank">
+    <h4>Set J &middot; Validation, selection and the test set</h4>
+
+    <div class="ix" data-quiz="exam-m2i-01">
+      <div class="ix-head"><span class="ix-kind">I1</span><span class="ix-done">answered</span></div>
+      <p class="prompt">What are the two kinds of pattern present in any dataset?</p>
+      <div class="opts">
+        <button class="opt" data-fb="Training and test describe which split a pattern was observed in, not what kind of pattern it is — both splits hold both kinds.">Training patterns and test patterns</button>
+        <button class="opt" data-right data-fb="Real patterns, which hold in the world and will reappear in new data, and random patterns, which are accidents of that particular sample.">Real patterns and random patterns</button>
+        <button class="opt" data-fb="Linear and non-linear describe the shape of a relationship, not whether it is genuine.">Linear patterns and non-linear patterns</button>
+        <button class="opt" data-fb="Every dataset carries both; the distinction isn't between clean and dirty data.">Measured patterns and missing patterns</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="ix" data-quiz="exam-m2i-02">
+      <div class="ix-head"><span class="ix-kind">I2</span><span class="ix-done">answered</span></div>
+      <p class="prompt">What exactly is the selection bias introduced by picking the model with the best validation performance?</p>
+      <div class="opts">
+        <button class="opt" data-fb="Training data is not what selection touches; the bias comes from selecting on the validation scores.">A bias toward models that saw more training data</button>
+        <button class="opt" data-fb="Class balance isn't what the selection favours.">A bias toward whichever class is more common in the validation set</button>
+        <button class="opt" data-right data-fb="A bias in favour of models that got a random boost on that particular validation set — strongest when the call between the top models is close.">A bias toward models that happened to fit that validation set's noise well</button>
+        <button class="opt" data-fb="Complexity isn't what's favoured; a simple model can get just as lucky as a complex one on a given validation set.">A bias toward more complex models, which fit anything</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="ix" data-quiz="exam-m2i-03">
+      <div class="ix-head"><span class="ix-kind">I3</span><span class="ix-done">answered</span></div>
+      <p class="prompt">When is that bias largest?</p>
+      <div class="opts">
+        <button class="opt" data-fb="When one model is clearly better on real patterns, the ranking is driven by genuine quality and random boosts rarely change the winner.">When one model is clearly far better than the rest</button>
+        <button class="opt" data-fb="Noise makes the problem worse, not better; larger random patterns mean bigger random boosts.">When the random patterns in the data are very small</button>
+        <button class="opt" data-fb="Two candidates aren't safer than five if the two are near-identical — closeness matters, not count.">When only two models are being compared</button>
+        <button class="opt" data-right data-fb="When several models are close to equally good, so which one wins is decided largely by which fit the validation noise best.">When there is a close call between several near-equal models</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="ix" data-quiz="exam-m2i-04">
+      <div class="ix-head"><span class="ix-kind">I4</span><span class="ix-done">answered</span></div>
+      <p class="prompt">Given that the validation winner may well not be the best model, what is the justification for choosing it anyway?</p>
+      <div class="opts">
+        <button class="opt" data-right data-fb="It is the most likely of the candidates to be best, even when that probability is under 50%. No other candidate has a higher probability.">It has the highest probability of being best, even if that probability is below a half</button>
+        <button class="opt" data-fb="Bias is not eliminated by the test set; the test set measures the chosen model without bias, which is a different thing.">The bias is removed later by the test set</button>
+        <button class="opt" data-fb="Convention isn't the argument — there's a probabilistic one available.">Convention, since everyone reports the validation winner</button>
+        <button class="opt" data-fb="Nothing guarantees it beats the others on new data — that's the whole problem.">It is guaranteed to perform best on new data</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="ix" data-quiz="exam-m2i-05">
+      <div class="ix-head"><span class="ix-kind">I5</span><span class="ix-done">answered</span></div>
+      <p class="prompt">What is the actual relationship between the validation set and the test set?</p>
+      <div class="opts">
+        <button class="opt" data-fb="Both contain real patterns. If the test set held none, no model could score above chance on it.">The validation set holds the real patterns; the test set holds noise</button>
+        <button class="opt" data-right data-fb="Neither is inherently better or worse; they simply contain different random patterns, and a model may fit one set's noise better than the other's.">Neither is inherently better — they hold different random patterns</button>
+        <button class="opt" data-fb="Difficulty isn't a property either set has been given — the difference is in which random patterns each happens to contain.">The validation set is deliberately made easier</button>
+        <button class="opt" data-fb="Neither is more representative by nature; if the split was random they are two samples of the same thing.">The test set is the more representative sample of the two</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="ix" data-quiz="exam-m2i-06">
+      <div class="ix-head"><span class="ix-kind">I6</span><span class="ix-done">answered</span></div>
+      <p class="prompt">Model A beats Model B on validation but loses to it on test. Which conclusion is supported?</p>
+      <div class="opts">
+        <button class="opt" data-fb="The test result is unbiased for the model you chose, but it doesn't establish a ranking any more reliably than the validation result did.">Model B is definitely better, since the test set is the honest one</button>
+        <button class="opt" data-fb="Averaging noisy rankings doesn't produce a reliable one, and it spends the test set's independence in the process.">The average of the two rankings gives the true ordering</button>
+        <button class="opt" data-right data-fb="Each set contains different random patterns, and there is no way to tell which ranking reflects the real difference.">Neither ranking can be trusted to reflect the true difference</button>
+        <button class="opt" data-fb="Disagreement between two noisy estimates is expected, not evidence of a fitting error.">One of the two models must have been fitted incorrectly</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="ix" data-quiz="exam-m2i-07">
+      <div class="ix-head"><span class="ix-kind">I7</span><span class="ix-done">answered</span></div>
+      <p class="prompt">Why not combine the validation and test sets and use all of it to choose the model?</p>
+      <div class="opts">
+        <button class="opt" data-fb="Combining datasets doesn't overfit the training process; the models were fitted on the training data either way.">Because the combined set would overfit the training data</button>
+        <button class="opt" data-fb="Selection would actually be slightly better with more data — the loss is elsewhere.">Because selection would become less accurate</button>
+        <button class="opt" data-fb="Nothing about pooling breaks the fitting step — the training data is untouched by the decision.">Because the models could no longer be fitted</button>
+        <button class="opt" data-right data-fb="Because you would be left with no data the selection didn't touch, and therefore no unbiased estimate of the chosen model's quality.">Because nothing would remain to give an unbiased quality estimate</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="ix" data-quiz="exam-m2i-08">
+      <div class="ix-head"><span class="ix-kind">I8</span><span class="ix-done">answered</span></div>
+      <p class="prompt">You genuinely need the test data for selection and have nothing else. What is the professionally correct handling?</p>
+      <div class="opts">
+        <button class="opt" data-right data-fb="Use it, and make sure everyone relying on the figure knows it is no longer unbiased and will likely overstate performance on new data.">Use it, and state clearly that the figure now overstates quality</button>
+        <button class="opt" data-fb="An invented correction replaces a known bias with an unknown one; there's no principled amount to subtract.">Apply a standard correction factor to remove the bias</button>
+        <button class="opt" data-fb="Refusing to choose isn't available when a model has to be deployed, and the guidance explicitly allows this use.">Refuse to select a model at all</button>
+        <button class="opt" data-fb="Silence is the failure mode here — the number will be read as unbiased unless you say otherwise.">Use it and report the resulting figure without comment</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="ix" data-quiz="exam-m2i-09">
+      <div class="ix-head"><span class="ix-kind">I9</span><span class="ix-done">answered</span></div>
+      <p class="prompt">Which of these is <em>not</em> a model-selection decision that carries validation selection bias?</p>
+      <div class="opts">
+        <button class="opt" data-fb="It is one — comparing kernels on validation performance and keeping the winner is exactly the pattern described.">Choosing between a linear and a non-linear kernel by validation score</button>
+        <button class="opt" data-right data-fb="Setting the boundary by a cost ratio supplied by the business is not a selection made on validation performance at all — no scores are being compared.">Shifting the intercept according to a cost ratio given by finance</button>
+        <button class="opt" data-fb="It is one — every candidate k is a candidate model, and picking the best-scoring k is a selection.">Choosing k in k-nearest-neighbours by comparing validation scores</button>
+        <button class="opt" data-fb="It is one — λ is a parameter chosen by comparing performance across candidate values.">Choosing λ for a soft-margin SVM by comparing validation scores</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="disc">
+      <div class="disc-head"><span class="disc-kind">discussion</span><span class="disc-tag">write, then compare</span></div>
+      <p class="prompt">Explain, in terms of real and random patterns, why the model with the best validation performance tends to do worse on the test set — and why this is not a flaw in the test data.</p>
+      <div class="note">
+        <div class="note-head"><span class="lbl">Your answer</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="exam-m2i-d10" data-placeholder="Two kinds of pattern, selection, and what carries over…"></div>
+      </div>
+      <details><summary>Show a strong answer</summary>
+        <div class="a"><p>A model's score on any dataset reflects both how well it captures the real patterns and how well it happens to fit that dataset's random patterns. Selecting the best validation score therefore favours models that received a random boost from the validation set's particular noise, and the effect is strongest when the top candidates are close in genuine quality. The test set contains different random patterns, so that boost doesn't transfer and the error comes out higher than validation suggested. Nothing is wrong with the test data: neither set is inherently better or worse, they merely contain different accidents, and there is no way to say which gives the truer ranking. The gap is a consequence of having selected on one of them.</p></div>
+      </details>
+    </div>
+
+    <div class="disc">
+      <div class="disc-head"><span class="disc-kind">discussion</span><span class="disc-tag">write, then compare</span></div>
+      <p class="prompt">Your manager proposes merging validation and test data to get a more reliable model choice. Write the response, including what you would advise if the merge turns out to be unavoidable.</p>
+      <div class="note">
+        <div class="note-head"><span class="lbl">Your answer</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="exam-m2i-d11" data-placeholder="What is gained, what is lost, and the disclosure that follows…"></div>
+      </div>
+      <details><summary>Show a strong answer</summary>
+        <div class="a"><p>Merging does improve the selection slightly, since the choice rests on more data — but it converts the test set into extra validation data and leaves nothing the selection didn't touch, so no unbiased estimate of the chosen model's quality remains. That estimate is usually the thing stakeholders actually need. If the merge is unavoidable because there isn't enough data otherwise, it is a legitimate move, provided the consequence is stated plainly: performance measured on that data will likely overstate the model's quality, nobody should expect it to do that well on new data, and the figure should not be presented as an unbiased estimate.</p></div>
+      </details>
+    </div>
+
+    <div class="disc">
+      <div class="disc-head"><span class="disc-kind">discussion</span><span class="disc-tag">write, then compare</span></div>
+      <p class="prompt">Five models score 88.1%, 88.0%, 87.9%, 87.7% and 84.2% on validation. Discuss what you would conclude, what you would do, and what you would tell a stakeholder about the chosen model's expected performance.</p>
+      <div class="note">
+        <div class="note-head"><span class="lbl">Your answer</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="exam-m2i-d12" data-placeholder="Which differences are meaningful, which aren't, and what to promise…"></div>
+      </div>
+      <details><summary>Show a strong answer</summary>
+        <div class="a"><p>The top four are separated by amounts that could easily be random patterns rather than real differences, so the ranking among them carries little information; the fifth is far enough behind to be plausibly worse on real patterns. Choose the top scorer — it remains the single most likely of the five to be best, even though the probability that it truly is best may be well under 50%. Then measure it on the untouched test set and quote that figure, not the 88.1%, since selecting on validation made that number optimistic. Tell the stakeholder that the choice among the top four was close to a coin toss, that the test figure is the honest estimate, and that a different data split might well have produced a different winner among them.</p></div>
+      </details>
+    </div>
+
+    <div class="disc">
+      <div class="disc-head"><span class="disc-kind">discussion</span><span class="disc-tag">write, then compare</span></div>
+      <p class="prompt">Explain why using the validation score of the chosen model as the headline performance figure is a reporting error, and what should be reported instead.</p>
+      <div class="note">
+        <div class="note-head"><span class="lbl">Your answer</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="exam-m2i-d13" data-placeholder="Which number is biased, in which direction, and why…"></div>
+      </div>
+      <details><summary>Show a strong answer</summary>
+        <div class="a"><p>The winner's validation score is optimistic by construction: it was the number used to pick that model, so any random boost the model received on that data is baked into it. Reporting it as expected performance systematically overpromises. What should be reported is the score on data that took no part in the selection — the test set — because that is the only estimate the selection process didn't inflate. If the validation score is quoted at all, it should be labelled as the selection criterion rather than as a performance estimate.</p></div>
+      </details>
+    </div>
+    <div class="ix" data-quiz="exam-m2j-x4">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">What exactly do you lose by pooling validation and test data to select a model?</p>
+        <div class="opts">
+          <button class="opt" data-fb="Nothing about pooling changes which random patterns exist in the data. The patterns are still there; you've just lost the clean place to measure against them.">The random patterns in the data, which are averaged away by pooling</button>
+          <button class="opt" data-right data-fb="You've converted the test set into extra validation data, leaving nothing that the selection didn't touch — and only untouched data gives an unbiased quality estimate.">An unbiased estimate of how good the chosen model actually is</button>
+          <button class="opt" data-fb="Selection actually gets slightly better, since it's based on more data. What's lost is on the measurement side, not the selection side.">The ability to choose between the candidate models</button>
+          <button class="opt" data-fb="Fitting is unaffected — the training data is untouched by this decision. The pooling question is about what the remaining data is spent on.">The ability to fit the models in the first place</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+    <div class="ix" data-quiz="exam-m2j-x5">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">You had to use the test data for selection because nothing else was left. What is the right thing to do next?</p>
+        <div class="opts">
+          <button class="opt" data-fb="Reporting it as unbiased is the one thing you must not do. The number is now optimistic, and presenting it as clean misleads whoever relies on it.">Report the resulting performance figure as the model's expected performance on new data</button>
+          <button class="opt" data-fb="Subtracting a made-up correction replaces a known bias with an unknown one. There's no principled amount to deduct — honesty about the direction of the bias is what's available.">Subtract a fixed penalty from the figure to correct the bias</button>
+          <button class="opt" data-right data-fb="Use it, but state plainly that it is no longer unbiased and will likely overstate quality on new data. Making sure others understand that is part of the job.">Use it, and tell everyone relying on it that the figure likely overstates real-world performance</button>
+          <button class="opt" data-fb="Discarding the number leaves the decision with no evidence at all. It still carries information — it just carries an upward bias that has to be declared.">Discard the performance figure entirely, since it is now worthless</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+  </div>
+
+  <div class="qbank">
+    <h4>Set K &middot; Classification against clustering</h4>
+
+    <div class="ix" data-quiz="exam-m2j-01">
+      <div class="ix-head"><span class="ix-kind">J1</span><span class="ix-done">answered</span></div>
+      <p class="prompt">What makes classification supervised?</p>
+      <div class="opts">
+        <button class="opt" data-fb="Human review of the output isn't what 'supervised' refers to.">A person checks each prediction before it is used</button>
+        <button class="opt" data-fb="Category count has nothing to do with supervision — clustering can produce two groups and classification can have many.">There are exactly two categories</button>
+        <button class="opt" data-right data-fb="You know the correct answer for each data point, and the model learns against those known answers.">The correct answer is known for each data point</button>
+        <button class="opt" data-fb="Validation applies to both supervised and unsupervised work, and isn't the defining feature.">The model is validated before deployment</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="ix" data-quiz="exam-m2j-02">
+      <div class="ix-head"><span class="ix-kind">J2</span><span class="ix-done">answered</span></div>
+      <p class="prompt">In clustering, where do the categories come from?</p>
+      <div class="opts">
+        <button class="opt" data-fb="Industry conventions may inform how you interpret clusters, but they don't produce them.">From an agreed industry taxonomy</button>
+        <button class="opt" data-fb="Analyst-assigned labels would make the data labelled, which is the supervised case.">From labels the analyst assigns to each point beforehand</button>
+        <button class="opt" data-fb="A separate recorded variable is the classification case — in clustering no such column exists.">From a separate column recorded in the data</button>
+        <button class="opt" data-right data-fb="They are defined by the predictors, through the model. The clusters have no existence outside the model that produced them.">They are defined by the predictors through the model</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="ix" data-quiz="exam-m2j-03">
+      <div class="ix-head"><span class="ix-kind">J3</span><span class="ix-done">answered</span></div>
+      <p class="prompt">Which pairing of question and method is correct?</p>
+      <div class="opts">
+        <button class="opt" data-right data-fb="“Which groups of these data points are similar to each other?” is the clustering shape — no categories are named in advance.">“Which of these are similar to each other?” → clustering</button>
+        <button class="opt" data-fb="Assigning a bone to a known species is classification with many categories, not clustering.">“Which known species is this bone?” → clustering</button>
+        <button class="opt" data-fb="'Is it or isn't it?' is the classification shape; that phrasing presumes categories that already exist.">“Is this one or the other?” → clustering</button>
+        <button class="opt" data-fb="Asking which points resemble each other names no categories, so it can't be classification.">“Which of these are similar to each other?” → classification</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="ix" data-quiz="exam-m2j-04">
+      <div class="ix-head"><span class="ix-kind">J4</span><span class="ix-done">answered</span></div>
+      <p class="prompt">Why are true labels supplied in the clustering homework?</p>
+      <div class="opts">
+        <button class="opt" data-fb="The algorithm never looks at them — if it did, it would be doing classification.">Because the algorithm needs them to form clusters</button>
+        <button class="opt" data-right data-fb="So you can see how well the algorithm performed. In practice you usually wouldn't have that information.">So you can judge how well the algorithm did, which you normally couldn't</button>
+        <button class="opt" data-fb="Nothing about labels is required for reproducibility of a clustering run.">Because clustering results can't be reproduced without them</button>
+        <button class="opt" data-fb="It doesn't make the exercise supervised — supervision is about what the model learns from, not what the file contains.">Because it makes the exercise supervised learning</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="ix" data-quiz="exam-m2j-05">
+      <div class="ix-head"><span class="ix-kind">J5</span><span class="ix-done">answered</span></div>
+      <p class="prompt">You change which attributes go into the model. What happens to the categories?</p>
+      <div class="opts">
+        <button class="opt" data-fb="Clusters are highly sensitive to which attributes define the distance between points.">Neither changes, since categories are independent of the model</button>
+        <button class="opt" data-fb="Reversed. The response is a fact about each case, fixed before any model exists.">A classification response changes; clusters stay fixed</button>
+        <button class="opt" data-right data-fb="Clustering results can change entirely, because the clusters are derived from the predictors; a classification response is unaffected, because it was recorded independently.">Clusters can change completely; a classification response does not change at all</button>
+        <button class="opt" data-fb="Both changing would mean the response depended on the predictors chosen, which it doesn't.">Both change in the same way</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="ix" data-quiz="exam-m2j-06">
+      <div class="ix-head"><span class="ix-kind">J6</span><span class="ix-done">answered</span></div>
+      <p class="prompt">A retailer asks: “Which of our customers behave similarly, so we can design offers for each type?” Which method, and why?</p>
+      <div class="opts">
+        <button class="opt" data-fb="SVM draws a boundary between known classes, which requires the classes to be known.">SVM — it separates groups with a boundary</button>
+        <button class="opt" data-fb="Classification requires a known correct answer per customer, and no such labelling exists here.">Classification — the customer types are the response</button>
+        <button class="opt" data-fb="k-nearest-neighbours is a classification method and needs labelled neighbours to vote.">k-nearest-neighbours — it handles many categories</button>
+        <button class="opt" data-right data-fb="Clustering. No correct grouping exists in advance; the groups will be produced from the purchasing attributes by the model.">Clustering — the groups don't exist until the model defines them</button>
+      </div>
+      <p class="fb"></p>
+    </div>
+
+    <div class="disc">
+      <div class="disc-head"><span class="disc-kind">discussion</span><span class="disc-tag">write, then compare</span></div>
+      <p class="prompt">Explain the difference between classification and clustering in three ways: supervision, where the categories come from, and how the question is typically phrased.</p>
+      <div class="note">
+        <div class="note-head"><span class="lbl">Your answer</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="exam-m2j-d07" data-placeholder="Three angles on the same distinction…"></div>
+      </div>
+      <details><summary>Show a strong answer</summary>
+        <div class="a"><p>Supervision: classification is supervised — a correct answer is known for each data point — while clustering is unsupervised, with no known correct answer at all. Categories: in classification the categories are a different variable from the predictors, so repaid-or-not is separate from income and credit score; in clustering the categories are defined by the predictors, through the model, and have no existence outside it. Phrasing: a classification question sounds like “is each data point this or that?” or “is it, or isn't it?”, while a clustering question sounds like “which groups of these data points are similar to each other?”</p></div>
+      </details>
+    </div>
+
+    <div class="disc">
+      <div class="disc-head"><span class="disc-kind">discussion</span><span class="disc-tag">write, then compare</span></div>
+      <p class="prompt">You are handed a dataset of hospital patients with twenty attributes and no outcome column. Describe what you can and cannot do with it, and what would have to change for classification to become possible.</p>
+      <div class="note">
+        <div class="note-head"><span class="lbl">Your answer</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="exam-m2j-d08" data-placeholder="What's available without a response column…"></div>
+      </div>
+      <details><summary>Show a strong answer</summary>
+        <div class="a"><p>Without a response column there is nothing to learn against, so classification is unavailable: no SVM, no k-nearest-neighbours, no measure of accuracy. What is available is clustering — finding groups of patients whose attributes resemble one another — with the results defined entirely by which attributes you include and how you measure distance, which means they must be interpreted rather than scored. For classification to become possible, an outcome would have to be observed and recorded for each patient — readmitted or not, responded to treatment or not — as a variable genuinely separate from the twenty predictors.</p></div>
+      </details>
+    </div>
+
+    <div class="disc">
+      <div class="disc-head"><span class="disc-kind">discussion</span><span class="disc-tag">write, then compare</span></div>
+      <p class="prompt">Someone runs a clustering algorithm, inspects the clusters, names them, and then reports “92% accuracy”. What has gone wrong?</p>
+      <div class="note">
+        <div class="note-head"><span class="lbl">Your answer</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="exam-m2j-d09" data-placeholder="What accuracy would have to be measured against…"></div>
+      </div>
+      <details><summary>Show a strong answer</summary>
+        <div class="a"><p>Accuracy requires a correct answer to compare against, and clustering has none — the clusters were defined by the model out of the predictors, so scoring them against names the analyst assigned afterwards is scoring the model against itself. The only legitimate version of that figure is the homework arrangement: independently observed labels, withheld from the algorithm, used purely to check how the clustering performed. If such labels existed and were reliable, the natural move would be classification instead.</p></div>
+      </details>
+    </div>
+    <div class="ix" data-quiz="exam-m2k-x4">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">What is the quickest phrasing test for telling the two apart?</p>
+        <div class="opts">
+          <button class="opt" data-fb="Sample size is irrelevant to which method the question calls for, though it may affect how well either performs.">Whether the dataset has more rows than columns</button>
+          <button class="opt" data-fb="Both operate on the same kinds of data table and both need attributes on comparable scales. That's not the dividing line.">Whether the attributes are quantitative or categorical</button>
+          <button class="opt" data-right data-fb="Classification asks 'is each data point this or that?' Clustering asks 'which groups of these data points are similar to each other?' The first names the categories in advance; the second doesn't.">Whether the question names the categories in advance, or asks which points resemble each other</button>
+          <button class="opt" data-fb="Category count doesn't decide it. Classification handles many classes, and clustering can produce two.">Whether the question involves two categories or more than two</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+  </div>
+    </div>
+    <aside class="check">
+      <span class="n">How to use this</span>
+      <p class="q">What is the single sentence to have ready?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Selecting the best validation score favours whichever model fit that set&rsquo;s random patterns best, so the winner&rsquo;s validation figure is optimistic; the test set is not better data, only data the selection never touched.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
 <section class="close" style="--accent:#131b26">
   <h2>How the topics fit together</h2>
   <p class="h2meta">The through-line across all eight</p>
@@ -2265,6 +3736,8 @@
     <li><span class="dot" style="--d:#7a3f52"></span><span class="lbl">Topic 9</span><span>Tests the lecture foundations: question types, the workflow, and the vocabulary the later topics assume.</span></li>
     <li><span class="dot" style="--d:#5a3d7a"></span><span class="lbl">Topic 10</span><span>Tests the instructor&rsquo;s follow-up notes on margins, scaling and method choice &mdash; explained in full on the Discussion page.</span></li>
     <li><span class="dot" style="--d:#131b26"></span><span class="lbl">Topic 11</span><span>Mixes all of it together, which is the only condition under which you find out what you actually know.</span></li>
+    <li><span class="dot" style="--d:#8a3d5c"></span><span class="lbl">Topic 12</span><span>Tests the whole of Module 2 &mdash; classification, the SVM formulation, support vectors, scaling and KNN.</span></li>
+    <li><span class="dot" style="--d:#a8552b"></span><span class="lbl">Topic 13</span><span>Tests the instructor&rsquo;s notes on validation selection bias and on classification against clustering.</span></li>
   </ul>
 
   <h3 style="color:#131b26">Things worth noticing</h3>
@@ -2293,7 +3766,7 @@
     <li>Say why a clustering cannot be cross-validated, and what to report instead.</li>
   </ul>
 
-  <h3 style="color:#131b26">Added by Topics 9 to 11</h3>
+  <h3 style="color:#131b26">Added by Topics 9 to 13</h3>
   <ul>
     <li>Classify a business question as descriptive, predictive or prescriptive, with a reason.</li>
     <li>Give the definition of modeling, name the three legs of the round trip, and say which leg a computer performs.</li>
@@ -2304,6 +3777,13 @@
     <li>List the circumstances favouring KNN over SVM and vice versa, including imbalance and prediction-time cost.</li>
     <li>Give the KNN probability estimate, its limitation at the extremes, and how to make KNN deliberately conservative.</li>
     <li>Explain why differing units weight distances, using the millimetres-and-kilometres example.</li>
+    <li>State the hard-separation SVM problem &mdash; objective and constraint &mdash; and explain why the response is coded &plusmn;1.</li>
+    <li>Define a support vector and say why the returned classifier touches none of them.</li>
+    <li>Give both the scaling and standardization formulas, and name a case where they are not interchangeable.</li>
+    <li>Walk through k-nearest-neighbours and name its three complications.</li>
+    <li>Explain, in terms of real and random patterns, why the validation winner&rsquo;s error usually rises on the test set.</li>
+    <li>Say what is lost by pooling validation and test data to choose a model, and what to disclose if you do it anyway.</li>
+    <li>Distinguish classification from clustering by supervision, by where the categories come from, and by how the question is phrased.</li>
   </ul>
 
   <div class="note">

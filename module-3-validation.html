@@ -9,6 +9,27 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="study.css">
+<style>
+/* additions for Lessons 5-12 — self-contained so they don't depend on study.css */
+.frq{border:1px solid rgba(19,27,38,.14);border-left:3px solid var(--accent,#131b26);
+     border-radius:4px;padding:.85rem 1rem;margin:1rem 0;background:rgba(19,27,38,.015)}
+.frq.case{background:rgba(19,27,38,.04)}
+.frq .qn{font-family:var(--sans,system-ui,sans-serif);font-size:.94rem;line-height:1.55;margin:0 0 .5rem}
+.frq .qn+.qn{margin-top:.6rem}
+.frq table{margin:.6rem 0}
+.frq>details{margin-top:.4rem}
+.frq>details>summary{cursor:pointer;font-family:var(--sans,system-ui,sans-serif);
+     font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;color:var(--accent,#131b26);
+     font-weight:600;list-style:none;padding:.2rem 0}
+.frq>details>summary::-webkit-details-marker{display:none}
+.frq>details>summary::before{content:"\25b8 ";display:inline-block}
+.frq>details[open]>summary::before{content:"\25be "}
+.frq .ans{border-top:1px solid rgba(19,27,38,.12);margin-top:.5rem;padding-top:.6rem}
+.frq .ans p{font-size:.92rem;line-height:1.6;margin:.5rem 0}
+.frq .ans p.mark{border-left:2px solid rgba(19,27,38,.25);padding-left:.7rem;
+     font-size:.87rem;color:var(--ink-soft,#4a5765);margin-top:.8rem}
+p.frq-lead{font-size:.92rem;color:var(--ink-soft,#4a5765);margin:.2rem 0 .8rem}
+</style>
 </head>
 <body data-page="m3">
 <div class="wrap">
@@ -28,7 +49,7 @@
 <header class="hero">
   
   <h1>Module 3: Validation</h1>
-  <p class="sub">Your model looks great on the data it was built from. That number is a lie, and this module is about getting an honest one.</p>
+  <p class="sub">Your model looks great on the data it was built from. That number is a lie — this module is about getting an honest one, and about the several ways an honest-looking procedure can still deceive you.</p>
 
   <svg class="plot" viewBox="0 0 660 300" role="img" aria-label="Dot plot of ten numbers drawn at random from 1 to 50: nine happen to land above 33, one lands at 4. A dashed line marks the model's guess of 42.">
     <text x="0" y="22" font-family="IBM Plex Sans,sans-serif" font-size="13.5" font-weight="600" fill="#131b26">Ten numbers drawn at random from 1 to 50</text>
@@ -57,6 +78,14 @@
     <li style="--dot:#7d4b7a"><a href="#l2"><span class="tnum">Lesson 2</span><span class="tname">Validation and test sets</span><span class="tq">Why does it take three sets, not two?</span></a></li>
     <li style="--dot:#8a5a1c"><a href="#l3"><span class="tnum">Lesson 3</span><span class="tname">Splitting the data</span><span class="tq">How much goes where, and chosen how?</span></a></li>
     <li style="--dot:#2f5d8c"><a href="#l4"><span class="tnum">Lesson 4</span><span class="tname">Cross-validation</span><span class="tq">What if the important points land in the wrong set?</span></a></li>
+    <li style="--dot:#9d3b3b"><a href="#l5"><span class="tnum">Lesson 5</span><span class="tname">What validation measures</span><span class="tq">Where does test error come from?</span></a></li>
+    <li style="--dot:#2f6b52"><a href="#l6"><span class="tnum">Lesson 6</span><span class="tname">Why one split isn’t enough</span><span class="tq">What if the split had gone differently?</span></a></li>
+    <li style="--dot:#6b3fa0"><a href="#l7"><span class="tnum">Lesson 7</span><span class="tname">Leave-one-out CV</span><span class="tq">What if k were as large as possible?</span></a></li>
+    <li style="--dot:#a8452c"><a href="#l8"><span class="tnum">Lesson 8</span><span class="tname">Choosing k</span><span class="tq">Why does everyone use 5 or 10?</span></a></li>
+    <li style="--dot:#1d4e89"><a href="#l9"><span class="tnum">Lesson 9</span><span class="tname">Classification &amp; nesting</span><span class="tq">What if you tune and assess at once?</span></a></li>
+    <li style="--dot:#4a6b2a"><a href="#l10"><span class="tnum">Lesson 10</span><span class="tname">Where CV breaks</span><span class="tq">When is a held-out set not held out?</span></a></li>
+    <li style="--dot:#16697a"><a href="#l11"><span class="tnum">Lesson 11</span><span class="tname">The bootstrap</span><span class="tq">How uncertain is the number itself?</span></a></li>
+    <li style="--dot:#131b26"><a href="#l12"><span class="tnum">Exam workout</span><span class="tname">Midterm &amp; final questions</span><span class="tq">Audits, tables, and where marks hide</span></a></li>
   </ul>
 
   <div class="badge-strip">
@@ -66,6 +95,14 @@
       <li class="badge" data-for="l2" style="--b:#7d4b7a"><span class="gem">T</span><span class="nm">Three Sets</span></li>
       <li class="badge" data-for="l3" style="--b:#8a5a1c"><span class="gem">S</span><span class="nm">Clean Split</span></li>
       <li class="badge" data-for="l4" style="--b:#2f5d8c"><span class="gem">K</span><span class="nm">k-Fold</span></li>
+      <li class="badge" data-for="l5" style="--b:#9d3b3b"><span class="gem">U</span><span class="nm">Bias &amp; Variance</span></li>
+      <li class="badge" data-for="l6" style="--b:#2f6b52"><span class="gem">~</span><span class="nm">Split Noise</span></li>
+      <li class="badge" data-for="l7" style="--b:#6b3fa0"><span class="gem">1</span><span class="nm">Leave One Out</span></li>
+      <li class="badge" data-for="l8" style="--b:#a8452c"><span class="gem">σ</span><span class="nm">One SE</span></li>
+      <li class="badge" data-for="l9" style="--b:#1d4e89"><span class="gem">⊙</span><span class="nm">Nested</span></li>
+      <li class="badge" data-for="l10" style="--b:#4a6b2a"><span class="gem">⚠</span><span class="nm">Leakage</span></li>
+      <li class="badge" data-for="l11" style="--b:#16697a"><span class="gem">B</span><span class="nm">Bootstrap</span></li>
+      <li class="badge" data-for="l12" style="--b:#131b26"><span class="gem">✓</span><span class="nm">Exam ready</span></li>
       <li class="badge" data-for="*" style="--b:#131b26"><span class="gem">★</span><span class="nm">Module 3 complete</span></li>
     </ul>
   </div>
@@ -672,6 +709,1099 @@
   </div>
 </section>
 
+<!-- ==================== LESSON 5 ==================== -->
+<section class="lesson" id="l5" data-short="Bias &amp; variance" style="--accent:#9d3b3b">
+  <div class="lesson-head">
+    <span class="ln">Lesson 5</span>
+    <h2>What validation is actually measuring</h2>
+    <p class="keyline">Test error splits into three pieces: how wrong the model’s shape is, how much it wobbles when the data changes, and noise nobody can remove. Every choice validation makes is a trade between the first two.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Two numbers, and the gap between them</h3>
+      <p>Lesson 1 said the training score is inflated. This lesson says <em>by how much, and why</em> — and it does so by naming the quantity validation is trying to estimate.</p>
+      <div class="defn">
+        <span class="term">Test error</span>
+        <p>The average error the model would make on a fresh observation drawn from the same source, that played no part in fitting it. It is the only number that answers the client’s question, and it can never be observed directly — only estimated.</p>
+      </div>
+      <p>For a numeric response the usual measure is <span class="key">mean squared error</span> — average of (actual − predicted)². For a classification problem it is the <span class="key">misclassification rate</span> — the fraction predicted wrongly. Everything in this module works identically for both; only the thing being averaged changes.</p>
+
+      <div class="formula">
+        expected test error &nbsp;=&nbsp; variance of the fit &nbsp;+&nbsp; (bias of the fit)² &nbsp;+&nbsp; irreducible error
+        <span class="cap">All three terms are non-negative, so the expected test error can never fall below the irreducible term however good the model is.</span>
+      </div>
+
+      <table class="plain">
+        <tr><th>Term</th><th>What it is</th><th>What increases it</th></tr>
+        <tr><td><strong>Variance</strong></td><td>How much the fitted model would change if you handed it a different training set from the same source</td><td>Flexibility. A very flexible model chases the particular points it was given — Lesson 1’s random effects, seen from the other side</td></tr>
+        <tr><td><strong>Bias</strong></td><td>The error from forcing a complicated reality into a simpler shape — a straight line through a genuinely curved relationship, say</td><td>Rigidity. A model too simple to represent the truth is wrong no matter how much data it gets</td></tr>
+        <tr><td><strong>Irreducible error</strong></td><td>Randomness in the world itself: unmeasured causes, genuine unpredictability, measurement noise in the response</td><td>Nothing you can do. It is a property of the problem, not the model</td></tr>
+      </table>
+      <p>That third term is why “our model is only 81% accurate” is not automatically a criticism. Two identical applicants can take different decisions. Some ceiling exists, it is below 100%, and no method reaches past it.</p>
+    </div>
+    <aside class="check">
+      <span class="n">Core idea</span>
+      <p class="q">Why can a model have zero training error and still have large test error?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Because zero training error is bought with flexibility, and flexibility is variance. The model has fitted this training set’s random effects exactly; on a different sample from the same source those effects are different, so the fit is wrong in a new way each time.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>The U-shaped curve everything in this course lives on</h3>
+      <p>Turn any flexibility dial slowly — the degree of a polynomial, k in nearest-neighbours, λ in an SVM, the depth of a tree — and the two movable terms move in opposite directions. Bias falls. Variance rises. Their sum is a U.</p>
+
+      <figure>
+        <svg class="fig" viewBox="0 0 660 300" role="img" aria-label="Error plotted against model flexibility. Squared bias falls, variance rises, irreducible error is a flat dashed line, and the total test error forms a U with its minimum where the two moving curves cross over in importance.">
+          <g font-family="IBM Plex Sans,sans-serif">
+            <line x1="90" y1="250" x2="610" y2="250" stroke="#131b26" stroke-width="1.3"/>
+            <line x1="90" y1="250" x2="90" y2="34" stroke="#131b26" stroke-width="1.3"/>
+            <line x1="90" y1="222" x2="610" y2="222" stroke="#9aa5b1" stroke-width="1.5" stroke-dasharray="5 4"/>
+            <text x="614" y="226" font-size="11" fill="#9aa5b1">irreducible</text>
+            <path d="M 100 72 C 180 176, 250 210, 360 216 C 450 220, 540 221, 600 221.5" fill="none" stroke="#2f5d8c" stroke-width="2.5"/>
+            <path d="M 100 219 C 260 218, 360 200, 440 160 C 510 124, 560 92, 600 62" fill="none" stroke="#8a5a1c" stroke-width="2.5"/>
+            <path d="M 100 58 C 190 132, 250 168, 320 172 C 400 176, 500 120, 600 40" fill="none" stroke="#9d3b3b" stroke-width="3"/>
+            <circle cx="333" cy="173" r="5.5" fill="#9d3b3b"/>
+            <line x1="333" y1="173" x2="333" y2="250" stroke="#9d3b3b" stroke-width="1.2" stroke-dasharray="3 3"/>
+            <text x="333" y="268" text-anchor="middle" font-size="11" fill="#9d3b3b">the flexibility you want</text>
+            <text x="150" y="96" font-size="11.5" fill="#2f5d8c">squared bias</text>
+            <text x="520" y="96" text-anchor="end" font-size="11.5" fill="#8a5a1c">variance</text>
+            <text x="196" y="52" font-size="11.5" font-weight="600" fill="#9d3b3b">total test error</text>
+            <text x="130" y="240" font-size="11" fill="#4a5765">underfitting</text>
+            <text x="592" y="240" text-anchor="end" font-size="11" fill="#4a5765">overfitting</text>
+            <text x="350" y="290" text-anchor="middle" font-size="12" fill="#4a5765">model flexibility →</text>
+            <text x="72" y="140" text-anchor="middle" font-size="12" fill="#4a5765" transform="rotate(-90 72 140)">error</text>
+          </g>
+        </svg>
+        <figcaption>Training error would slide downward across this whole picture without ever turning up — which is precisely why it cannot locate the minimum, and why validation exists.</figcaption>
+      </figure>
+
+      <div class="callout">
+        <p class="tag">What validation is for, stated exactly</p>
+        <p>Validation is a way of estimating the red curve using only data you have. You cannot see the true test error, so you approximate it by holding data out. Every technique in the rest of this module — a single split, k-fold, leave-one-out, the bootstrap — is a different approximation, with different bias and different variance <em>of the estimate itself</em>. That is the subtlety: the estimate has its own bias–variance problem, separate from the model’s.</p>
+      </div>
+
+      <div class="ix" data-quiz="m3l5-q1">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">A colleague reports that their model’s test error is 0.04 and says the remaining error proves they need a more flexible model. What should you ask?</p>
+        <div class="opts">
+          <button class="opt" data-fb="Sample size is worth knowing but it doesn't address the claim. Even with unlimited data the error would not reach zero.">How large the test set was, since a small one gives a noisy estimate.</button>
+          <button class="opt" data-right data-fb="Some of that 0.04 is irreducible — it belongs to the problem, not the model. If the noise floor is near 0.035, added flexibility can only make things worse by raising variance. Without an estimate of the floor, 'there is still error' is not an argument for anything.">What the irreducible error is likely to be, since error above zero is expected and may already be near the floor.</button>
+          <button class="opt" data-fb="Cross-validation would give a more stable estimate, but it estimates the same quantity. It cannot make error that belongs to the world disappear.">Whether they used cross-validation, since a single split understates error.</button>
+          <button class="opt" data-fb="Training error is the one number that is guaranteed not to help here — it declines with flexibility regardless, so it always appears to endorse more flexibility.">What the training error was, so the gap between the two can be measured.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="ix" data-quiz="m3l5-q2">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Two models are fitted to the same data. Model A changes dramatically when you refit it on a slightly different sample; Model B barely moves. What do you know?</p>
+        <div class="opts">
+          <button class="opt" data-fb="Stability alone does not make a model good. A model that always predicts the same constant is perfectly stable and useless — that is maximum bias with zero variance.">Model B is better, because a stable model generalises better.</button>
+          <button class="opt" data-right data-fb="Sensitivity to the training sample is the definition of variance. B has less of it, but it may have far more bias — if B is too rigid to represent the truth, its stability is stability at the wrong answer. Only test error settles it.">Model A has higher variance. Nothing yet about which has lower test error, since B may have much higher bias.</button>
+          <button class="opt" data-fb="Backwards. Changing a great deal between samples is high variance, not high bias. Bias is about being systematically wrong in the same direction every time.">Model A has higher bias, since it is being pulled around by individual points.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="note">
+        <div class="note-head"><span class="lbl">Class discussion — Lesson 5</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="m3l5" data-placeholder="Flexibility dials from other modules, where the instructor drew the U-curve…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Cross-module link</span>
+      <p class="q">Name four flexibility dials from elsewhere in the course and say which end is high-variance.</p>
+      <details><summary>Show answer</summary>
+        <p class="a">k in nearest-neighbours (small k is high variance), λ in the SVM objective (small λ, narrow margin, high variance), γ in a radial kernel (large γ is high variance), and LDA against QDA (QDA is the flexible, higher-variance one). Different letters, one picture.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
+<!-- ==================== LESSON 6 ==================== -->
+<section class="lesson" id="l6" data-short="One split isn’t enough" style="--accent:#2f6b52">
+  <div class="lesson-head">
+    <span class="ln">Lesson 6</span>
+    <h2>Why one split isn’t enough</h2>
+    <p class="keyline">A single held-out set gives an honest estimate — but a noisy one, and a pessimistic one. Two separate defects, and cross-validation was invented to fix both.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>The demonstration</h3>
+      <p>Take a dataset, split it at random into training and validation halves, fit a series of models of increasing flexibility, and plot validation error against flexibility. You get a curve. Now do the whole thing again with a different random split. You get a different curve. Do it ten times and you get ten curves that agree on the big picture and disagree on the details — including, often, on which model actually wins.</p>
+
+      <figure>
+        <svg class="fig" viewBox="0 0 660 300" role="img" aria-label="Left: a single validation error curve with a clear minimum. Right: ten curves from ten different random splits of the same data, agreeing that the simplest model is poor but disagreeing about which of the middle models is best.">
+          <g font-family="IBM Plex Sans,sans-serif">
+            <text x="30" y="22" font-size="12.5" font-weight="600" fill="#131b26">One split</text>
+            <line x1="46" y1="240" x2="300" y2="240" stroke="#131b26" stroke-width="1.2"/>
+            <line x1="46" y1="240" x2="46" y2="44" stroke="#131b26" stroke-width="1.2"/>
+            <path d="M 58 62 C 90 150, 120 184, 160 186 C 220 190, 260 196, 292 206" fill="none" stroke="#2f6b52" stroke-width="2.5"/>
+            <circle cx="160" cy="186" r="5" fill="#2f6b52"/>
+            <text x="166" y="180" font-size="11" fill="#4a5765">winner</text>
+            <text x="173" y="262" text-anchor="middle" font-size="11.5" fill="#4a5765">flexibility →</text>
+            <text x="34" y="142" text-anchor="middle" font-size="11.5" fill="#4a5765" transform="rotate(-90 34 142)">validation error</text>
+            <text x="58" y="286" font-size="11" fill="#9aa5b1">looks decisive</text>
+
+            <text x="368" y="22" font-size="12.5" font-weight="600" fill="#131b26">Ten splits of the same data</text>
+            <line x1="384" y1="240" x2="638" y2="240" stroke="#131b26" stroke-width="1.2"/>
+            <line x1="384" y1="240" x2="384" y2="44" stroke="#131b26" stroke-width="1.2"/>
+            <g fill="none" stroke="#2f6b52" stroke-width="1.6" opacity=".62">
+              <path d="M 396 58 C 428 144, 458 178, 498 180 C 558 184, 598 190, 630 200"/>
+              <path d="M 396 72 C 428 158, 458 190, 498 196 C 558 198, 598 200, 630 214"/>
+              <path d="M 396 50 C 428 136, 458 170, 498 176 C 558 186, 598 198, 630 196"/>
+              <path d="M 396 80 C 428 160, 458 186, 498 184 C 558 178, 598 188, 630 208"/>
+              <path d="M 396 64 C 428 150, 458 182, 498 190 C 558 194, 598 186, 630 190"/>
+              <path d="M 396 88 C 428 168, 458 196, 498 200 C 558 204, 598 208, 630 220"/>
+              <path d="M 396 54 C 428 140, 458 174, 498 170 C 558 176, 598 194, 630 202"/>
+              <path d="M 396 76 C 428 154, 458 180, 498 188 C 558 190, 598 196, 630 186"/>
+              <path d="M 396 68 C 428 148, 458 188, 498 194 C 558 188, 598 182, 630 206"/>
+              <path d="M 396 60 C 428 138, 458 176, 498 182 C 558 196, 598 202, 630 212"/>
+            </g>
+            <text x="511" y="262" text-anchor="middle" font-size="11.5" fill="#4a5765">flexibility →</text>
+            <text x="396" y="286" font-size="11" fill="#9aa5b1">only the leftmost verdict survives every split</text>
+          </g>
+        </svg>
+        <figcaption>All ten curves agree that the most rigid model is inadequate. None of them agrees with the others about which of the middle models is best, and each gives a different number for every model considered.</figcaption>
+      </figure>
+
+      <p>What the picture licenses you to conclude is narrower than it first appears. The big effect — the rigid model is not good enough — is visible in every split and is safe. The small differences among the good models are within the noise, and a single split cannot resolve them. Reporting “model 4 is best, at 18.2” from one split claims a precision the procedure does not have.</p>
+
+      <div class="defn">
+        <span class="term">Drawback one — the estimate is high-variance</span>
+        <p>Which observations happened to land in the validation set moves the number, sometimes a lot. Rerun with a different random seed and the answer changes.</p>
+      </div>
+      <div class="defn">
+        <span class="term">Drawback two — the estimate is biased upward</span>
+        <p>The model being scored was trained on only part of the data. Methods generally perform worse with fewer observations, so the held-out score tends to <em>overstate</em> the error of the model you will actually deploy, which gets trained on everything. Split 50/50 and you are measuring a model built from half your data.</p>
+      </div>
+      <div class="callout">
+        <p class="tag">Notice these push in opposite directions from Lesson 2’s bias</p>
+        <p>Lesson 2’s selection bias makes the winner’s validation score <strong>too optimistic</strong>. This lesson’s training-size bias makes any held-out score <strong>too pessimistic</strong>. Both are real, they do not cancel in any reliable way, and confusing them is a standard exam trap. Selection bias is about <em>which</em> model you picked; training-size bias is about <em>how much data</em> the scored model got.</p>
+      </div>
+
+      <div class="ix" data-quiz="m3l6-q1">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">You change the random seed on your train/validation split and your chosen model changes from a 4th-degree polynomial to a 6th. What is the right conclusion?</p>
+        <div class="opts">
+          <button class="opt" data-fb="Neither seed is 'correct'. Both splits are legitimate; the disagreement is telling you the procedure cannot resolve the difference, not that one run is faulty.">One of the two seeds produced a bad split, so rerun until the results are stable.</button>
+          <button class="opt" data-right data-fb="If the ranking flips with the seed, the models are within the noise of the estimate. Either use a lower-variance estimator like k-fold, or accept that they are equivalent and choose the simpler one on other grounds.">The two models are probably indistinguishable at this sample size, and the estimate is too noisy to separate them.</button>
+          <button class="opt" data-fb="Degree 6 is more flexible, so this is a claim about flexibility rather than about the split. And it contradicts the evidence — with the other seed, degree 4 won.">The 6th-degree model is genuinely better, since it won on the more recent split.</button>
+          <button class="opt" data-fb="Averaging the two degrees is not a meaningful operation, and two splits is not enough to average anyway. The fix is a procedure that averages over many held-out sets by construction.">Average the two answers and use a 5th-degree polynomial.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="ix" data-quiz="m3l6-q2">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Which statement about a 50/50 train–validation split is correct?</p>
+        <div class="opts">
+          <button class="opt" data-fb="An even split is easy to justify but it is the worst case for training-size bias — the scored model saw half the data, while the deployed model will see all of it.">It is the safest choice, since it gives the estimate as much data as the model.</button>
+          <button class="opt" data-right data-fb="Both effects follow from the same fact: half the data is withheld. The model is weaker than the deployed one, so the error estimate runs high, and the small validation set makes that estimate noisy.">It tends to overstate the error of the finally deployed model, and gives a noisier estimate than a larger training share would.</button>
+          <button class="opt" data-fb="Unbiasedness holds for the model that was actually fitted on that half — but that is not the model going into production. The estimate is unbiased for the wrong quantity.">It gives an unbiased estimate of the deployed model’s error, just an imprecise one.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="note">
+        <div class="note-head"><span class="lbl">Class discussion — Lesson 6</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="m3l6" data-placeholder="Seed sensitivity in the homework, how many repeats the TA suggested…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Exam target</span>
+      <p class="q">State the two drawbacks of the single-split validation approach, and say which way each one biases the number.</p>
+      <details><summary>Show answer</summary>
+        <p class="a">High variance — the estimate depends on which observations landed where, so it moves with the split. And upward bias on error — the scored model was trained on a subset, so it is weaker than the model you will deploy, making the estimated error too high. Cross-validation attacks both.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
+<!-- ==================== LESSON 7 ==================== -->
+<section class="lesson" id="l7" data-short="LOOCV" style="--accent:#6b3fa0">
+  <div class="lesson-head">
+    <span class="ln">Lesson 7</span>
+    <h2>Leave-one-out cross-validation</h2>
+    <p class="keyline">Push k all the way to the number of data points. Each model trains on everything but one observation — which removes almost all of the training-size bias and all of the randomness, at a price.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>The extreme case of k-fold</h3>
+      <div class="defn">
+        <span class="term">LOOCV</span>
+        <p>Hold out a single observation. Train on the other n − 1. Record the error on that one point. Repeat for every observation in turn, then average the n errors.</p>
+      </div>
+      <div class="formula">
+        CV<sub>(n)</sub> &nbsp;=&nbsp; (1/n) · Σ<sup>n</sup><sub>i=1</sub> MSE<sub>i</sub> &nbsp;&nbsp; where &nbsp; MSE<sub>i</sub> = ( y<sub>i</sub> − ŷ<sub>i</sub> )²<br><br>
+        for classification: &nbsp; CV<sub>(n)</sub> &nbsp;=&nbsp; (1/n) · Σ<sup>n</sup><sub>i=1</sub> Err<sub>i</sub>, &nbsp; Err<sub>i</sub> = 1 if misclassified, 0 otherwise
+        <span class="cap">Each ŷ<sub>i</sub> comes from a model that never saw observation i. Only the thing being averaged changes between the regression and classification versions.</span>
+      </div>
+
+      <figure>
+        <svg class="fig" viewBox="0 0 660 280" role="img" aria-label="Schematic of leave-one-out cross-validation: n rounds, each training on every observation except one, with the held-out observation moving along by one position each round.">
+          <g font-family="IBM Plex Sans,sans-serif">
+            <text x="20" y="24" font-size="11.5" fill="#4a5765">filled = train on it &nbsp;·&nbsp; outlined = the single held-out point</text>
+            <g fill="#4a5765" font-size="11.5">
+              <text x="20" y="62">Round 1</text><text x="20" y="94">Round 2</text>
+              <text x="20" y="126">Round 3</text><text x="20" y="190">Round n</text>
+            </g>
+            <g fill="#6b3fa0">
+              <rect x="96" y="46" width="480" height="20"/>
+              <rect x="96" y="78" width="24" height="20"/><rect x="128" y="78" width="448" height="20"/>
+              <rect x="96" y="110" width="56" height="20"/><rect x="160" y="110" width="416" height="20"/>
+              <rect x="96" y="174" width="448" height="20"/>
+            </g>
+            <rect x="96" y="46" width="24" height="20" fill="#ffffff" stroke="#6b3fa0" stroke-width="2"/>
+            <rect x="128" y="78" width="24" height="20" fill="#ffffff" stroke="#6b3fa0" stroke-width="2"/>
+            <rect x="160" y="110" width="24" height="20" fill="#ffffff" stroke="#6b3fa0" stroke-width="2"/>
+            <rect x="552" y="174" width="24" height="20" fill="#ffffff" stroke="#6b3fa0" stroke-width="2"/>
+            <g fill="#9aa5b1" font-size="15" text-anchor="middle"><text x="336" y="156">⋮</text></g>
+            <g fill="#4a5765" font-size="11" font-family="IBM Plex Mono,monospace">
+              <text x="590" y="62">err₁</text><text x="590" y="94">err₂</text><text x="590" y="126">err₃</text><text x="590" y="190">errₙ</text>
+            </g>
+            <line x1="96" y1="212" x2="620" y2="212" stroke="#c9d2db" stroke-width="1"/>
+            <text x="96" y="234" font-size="12.5" font-weight="600" fill="#131b26">Average all n errors → the LOOCV estimate</text>
+            <text x="96" y="254" font-size="11.5" fill="#4a5765">n fits, each on n − 1 observations, and no random choices anywhere</text>
+          </g>
+        </svg>
+        <figcaption>Each individual error is a terrible estimate on its own — it rests on one observation. The average of all n is the useful quantity.</figcaption>
+      </figure>
+
+      <table class="plain">
+        <tr><th>Advantage</th><th>Why</th></tr>
+        <tr><td><strong>Almost no training-size bias</strong></td><td>Each model is trained on n − 1 observations — essentially the full dataset — so it is about as strong as the model you will deploy. This directly fixes Lesson 6’s second drawback</td></tr>
+        <tr><td><strong>Completely deterministic</strong></td><td>There is no random split to make. Run it twice and you get the identical number, every time — which fixes the seed-sensitivity of Lesson 6’s first drawback, though not the variance of the estimate itself</td></tr>
+        <tr><td><strong>Uses every observation for evaluation</strong></td><td>Every point is held out exactly once, so nothing is permanently excluded from either role</td></tr>
+      </table>
+      <div class="callout">
+        <p class="tag">The price</p>
+        <p>The model has to be fitted <strong>n times</strong>. With 50,000 observations and a model taking ten seconds to fit, that is close to six days. For most methods LOOCV is simply unaffordable, which is the first and most obvious reason people use k = 5 or k = 10 instead.</p>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Exam target</span>
+      <p class="q">Give two advantages of LOOCV over a single train/validation split.</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Far less bias, because each fit uses n − 1 observations rather than roughly half. And no randomness — there is no split to choose, so repeated runs give exactly the same answer.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>The shortcut that makes it free — sometimes</h3>
+      <p>For a least-squares linear or polynomial regression there is a remarkable identity: the LOOCV score can be computed from a <em>single</em> fit, with no refitting at all.</p>
+      <div class="formula">
+        CV<sub>(n)</sub> &nbsp;=&nbsp; (1/n) · Σ<sup>n</sup><sub>i=1</sub> [ ( y<sub>i</sub> − ŷ<sub>i</sub> ) / ( 1 − h<sub>i</sub> ) ]²
+        <span class="cap">ŷ<sub>i</sub> is the ordinary fitted value from the full fit, and h<sub>i</sub> is the leverage of observation i — between 1/n and 1 — measuring how much that point influences its own fitted value.</span>
+      </div>
+      <p>It is the ordinary mean squared error with each residual divided by 1 − h<sub>i</sub>. High-leverage points are the ones a model bends toward, so their ordinary residuals understate how badly the model would do without them; dividing by 1 − h<sub>i</sub> inflates exactly those residuals, by exactly the right amount for the identity to hold.</p>
+      <div class="callout">
+        <p class="tag">Read the scope carefully</p>
+        <p>This holds for least-squares linear and polynomial regression. It does <strong>not</strong> hold in general — not for SVMs, not for k-nearest-neighbours, not for trees — and there the model really must be refitted n times. An exam question that offers the shortcut for a logistic regression or an SVM is testing whether you know where the boundary is.</p>
+      </div>
+
+      <div class="ix" data-quiz="m3l7-q1">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">You run LOOCV twice on the same dataset with the same model and get identical results. Your colleague, running 10-fold, gets slightly different numbers each time. Who has the problem?</p>
+        <div class="opts">
+          <button class="opt" data-fb="Nothing is broken in either run. Both behaviours are exactly what each procedure is supposed to do.">The colleague — variation between runs means their fold assignment is faulty.</button>
+          <button class="opt" data-right data-fb="LOOCV has no random split to make, so it is deterministic by construction. k-fold randomly assigns observations to folds, so repeated runs differ slightly — which is why repeating k-fold with several seeds and averaging is a reasonable habit.">Neither. LOOCV makes no random choices; k-fold assigns folds at random, so it varies by design.</button>
+          <button class="opt" data-fb="Determinism is not the same as absence of variance. LOOCV's estimate still has sampling variance with respect to the dataset — it just has none with respect to the split, which is a different thing.">You — LOOCV giving the same number twice means its variance is zero, which is impossible.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="note">
+        <div class="note-head"><span class="lbl">Class discussion — Lesson 7</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="m3l7" data-placeholder="cv.glm with K = n, leverage/hat values, timings from the homework…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Trap to avoid</span>
+      <p class="q">Does the leverage shortcut apply to a logistic regression?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">No. It is an identity for least squares linear and polynomial regression. For anything else — logistic regression, SVMs, nearest-neighbours, trees — the n refits are real and must be paid for.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
+<!-- ==================== LESSON 8 ==================== -->
+<section class="lesson" id="l8" data-short="Choosing k" style="--accent:#a8452c">
+  <div class="lesson-head">
+    <span class="ln">Lesson 8</span>
+    <h2>Choosing k, and what the CV number is for</h2>
+    <p class="keyline">Lesson 4 said k = 10 is common without saying why. The reason is a second bias–variance trade-off — this one in the estimate rather than the model — and it lands on 5 or 10.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Bias falls as k rises</h3>
+      <p>Each fold model trains on roughly (k − 1)/k of the data. So k = 2 trains on half, k = 5 on 80%, k = 10 on 90%, and LOOCV on all but one point. The larger k is, the closer each fold model is to the model you will actually deploy, and the less the training-size bias from Lesson 6 inflates the error estimate.</p>
+      <table>
+        <tr><th>k</th><th>Each fit trains on</th><th>Bias of the estimate</th><th>Number of fits</th></tr>
+        <tr><td>2</td><td>50%</td><td>Large — badly pessimistic</td><td>2</td></tr>
+        <tr><td>5</td><td>80%</td><td>Modest</td><td>5</td></tr>
+        <tr><td>10</td><td>90%</td><td>Small</td><td>10</td></tr>
+        <tr><td>n (LOOCV)</td><td>≈ 100%</td><td>Nearly zero</td><td>n</td></tr>
+      </table>
+      <p>On bias alone, LOOCV wins outright. If that were the whole story everyone would use it whenever they could afford to — and they don’t.</p>
+
+      <h3>Variance rises as k rises</h3>
+      <p>Here is the part that surprises people. LOOCV averages n numbers, and averaging usually stabilises things — but only when the things being averaged are independent. The n LOOCV models are trained on training sets that differ by a single observation each, so they are nearly identical to one another, and their errors are therefore <strong>highly correlated</strong>.</p>
+      <div class="callout">
+        <p class="tag">The statistical fact underneath</p>
+        <p>The mean of many highly correlated quantities has higher variance than the mean of the same number of weakly correlated ones. Averaging buys you very little when everything you are averaging is essentially the same measurement repeated. With k = 5 or 10 the training sets overlap much less, the fold errors are less correlated, and the average is genuinely more stable.</p>
+      </div>
+      <p>So the two effects oppose each other: raising k lowers bias and raises variance. Empirically, k = 5 and k = 10 sit in the region where neither is bad, which is the actual justification for the convention Lesson 4 mentioned in passing.</p>
+
+      <div class="ix" data-quiz="m3l8-q1">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Why does LOOCV tend to give a higher-variance estimate than 10-fold, despite averaging far more numbers?</p>
+        <div class="opts">
+          <button class="opt" data-fb="Each individual LOOCV error is indeed based on a single point and so is extremely noisy — but that is what the averaging is meant to fix. The reason the fix works poorly is about correlation, not about the individual errors.">Because each of the n errors is based on a single observation, so each is extremely noisy.</button>
+          <button class="opt" data-right data-fb="The n training sets differ by one observation, so the n fitted models are near-copies and their errors move together. Averaging correlated quantities reduces variance far less than averaging independent ones.">Because the n models are trained on nearly identical data, so their errors are highly correlated and averaging them reduces variance very little.</button>
+          <button class="opt" data-fb="LOOCV is deterministic — there is no random fold assignment at all. That is one of its selling points, and it is not the source of the variance being discussed.">Because the random assignment of single points to folds introduces extra randomness.</button>
+          <button class="opt" data-fb="It has the lowest bias of any k, not the highest. The trade-off runs the other way: LOOCV wins on bias and loses on variance.">Because LOOCV has the highest bias, and bias and variance always move together.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <h3>Two different jobs for the same number</h3>
+      <table class="plain">
+        <tr><th>Job</th><th>What you need from the CV curve</th></tr>
+        <tr><td><strong>Model selection</strong> — which of these candidates should I use?</td><td>Only the <em>location</em> of the minimum. The curve can be wrong about the level of error throughout and still point at the right model</td></tr>
+        <tr><td><strong>Model assessment</strong> — how good is the model I chose?</td><td>The <em>value</em> itself, and now its bias matters. Worse: if you selected using this number, it carries Lesson 2’s selection bias and is no longer an honest estimate</td></tr>
+      </table>
+      <p>This matters more than it sounds. Cross-validation estimates are often noticeably off in level while still identifying the right level of flexibility — which is good news, because selection is what people mostly use them for. It is also why selecting <em>and</em> reporting from the same cross-validation is the error Lesson 2 warned about, wearing a different hat.</p>
+
+      <div class="defn">
+        <span class="term">The one-standard-error rule</span>
+        <p>Compute the standard error of the cross-validation estimate across the folds. Then choose the <strong>simplest</strong> model whose score is within one standard error of the best score. The rationale: if several models are statistically indistinguishable, the simplest is the safer bet — it has less variance, is easier to explain, and is less likely to have won by luck.</p>
+      </div>
+      <p>This is the principled answer to Lesson 6’s wobbling curves. Rather than pretending the estimate can separate models it cannot, the rule reads the noise band honestly and breaks the tie on simplicity.</p>
+
+      <div class="ix" data-quiz="m3l8-q2">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">10-fold CV gives these mean errors, with the standard error across folds in brackets: 3 predictors 0.248 (0.011), 4 predictors 0.239 (0.010), 6 predictors 0.234 (0.012), 9 predictors 0.236 (0.011). What does the one-standard-error rule select?</p>
+        <div class="opts">
+          <button class="opt" data-fb="6 predictors is the raw minimum, which is what the rule is designed not to select automatically. The rule exists because 0.234 and 0.239 are not distinguishable at this precision.">6 predictors, since 0.234 is the lowest score.</button>
+          <button class="opt" data-right data-fb="Best is 0.234 with SE 0.012, so the band is anything at or below 0.246. The 3-predictor model at 0.248 is outside it; the 4-predictor model at 0.239 is inside and is the smallest model that qualifies.">4 predictors — the smallest model scoring within 0.246.</button>
+          <button class="opt" data-fb="3 predictors scores 0.248, which is above the 0.234 + 0.012 = 0.246 threshold. Close, but outside the band — the rule is a calculation, not a preference for the smallest model available.">3 predictors, since simpler is better whenever the curve is flat.</button>
+          <button class="opt" data-fb="9 predictors is neither the minimum nor the simplest qualifying model. It is strictly dominated here — more complexity for a worse score.">9 predictors, since more predictors reduce bias.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="note">
+        <div class="note-head"><span class="lbl">Class discussion — Lesson 8</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="m3l8" data-placeholder="Which k the instructor recommends, repeated CV, 1-SE rule in caret…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Exam target</span>
+      <p class="q">State the bias–variance trade-off in the choice of k, and say which direction each moves.</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Larger k means each fit trains on more data, so the estimate’s bias falls — LOOCV is nearly unbiased. But larger k also means the fold models are trained on more nearly identical data, so their errors are more correlated and the averaged estimate has higher variance. k = 5 or 10 balances the two.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
+<!-- ==================== LESSON 9 ==================== -->
+<section class="lesson" id="l9" data-short="Classification &amp; nesting" style="--accent:#1d4e89">
+  <div class="lesson-head">
+    <span class="ln">Lesson 9</span>
+    <h2>Cross-validation for classification, and nesting</h2>
+    <p class="keyline">Swap the quantity being averaged and everything carries over. The harder question is what to do when you are tuning <em>and</em> assessing with the same procedure.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Same machinery, different summand</h3>
+      <p>Cross-validation was described above using mean squared error because that is the natural measure for a numeric response. For classification, replace it with the misclassification count: Err<sub>i</sub> is 1 if the held-out case was predicted wrongly and 0 otherwise, and the fold score is the fraction wrong. Nothing else about the procedure changes.</p>
+      <p>Everything Module 2 said about metrics applies inside each fold. If accuracy is the wrong criterion for your problem — and for an imbalanced one it usually is — then cross-validating accuracy gives you a stable estimate of the wrong thing. Cross-validate the quantity you actually care about: sensitivity, expected cost, or AUC.</p>
+      <div class="callout">
+        <p class="tag">Stratify when the classes are unbalanced</p>
+        <p>With 3% positives and ten folds, a plain random split can easily hand one fold twice the positive rate of another, and can in principle give a fold none at all. <strong>Stratified k-fold</strong> assigns folds so that each preserves the overall class proportions. It is the same instinct as Lesson 3’s fix for the weekday problem — split within each category rather than across the whole pile — applied to the response instead of an attribute.</p>
+      </div>
+
+      <h3>When you tune and assess with the same data</h3>
+      <p>Here is the situation that trips up real projects. You use 10-fold cross-validation to choose k for a nearest-neighbours model. The winning k scores 0.19. Is 0.19 your estimate of the model’s error?</p>
+      <p>No — for exactly the reason in Lesson 2. You selected on those scores, so the winner’s score carries selection bias. Cross-validation lowers the noise that drives that bias but does not remove it, and if you tried thirty values of k the effect is not small.</p>
+      <div class="defn">
+        <span class="term">Nested cross-validation</span>
+        <p>Two loops. The <strong>inner</strong> loop cross-validates within the training portion to choose the parameter. The <strong>outer</strong> loop holds out a fold that the inner loop never touched, and scores the whole tuning-plus-fitting procedure on it. The outer number estimates the quality of the <em>procedure</em>, which is what you would actually rerun on new data.</p>
+      </div>
+      <p>The simpler alternative, and the one this module has been describing all along, is to keep a genuine test set out of the cross-validation entirely: cross-validate on the training-and-validation portion to choose, refit the winner on all of it, and score once on the reserved test set. Nesting is the same idea done repeatedly so that every observation gets a turn in the outer role.</p>
+
+      <div class="ix" data-quiz="m3l9-q1">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">You cross-validate 30 candidate values of λ and report the best fold-averaged score as your model’s expected performance. What is wrong?</p>
+        <div class="opts">
+          <button class="opt" data-fb="Cross-validation did its job — each candidate's score is a reasonable estimate of that candidate. The problem appears only when you take the maximum and then quote it.">Nothing, since cross-validation already corrects for selection.</button>
+          <button class="opt" data-right data-fb="Taking the best of 30 noisy estimates favours whichever got lucky, so the reported figure is optimistic. Cross-validation reduces the noise behind the effect but does not remove it — you still need a set that played no part in the choice.">The reported number was selected as the maximum of 30 estimates, so it is biased upward and needs an outer test set or an outer CV loop.</button>
+          <button class="opt" data-fb="30 is a lot of candidates, and more candidates means more selection bias — but the number itself is not the error. Even three candidates would need an untouched set before the winner's score could be reported.">Thirty candidates is too many to cross-validate reliably; use no more than ten.</button>
+          <button class="opt" data-fb="Averaging across folds is precisely what cross-validation is for, and it is the right summary of each candidate. The error is in what you did with the winning average, not in computing it.">Averaging across folds hides the fold-to-fold variation, so the mean should not be reported.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="ix" data-quiz="m3l9-q2">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">A fraud dataset has 0.9% positives. You run plain 10-fold CV and one fold reports 100% accuracy. What is the most likely explanation?</p>
+        <div class="opts">
+          <button class="opt" data-fb="A genuinely perfect fold on a hard problem is far less likely than the arithmetic explanation, and treating it as a triumph is how bad models get deployed.">That fold happened to be an easy one, so the model genuinely got everything right.</button>
+          <button class="opt" data-right data-fb="With 0.9% positives, a fold of a few hundred rows may contain no positives at all. A model predicting 'not fraud' throughout is then 100% accurate on that fold while detecting nothing. Stratify the folds, and cross-validate sensitivity or expected cost rather than accuracy.">That fold probably contains no positive cases at all, so predicting the majority class scores perfectly.</button>
+          <button class="opt" data-fb="Leakage produces suspiciously good results across the board, not in one fold while others behave normally. The single-fold pattern points at the class distribution.">Information has leaked from the training folds into that fold.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="note">
+        <div class="note-head"><span class="lbl">Class discussion — Lesson 9</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="m3l9" data-placeholder="Stratified folds in your software, nested CV cost, which metric to cross-validate…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Cross-module link</span>
+      <p class="q">Module 2 warned against reporting accuracy on imbalanced data. How does that warning change inside cross-validation?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">It doesn’t change at all — it just gets averaged. Cross-validation makes an estimate more stable; it has no opinion about whether the thing being estimated is the right quantity. Cross-validate expected cost or sensitivity if that is what the decision depends on.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
+<!-- ==================== LESSON 10 ==================== -->
+<section class="lesson" id="l10" data-short="Where CV breaks" style="--accent:#4a6b2a">
+  <div class="lesson-head">
+    <span class="ln">Lesson 10</span>
+    <h2>Where cross-validation quietly breaks</h2>
+    <p class="keyline">Every method in this module assumes the held-out data is genuinely independent of the training data. Four common situations where it isn’t — and in all four, the failure shows up as an excellent score.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>One: the preprocessing was done first</h3>
+      <p>Lesson 2 establishes that any set you make a choice on stops being clean. The same applies to any set that contributed to a calculation applied to the training data — and preprocessing is full of such calculations.</p>
+      <table class="plain">
+        <tr><th>Step done on the whole dataset before splitting</th><th>What leaks</th></tr>
+        <tr><td>Scaling or standardizing using the overall min, max, mean or standard deviation</td><td>Summary statistics of the held-out rows enter the training pipeline</td></tr>
+        <tr><td>Selecting the attributes most correlated with the response</td><td>The held-out responses helped decide which attributes the model may use — often the largest leak of the four</td></tr>
+        <tr><td>Imputing missing values from column means</td><td>Held-out values contribute to the numbers filled into training rows</td></tr>
+        <tr><td>Balancing classes by oversampling, then splitting</td><td>Copies of the same observation land in both training and held-out folds</td></tr>
+      </table>
+      <div class="callout">
+        <p class="tag">The rule that covers all of them</p>
+        <p>Every step that <em>learns anything from data</em> belongs inside the cross-validation loop, not before it. Fit the scaler on the training folds, apply it to the held-out fold. Select attributes using the training folds only, and re-select from scratch on each fold. If the choice of attributes changes between folds, that is not a bug — it is the procedure telling you how unstable the selection really is, which is information the leaky version hides completely.</p>
+      </div>
+      <p>The tell is always the same: performance that looks too good and does not survive contact with production. Attribute selection done once on all the data before cross-validating can produce a strong-looking score on data that contains <em>no real signal at all</em>, because the selection step has already found the attributes that happen to correlate with the held-out responses.</p>
+
+      <h3>Two: the data is ordered in time</h3>
+      <p>Random folds scatter observations across time, so a model is routinely trained on next month and evaluated on last month. That is not a mistake a deployed model can make, so the estimate is measuring something that will never happen. Any trend, seasonality or drift makes the score optimistic.</p>
+
+      <figure>
+        <svg class="fig" viewBox="0 0 660 280" role="img" aria-label="Top: random k-fold on time-ordered data, with held-out blocks scattered across the timeline. Bottom: rolling-origin validation, where each round trains on an initial stretch of time and evaluates on the period immediately after.">
+          <g font-family="IBM Plex Sans,sans-serif">
+            <text x="20" y="22" font-size="12.5" font-weight="600" fill="#9d3b3b">Random folds on time-ordered data — trains on the future</text>
+            <g fill="#4a6b2a"><rect x="40" y="36" width="580" height="22"/></g>
+            <g fill="#ffffff"><rect x="120" y="36" width="58" height="22"/><rect x="300" y="36" width="58" height="22"/><rect x="470" y="36" width="58" height="22"/></g>
+            <g fill="none" stroke="#9d3b3b" stroke-width="2">
+              <rect x="120" y="36" width="58" height="22"/><rect x="300" y="36" width="58" height="22"/><rect x="470" y="36" width="58" height="22"/>
+            </g>
+            <text x="40" y="76" font-size="11" fill="#9aa5b1">held-out blocks sit in the middle of the training data</text>
+
+            <text x="20" y="112" font-size="12.5" font-weight="600" fill="#2f6b52">Rolling origin — each round only looks forward</text>
+            <g fill="#4a6b2a">
+              <rect x="40" y="126" width="160" height="18"/>
+              <rect x="40" y="152" width="260" height="18"/>
+              <rect x="40" y="178" width="360" height="18"/>
+              <rect x="40" y="204" width="460" height="18"/>
+            </g>
+            <g fill="#ffffff" stroke="#2f6b52" stroke-width="2">
+              <rect x="200" y="126" width="100" height="18"/>
+              <rect x="300" y="152" width="100" height="18"/>
+              <rect x="400" y="178" width="100" height="18"/>
+              <rect x="500" y="204" width="100" height="18"/>
+            </g>
+            <g fill="#9aa5b1" font-size="10.5">
+              <text x="610" y="140">round 1</text><text x="610" y="166">2</text><text x="610" y="192">3</text><text x="610" y="218">4</text>
+            </g>
+            <line x1="40" y1="240" x2="620" y2="240" stroke="#131b26" stroke-width="1.2"/>
+            <polygon points="628,240 616,235 616,245" fill="#131b26"/>
+            <text x="330" y="264" text-anchor="middle" font-size="12" fill="#4a5765">time →</text>
+          </g>
+        </svg>
+        <figcaption>Rolling origin trains on a stretch of history and evaluates on the period immediately after, repeatedly. It uses less data per fit and gives a more pessimistic number — which is the honest one, because it is the only arrangement a deployed model ever faces.</figcaption>
+      </figure>
+
+      <h3>Three: the rows aren’t independent</h3>
+      <p>Cross-validation assumes each observation is a separate draw. It often isn’t: forty readings from the same patient, six months of transactions from the same customer, repeated measurements on the same machine. Split those at random and near-duplicates of the same underlying unit end up on both sides. The model can then succeed by recognising the unit rather than learning anything generalisable, and the estimate silently answers “how well does this work on a patient I have already seen?” instead of the question you asked.</p>
+      <p>The fix is <span class="key">grouped</span> splitting: assign whole patients, customers or machines to folds rather than individual rows. Expect the honest score to be worse. Lesson 3’s weekday example is the same principle seen from the other direction — there the worry was categories missing from a set; here it is the same unit appearing in two sets at once.</p>
+
+      <h3>Four: the future isn’t like the past</h3>
+      <p>Every estimate in this module assumes new data comes from the same source as the old. When the world shifts — a policy change, a new competitor, a pandemic — a perfectly executed cross-validation still gives an over-confident number, because the assumption it rests on has stopped being true. Nothing in the arithmetic can detect this. It is a judgement about the domain, and it belongs in the memo alongside the number.</p>
+
+      <div class="ix" data-quiz="m3l10-q1">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">An analyst screens 20,000 attributes down to the 50 most correlated with the response, then runs 10-fold cross-validation on those 50 and reports the result. What is the flaw?</p>
+        <div class="opts">
+          <button class="opt" data-fb="Fifty attributes may or may not be too many, and that would be a separate conversation about flexibility. The flaw here is in the order of operations, not the count.">Fifty attributes is too many for the model to handle, so it will overfit.</button>
+          <button class="opt" data-right data-fb="The screening step used every response, including those in each held-out fold. Each fold's data helped choose the attributes its own model gets to use, so the score is inflated — and with 20,000 candidates, the effect is large enough to produce a good-looking result on pure noise. The screening must be redone inside each fold.">The screening step used the held-out responses, so every fold was contaminated before cross-validation began.</button>
+          <button class="opt" data-fb="Correlation does miss non-linear relationships, which is a genuine limitation of the screening method. But it would make the model worse, not make the reported score dishonest.">Correlation only detects linear relationships, so useful attributes were discarded.</button>
+          <button class="opt" data-fb="Ten folds is a perfectly standard choice and is not the problem. Running 200 folds on contaminated data would give an equally contaminated answer.">Ten folds is too few when the number of attributes is this large.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="branch" data-branch="m3l10-case">
+        <div class="persona">
+          <span class="av">TO</span>
+          <span class="who"><b>Tom Oyelaran</b><span>Data scientist, equipment maintenance</span></span>
+        </div>
+        <div class="scene" data-step="1">
+          <p>Tom predicts which pumps will fail within 30 days. He has 900,000 daily sensor rows from 300 pumps over three years. Random 10-fold cross-validation reports 96% accuracy and an AUC of 0.97.</p>
+          <p class="said">His lead: “That’s the best result we’ve had. Write it up.”</p>
+          <p><strong>What should Tom check first?</strong></p>
+          <div class="choices">
+            <button class="choice" data-go="2" data-tone="bad" data-head="What it misses"
+              data-outcome="More folds would give a marginally more stable version of the same misleading number. The problem is not how many folds there are — it is what the folds contain, and no value of k repairs that.">
+              Rerun with 20 folds to confirm the estimate is stable.
+            </button>
+            <button class="choice" data-go="2" data-tone="good" data-head="The right move"
+              data-outcome="Two violations at once. Rows from the same pump are in both training and held-out folds, so the model can recognise individual pumps rather than learn failure patterns. And the data is time-ordered, so it is routinely trained on a pump's future and evaluated on its past. Either alone would inflate the score; together they explain 0.97 comfortably.">
+              Whether rows from the same pump, and from later dates, are appearing in both training and held-out folds.
+            </button>
+            <button class="choice" data-go="2" data-tone="bad" data-head="What goes wrong"
+              data-outcome="Failures are rare, so accuracy is indeed a poor metric here — but he already has AUC at 0.97, so the metric is not what is producing the result. Changing what he measures leaves the contaminated folds untouched.">
+              Swap accuracy for expected cost, since failures are rare and accuracy is misleading.
+            </button>
+          </div>
+        </div>
+        <div class="scene" data-step="2" data-end="1" hidden>
+          <p><strong>He refits properly.</strong> Grouping by pump and respecting time order, AUC drops to 0.71. His lead asks whether something has been broken.</p>
+          <div class="choices">
+            <button class="choice" data-tone="bad" data-head="What happens"
+              data-outcome="Reverting restores the number and destroys the meaning. The 0.97 answers 'how well can we predict a pump we have already watched fail, using information from after the prediction date?' — a question nobody asked and no deployment can rely on.">
+              Go back to the random folds — 0.97 was measured on real data, so it was a real result.
+            </button>
+            <button class="choice" data-tone="good" data-head="The right call"
+              data-outcome="Nothing broke. The 0.71 is the first honest number he has had, and it is the one that will roughly reproduce in production. The right framing for the lead is that the project just avoided promising 0.97 and delivering 0.71 — and that 0.71 on a genuinely hard problem may still be worth deploying, which the cost analysis can settle.">
+              Report 0.71 and explain that the earlier figure measured a question the deployed model will never face.
+            </button>
+            <button class="choice" data-tone="bad" data-head="What goes wrong"
+              data-outcome="Reporting both without a recommendation passes the problem to people less equipped to judge it, and in practice the larger number is the one that survives into the slide deck. Part of the job is saying which number is the real one.">
+              Report both numbers and let the business decide which to believe.
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-head"><span class="lbl">Class discussion — Lesson 10</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="m3l10" data-placeholder="Grouped splits, time-series CV, leakage examples from your own work…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Exam target</span>
+      <p class="q">What do all four failure modes in this lesson have in common?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">The held-out data is not independent of the training data — through preprocessing, through time, through repeated units, or because the population itself has moved. And all four announce themselves the same way: a better score than the model deserves, which no amount of extra folds will correct.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
+<!-- ==================== LESSON 11 ==================== -->
+<section class="lesson" id="l11" data-short="Bootstrap" style="--accent:#16697a">
+  <div class="lesson-head">
+    <span class="ln">Lesson 11</span>
+    <h2>The bootstrap</h2>
+    <p class="keyline">Cross-validation answers “how good is this model?”. The bootstrap answers a different question — “how much would this number move if I had collected different data?” — by resampling the data you have, with replacement.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>The question it answers</h3>
+      <p>Any quantity computed from data is itself uncertain: a regression coefficient, a median, a ratio, the optimal allocation between two investments. Ideally you would measure that uncertainty by collecting many fresh datasets from the population and watching the estimate vary. You cannot. The bootstrap emulates that process on a computer using the single dataset you have.</p>
+      <div class="defn">
+        <span class="term">The procedure</span>
+        <p>From a dataset of n observations, draw n observations <strong>at random with replacement</strong> to form a bootstrap sample. Compute your statistic on it. Repeat B times — B is typically in the hundreds or thousands. The spread of those B values estimates the sampling variability of the statistic, and its standard deviation estimates the standard error.</p>
+      </div>
+
+      <figure>
+        <svg class="fig" viewBox="0 0 660 280" role="img" aria-label="A dataset of three observations is resampled with replacement three times, producing bootstrap samples that repeat some observations and omit others, each giving its own estimate.">
+          <g font-family="IBM Plex Sans,sans-serif">
+            <rect x="40" y="86" width="112" height="82" fill="#16697a" fill-opacity=".1" stroke="#16697a" stroke-width="2"/>
+            <text x="96" y="76" text-anchor="middle" font-size="12.5" font-weight="600" fill="#131b26">Original data</text>
+            <g font-family="IBM Plex Mono,monospace" font-size="12" fill="#131b26" text-anchor="middle">
+              <text x="96" y="110">obs 1</text><text x="96" y="132">obs 2</text><text x="96" y="154">obs 3</text>
+            </g>
+            <g stroke="#9aa5b1" stroke-width="1.5" fill="none">
+              <path d="M 152 110 C 200 104, 220 78, 258 72"/>
+              <path d="M 152 127 C 200 127, 220 127, 258 127"/>
+              <path d="M 152 144 C 200 150, 220 180, 258 186"/>
+            </g>
+            <g>
+              <rect x="266" y="42" width="112" height="72" fill="none" stroke="#16697a" stroke-width="1.6"/>
+              <rect x="266" y="98" width="112" height="72" fill="none" stroke="#16697a" stroke-width="1.6"/>
+              <rect x="266" y="156" width="112" height="72" fill="none" stroke="#16697a" stroke-width="1.6"/>
+            </g>
+            <g font-family="IBM Plex Mono,monospace" font-size="11.5" fill="#131b26" text-anchor="middle">
+              <text x="322" y="62">obs 3</text><text x="322" y="80">obs 1</text><text x="322" y="98">obs 3</text>
+              <text x="322" y="118">obs 2</text><text x="322" y="136">obs 2</text><text x="322" y="154">obs 1</text>
+              <text x="322" y="176">obs 1</text><text x="322" y="194">obs 1</text><text x="322" y="212">obs 2</text>
+            </g>
+            <g font-family="IBM Plex Sans,sans-serif" font-size="11" fill="#4a5765">
+              <text x="388" y="80">→ estimate 1</text>
+              <text x="388" y="136">→ estimate 2</text>
+              <text x="388" y="194">→ estimate 3</text>
+              <text x="388" y="230">… B times in all</text>
+            </g>
+            <rect x="500" y="60" width="130" height="150" fill="#16697a" fill-opacity=".07" stroke="#16697a" stroke-width="1.5"/>
+            <g fill="#16697a">
+              <rect x="516" y="176" width="12" height="18"/><rect x="532" y="152" width="12" height="42"/>
+              <rect x="548" y="112" width="12" height="82"/><rect x="564" y="98" width="12" height="96"/>
+              <rect x="580" y="140" width="12" height="54"/><rect x="596" y="168" width="12" height="26"/>
+            </g>
+            <text x="565" y="50" text-anchor="middle" font-size="11.5" font-weight="600" fill="#131b26">spread of the B estimates</text>
+            <text x="565" y="228" text-anchor="middle" font-size="11" fill="#4a5765">its standard deviation = SE</text>
+            <text x="266" y="252" font-size="11" fill="#9aa5b1">note the repeats and the omissions — that is the “with replacement” part doing the work</text>
+          </g>
+        </svg>
+        <figcaption>Each bootstrap sample is the same size as the original but contains some observations more than once and others not at all. That variation is what stands in for collecting fresh data.</figcaption>
+      </figure>
+
+      <div class="callout">
+        <p class="tag">The number worth memorising</p>
+        <p>The chance a given observation appears in a particular bootstrap sample is 1 − (1 − 1/n)<sup>n</sup>, which converges to 1 − 1/e ≈ <strong>63.2%</strong>. So each bootstrap sample contains about two-thirds of the distinct observations, and roughly <strong>36.8%</strong> are left out — the “out-of-bag” observations, which some methods reuse as a free validation set.</p>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Exam target</span>
+      <p class="q">What fraction of the original observations appears in a typical bootstrap sample, and where does the number come from?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">About 63.2%. Each draw misses a given observation with probability (1 − 1/n); n independent draws miss it with probability (1 − 1/n)<sup>n</sup> → 1/e ≈ 0.368, so it appears with probability ≈ 0.632.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Bootstrap or cross-validation?</h3>
+      <table>
+        <tr><th></th><th>Cross-validation</th><th>Bootstrap</th></tr>
+        <tr><td>Question answered</td><td>How well does this model predict new data?</td><td>How uncertain is this estimated quantity?</td></tr>
+        <tr><td>How data is reused</td><td>Partitioned — each observation is held out exactly once</td><td>Resampled with replacement — observations repeat and are omitted</td></tr>
+        <tr><td>Typical output</td><td>An estimated test error</td><td>A standard error, or a confidence interval</td></tr>
+        <tr><td>Typical use</td><td>Choosing between models; estimating quality</td><td>Putting an error bar on a coefficient, a ratio, or any statistic with no clean formula</td></tr>
+      </table>
+      <p>They are complementary rather than competing. A common pairing: cross-validate to choose the model, then bootstrap to attach uncertainty to the quantity you report from it.</p>
+      <div class="callout">
+        <p class="tag">Why you cannot simply bootstrap the test error</p>
+        <p>It is tempting to treat the out-of-bag observations as a validation set and stop there — but the bootstrap sample and the original dataset overlap heavily by construction, with about two-thirds of observations in common. Naively scoring a bootstrapped model against the full original data therefore gives an optimistic answer, because most of the “held-out” rows were in training. Cross-validation partitions and so has no overlap at all, which is why it remains the right tool for estimating test error.</p>
+      </div>
+      <p>The bootstrap’s real strength is that it needs no formula. Standard errors for a regression coefficient come from textbook theory that assumes the model is correct; bootstrap standard errors make no such assumption, which is why they are often the more trustworthy of the two when the model is shaky. And for statistics with no theory at all — the ratio of two medians, an optimal allocation, the difference between two AUCs — it may be the only option.</p>
+
+      <div class="ix" data-quiz="m3l11-q1">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Which task is the bootstrap the right tool for?</p>
+        <div class="opts">
+          <button class="opt" data-fb="That is cross-validation's job. The bootstrap's resamples overlap the original data heavily, so it is poorly suited to estimating how a model performs on genuinely unseen observations.">Estimating how accurately a classifier will perform on future applicants.</button>
+          <button class="opt" data-fb="Choosing among candidates means comparing predictive performance, which again is cross-validation. The bootstrap quantifies uncertainty in an estimate rather than ranking models.">Choosing between five candidate values of k for a nearest-neighbours model.</button>
+          <button class="opt" data-right data-fb="A ratio of medians has no convenient standard-error formula, and the bootstrap needs none — resample, recompute, and read the spread. This is exactly the gap it was invented to fill.">Putting a standard error on the ratio of two median claim amounts, for which no formula is handy.</button>
+          <button class="opt" data-fb="Deciding a split ratio is a design question about how much data goes where, and the bootstrap has nothing to say about it.">Deciding whether to use a 70/30 or 60/20/20 split.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="ix" data-quiz="m3l11-q2">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Why must bootstrap sampling be done <em>with</em> replacement?</p>
+        <div class="opts">
+          <button class="opt" data-right data-fb="Sampling n from n without replacement returns the original dataset, in a different order, every single time. The statistic would be identical across all B resamples and its spread would be exactly zero — the procedure would measure nothing.">Because sampling n observations from n without replacement just returns the original dataset, so every resample would give the same answer.</button>
+          <button class="opt" data-fb="Larger samples are not the goal — each bootstrap sample is deliberately the same size n as the original, so that the estimate's variability reflects the real sample size.">Because it allows each resample to be larger than the original dataset, improving precision.</button>
+          <button class="opt" data-fb="Out-of-bag observations are a useful by-product, not the reason. The reason is that without replacement there would be no variation between resamples at all.">Because it guarantees that about a third of observations are left out for validation.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="note">
+        <div class="note-head"><span class="lbl">Class discussion — Lesson 11</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="m3l11" data-placeholder="boot() in R, how large B should be, bootstrap confidence intervals…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Contrast</span>
+      <p class="q">In one sentence each, what do cross-validation and the bootstrap estimate?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Cross-validation estimates how well a modelling procedure will predict data it has not seen. The bootstrap estimates how much a computed quantity would vary if you had drawn a different sample from the same population.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
+<!-- ==================== LESSON 12 ==================== -->
+<section class="lesson" id="l12" data-short="Exam workout" style="--accent:#131b26">
+  <div class="lesson-head">
+    <span class="ln">Exam workout</span>
+    <h2>Midterm and final-style questions</h2>
+    <p class="keyline">Validation questions on real papers are rarely definitional. They give you a procedure and ask what is wrong with it, or a table of numbers and ask what you are entitled to conclude.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <div class="callout">
+        <p class="tag">How to use this</p>
+        <p>Write your answer before opening the model one. The <em>marking notes</em> say where the marks usually sit — which on this topic is almost always the direction of a bias and the reason for it, not the name of the method.</p>
+      </div>
+
+      <h3>Section A — Multiple choice, midterm style</h3>
+
+      <div class="ix" data-quiz="m3x-q1">
+        <div class="ix-head"><span class="ix-kind">midterm · calculation</span><span class="ix-done">answered</span></div>
+        <p class="prompt">You tune an SVM over 6 values of λ and 4 values of γ using 10-fold cross-validation, then deploy the winner. How many times is the model fitted in total?</p>
+        <div class="opts">
+          <button class="opt" data-fb="240 is the cross-validation work, but it omits the final refit. The fold models are not the deliverable — none of them was trained on all the data.">240</button>
+          <button class="opt" data-right data-fb="6 × 4 = 24 candidate settings, each cross-validated over 10 folds = 240 fits, plus one final refit of the winning setting on all the training-and-validation data = 241. Forgetting the final refit is the most common slip here, and it is also a conceptual error, not just an arithmetic one.">241</button>
+          <button class="opt" data-fb="24 counts the candidate settings but not the folds. Each setting is fitted ten times, once per held-out fold.">24</button>
+          <button class="opt" data-fb="This adds a fit for each fold's 'winner', which does not happen — a single winning setting is chosen from the averaged scores and refitted once.">250</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="ix" data-quiz="m3x-q2">
+        <div class="ix-head"><span class="ix-kind">midterm · direction of bias</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Which pairing of bias and direction is correct?</p>
+        <div class="opts">
+          <button class="opt" data-fb="Both directions are inverted. Fitting to a set makes scores on that set look better, not worse; and training on less data makes the scored model weaker, so the error estimate runs high.">Training on a subset makes the error estimate too low; selecting the best of many models makes it too high.</button>
+          <button class="opt" data-right data-fb="Selection bias inflates performance — the winner is partly lucky. Training-size bias deflates it — the scored model saw less data than the deployed one will. They act in opposite directions and do not reliably cancel.">Selecting the best of many models makes the estimate too optimistic; training on a subset makes it too pessimistic.</button>
+          <button class="opt" data-fb="They do point in opposite directions, but 'cancel out' is wrong and dangerous — their sizes are unrelated, and assuming they offset is how unjustified numbers get reported.">Both biases make the estimate too optimistic, so they compound.</button>
+          <button class="opt" data-fb="Cross-validation reduces the noise that drives selection bias and reduces training-size bias by training on more data — but it eliminates neither. A reserved test set is still required.">Cross-validation eliminates both biases, so neither direction matters once it is used.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="ix" data-quiz="m3x-q3">
+        <div class="ix-head"><span class="ix-kind">midterm · concept</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Which statement about LOOCV versus 10-fold cross-validation is correct?</p>
+        <div class="opts">
+          <button class="opt" data-fb="LOOCV has lower bias, not higher — each fit uses n − 1 observations. The variance claim is also inverted.">LOOCV has higher bias and lower variance, because it averages more estimates.</button>
+          <button class="opt" data-right data-fb="Training on n − 1 observations makes each fold model almost the deployed model, so bias is nearly zero. But those n models are near-copies of each other, so their errors are highly correlated and the average is less stable than a 10-fold average.">LOOCV has lower bias and higher variance, because its n training sets are nearly identical to one another.</button>
+          <button class="opt" data-fb="LOOCV is deterministic, which removes randomness from the fold assignment — but that is not the same as having lower variance as an estimator of test error.">LOOCV has lower variance, since it involves no random fold assignment.</button>
+          <button class="opt" data-fb="They are not equivalent. LOOCV is the special case k = n, and the bias and variance of the resulting estimate differ systematically from k = 10.">They are statistically equivalent; the only difference is computational cost.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="ix" data-quiz="m3x-q4">
+        <div class="ix-head"><span class="ix-kind">final · diagnosis</span><span class="ix-done">answered</span></div>
+        <p class="prompt">A demand forecasting model is cross-validated with random 10-fold splits over four years of daily data and reports very low error. It performs far worse in production. Most likely cause?</p>
+        <div class="opts">
+          <button class="opt" data-fb="Ten folds is a standard choice and is not the issue. The problem is which observations the folds contain relative to each other in time, not how many folds there are.">Too few folds, so the estimate was unstable.</button>
+          <button class="opt" data-right data-fb="Random folds train on days after the held-out day, so the model routinely sees the future. Trend and seasonality then make the held-out days easy to predict in a way production never permits. Rolling-origin validation — train on a stretch of history, evaluate on the period immediately after — gives the honest figure.">Random folds let the model train on future observations, which a deployed model can never do.</button>
+          <button class="opt" data-fb="Selection bias inflates the winner's score, but usually by a modest amount. A large production gap on time-ordered data points squarely at the temporal structure of the folds.">Selection bias from comparing several models on the same folds.</button>
+          <button class="opt" data-fb="Training-size bias makes cross-validated error estimates too <em>high</em>, not too low. It cannot explain an estimate that turned out to be optimistic.">Training-size bias, since each fold model trained on only 90% of the data.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="ix" data-quiz="m3x-q5">
+        <div class="ix-head"><span class="ix-kind">final · scope</span><span class="ix-done">answered</span></div>
+        <p class="prompt">For which model can the LOOCV score be obtained from a single fit using the leverage formula?</p>
+        <div class="opts">
+          <button class="opt" data-fb="A support vector machine has no such identity. LOOCV on an SVM means n genuine refits.">A support vector machine with a radial kernel</button>
+          <button class="opt" data-right data-fb="The identity CV = (1/n)Σ[(yᵢ − ŷᵢ)/(1 − hᵢ)]² holds for least squares linear and polynomial regression. Everywhere else the n refits are real.">A cubic polynomial regression fitted by least squares</button>
+          <button class="opt" data-fb="Logistic regression is fitted by maximum likelihood, not least squares, and the identity does not hold. This is the most frequently offered wrong answer.">A logistic regression fitted by maximum likelihood</button>
+          <button class="opt" data-fb="k-nearest-neighbours has no coefficients and no leverage in this sense. It also has a cheap LOOCV for a different reason — you can simply exclude each point from its own neighbour search — but not via this formula.">A k-nearest-neighbours classifier</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="ix" data-quiz="m3x-q6">
+        <div class="ix-head"><span class="ix-kind">final · calculation</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Roughly what proportion of the original distinct observations appears in a single bootstrap sample of size n, for large n?</p>
+        <div class="opts">
+          <button class="opt" data-fb="100% would require sampling without replacement, which returns the original dataset and produces no variation between resamples at all.">All of them — the sample is the same size as the original.</button>
+          <button class="opt" data-fb="Half is a common guess but has no basis. The correct figure comes from the probability that a given observation survives n draws.">About 50%</button>
+          <button class="opt" data-right data-fb="P(an observation is chosen at least once) = 1 − (1 − 1/n)ⁿ → 1 − 1/e ≈ 0.632. So roughly 63% appear and 37% are out-of-bag.">About 63%</button>
+          <button class="opt" data-fb="About 37% is the out-of-bag fraction — the observations left out, not the ones included. Getting these the wrong way round is the usual slip.">About 37%</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="ix" data-quiz="m3x-q7">
+        <div class="ix-head"><span class="ix-kind">final · critical thinking</span><span class="ix-done">answered</span></div>
+        <p class="prompt">A team reserved a test set properly, cross-validated on the rest, chose a model, refit it, and scored 0.79 on the test set. They now want to try two more ideas. What is the correct procedure?</p>
+        <div class="opts">
+          <button class="opt" data-fb="Scoring the new candidates on the test set turns it into a validation set — the winner's score would then carry selection bias, and 0.79 stops being comparable to anything.">Cross-validate the two new ideas, then score all three on the existing test set and report the best.</button>
+          <button class="opt" data-right data-fb="The choosing has to happen where choosing is allowed. Cross-validate the new candidates alongside the old ones on the training-and-validation portion, pick a winner there, refit, and spend fresh test data on it — or accept that the 0.79 no longer describes whatever comes out.">Cross-validate the new ideas alongside the original candidates, choose there, and obtain fresh test data before reporting a new number.</button>
+          <button class="opt" data-fb="Comparing on the test set is precisely what makes it a validation set, whatever the intention. Using it 'only for comparison' is the same operation as using it for selection.">Score the two new ideas on the test set for comparison only, and keep reporting 0.79 for the original.</button>
+          <button class="opt" data-fb="Abandoning improvement is not required. The constraint is on where the comparison happens, not on whether further work is allowed.">Stop — once a test set has been used, no further model development is permitted.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="ix" data-quiz="m3x-q8">
+        <div class="ix-head"><span class="ix-kind">final · synthesis</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Which pairing of situation and validation design is the <em>weakest</em>?</p>
+        <div class="opts">
+          <button class="opt" data-fb="Sound. A rare positive class is exactly when stratification matters, because plain random folds can vary wildly in positive rate — or contain none at all.">Stratified 10-fold, for a classification problem with 2% positives</button>
+          <button class="opt" data-fb="Sound. With 200 observations and a cheap model, the n refits are affordable and the near-unbiasedness is worth having.">LOOCV, for a least-squares regression on 200 observations</button>
+          <button class="opt" data-right data-fb="This is the weak one. Rows from the same patient are not independent, so random folds place near-duplicates on both sides and the model can succeed by recognising patients. Fold by patient, not by row.">Random 10-fold by row, for repeated daily measurements on 80 patients</button>
+          <button class="opt" data-fb="Sound. Rolling origin respects the arrow of time and is the standard design for forecasting problems.">Rolling-origin validation, for a monthly sales forecast</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Technique</span>
+      <p class="q">Most validation questions reduce to one diagnostic question. Which?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">“Did the held-out data influence anything the model saw?” — through fitting, through selection, through preprocessing, through time, or through a repeated unit. If yes, the score is optimistic. If no, ask instead how much data the scored model got, which tells you whether it is pessimistic.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Section B — Short answer and discussion, final style</h3>
+      <p class="frq-lead">Roughly 4–8 marks each in a typical paper. Attempt each before opening it.</p>
+
+      <div class="frq">
+        <p class="qn">B1 · <strong>Explain why test error decomposes into three parts,</strong> and use the decomposition to explain the U-shaped relationship between flexibility and test error.</p>
+        <details><summary>Model answer</summary>
+          <div class="ans">
+            <p>Expected test error = variance of the fit + squared bias of the fit + irreducible error. <em>Variance</em> is how much the fitted model would change if trained on a different sample from the same source. <em>Bias</em> is the error from approximating a complicated reality with a simpler form. <em>Irreducible error</em> is randomness in the world — unmeasured causes and measurement noise — and is a property of the problem, not the model.</p>
+            <p>As flexibility rises, bias falls (the model can represent more shapes) and variance rises (the model chases the particular sample). Early on, bias falls faster than variance rises, so total error falls. Beyond some point bias has little left to give while variance keeps climbing, so total error rises again. The sum is therefore U-shaped, with a minimum at the flexibility where the two rates cross over.</p>
+            <p>Since all three terms are non-negative, expected test error can never fall below the irreducible error — there is a floor, and it is above zero.</p>
+            <p class="mark"><strong>Marking notes.</strong> Marks are for the mechanism, not the equation: the crossover of rates is what produces the U. A strong answer adds that training error has no such U — it declines monotonically with flexibility — which is precisely why it cannot be used to locate the minimum, and why validation exists.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="frq">
+        <p class="qn">B2 · <strong>State the two drawbacks of the single train/validation split</strong> and explain how k-fold cross-validation addresses each.</p>
+        <details><summary>Model answer</summary>
+          <div class="ans">
+            <p><strong>High variance of the estimate.</strong> The number depends on which observations happened to land in the validation set; repeat the split with a different seed and both the estimate and often the chosen model change. k-fold addresses this by averaging k held-out estimates, each using a different portion of the data, so the result depends far less on any one partition.</p>
+            <p><strong>Upward bias on error.</strong> The scored model was trained on only part of the data — half, under a 50/50 split — and methods perform worse with fewer observations, so the estimate overstates the error of the model that will actually be deployed on everything. k-fold addresses this by training each fold model on (k − 1)/k of the data: 90% at k = 10, much closer to the full dataset.</p>
+            <p class="mark"><strong>Marking notes.</strong> Both drawbacks must be named <em>with direction</em> — “biased” without saying which way typically scores half. The strongest answers note that k-fold reduces rather than eliminates both, and that raising k to reduce bias raises the variance of the estimate for a separate reason, which is the subject of the next question.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="frq">
+        <p class="qn">B3 · <strong>Explain the bias–variance trade-off in the choice of k,</strong> and justify the common recommendation of k = 5 or 10.</p>
+        <details><summary>Model answer</summary>
+          <div class="ans">
+            <p>Each fold model trains on about (k − 1)/k of the data, so larger k means more training data per fit and less upward bias in the error estimate. At k = n (LOOCV) each fit uses n − 1 observations and the estimate is nearly unbiased.</p>
+            <p>But larger k also means the k training sets overlap more heavily. At k = n they differ by a single observation, so the n fitted models are near-copies and their errors are highly correlated. The mean of many highly correlated quantities has higher variance than the mean of the same number of weakly correlated ones, so LOOCV’s average is less stable than a 10-fold average despite averaging more terms.</p>
+            <p>k = 5 or 10 sits where neither effect is severe: enough training data per fold to keep bias modest, enough independence between folds to keep variance modest, and a computational cost of 5 or 10 fits instead of n.</p>
+            <p class="mark"><strong>Marking notes.</strong> The correlation argument is the whole question. Answers that say “LOOCV has higher variance because each error is based on one point” have named a real fact that is not the reason — the averaging is meant to absorb it, and the reason it absorbs it poorly is correlation between the fits.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="frq">
+        <p class="qn">B4 · <strong>Describe k-fold cross-validation end to end</strong> for a project with a reserved test set, and state precisely what goes into production.</p>
+        <details><summary>Model answer</summary>
+          <div class="ans">
+            <p>First, before anything else touches the data, set aside a test set. Split the remaining training-and-validation data into k roughly equal folds. For each fold in turn: train each candidate model on the other k − 1 folds and score it on the held-out fold. Average each candidate’s k scores. Compare the averages and choose a candidate.</p>
+            <p>Then <strong>refit the chosen candidate on all k folds together</strong> — the deliverable is none of the k fold models, each of which saw only (k − 1)/k of the available data. Averaging their coefficients is also not an option; there is no guarantee that the average of several good models is a good model. Finally, score the refitted model once on the reserved test set and report that number.</p>
+            <p class="mark"><strong>Marking notes.</strong> The two ends are where marks are lost: the test set must be reserved <em>before</em> the folds are made, and the winner must be <em>refitted on everything</em> after the choice. The middle of the procedure is what everyone remembers and is usually worth the fewest marks.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="frq">
+        <p class="qn">B5 · <strong>Distinguish selection bias from training-size bias.</strong> Give the direction of each and an example where both are present.</p>
+        <details><summary>Model answer</summary>
+          <div class="ans">
+            <p><strong>Selection bias</strong> comes from choosing. Each candidate’s held-out score is unbiased on its own, but the <em>maximum</em> of several noisy scores favours whichever candidate got a favourable draw, so the winner’s score is optimistic. It grows with the number of candidates compared.</p>
+            <p><strong>Training-size bias</strong> comes from data volume. The scored model was fitted on less data than the deployed model will be, so it is weaker, and its error estimate is pessimistic.</p>
+            <p>Both are present in a routine tuning exercise: 10-fold cross-validating twenty values of a parameter. Each fold model trains on 90% of the data, so every candidate’s average is slightly pessimistic; and the winning average is then selected as the best of twenty, which is optimistic. The two do not cancel in any predictable way — their sizes are unrelated — which is why the honest figure still has to come from a set that took part in neither the fitting nor the choosing.</p>
+            <p class="mark"><strong>Marking notes.</strong> Naming both directions correctly is most of the marks. Explicitly rejecting the “they cancel out” intuition is worth an extra one, because it is a plausible-sounding conclusion that examiners plant in distractors.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="frq">
+        <p class="qn">B6 · <strong>An analyst standardizes all the data, then selects the 100 attributes most correlated with the response, then runs 10-fold cross-validation on those 100.</strong> Identify what is wrong and state the general rule.</p>
+        <details><summary>Model answer</summary>
+          <div class="ans">
+            <p>Both preprocessing steps used the whole dataset, including every fold that will later be held out. The standardization means each fold’s own values contributed to the mean and standard deviation applied to the training data. The attribute screening is worse: it used the held-out <em>responses</em> to decide which attributes the model is allowed to use, so every fold model has already been given information about the observations it will be scored on. With a large candidate pool, this can produce a respectable cross-validated score on data containing no real signal whatsoever.</p>
+            <p>The general rule: any step that <em>learns something from the data</em> must sit inside the cross-validation loop. Fit the scaler on the training folds and apply it to the held-out fold; re-run the attribute screening from scratch within each fold. If the selected attributes differ between folds, that instability is real information about how reliable the selection is — information the leaky version conceals.</p>
+            <p class="mark"><strong>Marking notes.</strong> Both leaks should be named, and the attribute-selection one identified as the more serious. The best answers point out the diagnostic symptom: a good cross-validated score that collapses in production, with nothing in the validation arithmetic able to detect the problem.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="frq">
+        <p class="qn">B7 · <strong>Why is random k-fold inappropriate for time-ordered data,</strong> and what should be used instead?</p>
+        <details><summary>Model answer</summary>
+          <div class="ans">
+            <p>Random folds place observations from after the held-out period into the training set, so the model is evaluated on the past having been trained on the future. A deployed model can never do this. Where there is trend, seasonality or drift, knowing the surrounding period makes the held-out points far easier than they will be in reality, so the estimate is optimistic — and the closer the correlation between adjacent periods, the larger the effect.</p>
+            <p>Use <strong>rolling-origin</strong> validation instead: train on an initial stretch of history, evaluate on the period immediately following, then extend the training window forward and repeat. Each round uses only information that would have been available at the time. It uses less data per fit and yields a worse number than random folds — and that worse number is the honest one, because it is the only arrangement a deployed model ever faces.</p>
+            <p class="mark"><strong>Marking notes.</strong> The phrase that earns marks is training on the future. Describing rolling origin concretely — the window extends, the evaluation period is always the next one — is worth more than naming it. Noting that the estimate legitimately gets worse, and that this is not a regression in quality, is a good closing point.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="frq">
+        <p class="qn">B8 · <strong>Define LOOCV,</strong> give two advantages and one cost, and state exactly when the computational shortcut applies.</p>
+        <details><summary>Model answer</summary>
+          <div class="ans">
+            <p>LOOCV holds out a single observation, trains on the remaining n − 1, records the error on that one point, and repeats for every observation, averaging the n errors: CV<sub>(n)</sub> = (1/n)Σ MSE<sub>i</sub>, or the same with misclassification indicators for a classification problem.</p>
+            <p><strong>Advantages:</strong> almost no training-size bias, since each fit uses n − 1 observations; and complete determinism, since there is no random split — repeated runs give identical results. <strong>Cost:</strong> n model fits, which is prohibitive for large n or slow methods.</p>
+            <p><strong>The shortcut:</strong> for least-squares linear and polynomial regression, CV<sub>(n)</sub> = (1/n)Σ[(y<sub>i</sub> − ŷ<sub>i</sub>)/(1 − h<sub>i</sub>)]², computable from a single fit, where h<sub>i</sub> is the leverage. It does not generalise — logistic regression, SVMs, nearest-neighbours and trees all require the n refits.</p>
+            <p class="mark"><strong>Marking notes.</strong> The scope restriction on the shortcut is a reliable mark and a reliable trap. An answer that adds why dividing by 1 − h<sub>i</sub> is the right correction — high-leverage points pull the fit toward themselves, so their ordinary residuals understate the error the model would make without them — shows understanding rather than recall.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="frq">
+        <p class="qn">B9 · <strong>State the one-standard-error rule</strong> and explain the reasoning behind it. Why not simply take the minimum?</p>
+        <details><summary>Model answer</summary>
+          <div class="ans">
+            <p>Compute the standard error of the cross-validation estimate across folds. Identify the best score, then choose the simplest model whose score falls within one standard error of it.</p>
+            <p>The reason not to take the minimum is that the cross-validation curve is itself an estimate with noise. When several models score within the noise band, the one that happens to be lowest is partly the luckiest, and re-running with different folds would likely promote a different one. Taking the minimum therefore commits to a distinction the data cannot support — and systematically favours the more flexible model, since flexibility adds variance and variance is what produces lucky low scores.</p>
+            <p>Choosing the simplest model in the band is defensible on several grounds at once: lower variance, easier to explain, cheaper to run, and less likely to have won by accident.</p>
+            <p class="mark"><strong>Marking notes.</strong> Watch what “simplest” means for the method in question. For subset selection it is the fewest predictors; for nearest-neighbours it is the <em>largest</em> k, since large k is the rigid end. Candidates who reflexively pick the smallest number lose marks here, and examiners know it.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="frq">
+        <p class="qn">B10 · <strong>Describe the bootstrap,</strong> explain where the figure of roughly 63% comes from, and say what it is for that cross-validation is not.</p>
+        <details><summary>Model answer</summary>
+          <div class="ans">
+            <p>Draw n observations from your dataset of n <em>with replacement</em> to form a bootstrap sample; compute the statistic of interest on it; repeat B times. The spread of the B values estimates the sampling variability of the statistic, and their standard deviation estimates its standard error. Sampling must be with replacement — without it, drawing n from n simply returns the original dataset every time and there would be no variation at all.</p>
+            <p>A given observation is missed by a single draw with probability (1 − 1/n), so it is missed by all n draws with probability (1 − 1/n)<sup>n</sup>, which tends to 1/e ≈ 0.368. It therefore appears with probability ≈ 0.632, leaving about 37% out-of-bag.</p>
+            <p>Cross-validation estimates how well a modelling procedure predicts unseen data. The bootstrap estimates the uncertainty of a computed quantity — a coefficient, a ratio, a median, an allocation — particularly where no convenient standard-error formula exists, and without assuming the model is correctly specified. It is a poor tool for estimating test error, because bootstrap samples share about two-thirds of their observations with the original data, so “held-out” evaluation against the full dataset is heavily contaminated.</p>
+            <p class="mark"><strong>Marking notes.</strong> The derivation of 0.632 is usually worth a mark on its own and is easy to produce under pressure. The clean statement of what each method estimates is the part that separates answers; the two are complementary, not competing.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="frq">
+        <p class="qn">B11 · <strong>Compare random, rotation and stratified splitting.</strong> Give the situation where each is the right choice and the failure mode of each.</p>
+        <details><summary>Model answer</summary>
+          <div class="ans">
+            <p><strong>Random:</strong> each observation is assigned at random. Unbiased on average and always defensible. Failure mode: nothing guarantees even coverage, so one set may end up heavy on a particular period or category purely by chance — a real risk when the dataset is small.</p>
+            <p><strong>Rotation:</strong> assign on a fixed cycle. Guarantees each part of the data is equally represented across sets, which helps when conditions drift over time. Failure mode: if the cycle length lines up with a period in the data, whole categories land in one set. A five-point rotation on five-day-a-week sales data sends every Monday, Wednesday and Friday to training and never checks them.</p>
+            <p><strong>Stratified:</strong> split randomly <em>within</em> each category — 60% of the Mondays, 60% of the Tuesdays, and so on, or 60% of each class. Gets the guaranteed coverage without the periodicity trap. It is the default for imbalanced classification, where a plain random fold can contain very few positives or none. Failure mode: you have to know which variable matters enough to stratify on, and stratifying on too many at once leaves strata too small to split sensibly.</p>
+            <p class="mark"><strong>Marking notes.</strong> The weekday example is the one the examiner is looking for and should be given concretely rather than gestured at. A strong answer generalises it: the danger arises whenever the split’s period matches a period in the data, which is a statement about any cyclical structure, not about weekdays specifically.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="frq">
+        <p class="qn">B12 · <strong>How does cross-validation change for a classification problem,</strong> and what should you be careful to cross-validate when one class is rare?</p>
+        <details><summary>Model answer</summary>
+          <div class="ans">
+            <p>The procedure is unchanged; only the quantity averaged differs. Instead of mean squared error, each fold contributes its misclassification rate — the fraction of held-out cases predicted wrongly — and the fold scores are averaged as before.</p>
+            <p>With a rare class, two cautions. First, use <strong>stratified</strong> folds so each preserves the overall class proportions; plain random folds can vary substantially in positive rate and, with very rare positives and small folds, may contain none at all, in which case a model predicting the majority class scores perfectly on that fold while detecting nothing. Second, cross-validate the <em>right quantity</em>: accuracy is dominated by the majority class, so a stable estimate of accuracy is a stable estimate of something that does not distinguish a useful model from a useless one. Cross-validate sensitivity, expected cost, or AUC — whichever the decision actually depends on.</p>
+            <p class="mark"><strong>Marking notes.</strong> The second point is where the marks are. Cross-validation improves the precision of an estimate and has no opinion about whether the estimated quantity is the right one — stating that explicitly connects this module to the metrics material and usually reads as a strong answer.</p>
+          </div>
+        </details>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Where the marks hide</span>
+      <p class="q">One habit earns marks on nearly every question in this section. Which?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Stating the <em>direction</em> of every bias you name, and why it runs that way. “The estimate is biased” is worth almost nothing; “biased upward, because the winner was selected as the maximum of several noisy scores” is worth the question.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Section C — Multi-part cases, final style</h3>
+      <p class="frq-lead">Each part builds on the last. Work them in order.</p>
+
+      <div class="frq case">
+        <p class="qn">C1 · <strong>Audit the pipeline.</strong> A colleague describes their workflow. Identify every error, say which direction each pushes the reported number, and give the corrected procedure.</p>
+        <table class="plain">
+          <tr><td>1</td><td>Loaded all 12,000 rows and standardized every attribute using the overall mean and standard deviation.</td></tr>
+          <tr><td>2</td><td>Dropped the attributes whose correlation with the response was below 0.05.</td></tr>
+          <tr><td>3</td><td>Split 80/20 into training and test.</td></tr>
+          <tr><td>4</td><td>On the training data, ran 10-fold cross-validation over 25 parameter settings and picked the best.</td></tr>
+          <tr><td>5</td><td>Reported the winning cross-validated score as the model’s expected performance, and separately checked it on the test set, which came out lower — concluding the test set was unrepresentative.</td></tr>
+        </table>
+        <details><summary>Model answer</summary>
+          <div class="ans">
+            <p><strong>Step 1 — leakage, optimistic.</strong> The mean and standard deviation were computed over rows that later became the test set, so test information entered the training pipeline. Compute them on the training data only and apply those same numbers to test.</p>
+            <p><strong>Step 2 — leakage, optimistic, and the more serious of the two.</strong> Attribute selection used every response, including the test responses, to decide what the model may use. This must be redone using only training data, and ideally re-run inside each cross-validation fold so its instability is visible.</p>
+            <p><strong>Step 3 — correct, but in the wrong place.</strong> The split should be the first operation, before any step that learns from data.</p>
+            <p><strong>Step 4 — correct in itself.</strong> Cross-validating 25 settings on the training portion is exactly right.</p>
+            <p><strong>Step 5 — two errors.</strong> First, the winning cross-validated score was selected as the best of 25 and so is optimistic; it is a basis for choosing, not a performance estimate. Second, the conclusion is backwards: the test score being lower is what the theory predicts, and blaming the test set inverts the diagnosis. The test set is the honest number.</p>
+            <p><strong>Corrected order:</strong> split off the test set first → within the training portion, run 10-fold cross-validation, performing standardization and attribute selection inside each fold → choose the setting → refit the winner, with its preprocessing, on the whole training portion → score once on the test set → report that.</p>
+            <p class="mark"><strong>Marking notes.</strong> Four errors, and full marks require all four with directions. Step 5’s reversed conclusion is the highest-value item: it is the same misunderstanding that makes people “fix” a disappointing test result by looking for a friendlier test set, and examiners include it deliberately.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="frq case">
+        <p class="qn">C2 · <strong>Reading a cross-validation table.</strong> 10-fold CV of a nearest-neighbours classifier over five values of k, on 4,000 training-and-validation observations. Misclassification rate, with the standard error across folds in brackets:</p>
+        <table class="plain">
+          <tr><th>k</th><th>1</th><th>5</th><th>10</th><th>20</th><th>50</th></tr>
+          <tr><td>CV error</td><td>0.312 (0.018)</td><td>0.268 (0.015)</td><td>0.251 (0.014)</td><td>0.247 (0.016)</td><td>0.259 (0.013)</td></tr>
+        </table>
+        <p class="qn">(a) How many model fits has this table cost, and how many more before deployment? (b) Which k does the raw minimum select, and which does the one-standard-error rule select? (c) Why is k = 1 the worst row, and what would its training error have been? (d) Can 0.247 be reported to the client as the model’s expected error rate? (e) The client asks for a single accuracy figure. Describe what you would do to produce one.</p>
+        <details><summary>Model answer</summary>
+          <div class="ans">
+            <p><strong>(a)</strong> 5 candidates × 10 folds = <strong>50 fits</strong>. One more — the winner refitted on all 4,000 training-and-validation observations — so <strong>51</strong> in total. (Strictly, nearest-neighbours “fits” nothing; the cost is in the 50 rounds of neighbour searching, which is the same accounting.)</p>
+            <p><strong>(b)</strong> Raw minimum: <strong>k = 20</strong> at 0.247. One-standard-error rule: the band is 0.247 + 0.016 = <strong>0.263</strong>, and the qualifying models are k = 10 (0.251), k = 20 (0.247) and k = 50 (0.259). The simplest of these is the <em>least flexible</em>, and for nearest-neighbours that is the largest k — so the rule selects <strong>k = 50</strong>. Anyone who reads “simplest” as “smallest number” selects k = 10 and has the flexibility direction backwards.</p>
+            <p><strong>(c)</strong> k = 1 is maximally flexible: each new point copies its single nearest neighbour, so the boundary wraps around individual observations and the fit is dominated by variance. Its <strong>training error would be exactly zero</strong>, since every training point is its own nearest neighbour — which is why training error cannot be used to choose k at all.</p>
+            <p><strong>(d)</strong> No. 0.247 is the minimum of five noisy estimates and so is optimistically biased by selection; it is also the score of fold models trained on 90% of the data rather than the deployed model trained on 100%, which pushes the other way. The two do not cancel predictably. Report the score from a test set that took no part in either the fitting or the choosing.</p>
+            <p><strong>(e)</strong> Refit the chosen k on all 4,000 observations, score once on the reserved test set, and report that figure — with the caveat that a single number hides which errors are being made. If the classes are imbalanced or the errors have different costs, give expected cost or sensitivity alongside it, and state the null-classifier baseline so the number has something to be compared against.</p>
+            <p class="mark"><strong>Marking notes.</strong> Part (b) is the discriminating one — the flexibility direction for k is the planted trap. In (a), forgetting the final refit is both an arithmetic slip and a conceptual one, and is usually marked as the latter. In (d), naming both biases and their directions scores higher than naming either alone.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="frq case">
+        <p class="qn">C3 · <strong>Wearable sensors.</strong> A team predicts falls in elderly patients from accelerometer data: 240 patients, each contributing about 90 days of readings, roughly 21,600 rows. Falls occur on 1.2% of patient-days. Random 10-fold cross-validation gives 98.9% accuracy and AUC 0.94.</p>
+        <p class="qn">(a) What does 98.9% accuracy tell you here? (b) Name two structural reasons the AUC of 0.94 is likely to be optimistic. (c) Design a validation scheme that fixes both. (d) After the fix, AUC falls to 0.72 and the clinical lead asks whether the project has failed. Answer them. (e) The team also wants a confidence interval on the difference in AUC between their model and a simpler baseline. Which technique from this module applies, and why not cross-validation?</p>
+        <details><summary>Model answer</summary>
+          <div class="ans">
+            <p><strong>(a)</strong> Almost nothing. Predicting “no fall” on every patient-day scores 98.8%, so the model is one-tenth of a point above a classifier that detects nothing. Accuracy on a 1.2% base rate cannot distinguish a useful model from a useless one, and the null baseline should be quoted every time this figure is.</p>
+            <p><strong>(b)</strong> First, <strong>grouped data</strong>: with 90 rows per patient and random folds, readings from the same patient sit in both training and held-out folds. The model can succeed by recognising individual patients’ movement signatures rather than learning what precedes a fall. Second, <strong>time ordering</strong>: within a patient, random folds train on days after the held-out day, so the model sees the future of the very patient it is being scored on.</p>
+            <p><strong>(c)</strong> Fold by <em>patient</em>, not by row, so every reading from a patient sits entirely in one fold; stratify the patient-level folds by whether the patient ever falls, so each fold contains some positive patients; and within each fold respect time order — train on each patient’s earlier days and evaluate on later ones, or hold out whole patients and evaluate their full series, which is closer to the deployment question of “a new patient arrives”. Reserve a set of patients as a test set before any of this begins.</p>
+            <p><strong>(d)</strong> No. The 0.72 is the first figure that answers the question the deployment poses — a new patient, going forward — and the 0.94 answered a question nobody will ever ask. What the project has avoided is promising 0.94 and delivering 0.72 in a clinical setting. Whether 0.72 is good enough is a separate question and a cost question: at a 1.2% base rate, what matters is how many falls are caught at a workable alert volume, and how the cost of a missed fall compares with the cost of a check that finds nothing. That calculation, not the AUC, should decide deployment.</p>
+            <p><strong>(e)</strong> The <strong>bootstrap</strong>. The difference between two AUCs has no convenient standard-error formula, and the bootstrap needs none: resample — at the <em>patient</em> level, to respect the grouping — recompute both AUCs and their difference on each resample, and read the interval off the spread of the B differences. Cross-validation is the wrong tool because it estimates predictive error, not the uncertainty of a computed statistic; it can tell you each model’s expected performance but not how confident you should be that one exceeds the other.</p>
+            <p class="mark"><strong>Marking notes.</strong> Part (b) must name both violations to score well — most candidates find the grouping and miss the time ordering. Part (d) rewards refusing the framing: restating what each number measures, rather than defending or apologising for the drop. In (e), resampling at the patient level rather than the row level is the detail that shows the grouping point was properly understood.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="note">
+        <div class="note-head"><span class="lbl">Exam workout — my working</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="m3exam" data-placeholder="Write your answers here before opening the model answers — then compare and note what you left out."></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Technique</span>
+      <p class="q">Across all three cases, what is the single most reliable opening move?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Ask what the reported number would be for a model that does nothing, and ask what the held-out data was allowed to touch. Between them those two questions catch the majority of validation errors that appear on exams and in practice.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
+
 <section class="close" style="--accent:#131b26">
   <h2>How the module fits together</h2>
   <p class="h2meta">The through-line across all four lessons</p>
@@ -680,12 +1810,22 @@
     <li><span class="dot" style="--d:#7d4b7a"></span><span class="lbl">Lesson 2</span><span>Prescribes the cure — and then finds a second inflation, caused by choosing rather than fitting, needing a third set.</span></li>
     <li><span class="dot" style="--d:#8a5a1c"></span><span class="lbl">Lesson 3</span><span>Gets practical about carving the data up, and shows how a tidy-looking split can quietly ruin the sets.</span></li>
     <li><span class="dot" style="--d:#2f5d8c"></span><span class="lbl">Lesson 4</span><span>Reuses the data instead of dividing it once, so nothing important is left out of training.</span></li>
+    <li><span class="dot" style="--d:#9d3b3b"></span><span class="lbl">Lesson 5</span><span>Names the quantity being estimated and splits it into bias, variance and a floor nobody gets under.</span></li>
+    <li><span class="dot" style="--d:#2f6b52"></span><span class="lbl">Lesson 6</span><span>Shows a single split is both noisy and pessimistic — the two defects cross-validation was built to fix.</span></li>
+    <li><span class="dot" style="--d:#6b3fa0"></span><span class="lbl">Lesson 7</span><span>Takes k to its maximum, removing the bias and the randomness, and paying n fits for it.</span></li>
+    <li><span class="dot" style="--d:#a8452c"></span><span class="lbl">Lesson 8</span><span>Finds a second bias–variance trade-off inside the estimate itself, and lands on 5 or 10.</span></li>
+    <li><span class="dot" style="--d:#1d4e89"></span><span class="lbl">Lesson 9</span><span>Carries it all to classification, and handles tuning and assessing with the same data.</span></li>
+    <li><span class="dot" style="--d:#4a6b2a"></span><span class="lbl">Lesson 10</span><span>Four ways a correctly executed cross-validation still lies, all of them announced by a flattering score.</span></li>
+    <li><span class="dot" style="--d:#16697a"></span><span class="lbl">Lesson 11</span><span>Switches question entirely: not how good the model is, but how uncertain a computed number is.</span></li>
   </ul>
 
-  <h3 style="color:#131b26">Three things worth noticing</h3>
+  <h3 style="color:#131b26">Six things worth noticing</h3>
   <ul>
     <li><strong>Two different biases, often confused.</strong> Training bias comes from fitting; validation bias comes from selecting. Cross-validation reduces the noise behind the second one but does not remove it — you still need a test set.</li>
     <li><strong>The test set is single-use.</strong> Nothing in the lecture says this outright, but it follows directly from Lesson 2: any set you make a choice on becomes a validation set.</li>
+    <li><strong>The estimate has its own bias–variance problem.</strong> Lesson 5’s trade-off is about the model; Lesson 8’s is about the number you use to judge it. Larger k gives the estimate less bias and more variance, entirely independently of whatever the model is doing. Keeping the two trade-offs apart is most of what this module asks of you.</li>
+    <li><strong>Every failure mode announces itself the same way.</strong> Leakage, random folds on time-ordered data, repeated units across folds, selecting and reporting from one set — all four produce a <em>better</em> score than the model deserves. A result that looks too good is a diagnosis, not a celebration.</li>
+    <li><strong>Cross-validation improves precision, not relevance.</strong> It has no opinion about whether the quantity being averaged is the right one. Cross-validated accuracy on a 1% base rate is a very stable estimate of something useless.</li>
     <li><strong>k appears three times in this course.</strong> k-means, k-nearest-neighbor, k-fold. The source material flags this. Expect a question that tests whether you know which is which.</li>
   </ul>
 
@@ -698,6 +1838,18 @@
     <li>Give common split ratios and the principle behind them.</li>
     <li>Contrast random and rotation splitting, with the weekday example.</li>
     <li>Describe k-fold cross-validation and say what gets deployed at the end.</li>
+    <li>Give the three-part decomposition of expected test error and use it to explain the U-shaped flexibility curve.</li>
+    <li>Explain why expected test error can never reach zero.</li>
+    <li>State the two drawbacks of the single-split approach, with the direction of each.</li>
+    <li>Distinguish selection bias from training-size bias and give the direction of both.</li>
+    <li>Define LOOCV, give two advantages and one cost, and say exactly where the leverage shortcut applies.</li>
+    <li>Explain why LOOCV has higher variance than 10-fold despite averaging more terms.</li>
+    <li>State the one-standard-error rule, justify it, and apply it to a table — including working out which direction “simplest” runs for the method in question.</li>
+    <li>Explain why every data-dependent preprocessing step belongs inside the cross-validation loop.</li>
+    <li>Explain why random folds are wrong for time-ordered data and describe rolling-origin validation.</li>
+    <li>Explain why repeated measurements on the same unit require grouped folds.</li>
+    <li>Describe the bootstrap, derive the 63.2% figure, and contrast what it estimates with what cross-validation estimates.</li>
+    <li>Say how cross-validation changes for classification, and what to stratify and to cross-validate when a class is rare.</li>
   </ul>
 
   <div class="note">
@@ -705,7 +1857,7 @@
     <div class="note-body" contenteditable="true" data-note="m3summary" data-placeholder="Write the module back in your own words — the fastest way to find out what you don't actually know yet."></div>
   </div>
 
-  <footer><span class="ai"><strong>Written by an AI model from lecture recordings.</strong> Not reviewed by any instructor or institution — verify anything you rely on against the original lectures. Examples here are generic illustrations rather than the ones used in class. The Dana Reyes case, the point that a test set becomes a validation set once you select on it, and “Three things worth noticing” are this summary’s own additions rather than lecture content.</span></footer>
+  <footer><span class="ai"><strong>Written by an AI model from lecture recordings.</strong> Not reviewed by any instructor or institution — verify anything you rely on against the original lectures. Examples here are generic illustrations rather than the ones used in class. The Dana Reyes and Tom Oyelaran cases, the point that a test set becomes a validation set once you select on it, “Six things worth noticing”, and Lessons 5 to 12 in their entirety are this summary’s own additions rather than lecture content — they draw on standard treatments of resampling, in particular <em>An Introduction to Statistical Learning</em> (James, Witten, Hastie &amp; Tibshirani), chapters 2 and 5, with the one-standard-error rule from chapter 6. All worked numbers in those lessons are invented for illustration, and notation follows the lecture material where the two differ.</span></footer>
 </section>
 
 </div>

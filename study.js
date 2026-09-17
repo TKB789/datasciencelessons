@@ -33,6 +33,10 @@ var MODULES = [
     title:"Change Detection", colour:"#6e4a8c",
     blurb:"Telling a real shift from noise, early enough to act on: why hypothesis testing arrives too late, and how CUSUM trades false alarms for speed." },
 
+  { id:"m7", file:"module-7-time-series.html", tab:"Module 7 — Time Series",
+    title:"Time Series", colour:"#2f6b52",
+    blurb:"Data measured period after period: exponential smoothing with trend and seasonality, forecasting, ARIMA for the value, GARCH for the variance, and how to validate in time order." },
+
   /* Not lecture modules — study tools arranged by topic rather than by lecture.
      `label` overrides the "Module N" caption on the index card. */
   { id:"disc", file:"discussion.html", tab:"Study tools — Discussion",
@@ -44,8 +48,8 @@ var MODULES = [
     title:"Exam Prep", colour:"#4a6b2a", label:"Exam prep",
     blurb:"The textbook half of the course on one page: bias and variance, cross-validation, the classifiers and what each assumes, regression diagnostics, ridge and lasso, forests, PCA and clustering." }
 
-  /* , { id:"m7", file:"module-7-something.html", tab:"Module 7 — Title",
-       title:"Title", colour:"#2f6b52", blurb:"One line about the module." } */
+  /* , { id:"m8", file:"module-8-something.html", tab:"Module 8 — Title",
+       title:"Title", colour:"#7a5c2e", blurb:"One line about the module." } */
 ];
 
 (function(){

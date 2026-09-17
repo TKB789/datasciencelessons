@@ -1,0 +1,1868 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Module 7: Time Series Models — Study Notes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="study.css">
+<style>
+/* exam-workout styles — same block as Module 2, self-contained so they don't depend on study.css */
+.frq{border:1px solid rgba(19,27,38,.14);border-left:3px solid var(--accent,#131b26);
+     border-radius:4px;padding:.85rem 1rem;margin:1rem 0;background:rgba(19,27,38,.015)}
+.frq.case{background:rgba(19,27,38,.04)}
+.frq .qn{font-family:var(--sans,system-ui,sans-serif);font-size:.94rem;line-height:1.55;margin:0 0 .5rem}
+.frq .qn+.qn{margin-top:.6rem}
+.frq table{margin:.6rem 0}
+.frq>details{margin-top:.4rem}
+.frq>details>summary{cursor:pointer;font-family:var(--sans,system-ui,sans-serif);
+     font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;color:var(--accent,#131b26);
+     font-weight:600;list-style:none;padding:.2rem 0}
+.frq>details>summary::-webkit-details-marker{display:none}
+.frq>details>summary::before{content:"▸ ";display:inline-block;transition:transform .12s}
+.frq>details[open]>summary::before{content:"▾ "}
+.frq .ans{border-top:1px solid rgba(19,27,38,.12);margin-top:.5rem;padding-top:.6rem}
+.frq .ans p{font-size:.92rem;line-height:1.6;margin:.5rem 0}
+.frq .ans p.mark{border-left:2px solid rgba(19,27,38,.25);padding-left:.7rem;
+     font-size:.87rem;color:var(--ink-soft,#4a5765);margin-top:.8rem}
+p.frq-lead{font-size:.92rem;color:var(--ink-soft,#4a5765);margin:.2rem 0 .8rem}
+/* figures on this page are wide — let them scroll rather than squash on phones */
+figure{overflow-x:auto}
+</style>
+</head>
+<body data-page="m7">
+<div class="wrap">
+
+<div class="topbar">
+  <div class="topline">
+    <a class="brand" href="index.html">Analytics Modeling &middot; Study Notes</a>
+    <nav class="tabs" aria-label="Modules"></nav>
+    <div class="toolbar">
+      <button class="btn" id="exportBtn">Export</button>
+      <button class="btn" id="importBtn">Import</button>
+    </div>
+  </div>
+  <nav class="rail" id="rail" aria-label="Lessons in this module"></nav>
+</div>
+
+<header class="hero">
+  <h1>Module 7: Time Series Models</h1>
+  <p class="sub">Data where the same thing is measured period after period — how to see the real level through the noise, add trend and seasonality, forecast what comes next, and estimate how much the answer might wobble.</p>
+
+  <svg class="plot" viewBox="0 0 660 350" role="img" aria-label="Noisy weekly observations as dots, a smoothed baseline line running through them that steps up partway along, and a flat forecast beyond the last observation with an uncertainty band that widens the further ahead it goes.">
+    <defs><pattern id="gridm7" width="26" height="26" patternUnits="userSpaceOnUse"><path d="M 26 0 L 0 0 0 26" fill="none" stroke="#e3e9ee" stroke-width="1"/></pattern></defs>
+    <rect x="62" y="24" width="576" height="276" fill="url(#gridm7)"/>
+    <path d="M 462.6 74.3 L 474.1 71.8 L 485.5 69.4 L 497.0 67.1 L 508.4 64.9 L 519.9 62.7 L 531.3 60.7 L 542.8 58.6 L 554.2 56.7 L 565.7 54.7 L 577.1 52.9 L 588.6 51.0 L 600.0 49.2 L 600.0 212.8 L 588.6 211.0 L 577.1 209.2 L 565.7 207.3 L 554.2 205.4 L 542.8 203.4 L 531.3 201.4 L 519.9 199.3 L 508.4 197.1 L 497.0 194.9 L 485.5 192.6 L 474.1 190.2 L 462.6 187.7 Z" fill="#2f6b52" opacity=".13"/>
+    <line x1="462.6" y1="24" x2="462.6" y2="300" stroke="#9aa5b1" stroke-width="1" stroke-dasharray="3 4"/>
+    <g fill="#9aa5b1"><circle cx="62.0" cy="210.5" r="3.2"/><circle cx="73.4" cy="189.8" r="3.2"/><circle cx="84.9" cy="209.7" r="3.2"/><circle cx="96.3" cy="212.1" r="3.2"/><circle cx="107.8" cy="228.7" r="3.2"/><circle cx="119.2" cy="209.3" r="3.2"/><circle cx="130.7" cy="173.5" r="3.2"/><circle cx="142.1" cy="192.1" r="3.2"/><circle cx="153.6" cy="175.6" r="3.2"/><circle cx="165.0" cy="196.9" r="3.2"/><circle cx="176.5" cy="192.9" r="3.2"/><circle cx="187.9" cy="198.6" r="3.2"/><circle cx="199.4" cy="248.6" r="3.2"/><circle cx="210.8" cy="180.5" r="3.2"/><circle cx="222.3" cy="189.9" r="3.2"/><circle cx="233.7" cy="190.1" r="3.2"/><circle cx="245.1" cy="249.2" r="3.2"/><circle cx="256.6" cy="250.7" r="3.2"/><circle cx="268.0" cy="227.6" r="3.2"/><circle cx="279.5" cy="216.2" r="3.2"/><circle cx="290.9" cy="195.3" r="3.2"/><circle cx="302.4" cy="204.8" r="3.2"/><circle cx="313.8" cy="189.5" r="3.2"/><circle cx="325.3" cy="220.9" r="3.2"/><circle cx="336.7" cy="125.8" r="3.2"/><circle cx="348.2" cy="123.5" r="3.2"/><circle cx="359.6" cy="152.0" r="3.2"/><circle cx="371.1" cy="87.8" r="3.2"/><circle cx="382.5" cy="119.1" r="3.2"/><circle cx="394.0" cy="101.8" r="3.2"/><circle cx="405.4" cy="150.9" r="3.2"/><circle cx="416.9" cy="154.1" r="3.2"/><circle cx="428.3" cy="143.4" r="3.2"/><circle cx="439.7" cy="137.0" r="3.2"/><circle cx="451.2" cy="117.1" r="3.2"/><circle cx="462.6" cy="127.4" r="3.2"/></g>
+    <path d="M 62.0 210.5 L 73.4 204.3 L 84.9 205.9 L 96.3 207.7 L 107.8 214.0 L 119.2 212.6 L 130.7 200.9 L 142.1 198.3 L 153.6 191.5 L 165.0 193.1 L 176.5 193.0 L 187.9 194.7 L 199.4 210.8 L 210.8 201.7 L 222.3 198.2 L 233.7 195.8 L 245.1 211.8 L 256.6 223.5 L 268.0 224.7 L 279.5 222.2 L 290.9 214.1 L 302.4 211.3 L 313.8 204.8 L 325.3 209.6 L 336.7 184.5 L 348.2 166.2 L 359.6 161.9 L 371.1 139.7 L 382.5 133.5 L 394.0 124.0 L 405.4 132.1 L 416.9 138.7 L 428.3 140.1 L 439.7 139.2 L 451.2 132.5 L 462.6 131.0" fill="none" stroke="#131b26" stroke-width="2.5"/>
+    <line x1="462.6" y1="131.0" x2="600.0" y2="131.0" stroke="#2f6b52" stroke-width="2.5" stroke-dasharray="7 4"/>
+    <line x1="62" y1="300" x2="638" y2="300" stroke="#131b26" stroke-width="1.5"/>
+    <line x1="62" y1="300" x2="62" y2="24" stroke="#131b26" stroke-width="1.5"/>
+    <text x="350" y="332" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="13" fill="#4a5765">week</text>
+    <text x="30" y="162" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="13" fill="#4a5765" transform="rotate(-90 30 162)">units sold</text>
+    <text x="96.3" y="46" font-family="IBM Plex Sans,sans-serif" font-size="12" fill="#131b26">smoothed baseline S&#8348;</text>
+    <text x="470.6" y="46" font-family="IBM Plex Sans,sans-serif" font-size="12" fill="#2f6b52">forecast, and how unsure it is</text>
+  </svg>
+
+  <ul class="track">
+    <li style="--dot:#2f6b52"><a href="#l1"><span class="tnum">Lesson 1</span><span class="tname">Exponential smoothing</span><span class="tq">Is that reading a real change, or noise?</span></a></li>
+    <li style="--dot:#8a5a1c"><a href="#l2"><span class="tnum">Lesson 2</span><span class="tname">Trends and cycles</span><span class="tq">What if the level is moving on purpose?</span></a></li>
+    <li style="--dot:#33507f"><a href="#l3"><span class="tnum">Lesson 3</span><span class="tname">Where the name comes from</span><span class="tq">Why “exponential”, and why “smoothing”?</span></a></li>
+    <li style="--dot:#16697a"><a href="#l4"><span class="tnum">Lesson 4</span><span class="tname">Forecasting</span><span class="tq">From describing the past to predicting next week</span></a></li>
+    <li style="--dot:#6b3fa0"><a href="#l5"><span class="tnum">Lesson 5</span><span class="tname">ARIMA</span><span class="tq">Differences, autoregression and past errors</span></a></li>
+    <li style="--dot:#a8452c"><a href="#l6"><span class="tnum">Lesson 6</span><span class="tname">GARCH</span><span class="tq">What if you need the variance, not the value?</span></a></li>
+    <li style="--dot:#3f6b1f"><a href="#l7"><span class="tnum">Lesson 7</span><span class="tname">Stationarity and choosing p, d, q</span><span class="tq">How many differences, how many lags?</span></a></li>
+    <li style="--dot:#1d4e89"><a href="#l8"><span class="tnum">Lesson 8</span><span class="tname">Judging a forecast</span><span class="tq">Why shuffled cross-validation cheats here</span></a></li>
+    <li style="--dot:#131b26"><a href="#l9"><span class="tnum">Exam workout</span><span class="tname">Midterm &amp; final questions</span><span class="tq">Calculations, cases, and where marks hide</span></a></li>
+  </ul>
+
+  <div class="badge-strip">
+    <p class="cap">Badges unlock when every activity in a lesson is finished.</p>
+    <ul class="badges">
+      <li class="badge" data-for="l1" style="--b:#2f6b52"><span class="gem">α</span><span class="nm">Baseline</span></li>
+      <li class="badge" data-for="l2" style="--b:#8a5a1c"><span class="gem">L</span><span class="nm">Holt-Winters</span></li>
+      <li class="badge" data-for="l3" style="--b:#33507f"><span class="gem">e</span><span class="nm">Exponential</span></li>
+      <li class="badge" data-for="l4" style="--b:#16697a"><span class="gem">F</span><span class="nm">Forecaster</span></li>
+      <li class="badge" data-for="l5" style="--b:#6b3fa0"><span class="gem">∆</span><span class="nm">ARIMA</span></li>
+      <li class="badge" data-for="l6" style="--b:#a8452c"><span class="gem">σ²</span><span class="nm">Volatility</span></li>
+      <li class="badge" data-for="l7" style="--b:#3f6b1f"><span class="gem">d</span><span class="nm">Stationary</span></li>
+      <li class="badge" data-for="l8" style="--b:#1d4e89"><span class="gem">→</span><span class="nm">Walk-forward</span></li>
+      <li class="badge" data-for="l9" style="--b:#131b26"><span class="gem">✓</span><span class="nm">Exam ready</span></li>
+      <li class="badge" data-for="*"  style="--b:#131b26"><span class="gem">★</span><span class="nm">Module 7 complete</span></li>
+    </ul>
+  </div>
+</header>
+
+<!-- ==================== LESSON 1 ==================== -->
+<section class="lesson" id="l1" data-short="Smoothing" style="--accent:#2f6b52">
+  <div class="lesson-head">
+    <span class="ln">Lesson 1</span>
+    <h2>Exponential smoothing</h2>
+    <p class="keyline">Today’s best estimate of the true level is a blend of what you just saw and what you believed yesterday — and one number, α, sets the mix.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Time series data, and the three things that move it</h3>
+      <div class="defn">
+        <span class="term">Time series data</span>
+        <p>Data where the same response is recorded for many time periods: the day’s high temperature at one airport, a stock price every two seconds, daily burger sales at one restaurant, a patient’s blood pressure over weeks.</p>
+      </div>
+      <p>Values like these vary for three different reasons, and a model has to tell them apart:</p>
+      <ul>
+        <li><strong>Trend</strong> — a steady drift up or down. A stock rising as the company gains market share; burger sales slipping as the menu widens.</li>
+        <li><strong>Cyclical (seasonal) variation</strong> — a repeating pattern. Warmer summers, busier weekends.</li>
+        <li><strong>Randomness</strong> — plain noise. Some days people simply want more burgers. A blood pressure reading taken during a tense match comes out high.</li>
+      </ul>
+      <p>Randomness is dealt with first, because it hides the other two. If a patient’s reading today is higher than usual, a doctor needs to know: has the underlying level risen, or was today just a noisy day?</p>
+    </div>
+    <aside class="check">
+      <span class="n">Check</span>
+      <p class="q">Name the three sources of variation in a time series.</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Trend, cyclical (seasonal) variation, and randomness. Exponential smoothing handles randomness first; Lesson 2 adds the other two.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Two extreme answers, and the blend</h3>
+      <table class="plain">
+        <tr><td><strong>x<sub>t</sub></strong></td><td>The observed response at time t — the reading actually taken</td></tr>
+        <tr><td><strong>S<sub>t</sub></strong></td><td>The expected baseline at time t — what the level “really” is once noise is removed</td></tr>
+      </table>
+      <p>Faced with an unusual reading, there are two opposite beliefs you could hold:</p>
+      <ul>
+        <li><strong>The reading is the truth:</strong> S<sub>t</sub> = x<sub>t</sub>. The baseline has moved.</li>
+        <li><strong>The reading is luck:</strong> S<sub>t</sub> = S<sub>t−1</sub>. Nothing has changed.</li>
+      </ul>
+      <p>Exponential smoothing takes a weighted average of the two:</p>
+      <div class="formula">
+        S<sub>t</sub> = α·x<sub>t</sub> + (1 − α)·S<sub>t−1</sub>, &nbsp;&nbsp; 0 &lt; α &lt; 1
+        <span class="cap">α is the weight on the new observation; (1 − α) is the weight on yesterday’s belief. At α = 1 you believe every reading; at α = 0 you never update.</span>
+      </div>
+      <div class="defn">
+        <span class="term">Choosing α</span>
+        <p><strong>Lots of randomness → α near 0.</strong> A fluctuation is probably noise, so lean on yesterday’s baseline. <strong>Little randomness → α near 1.</strong> A fluctuation probably reflects a real change, so trust what you see.</p>
+      </div>
+      <p>One detail remains: the first period has no yesterday. The standard starting condition is <strong>S<sub>1</sub> = x<sub>1</sub></strong> — take the first reading as the first baseline and build up from there.</p>
+
+      <figure>
+        <svg class="fig" viewBox="0 0 660 340" role="img" aria-label="The same noisy series smoothed twice. A small alpha gives a calm line that is slow to follow the step up; a large alpha gives a jumpy line that follows almost every dot.">
+          <g stroke="#e3e9ee"><line x1="62" y1="280.7" x2="620" y2="280.7"/><line x1="62" y1="203.6" x2="620" y2="203.6"/><line x1="62" y1="126.4" x2="620" y2="126.4"/><line x1="62" y1="49.3" x2="620" y2="49.3"/></g>
+          <g fill="#9aa5b1"><circle cx="62.0" cy="210.5" r="3.2"/><circle cx="77.9" cy="189.8" r="3.2"/><circle cx="93.9" cy="209.7" r="3.2"/><circle cx="109.8" cy="212.1" r="3.2"/><circle cx="125.8" cy="228.7" r="3.2"/><circle cx="141.7" cy="209.3" r="3.2"/><circle cx="157.7" cy="173.5" r="3.2"/><circle cx="173.6" cy="192.1" r="3.2"/><circle cx="189.5" cy="175.6" r="3.2"/><circle cx="205.5" cy="196.9" r="3.2"/><circle cx="221.4" cy="192.9" r="3.2"/><circle cx="237.4" cy="198.6" r="3.2"/><circle cx="253.3" cy="248.6" r="3.2"/><circle cx="269.3" cy="180.5" r="3.2"/><circle cx="285.2" cy="189.9" r="3.2"/><circle cx="301.1" cy="190.1" r="3.2"/><circle cx="317.1" cy="249.2" r="3.2"/><circle cx="333.0" cy="250.7" r="3.2"/><circle cx="349.0" cy="227.6" r="3.2"/><circle cx="364.9" cy="216.2" r="3.2"/><circle cx="380.9" cy="195.3" r="3.2"/><circle cx="396.8" cy="204.8" r="3.2"/><circle cx="412.7" cy="189.5" r="3.2"/><circle cx="428.7" cy="220.9" r="3.2"/><circle cx="444.6" cy="125.8" r="3.2"/><circle cx="460.6" cy="123.5" r="3.2"/><circle cx="476.5" cy="152.0" r="3.2"/><circle cx="492.5" cy="87.8" r="3.2"/><circle cx="508.4" cy="119.1" r="3.2"/><circle cx="524.3" cy="101.8" r="3.2"/><circle cx="540.3" cy="150.9" r="3.2"/><circle cx="556.2" cy="154.1" r="3.2"/><circle cx="572.2" cy="143.4" r="3.2"/><circle cx="588.1" cy="137.0" r="3.2"/><circle cx="604.1" cy="117.1" r="3.2"/><circle cx="620.0" cy="127.4" r="3.2"/></g>
+          <path d="M 62.0 210.5 L 77.9 193.9 L 93.9 206.5 L 109.8 211.0 L 125.8 225.1 L 141.7 212.5 L 157.7 181.3 L 173.6 190.0 L 189.5 178.5 L 205.5 193.2 L 221.4 193.0 L 237.4 197.4 L 253.3 238.3 L 269.3 192.1 L 285.2 190.3 L 301.1 190.1 L 317.1 237.4 L 333.0 248.0 L 349.0 231.7 L 364.9 219.3 L 380.9 200.1 L 396.8 203.9 L 412.7 192.4 L 428.7 215.2 L 444.6 143.7 L 460.6 127.5 L 476.5 147.1 L 492.5 99.6 L 508.4 115.2 L 524.3 104.5 L 540.3 141.6 L 556.2 151.6 L 572.2 145.1 L 588.1 138.6 L 604.1 121.4 L 620.0 126.2" fill="none" stroke="#a8452c" stroke-width="1.8"/>
+          <path d="M 62.0 210.5 L 77.9 207.4 L 93.9 207.7 L 109.8 208.4 L 125.8 211.4 L 141.7 211.1 L 157.7 205.5 L 173.6 203.5 L 189.5 199.3 L 205.5 198.9 L 221.4 198.0 L 237.4 198.1 L 253.3 205.7 L 269.3 201.9 L 285.2 200.1 L 301.1 198.6 L 317.1 206.2 L 333.0 212.9 L 349.0 215.1 L 364.9 215.2 L 380.9 212.3 L 396.8 211.1 L 412.7 207.9 L 428.7 209.8 L 444.6 197.2 L 460.6 186.2 L 476.5 181.1 L 492.5 167.1 L 508.4 159.9 L 524.3 151.2 L 540.3 151.1 L 556.2 151.6 L 572.2 150.3 L 588.1 148.3 L 604.1 143.7 L 620.0 141.2" fill="none" stroke="#2f6b52" stroke-width="2.6"/>
+          <line x1="444.6" y1="30" x2="444.6" y2="300" stroke="#9aa5b1" stroke-dasharray="3 4"/>
+          <text x="450.6" y="44" font-family="IBM Plex Sans,sans-serif" font-size="11.5" fill="#4a5765">the true level steps up here</text>
+          <line x1="62" y1="300" x2="620" y2="300" stroke="#131b26" stroke-width="1.5"/>
+          <line x1="62" y1="300" x2="62" y2="30" stroke="#131b26" stroke-width="1.5"/>
+          <text x="340" y="326" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="12.5" fill="#4a5765">time period t</text>
+          <g font-family="IBM Plex Sans,sans-serif" font-size="12">
+            <line x1="80" y1="44" x2="104" y2="44" stroke="#2f6b52" stroke-width="2.6"/><text x="110" y="48" fill="#2f6b52">α = 0.15 — trusts the past</text>
+            <line x1="80" y1="64" x2="104" y2="64" stroke="#a8452c" stroke-width="1.8"/><text x="110" y="68" fill="#a8452c">α = 0.8 — trusts today</text>
+          </g>
+        </svg>
+        <figcaption>The same readings smoothed two ways. The low-α line ignores most of the noise but takes several periods to believe the step up. The high-α line reacts at once — to the real step and to every random wiggle. (Illustrative data.)</figcaption>
+      </figure>
+
+      <div class="ix" data-quiz="m7l1-q1">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Home blood-pressure readings from a cheap cuff jump around by 15 points from one reading to the next even when nothing is wrong. Which α is the better starting point?</p>
+        <div class="opts">
+          <button class="opt" data-right data-fb="A noisy instrument means most of the movement is randomness. A small α keeps the baseline anchored to its history, so a single odd reading barely moves it.">A small α, around 0.1 to 0.2</button>
+          <button class="opt" data-fb="That is the choice for a precise system, where a change in the reading almost certainly means a change in the patient. Here it would chase every 15-point wobble.">A large α, around 0.8 to 0.9</button>
+          <button class="opt" data-fb="α = 1 gives S_t = x_t — no smoothing at all. The baseline would be exactly as noisy as the cuff.">α = 1, so the baseline always matches the latest reading</button>
+          <button class="opt" data-fb="α = 0 gives S_t = S_(t−1) forever — the baseline never moves from the first reading, so a genuine rise would never be detected.">α = 0, so noise can never affect the baseline</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Exam target</span>
+      <p class="q">Write the basic exponential smoothing equation and its starting condition from memory.</p>
+      <details><summary>Show answer</summary>
+        <p class="a">S<sub>t</sub> = αx<sub>t</sub> + (1 − α)S<sub>t−1</sub>, with 0 &lt; α &lt; 1 and S<sub>1</sub> = x<sub>1</sub>.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>A worked step</h3>
+      <p>Yesterday’s baseline was 120. Today’s reading is 135. With α = 0.2:</p>
+      <div class="formula">
+        S<sub>t</sub> = 0.2 × 135 + 0.8 × 120 = 27 + 96 = 123
+        <span class="cap">A 15-point jump in the reading moves the baseline only 3 points. With α = 0.8 the same reading would give 132.</span>
+      </div>
+
+      <div class="ix" data-quiz="m7l1-q2">
+        <div class="ix-head"><span class="ix-kind">calculation</span><span class="ix-done">answered</span></div>
+        <p class="prompt">With α = 0.4, S<sub>t−1</sub> = 50 and x<sub>t</sub> = 40, what is S<sub>t</sub>?</p>
+        <div class="opts">
+          <button class="opt" data-fb="That puts 0.4 on yesterday's baseline and 0.6 on the reading — the weights are the wrong way round. α always multiplies the new observation.">44</button>
+          <button class="opt" data-right data-fb="0.4 × 40 + 0.6 × 50 = 16 + 30 = 46. The baseline moves 40% of the way from 50 toward 40.">46</button>
+          <button class="opt" data-fb="45 is the plain average, which would be α = 0.5.">45</button>
+          <button class="opt" data-fb="That would be believing the reading completely (α = 1).">40</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="note">
+        <div class="note-head"><span class="lbl">Class discussion — Lesson 1</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="m7l1" data-placeholder="Time series from your own work, how noisy they are, what α you'd start with…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Worth noticing</span>
+      <p class="q">S<sub>t</sub> always lands between which two numbers?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Between x<sub>t</sub> and S<sub>t−1</sub>, because it is a weighted average of them with weights that sum to 1. It moves the fraction α of the way from the old baseline toward the new reading.</p>
+      </details>
+    </aside>
+  </div>
+  <div class="row">
+    <div class="main">
+      <h3>More examples: where exponential smoothing came from, and where it runs today</h3>
+      <div class="callout">
+        <p class="tag">A little history</p>
+        <p>The method came out of 1950s operations research, not finance. Robert G. Brown developed simple exponential smoothing for US Navy inventory control. Charles Holt added a separate trend in a 1957 Office of Naval Research memo. Peter Winters tested Holt’s methods on real sales data in 1960 and added the seasonal part, which is why triple smoothing carries both names. Its original purpose — deciding how much stock to hold — is still one of its main uses.</p>
+      </div>
+
+      <h4>Example: your internet connection runs this equation</h4>
+      <p>Every TCP connection has to decide how long to wait for a reply before assuming a packet was lost. Round-trip times are noisy, so the internet standard for this (RFC 6298) smooths them with exactly the Lesson 1 equation, using α = 1/8:</p>
+      <div class="formula">
+        SRTT ← (1 − 1/8)·SRTT + (1/8)·R′
+        <span class="cap">SRTT is the smoothed round-trip time (our S<sub>t</sub>); R′ is the newest measurement (our x<sub>t</sub>).</span>
+      </div>
+      <p>It also smooths how far each measurement lands from the average, with weight 1/4, and waits for the average plus four times that spread. Suppose SRTT = 100 ms, the smoothed spread is 20 ms, and a slow reply takes 180 ms:</p>
+      <table class="plain">
+        <tr><td><strong>Spread</strong></td><td>0.75 × 20 + 0.25 × |100 − 180| = 15 + 20 = <strong>35 ms</strong></td></tr>
+        <tr><td><strong>Smoothed RTT</strong></td><td>0.875 × 100 + 0.125 × 180 = 87.5 + 22.5 = <strong>110 ms</strong></td></tr>
+        <tr><td><strong>Timeout</strong></td><td>110 + 4 × 35 = <strong>250 ms</strong> (the standard then raises anything below 1 second up to 1 second)</td></tr>
+      </table>
+      <p>One slow reply moves the average only 10 ms — a small α at work. The spread term is the same idea applied to <em>variability</em>, which is where Lesson 6 ends up.</p>
+
+      <h4>Try it: move α and watch the baseline</h4>
+      <div class="ix-explore" id="alphaExplorer" style="border:1px solid rgba(19,27,38,.14);border-radius:4px;padding:.8rem 1rem;margin:1rem 0">
+        <label style="font-family:var(--sans,sans-serif);font-size:.92rem;display:flex;gap:.7rem;align-items:center;flex-wrap:wrap">
+          α = <strong id="aeVal" style="min-width:2.5em">0.30</strong>
+          <input type="range" id="aeSlider" min="0.02" max="1" step="0.01" value="0.3" style="flex:1;min-width:160px" aria-label="Smoothing constant alpha">
+        </label>
+        <svg id="aeSvg" viewBox="0 0 660 260" role="img" aria-label="The Lesson 1 readings with a smoothed line that updates as alpha changes." style="width:100%;height:auto;display:block;margin-top:.5rem"></svg>
+        <p id="aeStats" style="font-family:var(--sans,sans-serif);font-size:.88rem;color:var(--ink-soft,#4a5765);margin:.3rem 0 0"></p>
+      </div>
+      <p>Things to try: drag α to about 0.05 and count how many periods the line takes to accept the step up. Then drag it to 0.95 and see how much of the noise it copies. Somewhere in between is the trade-off the optimizer in Lesson 4 settles for you.</p>
+    </div>
+    <aside class="check">
+      <span class="n">Worth noticing</span>
+      <p class="q">TCP uses α = 1/8. What does that choice say about how its designers view a single slow reply?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">That it is mostly noise. A small α means one unusual round-trip time moves the estimate only an eighth of the way, so the timeout doesn’t lurch around with every delayed packet.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
+<!-- ==================== LESSON 2 ==================== -->
+<section class="lesson" id="l2" data-short="Trend &amp; cycles" style="--accent:#8a5a1c">
+  <div class="lesson-head">
+    <span class="ln">Lesson 2</span>
+    <h2>Trends and cycles</h2>
+    <p class="keyline">Trend and seasonality get the same treatment as the baseline: each has its own running estimate, its own weight, and its own starting value.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Adding a trend</h3>
+      <p>Let T<sub>t</sub> be the trend at time t — how much the baseline changes per period. Two things change.</p>
+      <p>First, “yesterday’s belief” now has to include yesterday’s trend. If the level was 100 and rising by 5 a period, the prior guess for today is 105, not 100:</p>
+      <div class="formula">
+        S<sub>t</sub> = α·x<sub>t</sub> + (1 − α)·(S<sub>t−1</sub> + T<sub>t−1</sub>)
+      </div>
+      <p>Second, the trend itself is smoothed the same way. The <em>observed</em> trend this period is how much the baseline just moved, S<sub>t</sub> − S<sub>t−1</sub>, and it is blended with the previous trend estimate using a new constant β:</p>
+      <div class="formula">
+        T<sub>t</sub> = β·(S<sub>t</sub> − S<sub>t−1</sub>) + (1 − β)·T<sub>t−1</sub>, &nbsp;&nbsp; 0 &lt; β &lt; 1
+        <span class="cap">Starting condition: T<sub>1</sub> = 0 — assume no trend until the data says otherwise, just as S<sub>1</sub> = x<sub>1</sub> assumes nothing about the baseline.</span>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Check</span>
+      <p class="q">What is the “observed trend” that β weights?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">The change in the baseline estimate from last period to this one, S<sub>t</sub> − S<sub>t−1</sub> — not the change in the raw observations, which would carry all the noise with it.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Adding seasonality — multiplicatively</h3>
+      <p>A cyclic effect could be added as another additive term, and sometimes that is the right choice. The lecture shows the alternative, a <strong>multiplicative</strong> seasonal factor, so both are in your toolbox.</p>
+      <table class="plain">
+        <tr><td><strong>L</strong></td><td>The length of one cycle. Daily readings with a weekly cycle: L = 7. Hourly readings with a daily cycle: L = 24.</td></tr>
+        <tr><td><strong>C<sub>t</sub></strong></td><td>The seasonal factor for period t. Above 1 inflates, below 1 deflates.</td></tr>
+      </table>
+      <p>The observation is divided by its seasonal factor before it is blended in — that strips the season out so the baseline sees only the underlying level:</p>
+      <div class="formula">
+        S<sub>t</sub> = α·(x<sub>t</sub> / C<sub>t−L</sub>) + (1 − α)·(S<sub>t−1</sub> + T<sub>t−1</sub>)
+        <span class="cap">Why C<sub>t−L</sub> and not C<sub>t−1</sub>? It is the most recent factor from the <em>same stage</em> of the cycle. If today is Monday, use last Monday’s factor.</span>
+      </div>
+      <p>The factor is then updated with a third constant, γ, blending “how far above the baseline was this period?” with the old factor for this stage:</p>
+      <div class="formula">
+        C<sub>t</sub> = γ·(x<sub>t</sub> / S<sub>t</sub>) + (1 − γ)·C<sub>t−L</sub>, &nbsp;&nbsp; 0 &lt; γ &lt; 1
+        <span class="cap">Starting condition: the first L factors are all 1 — no seasonal effect assumed — and the data fills in the rest.</span>
+      </div>
+      <div class="callout">
+        <p class="tag">Reading a factor</p>
+        <p>C = 1.1 on a Sunday means Sunday sales run 10% above baseline just because it is Sunday. Sell 550 burgers that day and 500 of them are baseline; the other 50 are the Sunday lift.</p>
+      </div>
+
+      <div class="ix" data-match="m7l2-match">
+        <div class="ix-head"><span class="ix-kind">match the pairs</span><span class="ix-done">matched</span></div>
+        <p class="prompt">Click a symbol, then its meaning.</p>
+        <div class="match">
+          <div class="col" data-side="a"><h4>Symbol</h4>
+            <button class="cell" data-pair="1">S<sub>t</sub></button>
+            <button class="cell" data-pair="2">T<sub>t</sub></button>
+            <button class="cell" data-pair="3">C<sub>t</sub></button>
+            <button class="cell" data-pair="4">L</button>
+            <button class="cell" data-pair="5">C<sub>t−L</sub></button>
+            <button class="cell" data-pair="6">γ</button>
+          </div>
+          <div class="col" data-side="b"><h4>Meaning</h4>
+            <button class="cell" data-pair="1" data-fb="S_t is the baseline — the level with noise, trend-step and season removed.">Estimated baseline level at time t</button>
+            <button class="cell" data-pair="2" data-fb="T_t is the smoothed change in baseline per period. It starts at T_1 = 0.">Estimated change in baseline per period</button>
+            <button class="cell" data-pair="3" data-fb="C_t multiplies the baseline. 1.1 means 10% above; 0.9 means 10% below.">Multiplicative seasonal factor at time t</button>
+            <button class="cell" data-pair="4" data-fb="L is the cycle length in periods — 7 for a weekly cycle in daily data.">Number of periods in one cycle</button>
+            <button class="cell" data-pair="5" data-fb="C_(t−L) is last cycle's factor for this same stage — last Monday's factor on a Monday.">Latest factor from the same stage of the cycle</button>
+            <button class="cell" data-pair="6" data-fb="γ weights the newly observed seasonal ratio x_t / S_t against the old factor. α and β do the same job for baseline and trend.">Weight on the newly observed seasonal ratio</button>
+          </div>
+        </div>
+        <p class="fb"></p>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Exam target</span>
+      <p class="q">Give all three starting conditions for triple exponential smoothing.</p>
+      <details><summary>Show answer</summary>
+        <p class="a">S<sub>1</sub> = x<sub>1</sub>; T<sub>1</sub> = 0; and the first L seasonal factors C<sub>1</sub> … C<sub>L</sub> all equal 1. Each says “assume nothing yet” in the form that suits that component.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Names you will see</h3>
+      <table class="plain">
+        <tr><td><strong>Single</strong> exponential smoothing</td><td>Baseline only (α)</td></tr>
+        <tr><td><strong>Double</strong> exponential smoothing</td><td>Baseline and trend (α, β)</td></tr>
+        <tr><td><strong>Triple</strong> exponential smoothing</td><td>Baseline, trend and seasonality (α, β, γ) — also called <strong>Winters’ method</strong> or <strong>Holt-Winters</strong></td></tr>
+      </table>
+
+      <div class="ix" data-quiz="m7l2-q1">
+        <div class="ix-head"><span class="ix-kind">calculation</span><span class="ix-done">answered</span></div>
+        <p class="prompt">A café’s Saturday seasonal factor is 1.25. It serves 600 coffees this Saturday. How many of those are baseline demand?</p>
+        <div class="opts">
+          <button class="opt" data-fb="That subtracts 25% of 600. The factor multiplies the baseline, so the lift is 25% of the baseline, not of the total.">450</button>
+          <button class="opt" data-right data-fb="600 / 1.25 = 480. The remaining 120 is the Saturday lift — 25% of 480. This is exactly the division x_t / C_(t−L) that the baseline equation performs.">480</button>
+          <button class="opt" data-fb="600 × 1.25 inflates instead of deflating. To remove a seasonal effect from an observation, divide by the factor.">750</button>
+          <button class="opt" data-fb="600 − 25 treats the factor as an additive count. With a multiplicative model the lift scales with the baseline.">575</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="ix" data-quiz="m7l2-q2">
+        <div class="ix-head"><span class="ix-kind">calculation</span><span class="ix-done">answered</span></div>
+        <p class="prompt">With γ = 0.1, this period’s observation is 660, the new baseline S<sub>t</sub> is 600, and last cycle’s factor for this stage was 1.2. What is the updated factor C<sub>t</sub>?</p>
+        <div class="opts">
+          <button class="opt" data-fb="1.1 is the observed ratio 660/600 on its own — that would be γ = 1.">1.10</button>
+          <button class="opt" data-right data-fb="0.1 × (660/600) + 0.9 × 1.2 = 0.11 + 1.08 = 1.19. One weaker-than-usual period nudges the factor down only slightly, because γ is small.">1.19</button>
+          <button class="opt" data-fb="That swaps the weights — 0.9 on the new ratio and 0.1 on the old factor.">1.11</button>
+          <button class="opt" data-fb="1.2 would mean the factor didn't update at all (γ = 0).">1.20</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="note">
+        <div class="note-head"><span class="lbl">Class discussion — Lesson 2</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="m7l2" data-placeholder="Additive vs multiplicative seasonality, HoltWinters() arguments, choosing L…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Worth noticing</span>
+      <p class="q">When would an additive seasonal term fit better than a multiplicative one?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">When the seasonal swing stays roughly the same size in absolute terms as the level changes — say, always about 50 extra units on Sundays. Multiplicative fits when the swing grows with the level — always about 10% extra. (This rule of thumb is standard practice rather than lecture content.)</p>
+      </details>
+    </aside>
+  </div>
+  <div class="row">
+    <div class="main">
+      <h3>More examples: real data with each kind of seasonality</h3>
+      <h4>Multiplicative: airline passengers, 1949–1960</h4>
+      <p>The classic example in almost every time series textbook is Box and Jenkins’ monthly totals of international airline passengers. It is small, real, and has all three components at once.</p>
+      <figure>
+        <svg class="fig" viewBox="0 0 660 340" role="img" aria-label="Monthly international airline passengers from 1949 to 1960, in thousands. The series climbs from about 120 to about 480 on average, and the summer peaks rise far above the winter troughs, with the gap between them growing from 44 thousand in 1949 to 232 thousand in 1960.">
+          <g font-family="IBM Plex Sans,sans-serif">
+          <g stroke="#e3e9ee"><line x1="62" y1="290.4" x2="620" y2="290.4"/><text x="56" y="294.4" text-anchor="end" font-size="10.5" fill="#4a5765" stroke="none">100</text><line x1="62" y1="242.1" x2="620" y2="242.1"/><text x="56" y="246.1" text-anchor="end" font-size="10.5" fill="#4a5765" stroke="none">200</text><line x1="62" y1="193.9" x2="620" y2="193.9"/><text x="56" y="197.9" text-anchor="end" font-size="10.5" fill="#4a5765" stroke="none">300</text><line x1="62" y1="145.7" x2="620" y2="145.7"/><text x="56" y="149.7" text-anchor="end" font-size="10.5" fill="#4a5765" stroke="none">400</text><line x1="62" y1="97.5" x2="620" y2="97.5"/><text x="56" y="101.5" text-anchor="end" font-size="10.5" fill="#4a5765" stroke="none">500</text><line x1="62" y1="49.3" x2="620" y2="49.3"/><text x="56" y="53.3" text-anchor="end" font-size="10.5" fill="#4a5765" stroke="none">600</text></g>
+          <path d="M 62.0 284.6 L 65.9 281.7 L 69.8 274.9 L 73.7 276.4 L 77.6 280.2 L 81.5 273.5 L 85.4 267.2 L 89.3 267.2 L 93.2 273.0 L 97.1 281.2 L 101.0 288.4 L 104.9 281.7 L 108.8 283.1 L 112.7 277.8 L 116.6 270.6 L 120.5 273.5 L 124.4 278.3 L 128.3 266.7 L 132.2 256.6 L 136.1 256.6 L 140.0 262.4 L 143.9 274.4 L 147.8 283.6 L 151.7 271.1 L 155.7 268.7 L 159.6 266.2 L 163.5 252.8 L 167.4 260.0 L 171.3 255.6 L 175.2 252.8 L 179.1 242.6 L 183.0 242.6 L 186.9 249.9 L 190.8 260.5 L 194.7 268.2 L 198.6 258.5 L 202.5 256.1 L 206.4 251.8 L 210.3 245.5 L 214.2 251.3 L 218.1 250.3 L 222.0 233.5 L 225.9 227.7 L 229.8 221.9 L 233.7 237.8 L 237.6 246.5 L 241.5 255.6 L 245.4 245.0 L 249.3 244.1 L 253.2 244.1 L 257.1 224.8 L 261.0 225.3 L 264.9 228.2 L 268.8 221.4 L 272.7 211.3 L 276.6 207.4 L 280.5 224.3 L 284.4 236.8 L 288.3 251.8 L 292.2 241.7 L 296.1 240.2 L 300.0 247.9 L 303.9 225.3 L 307.8 229.1 L 311.7 225.8 L 315.6 211.3 L 319.5 193.0 L 323.4 197.3 L 327.3 213.7 L 331.2 228.2 L 335.1 240.7 L 339.0 228.2 L 343.0 221.9 L 346.9 226.2 L 350.8 209.8 L 354.7 208.9 L 358.6 208.4 L 362.5 186.7 L 366.4 163.1 L 370.3 171.3 L 374.2 188.1 L 378.1 206.5 L 382.0 224.3 L 385.9 204.5 L 389.8 201.6 L 393.7 205.0 L 397.6 185.7 L 401.5 187.7 L 405.4 185.2 L 409.3 158.2 L 413.2 139.4 L 417.1 143.3 L 421.0 167.4 L 424.9 191.0 L 428.8 207.9 L 432.7 191.0 L 436.6 186.7 L 440.5 193.4 L 444.4 166.9 L 448.3 170.8 L 452.2 167.4 L 456.1 135.1 L 460.0 114.4 L 463.9 113.4 L 467.8 143.8 L 471.7 171.3 L 475.6 191.5 L 479.5 176.6 L 483.4 174.6 L 487.3 185.2 L 491.2 164.0 L 495.1 170.8 L 499.0 163.6 L 502.9 128.8 L 506.8 101.8 L 510.7 95.1 L 514.6 143.8 L 518.5 165.5 L 522.4 189.1 L 526.3 176.1 L 530.3 165.0 L 534.2 173.7 L 538.1 142.8 L 542.0 147.6 L 545.9 136.1 L 549.8 111.0 L 553.7 74.4 L 557.6 69.1 L 561.5 115.3 L 565.4 142.3 L 569.3 164.0 L 573.2 143.3 L 577.1 137.5 L 581.0 150.1 L 584.9 136.6 L 588.8 116.3 L 592.7 111.0 L 596.6 80.6 L 600.5 38.7 L 604.4 46.4 L 608.3 93.6 L 612.2 116.3 L 616.1 150.5 L 620.0 130.3" fill="none" stroke="#8a5a1c" stroke-width="2"/>
+          <line x1="85.4" y1="267.2" x2="85.4" y2="288.4" stroke="#131b26" stroke-width="1.5"/>
+          <text x="91.4" y="259.2" font-size="11.5" fill="#131b26">1949 swing: 44</text>
+          <line x1="600.5" y1="38.7" x2="600.5" y2="150.5" stroke="#131b26" stroke-width="1.5"/>
+          <text x="594.5" y="166.5" text-anchor="end" font-size="11.5" fill="#131b26">1960 swing: 232</text>
+          <line x1="62" y1="300" x2="620" y2="300" stroke="#131b26" stroke-width="1.5"/>
+          <line x1="62" y1="300" x2="62" y2="30" stroke="#131b26" stroke-width="1.5"/>
+          <text x="62.0" y="318" font-size="10.5" fill="#4a5765">1949</text><text x="155.7" y="318" font-size="10.5" fill="#4a5765">1951</text><text x="249.3" y="318" font-size="10.5" fill="#4a5765">1953</text><text x="343.0" y="318" font-size="10.5" fill="#4a5765">1955</text><text x="436.6" y="318" font-size="10.5" fill="#4a5765">1957</text><text x="530.3" y="318" font-size="10.5" fill="#4a5765">1959</text>
+          <text x="72" y="44" font-size="12" fill="#4a5765">passengers per month (thousands)</text>
+          </g>
+        </svg>
+        <figcaption>Monthly international airline passengers (thousands), from Box &amp; Jenkins’ “Series G”. Both the level and the seasonal swing grow over time.</figcaption>
+      </figure>
+      <table>
+        <tr><td><strong>Year</strong></td><td><strong>Average month</strong></td><td><strong>Peak − trough</strong></td><td><strong>Peak ÷ trough</strong></td></tr>
+        <tr><td>1949</td><td>127</td><td>44</td><td>1.42</td></tr>
+        <tr><td>1954</td><td>239</td><td>114</td><td>1.61</td></tr>
+        <tr><td>1960</td><td>476</td><td>232</td><td>1.59</td></tr>
+      </table>
+      <p>Read across the table. The average month grew about 3.7 times, and the absolute swing grew more than 5 times. The <em>ratio</em> of peak to trough stayed in a narrow band around 1.4–1.6. A seasonal effect that stays roughly constant as a <strong>proportion</strong> is exactly what a multiplicative factor C<sub>t</sub> describes. Lesson 4 fits both versions to this data and compares them.</p>
+
+      <h4>Additive: carbon dioxide at Mauna Loa</h4>
+      <p>The Keeling curve — atmospheric CO₂ measured on Mauna Loa, Hawaii, since 1958 — has a strong trend and a yearly cycle. Northern Hemisphere plants pull CO₂ out of the air as they grow in spring and summer, and it returns as they die back. The peak-to-trough swing averages roughly 6 ppm. While the level rose from about 316 ppm to over 420 ppm, that swing changed only modestly. A swing that stays about the same <em>size</em> while the level climbs fits an additive seasonal term better than a multiplicative one.</p>
+
+      <h4>More than one cycle: electricity demand</h4>
+      <p>Half-hourly electricity demand has a daily cycle <em>and</em> a weekly one. Basic Holt-Winters allows one L. In 2003, James Taylor extended the method to two seasonal cycles for exactly this problem. When your data has several cycles, look for “double seasonal” or “multiple seasonal” versions in your software.</p>
+
+      <div class="ix" data-quiz="m7l2-q3">
+        <div class="ix-head"><span class="ix-kind">real data</span><span class="ix-done">answered</span></div>
+        <p class="prompt">A theme park’s summer attendance runs about 80% above its winter attendance, and that has held true while total visitors doubled over a decade. Which seasonal form fits?</p>
+        <div class="opts">
+          <button class="opt" data-right data-fb="The seasonal effect is a steady proportion (80% above) while the level changes, so the swing in visitors doubles along with the level. That is the multiplicative pattern, as with the airline data.">Multiplicative — the effect is a stable percentage</button>
+          <button class="opt" data-fb="Additive fits when the swing stays a fixed number of visitors. Here the number doubles with the level, because it is a fixed percentage.">Additive — the effect is a stable number of visitors</button>
+          <button class="opt" data-fb="The seasonal effect is strong and consistent — 80% is large. Leaving it out would give forecasts that are badly wrong in both seasons.">Neither — attendance has no real seasonality</button>
+          <button class="opt" data-fb="The trend is real, but it doesn't explain the summer–winter gap. Trend and seasonality are separate components and need separate terms.">A trend term alone captures it</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Check</span>
+      <p class="q">In the airline table, why is “peak ÷ trough” the more useful column for choosing a model?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Because it tests the multiplicative assumption directly. If the ratio stays roughly steady while the level grows, a multiplicative factor fits. If instead the difference stayed steady, additive would fit.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
+<!-- ==================== LESSON 3 ==================== -->
+<section class="lesson" id="l3" data-short="The name" style="--accent:#33507f">
+  <div class="lesson-head">
+    <span class="ln">Lesson 3</span>
+    <h2>Where the name comes from</h2>
+    <p class="keyline">“Smoothing” because spikes get pulled toward the old baseline; “exponential” because, unrolled, every past observation is in there with a weight that shrinks by a constant factor each step back.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Smoothing</h3>
+      <p>Take any α strictly between 0 and 1 — think of 0.5. A very high reading x<sub>t</sub> is only counted with weight α, and the other (1 − α) goes to the older, lower baseline, so S<sub>t</sub> ends up below the spike. A very low reading gets pulled <em>up</em> the same way. Peaks shave down, valleys fill in, and the line through them is smoother than the data.</p>
+      <p>The trend and seasonal equations work exactly the same way, so everything in this lesson applies to them too.</p>
+
+      <h3>Exponential</h3>
+      <p>S<sub>t−1</sub> is itself given by the same equation: S<sub>t−1</sub> = αx<sub>t−1</sub> + (1 − α)S<sub>t−2</sub>. Substitute that in, then do the same for S<sub>t−2</sub>, S<sub>t−3</sub>, and so on:</p>
+      <div class="formula">
+        S<sub>t</sub> = αx<sub>t</sub> + α(1−α)x<sub>t−1</sub> + α(1−α)²x<sub>t−2</sub> + α(1−α)³x<sub>t−3</sub> + … + (1−α)<sup>k</sup>S<sub>t−k</sub>
+        <span class="cap">The weight on the observation k periods back is α(1−α)<sup>k</sup>. The exponent rises by one each step — that is the “exponential”.</span>
+      </div>
+
+      <figure class="hotwrap" data-hotspot="m7l3-hot">
+        <svg class="fig" viewBox="0 0 660 320" role="img" aria-label="Two bar charts of the weight each past observation receives. With alpha 0.5 the weights halve each step and die out within a few periods. With alpha 0.2 they start lower and fade slowly, spreading across many periods.">
+          <g font-family="IBM Plex Sans,sans-serif">
+          <line x1="40" y1="250" x2="310" y2="250" stroke="#131b26" stroke-width="1.2"/>
+          <line x1="350" y1="250" x2="620" y2="250" stroke="#131b26" stroke-width="1.2"/>
+          <rect x="44" y="60.0" width="20" height="190.0" fill="#33507f"/><text x="54.0" y="266" text-anchor="middle" font-size="10.5" fill="#4a5765">t</text><rect x="70" y="155.0" width="20" height="95.0" fill="#33507f"/><text x="80.0" y="266" text-anchor="middle" font-size="10.5" fill="#4a5765">t−1</text><rect x="96" y="202.5" width="20" height="47.5" fill="#33507f"/><text x="106.0" y="266" text-anchor="middle" font-size="10.5" fill="#4a5765">t−2</text><rect x="122" y="226.2" width="20" height="23.8" fill="#33507f"/><rect x="148" y="238.1" width="20" height="11.9" fill="#33507f"/><rect x="174" y="244.1" width="20" height="5.9" fill="#33507f"/><text x="184.0" y="266" text-anchor="middle" font-size="10.5" fill="#4a5765">t−5</text><rect x="200" y="247.0" width="20" height="3.0" fill="#33507f"/><rect x="226" y="248.5" width="20" height="1.5" fill="#33507f"/><rect x="252" y="249.3" width="20" height="0.7" fill="#33507f"/><rect x="278" y="249.6" width="20" height="0.4" fill="#33507f"/><text x="288.0" y="266" text-anchor="middle" font-size="10.5" fill="#4a5765">t−9</text><text x="44" y="296" font-size="12.5" font-weight="600" fill="#33507f">α = 0.5 — memory is short</text>
+          <rect x="354" y="174.0" width="20" height="76.0" fill="#8a5a1c"/><text x="364.0" y="266" text-anchor="middle" font-size="10.5" fill="#4a5765">t</text><rect x="380" y="189.2" width="20" height="60.8" fill="#8a5a1c"/><text x="390.0" y="266" text-anchor="middle" font-size="10.5" fill="#4a5765">t−1</text><rect x="406" y="201.4" width="20" height="48.6" fill="#8a5a1c"/><text x="416.0" y="266" text-anchor="middle" font-size="10.5" fill="#4a5765">t−2</text><rect x="432" y="211.1" width="20" height="38.9" fill="#8a5a1c"/><rect x="458" y="218.9" width="20" height="31.1" fill="#8a5a1c"/><rect x="484" y="225.1" width="20" height="24.9" fill="#8a5a1c"/><text x="494.0" y="266" text-anchor="middle" font-size="10.5" fill="#4a5765">t−5</text><rect x="510" y="230.1" width="20" height="19.9" fill="#8a5a1c"/><rect x="536" y="234.1" width="20" height="15.9" fill="#8a5a1c"/><rect x="562" y="237.2" width="20" height="12.8" fill="#8a5a1c"/><rect x="588" y="239.8" width="20" height="10.2" fill="#8a5a1c"/><text x="598.0" y="266" text-anchor="middle" font-size="10.5" fill="#4a5765">t−9</text><text x="354" y="296" font-size="12.5" font-weight="600" fill="#8a5a1c">α = 0.2 — memory is long</text>
+          <text x="44" y="52.0" font-size="11" fill="#4a5765">0.50</text>
+          <text x="354" y="166.0" font-size="11" fill="#4a5765">0.20</text>
+          <g class="hs" data-title="The most recent observation" data-body="Its weight is exactly α. Nothing else in the sum can weigh more, because every older term is multiplied by at least one extra factor of (1 − α), which is below 1.">
+            <rect class="hit" x="40" y="54" width="28" height="200"/><rect class="ring" x="40" y="54" width="28" height="200" rx="3"/>
+          </g>
+          <g class="hs" data-title="The shape of the decay" data-body="Each bar is (1 − α) times the one before it: α, α(1−α), α(1−α)², … That constant ratio is a geometric — exponential — decay, and it is where the method gets its name. With α = 0.5 the ratio is 0.5, so each step halves the weight.">
+            <rect class="hit" x="70" y="140" width="90" height="114"/><rect class="ring" x="70" y="140" width="90" height="114" rx="3"/>
+          </g>
+          <g class="hs" data-title="The tail never reaches zero" data-body="The weight on an observation k periods back is α(1−α)^k — tiny, but not zero. Every observation ever recorded is still in S&#8348;. Older ones are simply folded into S&#8348;&#8331;&#8321;, which is why the one-line equation looks as if it only uses today.">
+            <rect class="hit" x="170" y="200" width="140" height="54"/><rect class="ring" x="170" y="200" width="140" height="54" rx="3"/>
+          </g>
+          <g class="hs" data-title="A smaller α spreads the weight out" data-body="With α = 0.2 today counts for only 20%, and the weights fade by a factor of 0.8 per step, so the last ten periods share the load. That averaging over many periods is what makes a small α smooth — and slow to react when the level genuinely moves.">
+            <rect class="hit" x="350" y="160" width="270" height="94"/><rect class="ring" x="350" y="160" width="270" height="94" rx="3"/>
+          </g>
+          </g>
+        </svg>
+        <div class="hotpanel"><span class="hint">Four regions are clickable. Open all four to finish this activity.</span></div>
+      </figure>
+    </div>
+    <aside class="check">
+      <span class="n">Exam target</span>
+      <p class="q">What weight does x<sub>t−3</sub> receive in S<sub>t</sub>?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">α(1 − α)³. With α = 0.5 that is 0.0625; with α = 0.2 it is 0.1024 — the smaller α gives <em>more</em> weight to an observation three periods old.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>What the unrolled form reveals</h3>
+      <p>The one-line equation makes it look as if only the latest observation matters. The expanded form shows the truth:</p>
+      <ul>
+        <li><strong>Every past observation contributes</strong> to S<sub>t</sub>. The older ones are baked into S<sub>t−1</sub>.</li>
+        <li><strong>Recent observations count more.</strong> Because 1 − α &lt; 1, each step back multiplies the weight by something smaller than one.</li>
+      </ul>
+      <p>So the method has a long memory and a recency bias at the same time — which is usually exactly what you want when estimating what is happening now.</p>
+
+      <div class="ix" data-quiz="m7l3-q1">
+        <div class="ix-head"><span class="ix-kind">concept trap</span><span class="ix-done">answered</span></div>
+        <p class="prompt">A colleague says: “Exponential smoothing only looks at the latest reading and yesterday’s baseline, so data from a month ago has no effect.” What is the best reply?</p>
+        <div class="opts">
+          <button class="opt" data-fb="The one-line equation does only name those two, but that is the point of the unrolled form — the equation is shorthand, not the whole story.">They’re right — that is what the equation says.</button>
+          <button class="opt" data-right data-fb="S_(t−1) already contains every earlier observation, each with weight α(1−α)^k. A month-old reading still counts; its weight is just small, and how small depends on α.">Month-old data is still in there, folded into yesterday’s baseline with a smaller weight.</button>
+          <button class="opt" data-fb="The weights shrink geometrically; they never reach exactly zero. There is no cut-off window in basic exponential smoothing — that describes a simple moving average.">Old data drops out after a fixed window of L periods.</button>
+          <button class="opt" data-fb="Every observation, old and new, is weighted by α at least once, but older ones also pick up extra (1−α) factors. They are not weighted equally.">All past readings count equally, so month-old data matters as much as today’s.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="note">
+        <div class="note-head"><span class="lbl">Class discussion — Lesson 3</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="m7l3" data-placeholder="The unrolled equation in your own words, comparison with a moving average…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Worth noticing</span>
+      <p class="q">Do the weights α(1−α)<sup>k</sup> add up to 1?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Over an infinitely long history, yes — it is a geometric series: α / (1 − (1 − α)) = 1. Over a finite history the leftover (1 − α)<sup>k</sup> sits on the starting value S<sub>1</sub> = x<sub>1</sub>. That leftover is why the choice of starting value fades in importance as data accumulates.</p>
+      </details>
+    </aside>
+  </div>
+  <div class="row">
+    <div class="main">
+      <h3>More examples: how long is α’s memory?</h3>
+      <p>Two numbers make α concrete. The <strong>half-life</strong> is how many periods back the weight falls to half of today’s weight: ln(0.5) / ln(1 − α). The <strong>average age</strong> of the data behind S<sub>t</sub> — the weighted average of how many periods old each observation is — works out to (1 − α) / α.</p>
+      <table>
+        <tr><td><strong>α</strong></td><td><strong>Weight on today</strong></td><td><strong>Half-life</strong></td><td><strong>Average age of the data</strong></td><td><strong>Share of weight on the last 10 periods</strong></td></tr>
+        <tr><td>0.1</td><td>10%</td><td>6.6 periods</td><td>9 periods</td><td>65%</td></tr>
+        <tr><td>0.2</td><td>20%</td><td>3.1 periods</td><td>4 periods</td><td>89%</td></tr>
+        <tr><td>0.3</td><td>30%</td><td>1.9 periods</td><td>2.3 periods</td><td>97%</td></tr>
+        <tr><td>0.5</td><td>50%</td><td>1 period</td><td>1 period</td><td>99.9%</td></tr>
+        <tr><td>0.8</td><td>80%</td><td>0.4 periods</td><td>0.25 periods</td><td>≈100%</td></tr>
+      </table>
+      <p>So α = 0.1 on daily data behaves like an average over roughly the last week and a half, and α = 0.5 is essentially looking at yesterday and today. When someone gives you a fitted α, translating it into an average age is the quickest way to explain it to a non-specialist.</p>
+
+      <h4>Compared with a simple moving average</h4>
+      <p>A 5-day moving average gives each of the last five days a weight of 0.2 and every earlier day a weight of 0. That cliff causes a quirk: when a big value <em>drops out</em> of the window, the average jumps, even though nothing happened today. Exponential weights fade smoothly instead, so there is no drop-out jump. They also need only one stored number, S<sub>t−1</sub>, rather than the whole window — a big reason the method suited 1950s inventory systems.</p>
+
+      <div class="ix" data-quiz="m7l3-q2">
+        <div class="ix-head"><span class="ix-kind">calculation</span><span class="ix-done">answered</span></div>
+        <p class="prompt">A team wants a smoothed daily metric whose data is, on average, about 4 days old. Which α gives that?</p>
+        <div class="opts">
+          <button class="opt" data-fb="With α = 0.25, (1 − α)/α = 0.75/0.25 = 3 days.">0.25</button>
+          <button class="opt" data-right data-fb="(1 − 0.2)/0.2 = 4. Solving (1 − α)/α = 4 gives α = 1/5.">0.20</button>
+          <button class="opt" data-fb="With α = 0.4, (1 − α)/α = 1.5 days — far more reactive than asked.">0.40</button>
+          <button class="opt" data-fb="With α = 0.1 the average age is 9 days — more than twice what was asked.">0.10</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Check</span>
+      <p class="q">With α = 0.5, what fraction of S<sub>t</sub>’s weight sits on data more than three periods old?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">(1 − α)<sup>4</sup> = 0.5<sup>4</sup> = 6.25%. Today and the three periods before it carry 50 + 25 + 12.5 + 6.25 = 93.75%.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
+<!-- ==================== LESSON 4 ==================== -->
+<section class="lesson" id="l4" data-short="Forecasting" style="--accent:#16697a">
+  <div class="lesson-head">
+    <span class="ln">Lesson 4</span>
+    <h2>Forecasting with exponential smoothing</h2>
+    <p class="keyline">You don’t know next period’s observation, so your best guess for it is your current baseline — and that single substitution turns a smoother into a forecaster.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>The one-step-ahead forecast</h3>
+      <p>Write the smoothing equation for the next period, t + 1:</p>
+      <div class="formula">
+        S<sub>t+1</sub> = α·x<sub>t+1</sub> + (1 − α)·S<sub>t</sub>
+      </div>
+      <p>x<sub>t+1</sub> hasn’t happened yet. The best guess for it is the current baseline S<sub>t</sub>. Substitute, and the α terms cancel:</p>
+      <div class="formula">
+        F<sub>t+1</sub> = α·S<sub>t</sub> + (1 − α)·S<sub>t</sub> = S<sub>t</sub>
+        <span class="cap">The forecast for next period is simply the latest baseline estimate.</span>
+      </div>
+      <p>The same argument applies to t + 2, t + 3 and beyond, so with baseline only the forecast is a <strong>flat line</strong> at S<sub>t</sub>. What does change is the uncertainty: the further ahead you look, the larger the expected forecast error — which is the widening band in the picture at the top of this page.</p>
+    </div>
+    <aside class="check">
+      <span class="n">Check</span>
+      <p class="q">Using single exponential smoothing, what is the forecast five periods ahead?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">S<sub>t</sub> — the same as the one-period-ahead forecast. Only the expected size of the error grows.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>With trend, and with seasonality</h3>
+      <p>The best estimate of next period’s baseline is the current baseline; the best estimate of next period’s trend is the current trend. So:</p>
+      <div class="formula">
+        F<sub>t+1</sub> = S<sub>t</sub> + T<sub>t</sub>
+      </div>
+      <p>Add multiplicative seasonality, and the best estimate of next period’s factor is the latest one from that same stage of the cycle, C<sub>(t+1)−L</sub>:</p>
+      <div class="formula">
+        F<sub>t+1</sub> = (S<sub>t</sub> + T<sub>t</sub>) · C<sub>(t+1)−L</sub>
+      </div>
+      <div class="callout">
+        <p class="tag">Looking more than one step ahead</p>
+        <p>The lecture presents the one-step form. In the standard Holt-Winters method the trend is applied once per step, so k periods ahead the forecast is (S<sub>t</sub> + k·T<sub>t</sub>) · C<sub>(t+k)−L</sub>, using the factor from the matching stage of the most recent full cycle. Check which form your software reports.</p>
+      </div>
+
+      <h3>A worked example</h3>
+      <p>α = 0.2, β = 0.5. Last period: S<sub>t−1</sub> = 100, T<sub>t−1</sub> = 2. This period’s observation is x<sub>t</sub> = 120. No seasonality yet.</p>
+      <div class="formula">
+        S<sub>t</sub> = 0.2 × 120 + 0.8 × (100 + 2) = 24 + 81.6 = 105.6<br>
+        T<sub>t</sub> = 0.5 × (105.6 − 100) + 0.5 × 2 = 2.8 + 1 = 3.8<br>
+        F<sub>t+1</sub> = 105.6 + 3.8 = 109.4
+        <span class="cap">If next period’s stage of the cycle had a factor of 1.2, the forecast would be 109.4 × 1.2 = 131.28.</span>
+      </div>
+
+      <div class="ix" data-quiz="m7l4-q1">
+        <div class="ix-head"><span class="ix-kind">calculation</span><span class="ix-done">answered</span></div>
+        <p class="prompt">S<sub>t</sub> = 200, T<sub>t</sub> = 4, and the seasonal factor from the matching stage last cycle is 0.9. What is F<sub>t+1</sub>?</p>
+        <div class="opts">
+          <button class="opt" data-fb="That applies the factor to the baseline only and adds the trend afterwards. In the multiplicative model the factor scales baseline plus trend together.">184.0</button>
+          <button class="opt" data-right data-fb="(200 + 4) × 0.9 = 183.6. The low factor says next period sits at a quiet stage of the cycle.">183.6</button>
+          <button class="opt" data-fb="204 ignores the seasonal factor entirely.">204.0</button>
+          <button class="opt" data-fb="Dividing by the factor is how you remove seasonality from an observation. To put it back into a forecast, multiply.">226.7</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Exam target</span>
+      <p class="q">Why does the α term vanish from the single-smoothing forecast?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Because the unknown x<sub>t+1</sub> is replaced by S<sub>t</sub>, both terms of the weighted average are S<sub>t</sub>, and α + (1 − α) = 1. α still matters — it shaped S<sub>t</sub> — but it doesn’t appear in the forecasting step.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Fitting α, β and γ</h3>
+      <p>Every past period gives a forecast you can check. Measure each one’s squared error, (F<sub>t</sub> − x<sub>t</sub>)², add them up over the training data, and choose the constants that make the total smallest:</p>
+      <div class="formula">
+        minimize &nbsp; Σ<sub>t</sub> (F<sub>t</sub> − x<sub>t</sub>)² &nbsp; over α, β, γ &nbsp; subject to &nbsp; 0 ≤ α, β, γ ≤ 1
+        <span class="cap">This is an optimization problem — the course covers optimization as a topic of its own. Statistical software solves it for you.</span>
+      </div>
+
+      <div class="ix" data-order="m7l4-order" data-win="Initial conditions first, then the recursion, then the error, then the optimizer — and only the final fitted state is used to forecast.">
+        <div class="ix-head"><span class="ix-kind">put in order</span><span class="ix-done">solved</span></div>
+        <p class="prompt">Put the steps for fitting and using a Holt-Winters model in order. Drag, or use the arrows.</p>
+        <ol class="order">
+          <li data-pos="1">Choose the cycle length L and set S<sub>1</sub> = x<sub>1</sub>, T<sub>1</sub> = 0, and the first L factors to 1</li>
+          <li data-pos="2">Pick trial values of α, β and γ between 0 and 1</li>
+          <li data-pos="3">Run the update equations through the training data, recording each one-step forecast F<sub>t</sub></li>
+          <li data-pos="4">Add up the squared errors (F<sub>t</sub> − x<sub>t</sub>)²</li>
+          <li data-pos="5">Let the optimizer adjust α, β and γ until that total is as small as possible</li>
+          <li data-pos="6">Forecast forward from the final S<sub>t</sub>, T<sub>t</sub> and seasonal factors</li>
+        </ol>
+        <button class="btn check">Check order</button>
+        <p class="fb"></p>
+      </div>
+
+      <div class="note">
+        <div class="note-head"><span class="lbl">Class discussion — Lesson 4</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="m7l4" data-placeholder="predict() on a HoltWinters fit, forecast horizons, what SSE your software reports…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Worth noticing</span>
+      <p class="q">Exponential smoothing is described as both descriptive and predictive. What makes it each?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Descriptive: the smoothed S<sub>t</sub> tells you what the underlying level <em>has been</em>. Predictive: F<sub>t+1</sub> uses that same state to say what comes <em>next</em>. It is one model used two ways.</p>
+      </details>
+    </aside>
+  </div>
+  <div class="row">
+    <div class="main">
+      <h3>More examples: Holt-Winters worked row by row</h3>
+      <p>Eight quarters of sales for a small shop, with a busy fourth quarter. L = 4, α = 0.5, β = 0.3, γ = 0.4, and the lecture’s starting conditions: S<sub>1</sub> = x<sub>1</sub>, T<sub>1</sub> = 0, and C<sub>1</sub> to C<sub>4</sub> all equal to 1.</p>
+      <table>
+        <tr><td><strong>t</strong></td><td><strong>x<sub>t</sub></strong></td><td><strong>Forecast made at t−1</strong></td><td><strong>S<sub>t</sub></strong></td><td><strong>T<sub>t</sub></strong></td><td><strong>C<sub>t</sub></strong></td></tr>
+        <tr><td>1</td><td>40</td><td>—</td><td>40.00</td><td>0.00</td><td>1 (start)</td></tr>
+        <tr><td>2</td><td>28</td><td>40.00</td><td>34.00</td><td>−1.80</td><td>1 (start)</td></tr>
+        <tr><td>3</td><td>30</td><td>32.20</td><td>31.10</td><td>−2.13</td><td>1 (start)</td></tr>
+        <tr><td>4</td><td>52</td><td>28.97</td><td>40.48</td><td>1.32</td><td>1 (start)</td></tr>
+        <tr><td>5</td><td>46</td><td>41.81</td><td>43.90</td><td>1.95</td><td>1.019</td></tr>
+        <tr><td>6</td><td>32</td><td>45.86</td><td>38.93</td><td>−0.13</td><td>0.929</td></tr>
+        <tr><td>7</td><td>33</td><td>38.80</td><td>35.90</td><td>−1.00</td><td>0.968</td></tr>
+        <tr><td>8</td><td>60</td><td>34.91</td><td>47.45</td><td>2.77</td><td>1.106</td></tr>
+      </table>
+      <p>Check one row yourself — t = 5, which uses C<sub>1</sub> = 1:</p>
+      <div class="formula">
+        S<sub>5</sub> = 0.5 × 46/1 + 0.5 × (40.48 + 1.32) = 23 + 20.90 = 43.90<br>
+        T<sub>5</sub> = 0.3 × (43.90 − 40.48) + 0.7 × 1.32 = 1.03 + 0.92 = 1.95<br>
+        C<sub>5</sub> = 0.4 × 46/43.90 + 0.6 × 1 = 0.419 + 0.6 = 1.019
+      </div>
+      <p>Then forecast quarter 9, a first quarter, using the latest first-quarter factor C<sub>5</sub>:</p>
+      <div class="formula">
+        F<sub>9</sub> = (S<sub>8</sub> + T<sub>8</sub>) × C<sub>5</sub> = (47.45 + 2.77) × 1.019 ≈ 51.2
+        <span class="cap">Suppose quarter 9 actually comes in at 50 — an error of about +1.2.</span>
+      </div>
+      <p>Three lessons hide in this table:</p>
+      <ul>
+        <li><strong>The first cycle is learning time.</strong> With every factor set to 1, the model can’t yet tell a busy fourth quarter from a trend, so T<sub>t</sub> swings from −2.13 to +1.32 and the quarter-4 forecast of 28.97 misses 52 badly.</li>
+        <li><strong>The season shows up slowly.</strong> After one update the Q4 factor is only 1.106, though Q4 actually runs about 40% above the yearly average. With γ = 0.4 it takes several cycles to learn that. This is why software usually starts from a rough estimate of the season instead of 1s.</li>
+        <li><strong>Every forecast in the third column was made before its x<sub>t</sub> was known.</strong> Those are the errors the optimizer minimises.</li>
+      </ul>
+    </div>
+    <aside class="check">
+      <span class="n">Check</span>
+      <p class="q">For t = 6, which seasonal factor divides x<sub>6</sub>, and why?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">C<sub>2</sub> = 1. Quarter 6 is a second quarter, and C<sub>2</sub> is the most recent second-quarter factor — that is, C<sub>t−L</sub> with L = 4.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>More examples: forecasting real airline traffic</h3>
+      <p>Take the airline data from Lesson 2. Fit on 1949–1958, forecast all 24 months of 1959–1960, and compare with what happened. The numbers below come from fitting each model for this page. The Holt-Winters fits started from a rough seasonal estimate taken from the first three years.</p>
+      <figure>
+        <svg class="fig" viewBox="0 0 660 360" role="img" aria-label="Actual passengers for 1959 and 1960 compared with three forecasts made at the end of 1958. The Holt-Winters forecast follows the actual line closely. The seasonal naive forecast has the right shape but sits too low. The naive forecast is a flat line far below the summer peaks.">
+          <g font-family="IBM Plex Sans,sans-serif">
+          <g stroke="#e3e9ee"><line x1="70" y1="276.8" x2="610" y2="276.8"/><text x="64" y="280.8" text-anchor="end" font-size="10.5" fill="#4a5765" stroke="none">300</text><line x1="70" y1="211.1" x2="610" y2="211.1"/><text x="64" y="215.1" text-anchor="end" font-size="10.5" fill="#4a5765" stroke="none">400</text><line x1="70" y1="145.3" x2="610" y2="145.3"/><text x="64" y="149.3" text-anchor="end" font-size="10.5" fill="#4a5765" stroke="none">500</text><line x1="70" y1="79.5" x2="610" y2="79.5"/><text x="64" y="83.5" text-anchor="end" font-size="10.5" fill="#4a5765" stroke="none">600</text></g>
+          <line x1="80" y1="252.5" x2="600" y2="252.5" stroke="#9aa5b1" stroke-width="1.8" stroke-dasharray="3 4"/>
+          <path d="M 80.0 250.5 L 102.6 265.0 L 125.2 236.1 L 147.8 245.3 L 170.4 235.4 L 193.0 188.0 L 215.7 151.2 L 238.3 142.0 L 260.9 208.4 L 283.5 238.0 L 306.1 270.3 L 328.7 252.5 L 351.3 250.5 L 373.9 265.0 L 396.5 236.1 L 419.1 245.3 L 441.7 235.4 L 464.3 188.0 L 487.0 151.2 L 509.6 142.0 L 532.2 208.4 L 554.8 238.0 L 577.4 270.3 L 600.0 252.5" fill="none" stroke="#a8452c" stroke-width="1.8" stroke-dasharray="6 4"/>
+          <path d="M 80.0 244.2 L 102.6 256.2 L 125.2 221.5 L 147.8 227.0 L 170.4 215.2 L 193.0 164.3 L 215.7 127.8 L 238.3 124.6 L 260.9 191.5 L 283.5 224.5 L 306.1 258.3 L 328.7 237.9 L 351.3 229.2 L 373.9 242.0 L 396.5 205.1 L 419.1 211.1 L 441.7 198.7 L 464.3 144.6 L 487.0 105.9 L 509.6 102.6 L 532.2 173.8 L 554.8 208.9 L 577.4 244.9 L 600.0 223.3" fill="none" stroke="#16697a" stroke-width="2.4"/>
+          <path d="M 80.0 237.4 L 102.6 249.2 L 125.2 207.1 L 147.8 213.7 L 170.4 197.9 L 193.0 163.7 L 215.7 113.7 L 238.3 106.4 L 260.9 169.6 L 283.5 206.4 L 306.1 236.1 L 328.7 207.8 L 351.3 199.9 L 373.9 217.0 L 396.5 198.6 L 419.1 170.9 L 441.7 163.7 L 464.3 122.2 L 487.0 65.0 L 509.6 75.5 L 532.2 140.0 L 554.8 170.9 L 577.4 217.6 L 600.0 190.0" fill="none" stroke="#131b26" stroke-width="2.4"/>
+          <g fill="#131b26"><circle cx="80.0" cy="237.4" r="2.6"/><circle cx="102.6" cy="249.2" r="2.6"/><circle cx="125.2" cy="207.1" r="2.6"/><circle cx="147.8" cy="213.7" r="2.6"/><circle cx="170.4" cy="197.9" r="2.6"/><circle cx="193.0" cy="163.7" r="2.6"/><circle cx="215.7" cy="113.7" r="2.6"/><circle cx="238.3" cy="106.4" r="2.6"/><circle cx="260.9" cy="169.6" r="2.6"/><circle cx="283.5" cy="206.4" r="2.6"/><circle cx="306.1" cy="236.1" r="2.6"/><circle cx="328.7" cy="207.8" r="2.6"/><circle cx="351.3" cy="199.9" r="2.6"/><circle cx="373.9" cy="217.0" r="2.6"/><circle cx="396.5" cy="198.6" r="2.6"/><circle cx="419.1" cy="170.9" r="2.6"/><circle cx="441.7" cy="163.7" r="2.6"/><circle cx="464.3" cy="122.2" r="2.6"/><circle cx="487.0" cy="65.0" r="2.6"/><circle cx="509.6" cy="75.5" r="2.6"/><circle cx="532.2" cy="140.0" r="2.6"/><circle cx="554.8" cy="170.9" r="2.6"/><circle cx="577.4" cy="217.6" r="2.6"/><circle cx="600.0" cy="190.0" r="2.6"/></g>
+          <text x="80.0" y="310" text-anchor="middle" font-size="10.5" fill="#4a5765">Jan 1959</text><text x="215.7" y="310" text-anchor="middle" font-size="10.5" fill="#4a5765">Jul</text><text x="351.3" y="310" text-anchor="middle" font-size="10.5" fill="#4a5765">Jan 1960</text><text x="487.0" y="310" text-anchor="middle" font-size="10.5" fill="#4a5765">Jul</text>
+          <line x1="70" y1="290" x2="610" y2="290" stroke="#131b26" stroke-width="1.2"/>
+          <g font-size="11.5">
+            <line x1="84" y1="330" x2="104" y2="330" stroke="#131b26" stroke-width="2.4"/><text x="108" y="334" fill="#131b26">actual</text>
+            <line x1="164" y1="330" x2="184" y2="330" stroke="#16697a" stroke-width="2.4"/><text x="188" y="334" fill="#16697a">Holt-Winters</text>
+            <line x1="288" y1="330" x2="308" y2="330" stroke="#a8452c" stroke-width="1.8" stroke-dasharray="6 4"/><text x="312" y="334" fill="#a8452c">seasonal naive</text>
+            <line x1="424" y1="330" x2="444" y2="330" stroke="#9aa5b1" stroke-width="1.8" stroke-dasharray="3 4"/><text x="448" y="334" fill="#4a5765">naive (= SES here)</text>
+          </g>
+          </g>
+        </svg>
+        <figcaption>Forecasts made at the end of 1958 against the actual 1959–1960 traffic (thousands of passengers).</figcaption>
+      </figure>
+      <table>
+        <tr><td><strong>Model (fit on 1949–58)</strong></td><td><strong>Fitted constants</strong></td><td><strong>MAPE, 1959–60</strong></td><td><strong>RMSE</strong></td></tr>
+        <tr><td>Holt-Winters, multiplicative</td><td>α 0.31, β 0.005, γ 0.98</td><td>7.6%</td><td>38</td></tr>
+        <tr><td>Holt-Winters, additive</td><td>α 0.23, β 0.00, γ 1.00</td><td>7.8%</td><td>41</td></tr>
+        <tr><td>Seasonal naive (repeat 1958)</td><td>—</td><td>15.5%</td><td>77</td></tr>
+        <tr><td>Single exponential smoothing</td><td>α 1.00</td><td>23.6%</td><td>137</td></tr>
+        <tr><td>Naive (repeat Dec 1958)</td><td>—</td><td>23.6%</td><td>137</td></tr>
+      </table>
+      <p>What to take from it:</p>
+      <ul>
+        <li><strong>Single smoothing collapsed into naive.</strong> A series with trend and season breaks single smoothing’s flat-level assumption. The best it can do is chase the latest value, so the optimizer pushed α to 1 — exactly the naive forecast. A fitted α near 1 is often a sign of a missing component.</li>
+        <li><strong>Multiplicative fitted the training years better.</strong> Its squared one-step error over 1950–58 was about 29% lower than the additive model’s (11,591 vs 16,257). On the two test years the gap narrowed to a small one. A better fit doesn’t always mean a proportionally better forecast.</li>
+        <li><strong>γ went to about 1.</strong> Each month’s factor is re-estimated almost entirely from its latest ratio. The optimizer decided last year’s same month is the best guide to this year’s.</li>
+        <li><strong>Holt-Winters halved the seasonal naive error.</strong> That is a model earning its complexity — the check Lesson 8 insists on.</li>
+      </ul>
+
+      <div class="ix" data-quiz="m7l4-q2">
+        <div class="ix-head"><span class="ix-kind">real data</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Fitting single exponential smoothing to the airline data returned α = 1. What is the best explanation?</p>
+        <div class="opts">
+          <button class="opt" data-fb="There's plenty of noise and seasonal swing in this data. α = 1 isn't a statement about noise here.">The data has almost no noise, so every reading can be trusted.</button>
+          <button class="opt" data-right data-fb="Single smoothing assumes a flat level. With a strong trend and season, any older data makes the baseline lag further behind, so the error-minimising choice is to ignore history entirely — which turns the model into the naive forecast.">The model has no trend or season, so the best it can do is copy the latest value.</button>
+          <button class="opt" data-fb="The optimizer is allowed to reach the boundary of [0, 1]. Landing there is a result, not a failure.">The optimizer broke, because α must be strictly below 1.</button>
+          <button class="opt" data-fb="More data wouldn't change the mismatch between a flat-level model and trending, seasonal data.">Ten years is too little data for smoothing.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Worth noticing</span>
+      <p class="q">Why can the seasonal naive forecast have the right shape but still miss by 15%?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">It copies 1958’s seasonal pattern but also 1958’s level. Traffic kept growing, so every month is too low — and further off in 1960 than in 1959. It has season but no trend.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
+<!-- ==================== LESSON 5 ==================== -->
+<section class="lesson" id="l5" data-short="ARIMA" style="--accent:#6b3fa0">
+  <div class="lesson-head">
+    <span class="ln">Lesson 5</span>
+    <h2>ARIMA</h2>
+    <p class="keyline">Difference the data until it stops drifting, predict those differences from their own recent past and from recent errors — and exponential smoothing turns out to be one special case.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <p>ARIMA stands for <strong>AutoRegressive Integrated Moving Average</strong>. The lecture covers what it does rather than the theory behind it. It has three parts, one per letter group.</p>
+
+      <h3>1 · Differences (the “I”)</h3>
+      <div class="defn">
+        <span class="term">Stationary</span>
+        <p>A series whose mean, variance and other measures are expected to stay constant over time.</p>
+      </div>
+      <p>Exponential smoothing’s unrolled equation estimates S<sub>t</sub> from x<sub>t</sub>, x<sub>t−1</sub>, x<sub>t−2</sub>, … — which works well when the data is stationary. Trend or seasonality break that. But even when the data isn’t stationary, its <em>differences</em> may be:</p>
+      <table class="plain">
+        <tr><td><strong>1st-order differences</strong></td><td>x<sub>t</sub> − x<sub>t−1</sub>, the change between consecutive observations</td></tr>
+        <tr><td><strong>2nd-order differences</strong></td><td>The differences of those differences</td></tr>
+        <tr><td><strong>d-th-order differences</strong></td><td>Repeat the differencing d times</td></tr>
+      </table>
+
+      <h3>2 · Autoregression (the “AR”)</h3>
+      <p>Regression predicts a value from other factors — a child’s adult height from the parents’ heights and the child’s own height at two. <em>Auto</em>regression predicts a value from <strong>earlier values of the same thing</strong>: the child’s height at eighteen months, at one year, and so on. That only works with time series data.</p>
+      <p>The unrolled exponential smoothing equation is already an autoregression — one that reaches back through <em>all</em> the data, so it is <strong>order ∞</strong>. Using only the last p periods gives an <strong>order-p</strong> autoregressive model.</p>
+      <p>ARIMA applies the autoregression to the <em>d-th-order differences</em> rather than to the raw observations.</p>
+
+      <h3>3 · Moving average (the “MA”)</h3>
+      <p>Besides past values, ARIMA also uses <strong>past forecast errors</strong> as predictors. Going back q periods gives an <strong>order-q moving average</strong>.</p>
+    </div>
+    <aside class="check">
+      <span class="n">Vocabulary</span>
+      <p class="q">In ARIMA(p, d, q), which letter controls which part?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">p — how many past values feed the autoregression. d — how many times the data is differenced. q — how many past errors feed the moving average.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Putting it together</h3>
+      <p>Writing D<sub>t</sub> for the d-th-order difference at time t and ε<sub>t</sub> for the forecast error, one common way to write the model is:</p>
+      <div class="formula">
+        D<sub>t</sub> = μ + Σ<sub>i=1..p</sub> φ<sub>i</sub>·D<sub>t−i</sub> + Σ<sub>i=1..q</sub> θ<sub>i</sub>·ε<sub>t−i</sub> + ε<sub>t</sub>
+        <span class="cap">A constant, p autoregressive terms on past differences, and q terms on past errors. Sign conventions for the θ terms differ between textbooks and software; the structure is what matters.</span>
+      </div>
+      <p>Once you choose p, d and q, software finds the best constants — again by solving an optimization problem — and does it quickly. So you can try several (p, d, q) combinations and compare them with the validation approaches from earlier modules. Lesson 8 covers how those approaches need adjusting for time series.</p>
+      <p>Seasonality can be added too. The course doesn’t cover seasonal ARIMA, but good software does it for you.</p>
+
+      <h3>Familiar models in disguise</h3>
+      <p>Particular choices of p, d and q reproduce simpler models. That is part of ARIMA’s power: one framework generalises many.</p>
+
+      <div class="ix" data-match="m7l5-match">
+        <div class="ix-head"><span class="ix-kind">match the pairs</span><span class="ix-done">matched</span></div>
+        <p class="prompt">Click an ARIMA setting, then the model it reduces to.</p>
+        <div class="match">
+          <div class="col" data-side="a"><h4>Setting</h4>
+            <button class="cell" data-pair="1">ARIMA(0, 0, 0)</button>
+            <button class="cell" data-pair="2">ARIMA(0, 1, 0)</button>
+            <button class="cell" data-pair="3">ARIMA(p, 0, 0)</button>
+            <button class="cell" data-pair="4">ARIMA(0, 0, q)</button>
+            <button class="cell" data-pair="5">ARIMA(0, 1, 1)</button>
+          </div>
+          <div class="col" data-side="b"><h4>Equivalent model</h4>
+            <button class="cell" data-pair="1" data-fb="No differencing, no lags, no past errors — just a constant plus noise. No pattern to exploit.">White noise — no pattern at all</button>
+            <button class="cell" data-pair="2" data-fb="One difference and nothing else: each change is pure noise, so the next value is the last value plus a random step.">Random walk</button>
+            <button class="cell" data-pair="3" data-fb="Only the autoregressive part is switched on, applied to the undifferenced data.">Pure autoregressive (AR) model</button>
+            <button class="cell" data-pair="4" data-fb="Only the moving-average part is switched on — past errors, no past values.">Pure moving-average (MA) model</button>
+            <button class="cell" data-pair="5" data-fb="One difference plus one past error reproduces basic (single) exponential smoothing — Lessons 1 to 4 were a special case all along.">Basic exponential smoothing</button>
+          </div>
+        </div>
+        <p class="fb"></p>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Exam target</span>
+      <p class="q">Which ARIMA model is basic exponential smoothing?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">ARIMA(0, 1, 1): first differences, no autoregressive terms, one moving-average term.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>When to use it</h3>
+      <ul>
+        <li>ARIMA, like exponential smoothing, is for <strong>short-term forecasting</strong>.</li>
+        <li>It tends to beat exponential smoothing when the data is <strong>more stable</strong> — fewer peaks, valleys and outliers.</li>
+        <li>Rule of thumb: you need about <strong>40 past data points</strong> for ARIMA to work well.</li>
+      </ul>
+
+      <div class="ix" data-quiz="m7l5-q1">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">What does ARIMA run its autoregression on?</p>
+        <div class="opts">
+          <button class="opt" data-fb="That is plain autoregression. ARIMA's distinctive step is to difference first — the “integrated” part.">The raw observations x<sub>t−1</sub>, x<sub>t−2</sub>, …</button>
+          <button class="opt" data-right data-fb="The autoregression is applied to the d-th-order differences, which may be stationary even when the raw series isn't. With d = 0 those “differences” are just the raw data.">The d-th-order differences of the observations</button>
+          <button class="opt" data-fb="Past errors are the moving-average part (q), which sits alongside the autoregression rather than being its input.">The past forecast errors</button>
+          <button class="opt" data-fb="Squared errors and variances belong to GARCH, in the next lesson.">The past squared errors</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="branch" data-branch="m7l5-case">
+        <div class="persona">
+          <span class="av">DR</span>
+          <span class="who"><b>Dana Reyes</b><span>Demand planner, regional truck dealer group</span></span>
+        </div>
+        <div class="scene" data-step="1">
+          <p>Dana has 30 months of pickup truck sales. The series jumps around a lot — end-of-quarter promotions create sharp spikes, and one month a fleet order tripled sales.</p>
+          <p class="said">Her manager: “ARIMA is the more general model, so it must be the better one. Use that.”</p>
+          <p><strong>What should Dana start with?</strong></p>
+          <div class="choices">
+            <button class="choice" data-go="2" data-tone="bad" data-head="What goes wrong"
+              data-outcome="More general doesn't mean better on this data. Thirty points is short of the roughly 40 the rule of thumb asks for, and ARIMA tends to do best on stable series — this one is full of spikes and an outlier. She would be fitting more parameters to less, noisier information.">
+              ARIMA, because a general model can always match or beat its special cases.
+            </button>
+            <button class="choice" data-go="2" data-tone="good" data-head="The better starting point"
+              data-outcome="Exponential smoothing copes better with peaks and outliers, and 30 points is below ARIMA's rough 40-point threshold. She can still try a few ARIMA specifications and compare them on held-out months — but smoothing is the sensible baseline here.">
+              Exponential smoothing, and compare a few ARIMA models against it on held-out months.
+            </button>
+            <button class="choice" data-go="2" data-tone="bad" data-head="What it misses"
+              data-outcome="GARCH estimates variance, not the sales figure itself. It answers a different question — one Dana is about to be asked.">
+              GARCH, because the series is so volatile.
+            </button>
+          </div>
+        </div>
+        <div class="scene" data-step="2" data-end="1" hidden>
+          <p><strong>The next request.</strong> The dealer group decides how many trucks to order from the forecast. The operations lead asks: “How far off could this number be? I need to know how much buffer stock to hold.”</p>
+          <div class="choices">
+            <button class="choice" data-tone="bad" data-head="What happens"
+              data-outcome="A fixed percentage ignores what the data says about uncertainty. If the variability changes over time — calm stretches, then turbulent ones — a constant buffer is too big in calm months and too small in wild ones.">
+              Add a flat 10% to the forecast and call it the buffer.
+            </button>
+            <button class="choice" data-tone="good" data-head="The right call"
+              data-outcome="The question is about variance, not the expected value. Estimating the variance of the forecast error tells her how much the true number could sit above or below the forecast — and if that variance shifts over time, a GARCH-type model is built to estimate it. Buffer size follows from that spread.">
+              Estimate the variance of the forecast error, and size the buffer from that.
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-head"><span class="lbl">Class discussion — Lesson 5</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="m7l5" data-placeholder="arima() / auto.arima() syntax, seasonal ARIMA, how many points your data has…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Check</span>
+      <p class="q">State the rule of thumb for how much data ARIMA needs, and the kind of data it prefers.</p>
+      <details><summary>Show answer</summary>
+        <p class="a">About 40 past data points; and relatively stable data with few peaks, valleys and outliers. Spiky data tends to favour exponential smoothing.</p>
+      </details>
+    </aside>
+  </div>
+  <div class="row">
+    <div class="main">
+      <h3>More examples: seeing smoothing inside ARIMA</h3>
+      <h4>Rewrite smoothing as “last forecast plus a correction”</h4>
+      <p>Since F<sub>t+1</sub> = S<sub>t</sub>, the smoothing equation can be rearranged:</p>
+      <div class="formula">
+        F<sub>t+1</sub> = αx<sub>t</sub> + (1 − α)F<sub>t</sub> = F<sub>t</sub> + α·(x<sub>t</sub> − F<sub>t</sub>)
+        <span class="cap">New forecast = old forecast + α × last error. This is called the error-correction form.</span>
+      </div>
+      <p>Now look at it through ARIMA’s eyes. The change in the series, x<sub>t+1</sub> − x<sub>t</sub>, is a <strong>first difference</strong> (d = 1). Working through the algebra, that difference is explained by the current random error plus a multiple of the <strong>previous error</strong> (q = 1), with no past values needed (p = 0). That is ARIMA(0, 1, 1). α is doing the job of the moving-average coefficient.</p>
+      <p>Example with α = 0.3: last forecast 200, actual 220, error +20. New forecast = 200 + 0.3 × 20 = 206. A single surprise shifts every future forecast by 30% of its size.</p>
+
+      <h4>Example: an AR(1) model forecast</h4>
+      <p>Weekly deviations of a warehouse’s temperature from its setpoint follow D<sub>t</sub> = 0.6·D<sub>t−1</sub> + ε<sub>t</sub> (ARIMA(1, 0, 0), no constant). This week’s deviation is +5°.</p>
+      <div class="formula">
+        next week: 0.6 × 5 = 3.0 &nbsp;&nbsp; in two weeks: 0.6 × 3.0 = 1.8 &nbsp;&nbsp; in three: 1.08 … → 0
+        <span class="cap">A stationary AR(1) forecast decays back toward the mean. Contrast the random walk below, whose forecast never decays.</span>
+      </div>
+
+      <h4>Example: stock prices as a random walk</h4>
+      <p>Daily closing prices are often close to ARIMA(0, 1, 0): tomorrow = today + an unpredictable change. The best forecast for any future day is today’s price, and the uncertainty grows with the horizon. That is why the <em>price</em> itself is hard to forecast — and why Lesson 6 turns to forecasting how <em>variable</em> the changes will be.</p>
+
+      <h4>Example: the “airline model”</h4>
+      <p>Box and Jenkins modelled the Lesson 2 airline data with what became known as the airline model, written ARIMA(0, 1, 1)(0, 1, 1)<sub>12</sub> and fitted to the <em>log</em> of the passenger counts. The second bracket is the seasonal extension the lecture mentions:</p>
+      <table class="plain">
+        <tr><td><strong>log</strong></td><td>Turns the growing, proportional swings into constant-size ones</td></tr>
+        <tr><td><strong>(0, 1, 1)</strong></td><td>One ordinary difference and one past error — smoothing from month to month</td></tr>
+        <tr><td><strong>(0, 1, 1)<sub>12</sub></strong></td><td>One difference against the same month last year, and one past error from 12 months back — smoothing from year to year</td></tr>
+      </table>
+      <p>Fitted on 1949–1958 for this page, its two error coefficients came out at about −0.32 and −0.57, similar to published fits. Its 1959–60 forecasts had a MAPE of 8.4% (RMSE 43) — in the same range as Holt-Winters in Lesson 4, with just two parameters. Lesson 7 shows how the correlation plots point to this exact model.</p>
+
+      <div class="ix" data-quiz="m7l5-q2">
+        <div class="ix-head"><span class="ix-kind">calculation</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Using the error-correction form with α = 0.25: last period’s forecast was 80 and the actual value was 72. What is the new forecast?</p>
+        <div class="opts">
+          <button class="opt" data-fb="That moves 75% of the way toward the actual. The correction uses α, not 1 − α.">74</button>
+          <button class="opt" data-right data-fb="Error = 72 − 80 = −8. New forecast = 80 + 0.25 × (−8) = 78. Same answer as 0.25 × 72 + 0.75 × 80.">78</button>
+          <button class="opt" data-fb="The error must be x − F = −8, not +8. Adding 2 moves the forecast away from the actual.">82</button>
+          <button class="opt" data-fb="72 is α = 1 — the naive forecast.">72</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Check</span>
+      <p class="q">An AR(1) forecast fades toward the mean; a random-walk forecast stays flat at today’s value. What single difference in the model causes that?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">The random walk is differenced (d = 1), so shocks are permanent. The stationary AR(1) has a coefficient below 1 on the undifferenced data, so each shock’s effect shrinks every period.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
+<!-- ==================== LESSON 6 ==================== -->
+<section class="lesson" id="l6" data-short="GARCH" style="--accent:#a8452c">
+  <div class="lesson-head">
+    <span class="ln">Lesson 6</span>
+    <h2>GARCH</h2>
+    <p class="keyline">The same machinery as ARIMA, pointed at variance instead of value — so you can say not just what will happen, but how uncertain that is.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <p>GARCH stands for <strong>Generalized AutoRegressive Conditional Heteroscedasticity</strong>. It estimates or forecasts the <strong>variance</strong> of something recorded as a time series.</p>
+
+      <h3>Why forecast variance at all?</h3>
+      <ul>
+        <li><strong>Size the error around a forecast.</strong> A pickup truck maker forecasting demand needs to know how far above or below the true figure the forecast might land, so it can plan production and stock.</li>
+        <li><strong>Measure risk in investing.</strong> Classic portfolio optimization balances expected return against volatility. Some investors accept more risk for more expected return; others trade return for safety. Variance is the usual stand-in for volatility — and GARCH is a common way to estimate it.</li>
+      </ul>
+
+      <figure>
+        <svg class="fig" viewBox="0 0 660 330" role="img" aria-label="Daily returns drawn as spikes around zero. Calm stretches and turbulent stretches alternate. Two lines above and below track two estimated standard deviations and widen during the turbulent stretches.">
+          <line x1="62" y1="170" x2="620" y2="170" stroke="#131b26" stroke-width="1.2"/>
+          <g stroke="#9aa5b1" stroke-width="2"><line x1="62.0" y1="170" x2="62.0" y2="225.2"/><line x1="66.0" y1="170" x2="66.0" y2="152.5"/><line x1="70.0" y1="170" x2="70.0" y2="126.3"/><line x1="74.0" y1="170" x2="74.0" y2="192.5"/><line x1="78.1" y1="170" x2="78.1" y2="225.8"/><line x1="82.1" y1="170" x2="82.1" y2="172.9"/><line x1="86.1" y1="170" x2="86.1" y2="150.3"/><line x1="90.1" y1="170" x2="90.1" y2="126.7"/><line x1="94.1" y1="170" x2="94.1" y2="218.7"/><line x1="98.1" y1="170" x2="98.1" y2="223.5"/><line x1="102.1" y1="170" x2="102.1" y2="139.6"/><line x1="106.2" y1="170" x2="106.2" y2="150.1"/><line x1="110.2" y1="170" x2="110.2" y2="108.7"/><line x1="114.2" y1="170" x2="114.2" y2="127.5"/><line x1="118.2" y1="170" x2="118.2" y2="174.4"/><line x1="122.2" y1="170" x2="122.2" y2="181.1"/><line x1="126.2" y1="170" x2="126.2" y2="71.1"/><line x1="130.2" y1="170" x2="130.2" y2="184.4"/><line x1="134.3" y1="170" x2="134.3" y2="206.8"/><line x1="138.3" y1="170" x2="138.3" y2="222.1"/><line x1="142.3" y1="170" x2="142.3" y2="165.6"/><line x1="146.3" y1="170" x2="146.3" y2="163.7"/><line x1="150.3" y1="170" x2="150.3" y2="184.2"/><line x1="154.3" y1="170" x2="154.3" y2="172.4"/><line x1="158.3" y1="170" x2="158.3" y2="160.0"/><line x1="162.4" y1="170" x2="162.4" y2="145.8"/><line x1="166.4" y1="170" x2="166.4" y2="132.5"/><line x1="170.4" y1="170" x2="170.4" y2="162.7"/><line x1="174.4" y1="170" x2="174.4" y2="229.6"/><line x1="178.4" y1="170" x2="178.4" y2="143.5"/><line x1="182.4" y1="170" x2="182.4" y2="222.4"/><line x1="186.4" y1="170" x2="186.4" y2="176.7"/><line x1="190.5" y1="170" x2="190.5" y2="224.8"/><line x1="194.5" y1="170" x2="194.5" y2="169.9"/><line x1="198.5" y1="170" x2="198.5" y2="199.3"/><line x1="202.5" y1="170" x2="202.5" y2="162.1"/><line x1="206.5" y1="170" x2="206.5" y2="54.2"/><line x1="210.5" y1="170" x2="210.5" y2="172.5"/><line x1="214.5" y1="170" x2="214.5" y2="129.0"/><line x1="218.6" y1="170" x2="218.6" y2="233.1"/><line x1="222.6" y1="170" x2="222.6" y2="184.3"/><line x1="226.6" y1="170" x2="226.6" y2="139.0"/><line x1="230.6" y1="170" x2="230.6" y2="174.2"/><line x1="234.6" y1="170" x2="234.6" y2="154.3"/><line x1="238.6" y1="170" x2="238.6" y2="165.8"/><line x1="242.6" y1="170" x2="242.6" y2="208.1"/><line x1="246.7" y1="170" x2="246.7" y2="148.5"/><line x1="250.7" y1="170" x2="250.7" y2="199.9"/><line x1="254.7" y1="170" x2="254.7" y2="102.0"/><line x1="258.7" y1="170" x2="258.7" y2="191.1"/><line x1="262.7" y1="170" x2="262.7" y2="142.6"/><line x1="266.7" y1="170" x2="266.7" y2="169.9"/><line x1="270.7" y1="170" x2="270.7" y2="135.2"/><line x1="274.8" y1="170" x2="274.8" y2="192.1"/><line x1="278.8" y1="170" x2="278.8" y2="134.5"/><line x1="282.8" y1="170" x2="282.8" y2="174.4"/><line x1="286.8" y1="170" x2="286.8" y2="127.1"/><line x1="290.8" y1="170" x2="290.8" y2="147.8"/><line x1="294.8" y1="170" x2="294.8" y2="165.1"/><line x1="298.8" y1="170" x2="298.8" y2="195.6"/><line x1="302.9" y1="170" x2="302.9" y2="145.0"/><line x1="306.9" y1="170" x2="306.9" y2="154.9"/><line x1="310.9" y1="170" x2="310.9" y2="118.9"/><line x1="314.9" y1="170" x2="314.9" y2="183.0"/><line x1="318.9" y1="170" x2="318.9" y2="151.6"/><line x1="322.9" y1="170" x2="322.9" y2="153.7"/><line x1="326.9" y1="170" x2="326.9" y2="161.2"/><line x1="331.0" y1="170" x2="331.0" y2="163.8"/><line x1="335.0" y1="170" x2="335.0" y2="164.8"/><line x1="339.0" y1="170" x2="339.0" y2="186.6"/><line x1="343.0" y1="170" x2="343.0" y2="197.7"/><line x1="347.0" y1="170" x2="347.0" y2="181.1"/><line x1="351.0" y1="170" x2="351.0" y2="153.9"/><line x1="355.1" y1="170" x2="355.1" y2="129.3"/><line x1="359.1" y1="170" x2="359.1" y2="141.1"/><line x1="363.1" y1="170" x2="363.1" y2="138.3"/><line x1="367.1" y1="170" x2="367.1" y2="146.0"/><line x1="371.1" y1="170" x2="371.1" y2="148.6"/><line x1="375.1" y1="170" x2="375.1" y2="164.5"/><line x1="379.1" y1="170" x2="379.1" y2="147.6"/><line x1="383.2" y1="170" x2="383.2" y2="118.7"/><line x1="387.2" y1="170" x2="387.2" y2="180.8"/><line x1="391.2" y1="170" x2="391.2" y2="191.9"/><line x1="395.2" y1="170" x2="395.2" y2="109.0"/><line x1="399.2" y1="170" x2="399.2" y2="161.1"/><line x1="403.2" y1="170" x2="403.2" y2="136.3"/><line x1="407.2" y1="170" x2="407.2" y2="139.5"/><line x1="411.3" y1="170" x2="411.3" y2="209.5"/><line x1="415.3" y1="170" x2="415.3" y2="83.1"/><line x1="419.3" y1="170" x2="419.3" y2="89.6"/><line x1="423.3" y1="170" x2="423.3" y2="161.0"/><line x1="427.3" y1="170" x2="427.3" y2="134.2"/><line x1="431.3" y1="170" x2="431.3" y2="164.1"/><line x1="435.3" y1="170" x2="435.3" y2="208.4"/><line x1="439.4" y1="170" x2="439.4" y2="174.8"/><line x1="443.4" y1="170" x2="443.4" y2="154.9"/><line x1="447.4" y1="170" x2="447.4" y2="127.2"/><line x1="451.4" y1="170" x2="451.4" y2="142.3"/><line x1="455.4" y1="170" x2="455.4" y2="167.7"/><line x1="459.4" y1="170" x2="459.4" y2="121.2"/><line x1="463.4" y1="170" x2="463.4" y2="199.0"/><line x1="467.5" y1="170" x2="467.5" y2="140.4"/><line x1="471.5" y1="170" x2="471.5" y2="129.1"/><line x1="475.5" y1="170" x2="475.5" y2="181.0"/><line x1="479.5" y1="170" x2="479.5" y2="233.9"/><line x1="483.5" y1="170" x2="483.5" y2="206.6"/><line x1="487.5" y1="170" x2="487.5" y2="160.5"/><line x1="491.5" y1="170" x2="491.5" y2="150.0"/><line x1="495.6" y1="170" x2="495.6" y2="113.5"/><line x1="499.6" y1="170" x2="499.6" y2="209.9"/><line x1="503.6" y1="170" x2="503.6" y2="169.9"/><line x1="507.6" y1="170" x2="507.6" y2="145.6"/><line x1="511.6" y1="170" x2="511.6" y2="175.8"/><line x1="515.6" y1="170" x2="515.6" y2="252.1"/><line x1="519.6" y1="170" x2="519.6" y2="134.9"/><line x1="523.7" y1="170" x2="523.7" y2="71.5"/><line x1="527.7" y1="170" x2="527.7" y2="117.2"/><line x1="531.7" y1="170" x2="531.7" y2="218.1"/><line x1="535.7" y1="170" x2="535.7" y2="191.3"/><line x1="539.7" y1="170" x2="539.7" y2="159.2"/><line x1="543.7" y1="170" x2="543.7" y2="55.8"/><line x1="547.7" y1="170" x2="547.7" y2="133.9"/><line x1="551.8" y1="170" x2="551.8" y2="163.7"/><line x1="555.8" y1="170" x2="555.8" y2="88.8"/><line x1="559.8" y1="170" x2="559.8" y2="174.6"/><line x1="563.8" y1="170" x2="563.8" y2="72.4"/><line x1="567.8" y1="170" x2="567.8" y2="210.8"/><line x1="571.8" y1="170" x2="571.8" y2="197.2"/><line x1="575.8" y1="170" x2="575.8" y2="131.0"/><line x1="579.9" y1="170" x2="579.9" y2="95.5"/><line x1="583.9" y1="170" x2="583.9" y2="133.9"/><line x1="587.9" y1="170" x2="587.9" y2="154.0"/><line x1="591.9" y1="170" x2="591.9" y2="260.7"/><line x1="595.9" y1="170" x2="595.9" y2="210.1"/><line x1="599.9" y1="170" x2="599.9" y2="203.1"/><line x1="603.9" y1="170" x2="603.9" y2="197.7"/><line x1="608.0" y1="170" x2="608.0" y2="141.0"/><line x1="612.0" y1="170" x2="612.0" y2="185.8"/><line x1="616.0" y1="170" x2="616.0" y2="134.9"/><line x1="620.0" y1="170" x2="620.0" y2="166.4"/></g>
+          <path d="M 62.0 79.9 L 66.0 77.2 L 70.0 82.2 L 74.0 82.2 L 78.1 86.1 L 82.1 82.1 L 86.1 87.5 L 90.1 91.1 L 94.1 89.8 L 98.1 87.2 L 102.1 83.7 L 106.2 86.3 L 110.2 90.0 L 114.2 83.5 L 118.2 83.6 L 122.2 88.7 L 126.2 93.1 L 130.2 70.2 L 134.3 76.1 L 138.3 78.4 L 142.3 76.9 L 146.3 82.7 L 150.3 87.9 L 154.3 92.1 L 158.3 96.5 L 162.4 100.1 L 166.4 101.6 L 170.4 100.0 L 174.4 103.4 L 178.4 94.4 L 182.4 96.2 L 186.4 91.4 L 190.5 95.7 L 194.5 90.1 L 198.5 94.7 L 202.5 96.0 L 206.5 99.8 L 210.5 65.8 L 214.5 72.6 L 218.6 74.6 L 222.6 70.5 L 226.6 76.4 L 230.6 79.7 L 234.6 85.3 L 238.6 89.6 L 242.6 94.2 L 246.7 93.7 L 250.7 96.4 L 254.7 97.4 L 258.7 86.6 L 262.7 90.2 L 266.7 92.5 L 270.7 96.8 L 274.8 96.7 L 278.8 99.0 L 282.8 98.3 L 286.8 102.0 L 290.8 98.9 L 294.8 100.9 L 298.8 104.3 L 302.9 105.0 L 306.9 105.7 L 310.9 107.8 L 314.9 100.8 L 318.9 103.7 L 322.9 105.7 L 326.9 107.6 L 331.0 110.1 L 335.0 112.5 L 339.0 114.6 L 343.0 115.4 L 347.0 113.9 L 351.0 115.4 L 355.1 116.1 L 359.1 110.8 L 363.1 109.8 L 367.1 108.3 L 371.1 108.7 L 375.1 109.5 L 379.1 112.0 L 383.2 112.2 L 387.2 104.0 L 391.2 106.8 L 395.2 107.8 L 399.2 97.1 L 403.2 100.7 L 407.2 100.2 L 411.3 100.5 L 415.3 98.6 L 419.3 79.5 L 423.3 68.4 L 427.3 74.9 L 431.3 77.5 L 435.3 83.2 L 439.4 84.3 L 443.4 89.4 L 447.4 93.3 L 451.4 91.8 L 455.4 93.7 L 459.4 98.0 L 463.4 93.9 L 467.5 95.3 L 471.5 96.5 L 475.5 94.9 L 479.5 98.6 L 483.5 89.2 L 487.5 89.8 L 491.5 94.1 L 495.6 97.0 L 499.6 90.6 L 503.6 90.2 L 507.6 94.8 L 511.6 96.9 L 515.6 100.7 L 519.6 83.1 L 523.7 84.8 L 527.7 64.8 L 531.7 65.2 L 535.7 66.6 L 539.7 72.3 L 543.7 78.2 L 547.7 53.1 L 551.8 58.3 L 555.8 65.7 L 559.8 57.5 L 563.8 65.1 L 567.8 51.0 L 571.8 55.6 L 575.8 61.7 L 579.9 65.4 L 583.9 59.5 L 587.9 64.0 L 591.9 70.4 L 595.9 57.6 L 599.9 61.6 L 603.9 66.3 L 608.0 71.2 L 612.0 75.5 L 616.0 80.8 L 620.0 82.8" fill="none" stroke="#a8452c" stroke-width="2"/>
+          <path d="M 62.0 260.1 L 66.0 262.8 L 70.0 257.8 L 74.0 257.8 L 78.1 253.9 L 82.1 257.9 L 86.1 252.5 L 90.1 248.9 L 94.1 250.2 L 98.1 252.8 L 102.1 256.3 L 106.2 253.7 L 110.2 250.0 L 114.2 256.5 L 118.2 256.4 L 122.2 251.3 L 126.2 246.9 L 130.2 269.8 L 134.3 263.9 L 138.3 261.6 L 142.3 263.1 L 146.3 257.3 L 150.3 252.1 L 154.3 247.9 L 158.3 243.5 L 162.4 239.9 L 166.4 238.4 L 170.4 240.0 L 174.4 236.6 L 178.4 245.6 L 182.4 243.8 L 186.4 248.6 L 190.5 244.3 L 194.5 249.9 L 198.5 245.3 L 202.5 244.0 L 206.5 240.2 L 210.5 274.2 L 214.5 267.4 L 218.6 265.4 L 222.6 269.5 L 226.6 263.6 L 230.6 260.3 L 234.6 254.7 L 238.6 250.4 L 242.6 245.8 L 246.7 246.3 L 250.7 243.6 L 254.7 242.6 L 258.7 253.4 L 262.7 249.8 L 266.7 247.5 L 270.7 243.2 L 274.8 243.3 L 278.8 241.0 L 282.8 241.7 L 286.8 238.0 L 290.8 241.1 L 294.8 239.1 L 298.8 235.7 L 302.9 235.0 L 306.9 234.3 L 310.9 232.2 L 314.9 239.2 L 318.9 236.3 L 322.9 234.3 L 326.9 232.4 L 331.0 229.9 L 335.0 227.5 L 339.0 225.4 L 343.0 224.6 L 347.0 226.1 L 351.0 224.6 L 355.1 223.9 L 359.1 229.2 L 363.1 230.2 L 367.1 231.7 L 371.1 231.3 L 375.1 230.5 L 379.1 228.0 L 383.2 227.8 L 387.2 236.0 L 391.2 233.2 L 395.2 232.2 L 399.2 242.9 L 403.2 239.3 L 407.2 239.8 L 411.3 239.5 L 415.3 241.4 L 419.3 260.5 L 423.3 271.6 L 427.3 265.1 L 431.3 262.5 L 435.3 256.8 L 439.4 255.7 L 443.4 250.6 L 447.4 246.7 L 451.4 248.2 L 455.4 246.3 L 459.4 242.0 L 463.4 246.1 L 467.5 244.7 L 471.5 243.5 L 475.5 245.1 L 479.5 241.4 L 483.5 250.8 L 487.5 250.2 L 491.5 245.9 L 495.6 243.0 L 499.6 249.4 L 503.6 249.8 L 507.6 245.2 L 511.6 243.1 L 515.6 239.3 L 519.6 256.9 L 523.7 255.2 L 527.7 275.2 L 531.7 274.8 L 535.7 273.4 L 539.7 267.7 L 543.7 261.8 L 547.7 286.9 L 551.8 281.7 L 555.8 274.3 L 559.8 282.5 L 563.8 274.9 L 567.8 289.0 L 571.8 284.4 L 575.8 278.3 L 579.9 274.6 L 583.9 280.5 L 587.9 276.0 L 591.9 269.6 L 595.9 282.4 L 599.9 278.4 L 603.9 273.7 L 608.0 268.8 L 612.0 264.5 L 616.0 259.2 L 620.0 257.2" fill="none" stroke="#a8452c" stroke-width="2"/>
+          <line x1="62" y1="30" x2="62" y2="300" stroke="#131b26" stroke-width="1.5"/>
+          <text x="340" y="316" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="12.5" fill="#4a5765">trading day</text>
+          <text x="30" y="170" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="12.5" fill="#4a5765" transform="rotate(-90 30 170)">daily return</text>
+          <g font-family="IBM Plex Sans,sans-serif" font-size="12"><line x1="420" y1="296" x2="444" y2="296" stroke="#a8452c" stroke-width="2"/><text x="450" y="300" fill="#a8452c">± 2σ&#8348; from GARCH(1,1)</text></g>
+        </svg>
+        <figcaption>Simulated daily returns. Big moves cluster together, and so do quiet ones. A GARCH model tracks that changing variance — the band widens after large moves and narrows in calm spells. That time-varying variance is the “conditional heteroscedasticity” in the name. (Simulated data; parameters chosen for illustration.)</figcaption>
+      </figure>
+    </div>
+    <aside class="check">
+      <span class="n">Vocabulary</span>
+      <p class="q">What does “heteroscedasticity” mean?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Variance that isn’t constant. “Conditional” adds that the variance at time t depends on what happened in earlier periods. (The word breakdown is standard usage rather than lecture content.)</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>What the model looks like</h3>
+      <p>The lecture doesn’t go deep into the mathematics, but the structure is:</p>
+      <div class="formula">
+        σ<sub>t</sub>² = ω + Σ<sub>i=1..p</sub> β<sub>i</sub>·σ<sub>t−i</sub>² + Σ<sub>i=1..q</sub> γ<sub>i</sub>·ε<sub>t−i</sub>²
+        <span class="cap">Today’s variance from a constant, p past variances, and q past squared errors. Software packages differ over which order is written first — check the documentation before reading off p and q.</span>
+      </div>
+      <p>Set that beside ARIMA and there are only two differences:</p>
+      <table class="plain">
+        <tr><td><strong>Variances, not values</strong></td><td>GARCH works with variances σ² and <em>squared</em> errors ε², where ARIMA works with observations and plain errors.</td></tr>
+        <tr><td><strong>No differencing</strong></td><td>GARCH uses the variances directly, never differences of them. So there is no d: the model is GARCH(p, q), not GARCH(p, d, q).</td></tr>
+      </table>
+      <p>As with ARIMA, good software fits the constants for any p and q you choose. GARCH(1, 1) is the common default in practice.</p>
+
+      <div class="ix" data-quiz="m7l6-q1">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Why does a GARCH model have two order parameters when ARIMA has three?</p>
+        <div class="opts">
+          <button class="opt" data-fb="GARCH does use past squared errors — that is one of its two sums.">GARCH has no moving-average part.</button>
+          <button class="opt" data-fb="GARCH does use past variances — that is its autoregressive-style sum.">GARCH has no autoregressive part.</button>
+          <button class="opt" data-right data-fb="GARCH works with the variances themselves, never with differences of them, so there is nothing for d to count.">GARCH doesn’t use differences, so it has no d.</button>
+          <button class="opt" data-fb="GARCH can be fitted to seasonal data like anything else; seasonality isn't what the missing parameter is about.">GARCH can’t handle seasonality.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="ix" data-quiz="m7l6-q2">
+        <div class="ix-head"><span class="ix-kind">method choice</span><span class="ix-done">answered</span></div>
+        <p class="prompt">An investment team wants next week’s volatility estimate for each fund to feed a risk-versus-return portfolio model. Which method fits the question?</p>
+        <div class="opts">
+          <button class="opt" data-fb="Holt-Winters forecasts the level of a series. The team wants its variance.">Holt-Winters on each fund’s price</button>
+          <button class="opt" data-fb="ARIMA also forecasts the value. It could predict the return, but the question asks how volatile it will be.">ARIMA on each fund’s price</button>
+          <button class="opt" data-right data-fb="Volatility is being proxied by variance, and GARCH is the time series method built to estimate and forecast variance — exactly the input a portfolio optimization model needs.">GARCH on each fund’s returns</button>
+          <button class="opt" data-fb="CUSUM detects when a series has shifted. It gives an alarm, not a variance estimate.">CUSUM on each fund’s returns</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="callout">
+        <p class="tag">The three methods side by side</p>
+        <p><strong>Exponential smoothing</strong> — estimates and forecasts the value, with optional trend and seasonality. <strong>ARIMA</strong> — generalises exponential smoothing for the value. <strong>GARCH</strong> — an ARIMA-like model for the variance. Other approaches exist, but these are the most common and most generally useful.</p>
+      </div>
+
+      <div class="note">
+        <div class="note-head"><span class="lbl">Class discussion — Lesson 6</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="m7l6" data-placeholder="rugarch / fGarch syntax, what garchOrder means in your package, portfolio models…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Exam target</span>
+      <p class="q">Name the two structural differences between GARCH and ARIMA.</p>
+      <details><summary>Show answer</summary>
+        <p class="a">GARCH models variances and squared errors rather than observations and linear errors; and it doesn’t difference, so it has no d parameter.</p>
+      </details>
+    </aside>
+  </div>
+  <div class="row">
+    <div class="main">
+      <h3>More examples: GARCH in numbers</h3>
+      <div class="callout">
+        <p class="tag">Where it came from</p>
+        <p>Robert Engle introduced ARCH in 1982: model today’s variance from past squared errors. His student Tim Bollerslev added past variances in 1986 and called it generalized ARCH — GARCH. Engle shared the 2003 Nobel Memorial Prize in Economics for methods of analysing time series whose volatility changes over time. The pattern he captured is that markets swing between calm spells and turbulent ones.</p>
+      </div>
+
+      <h4>Worked example: one day of GARCH(1, 1)</h4>
+      <p>Measure daily returns in percent. A fitted model has ω = 0.05, weight β = 0.85 on yesterday’s variance and weight γ = 0.10 on yesterday’s squared surprise. Yesterday’s variance estimate was 1.0 (a 1% standard deviation).</p>
+      <table class="plain">
+        <tr><td><strong>Big move: return −3%</strong></td><td>σ² = 0.05 + 0.85 × 1.0 + 0.10 × 9 = <strong>1.80</strong>, so σ ≈ 1.34%</td></tr>
+        <tr><td><strong>Quiet day: return 0.5%</strong></td><td>σ² = 0.05 + 0.85 × 1.0 + 0.10 × 0.25 = <strong>0.925</strong>, so σ ≈ 0.96%</td></tr>
+      </table>
+      <p>One large surprise raises tomorrow’s expected spread by a third. That is volatility clustering expressed as an equation.</p>
+      <p>Three more quantities fall straight out of the constants:</p>
+      <table class="plain">
+        <tr><td><strong>Persistence</strong></td><td>β + γ = 0.95. It must be below 1 for the variance to settle; close to 1 means shocks linger.</td></tr>
+        <tr><td><strong>Long-run variance</strong></td><td>ω / (1 − β − γ) = 0.05 / 0.05 = 1.0, a 1% daily standard deviation. With about 252 trading days a year, that is roughly 1% × √252 ≈ 16% a year.</td></tr>
+        <tr><td><strong>Half-life of a shock</strong></td><td>ln(0.5) / ln(0.95) ≈ 13.5 trading days for the extra variance to halve — the same half-life idea as Lesson 3.</td></tr>
+      </table>
+
+      <h4>The link back to Lesson 1</h4>
+      <p>Drop ω and make the two weights add to 1, and GARCH(1, 1) becomes:</p>
+      <div class="formula">
+        σ<sub>t</sub>² = λ·σ<sub>t−1</sub>² + (1 − λ)·ε<sub>t−1</sub>²
+        <span class="cap">That is exponential smoothing applied to squared returns — with λ playing the role of (1 − α). J.P. Morgan’s RiskMetrics system popularised this version in the 1990s with λ = 0.94 for daily data.</span>
+      </div>
+      <p>Full GARCH adds ω, which pulls the variance back toward its long-run level over time. Exponential smoothing of squared returns has no long-run level to return to.</p>
+
+      <h4>How the forecast gets used: value at risk</h4>
+      <p>Banks use volatility forecasts like these in <strong>value-at-risk</strong> calculations — the loss a portfolio should exceed only with some small probability — which feed regulatory capital requirements. The Nobel committee’s own illustration: $1 million held in the S&amp;P 500 on 31 July 2002 had, by such a model, a 99% chance of losing no more than about $61,500 the next day.</p>
+
+      <div class="ix" data-quiz="m7l6-q3">
+        <div class="ix-head"><span class="ix-kind">calculation</span><span class="ix-done">answered</span></div>
+        <p class="prompt">A GARCH(1, 1) has ω = 0.04, β = 0.90 on the past variance and γ = 0.05 on the past squared error. Yesterday’s variance was 0.8 and yesterday’s return was 2%. What is today’s variance, and what is the long-run variance?</p>
+        <div class="opts">
+          <button class="opt" data-right data-fb="0.04 + 0.90 × 0.8 + 0.05 × 4 = 0.04 + 0.72 + 0.20 = 0.96. Long run: 0.04 / (1 − 0.95) = 0.8. The 2% move lifted variance above its usual level; over time it drifts back to 0.8.">Today 0.96; long run 0.80</button>
+          <button class="opt" data-fb="0.86 uses the return (2) instead of its square (4). GARCH works with squared errors.">Today 0.86; long run 0.80</button>
+          <button class="opt" data-fb="Today's value is right, but the long-run variance is ω divided by (1 − β − γ), not ω divided by (β + γ).">Today 0.96; long run 0.04</button>
+          <button class="opt" data-fb="That swaps the weights — 0.05 on the past variance and 0.90 on the squared error.">Today 3.64; long run 0.80</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Check</span>
+      <p class="q">What happens to a GARCH(1, 1) forecast of variance many days ahead?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">It moves toward the long-run variance ω / (1 − β − γ), faster when persistence β + γ is smaller. A turbulent day raises the near-term forecast, but not the distant one.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
+<!-- ==================== LESSON 7 ==================== -->
+<section class="lesson" id="l7" data-short="Choosing p, d, q" style="--accent:#3f6b1f">
+  <div class="lesson-head">
+    <span class="ln">Lesson 7</span>
+    <h2>Stationarity and choosing p, d, q</h2>
+    <p class="keyline">Difference just enough to stop the drift, read the leftover correlation to suggest p and q, then let validation make the final call.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <div class="callout">
+        <p class="tag">Beyond the lectures</p>
+        <p>The lecture says software fits the constants once you pick p, d and q. This lesson adds the standard ways of picking them. It draws on common forecasting practice, not on lecture content.</p>
+      </div>
+
+      <h3>Spotting non-stationarity</h3>
+      <ul>
+        <li><strong>The mean drifts</strong> — a trend, or a level that wanders and never comes back.</li>
+        <li><strong>The pattern repeats</strong> — seasonality means the expected value depends on the stage of the cycle.</li>
+        <li><strong>The spread changes</strong> — swings get bigger as the level rises, or come in bursts.</li>
+      </ul>
+      <p>Differencing fixes the first two. It does <em>not</em> fix the third. A spread that grows with the level is usually handled by taking logs first; a spread that comes in bursts is what GARCH models.</p>
+
+      <h3>How many differences?</h3>
+      <p>Difference once and look again. A straight-line trend disappears after one difference; a curving (quadratic) trend needs two.</p>
+      <table class="plain">
+        <tr><td><strong>Series</strong></td><td>3, 7, 11, 15, 19</td></tr>
+        <tr><td><strong>1st differences</strong></td><td>4, 4, 4, 4 — constant, so d = 1 is enough</td></tr>
+      </table>
+      <p>Stop as soon as the series looks stationary. Differencing more than needed adds noise and makes forecasts worse, so the usual choice is d = 0, 1, or occasionally 2.</p>
+
+      <div class="ix" data-quiz="m7l7-q1">
+        <div class="ix-head"><span class="ix-kind">calculation</span><span class="ix-done">answered</span></div>
+        <p class="prompt">A series runs 2, 5, 10, 17, 26, 37. What is the smallest d that makes it stationary?</p>
+        <div class="opts">
+          <button class="opt" data-fb="The raw series is clearly climbing, so its mean isn't constant.">d = 0</button>
+          <button class="opt" data-fb="First differences are 3, 5, 7, 9, 11 — still climbing by 2 each time. One more difference is needed.">d = 1</button>
+          <button class="opt" data-right data-fb="First differences: 3, 5, 7, 9, 11. Second differences: 2, 2, 2, 2. Constant at d = 2 — the signature of a quadratic trend.">d = 2</button>
+          <button class="opt" data-fb="Second differences are already constant. A third round would give 0, 0, 0 and only add noise on real data — that is over-differencing.">d = 3</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Check</span>
+      <p class="q">A series’ swings double in size as its level doubles. Will differencing make it stationary?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Not on its own. Differencing removes a drifting mean, not a growing spread. Take logs first so a proportional change becomes a constant-size change, then difference if needed.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Suggesting p and q</h3>
+      <p>Two plots of the differenced series do most of the work:</p>
+      <table class="plain">
+        <tr><td><strong>ACF</strong> (autocorrelation function)</td><td>How strongly the series correlates with itself k periods back, including indirect links through the periods in between.</td></tr>
+        <tr><td><strong>PACF</strong> (partial autocorrelation)</td><td>The same, but with the in-between periods’ influence removed — only the direct link.</td></tr>
+      </table>
+      <table>
+        <tr><td><strong>Pattern</strong></td><td><strong>ACF</strong></td><td><strong>PACF</strong></td></tr>
+        <tr><td>AR(p)</td><td>Dies away gradually</td><td>Cuts off sharply after lag p</td></tr>
+        <tr><td>MA(q)</td><td>Cuts off sharply after lag q</td><td>Dies away gradually</td></tr>
+        <tr><td>Mixed ARMA</td><td>Dies away</td><td>Dies away — try small p and q and compare</td></tr>
+      </table>
+      <p>Real plots are rarely this clean, so treat them as a shortlist. <strong>Information criteria</strong> such as AIC and BIC then score each candidate on fit with a penalty for extra parameters. Automated searches, such as <span class="m">auto.arima</span> in R, do exactly that. Whatever they pick, confirm it on held-out data — Lesson 8.</p>
+
+      <div class="ix" data-quiz="m7l7-q2">
+        <div class="ix-head"><span class="ix-kind">diagnosis</span><span class="ix-done">answered</span></div>
+        <p class="prompt">After one difference, the ACF fades slowly over many lags, while the PACF shows two large spikes and then nothing. Which model does that suggest?</p>
+        <div class="opts">
+          <button class="opt" data-right data-fb="A PACF that cuts off after lag 2 points to two autoregressive terms, and the slowly fading ACF agrees. With one difference already taken, that is ARIMA(2, 1, 0).">ARIMA(2, 1, 0)</button>
+          <button class="opt" data-fb="A sharp cut-off in the ACF would point to MA terms. Here the sharp cut-off is in the PACF, which points to AR terms.">ARIMA(0, 1, 2)</button>
+          <button class="opt" data-fb="The data was already differenced once before plotting, so d = 1, not 2.">ARIMA(2, 2, 0)</button>
+          <button class="opt" data-fb="A random walk leaves no correlation after differencing. Two large PACF spikes are real structure the model should capture.">ARIMA(0, 1, 0)</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="note">
+        <div class="note-head"><span class="lbl">Class discussion — Lesson 7</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="m7l7" data-placeholder="acf() / pacf() output, ndiffs(), AIC vs BIC, log transforms…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Worth noticing</span>
+      <p class="q">Stock prices usually need d = 1. What is GARCH normally fitted to, and how does that relate?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">To returns — the period-to-period percentage change in price. A return is essentially a first difference of the log price. So GARCH “needs no d” partly because the differencing was done before the data reached it.</p>
+      </details>
+    </aside>
+  </div>
+  <div class="row">
+    <div class="main">
+      <h3>More examples: finding the airline model from the data</h3>
+      <p>Here is the Lesson 7 procedure run on the real airline series. These correlations were computed for this page.</p>
+      <ol>
+        <li><strong>Look at the raw series.</strong> Its autocorrelations start at 0.95 and fade very slowly (still 0.71 at lag 13). That slow fade is the signature of a trend — not stationary.</li>
+        <li><strong>Fix the growing swing first.</strong> Take logs, so a proportional seasonal effect becomes a constant-size one.</li>
+        <li><strong>Take one ordinary difference.</strong> The trend goes, but a huge spike remains at lag 12 (0.84), and again at lag 24 (0.74). Each month still looks most like the same month last year — the season is still in the data.</li>
+        <li><strong>Take a seasonal difference as well</strong> (this month minus the same month last year). Now almost every bar sits inside the noise band, except two negative spikes: lag 1 (−0.34) and lag 12 (−0.39).</li>
+        <li><strong>Read the spikes.</strong> An ACF that cuts off after lag 1 suggests one MA term. A spike at exactly lag 12 suggests one seasonal MA term. With one ordinary and one seasonal difference, that is ARIMA(0, 1, 1)(0, 1, 1)<sub>12</sub> — the airline model from Lesson 5.</li>
+      </ol>
+      <figure>
+        <svg class="fig" viewBox="0 0 660 290" role="img" aria-label="Two autocorrelation plots of the airline data. After taking logs and one ordinary difference, there is a huge spike at lag 12 and another at lag 24. After also taking a seasonal difference, most bars fall inside the grey noise band, with notable negative spikes only at lag 1 and lag 12.">
+          <g font-family="IBM Plex Sans,sans-serif">
+          <text x="30" y="36" font-size="12" font-weight="600" fill="#3f6b1f">log, then 1st difference</text><line x1="30" y1="150" x2="300" y2="150" stroke="#131b26"/><rect x="30" y="132.9" width="270" height="34.2" fill="#9aa5b1" opacity=".18"/><line x1="36" y1="150" x2="36" y2="130.0" stroke="#3f6b1f" stroke-width="5"/><line x1="47" y1="150" x2="47" y2="162.0" stroke="#3f6b1f" stroke-width="5"/><line x1="58" y1="150" x2="58" y2="165.1" stroke="#3f6b1f" stroke-width="5"/><line x1="69" y1="150" x2="69" y2="182.2" stroke="#3f6b1f" stroke-width="5"/><line x1="80" y1="150" x2="80" y2="158.4" stroke="#3f6b1f" stroke-width="5"/><line x1="91" y1="150" x2="91" y2="147.4" stroke="#3f6b1f" stroke-width="5"/><line x1="102" y1="150" x2="102" y2="161.1" stroke="#3f6b1f" stroke-width="5"/><line x1="113" y1="150" x2="113" y2="183.7" stroke="#3f6b1f" stroke-width="5"/><line x1="124" y1="150" x2="124" y2="161.6" stroke="#3f6b1f" stroke-width="5"/><line x1="135" y1="150" x2="135" y2="160.9" stroke="#3f6b1f" stroke-width="5"/><line x1="146" y1="150" x2="146" y2="129.4" stroke="#3f6b1f" stroke-width="5"/><line x1="157" y1="150" x2="157" y2="65.9" stroke="#3f6b1f" stroke-width="5"/><line x1="168" y1="150" x2="168" y2="128.5" stroke="#3f6b1f" stroke-width="5"/><line x1="179" y1="150" x2="179" y2="164.0" stroke="#3f6b1f" stroke-width="5"/><line x1="190" y1="150" x2="190" y2="161.6" stroke="#3f6b1f" stroke-width="5"/><line x1="201" y1="150" x2="201" y2="177.9" stroke="#3f6b1f" stroke-width="5"/><line x1="212" y1="150" x2="212" y2="155.2" stroke="#3f6b1f" stroke-width="5"/><line x1="223" y1="150" x2="223" y2="148.8" stroke="#3f6b1f" stroke-width="5"/><line x1="234" y1="150" x2="234" y2="161.4" stroke="#3f6b1f" stroke-width="5"/><line x1="245" y1="150" x2="245" y2="183.7" stroke="#3f6b1f" stroke-width="5"/><line x1="256" y1="150" x2="256" y2="160.7" stroke="#3f6b1f" stroke-width="5"/><line x1="267" y1="150" x2="267" y2="157.5" stroke="#3f6b1f" stroke-width="5"/><line x1="278" y1="150" x2="278" y2="130.1" stroke="#3f6b1f" stroke-width="5"/><line x1="289" y1="150" x2="289" y2="76.3" stroke="#3f6b1f" stroke-width="5"/><text x="36" y="268" text-anchor="middle" font-size="10.5" fill="#4a5765">1</text><text x="157" y="268" text-anchor="middle" font-size="10.5" fill="#4a5765">12</text><text x="289" y="268" text-anchor="middle" font-size="10.5" fill="#4a5765">24</text>
+          <text x="350" y="36" font-size="12" font-weight="600" fill="#1d4e89">… then seasonal difference too</text><line x1="350" y1="150" x2="620" y2="150" stroke="#131b26"/><rect x="350" y="132.9" width="270" height="34.2" fill="#9aa5b1" opacity=".18"/><line x1="356" y1="150" x2="356" y2="184.1" stroke="#1d4e89" stroke-width="5"/><line x1="367" y1="150" x2="367" y2="139.5" stroke="#1d4e89" stroke-width="5"/><line x1="378" y1="150" x2="378" y2="170.2" stroke="#1d4e89" stroke-width="5"/><line x1="389" y1="150" x2="389" y2="147.9" stroke="#1d4e89" stroke-width="5"/><line x1="400" y1="150" x2="400" y2="144.4" stroke="#1d4e89" stroke-width="5"/><line x1="411" y1="150" x2="411" y2="146.9" stroke="#1d4e89" stroke-width="5"/><line x1="422" y1="150" x2="422" y2="155.6" stroke="#1d4e89" stroke-width="5"/><line x1="433" y1="150" x2="433" y2="150.1" stroke="#1d4e89" stroke-width="5"/><line x1="444" y1="150" x2="444" y2="132.4" stroke="#1d4e89" stroke-width="5"/><line x1="455" y1="150" x2="455" y2="157.6" stroke="#1d4e89" stroke-width="5"/><line x1="466" y1="150" x2="466" y2="143.6" stroke="#1d4e89" stroke-width="5"/><line x1="477" y1="150" x2="477" y2="188.7" stroke="#1d4e89" stroke-width="5"/><line x1="488" y1="150" x2="488" y2="134.8" stroke="#1d4e89" stroke-width="5"/><line x1="499" y1="150" x2="499" y2="155.8" stroke="#1d4e89" stroke-width="5"/><line x1="510" y1="150" x2="510" y2="135.0" stroke="#1d4e89" stroke-width="5"/><line x1="521" y1="150" x2="521" y2="163.9" stroke="#1d4e89" stroke-width="5"/><line x1="532" y1="150" x2="532" y2="143.0" stroke="#1d4e89" stroke-width="5"/><line x1="543" y1="150" x2="543" y2="148.4" stroke="#1d4e89" stroke-width="5"/><line x1="554" y1="150" x2="554" y2="151.1" stroke="#1d4e89" stroke-width="5"/><line x1="565" y1="150" x2="565" y2="161.7" stroke="#1d4e89" stroke-width="5"/><line x1="576" y1="150" x2="576" y2="146.1" stroke="#1d4e89" stroke-width="5"/><line x1="587" y1="150" x2="587" y2="159.1" stroke="#1d4e89" stroke-width="5"/><line x1="598" y1="150" x2="598" y2="127.7" stroke="#1d4e89" stroke-width="5"/><line x1="609" y1="150" x2="609" y2="151.8" stroke="#1d4e89" stroke-width="5"/><text x="356" y="268" text-anchor="middle" font-size="10.5" fill="#4a5765">1</text><text x="477" y="268" text-anchor="middle" font-size="10.5" fill="#4a5765">12</text><text x="609" y="268" text-anchor="middle" font-size="10.5" fill="#4a5765">24</text>
+          <text x="330" y="284" text-anchor="middle" font-size="11.5" fill="#4a5765">lag (months) — grey band ≈ what pure noise could produce</text>
+          </g>
+        </svg>
+        <figcaption>Autocorrelation of the log airline series after one difference (left) and after an added seasonal difference (right). Bars outside the grey band are larger than pure noise would typically produce.</figcaption>
+      </figure>
+      <p>The log step matters for Holt-Winters too. Fitting <em>additive</em> Holt-Winters to the logged series and converting back gave a 1959–60 MAPE of 2.2% (RMSE 14) — far better than either version on the raw counts in Lesson 4. Logging turned the multiplicative pattern into a clean additive one.</p>
+
+      <div class="ix" data-quiz="m7l7-q3">
+        <div class="ix-head"><span class="ix-kind">diagnosis</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Monthly ice-cream sales, after one ordinary difference, still show an ACF spike of 0.8 at lag 12. What should you do next?</p>
+        <div class="opts">
+          <button class="opt" data-fb="A second ordinary difference targets a curving trend, not a yearly pattern. It would leave the lag-12 spike and add noise.">Take a second ordinary difference (d = 2)</button>
+          <button class="opt" data-right data-fb="A large spike at the seasonal lag after differencing means the yearly pattern is still there. A seasonal difference — this month minus the same month last year — removes it, as in the airline example.">Take a seasonal difference at lag 12</button>
+          <button class="opt" data-fb="12 AR terms is a lot of parameters to chase one seasonal pattern. The seasonal difference or a seasonal term handles it far more simply.">Add 12 autoregressive terms (p = 12)</button>
+          <button class="opt" data-fb="A correlation of 0.8 is far outside anything noise would produce with a few years of monthly data.">Nothing — a spike at one lag is just noise</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Check</span>
+      <p class="q">Why take logs <em>before</em> differencing in the airline example, rather than after?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Differences of the raw counts would still have swings that grow over time. Taking logs first makes those swings a constant size, so the differences that follow can be stationary. A log difference is also roughly a percentage change, which is easy to interpret.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
+<!-- ==================== LESSON 8 ==================== -->
+<section class="lesson" id="l8" data-short="Judging" style="--accent:#1d4e89">
+  <div class="lesson-head">
+    <span class="ln">Lesson 8</span>
+    <h2>Judging a forecast</h2>
+    <p class="keyline">Validate in time order, score errors in units people understand, and always check you beat the lazy forecast.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <div class="callout">
+        <p class="tag">Beyond the lectures</p>
+        <p>The lecture points to the validation approaches from earlier modules and says time series quality measures are covered later. This lesson shows how the earlier approaches change when order matters. It follows standard forecasting practice.</p>
+      </div>
+
+      <h3>Why ordinary cross-validation cheats</h3>
+      <p>Random k-fold cross-validation shuffles rows into folds. With time series, that means training on March and July to “predict” May. Neighbouring periods are strongly related, so the model has effectively seen the answer. The error it reports is optimistic, sometimes wildly so.</p>
+      <p>The fix: <strong>always train on the past and test on the future.</strong> The simplest version holds out the last stretch of data. A better version repeats that many times:</p>
+
+      <div class="ix" data-order="m7l8-order" data-win="This is walk-forward (rolling-origin) validation. Every forecast is made only from data that existed at the time.">
+        <div class="ix-head"><span class="ix-kind">put in order</span><span class="ix-done">solved</span></div>
+        <p class="prompt">Put the steps of walk-forward validation in order.</p>
+        <ol class="order">
+          <li data-pos="1">Fit the model on the first stretch of data, say periods 1 to 40</li>
+          <li data-pos="2">Forecast period 41</li>
+          <li data-pos="3">Record the error against what actually happened in period 41</li>
+          <li data-pos="4">Add period 41 to the training data and refit</li>
+          <li data-pos="5">Repeat until the end of the data is reached</li>
+          <li data-pos="6">Average the recorded errors and compare candidate models on that average</li>
+        </ol>
+        <button class="btn check">Check order</button>
+        <p class="fb"></p>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Exam target</span>
+      <p class="q">In one sentence, what rule must any time series validation scheme obey?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Every forecast being scored must be made using only data from before the period it forecasts.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Scoring the errors</h3>
+      <p>With error e<sub>t</sub> = F<sub>t</sub> − x<sub>t</sub>:</p>
+      <table class="plain">
+        <tr><td><strong>MAE</strong> — mean absolute error</td><td>Average size of the miss, in the data’s own units. Easy to explain.</td></tr>
+        <tr><td><strong>RMSE</strong> — root mean squared error</td><td>Square root of the average squared miss. Punishes big misses more; matches the squared-error fitting in Lesson 4.</td></tr>
+        <tr><td><strong>MAPE</strong> — mean absolute percentage error</td><td>Average of |e<sub>t</sub>| / x<sub>t</sub>. Unit-free, so it compares across series — but breaks down when any actual value is zero or near zero.</td></tr>
+      </table>
+      <p>Three periods, actuals 100, 110, 90; forecasts 105, 100, 95. Errors: +5, −10, +5.</p>
+      <div class="formula">
+        MAE = (5 + 10 + 5) / 3 ≈ 6.67 &nbsp;&nbsp; RMSE = √((25 + 100 + 25) / 3) = √50 ≈ 7.07 &nbsp;&nbsp; MAPE ≈ 6.5%
+        <span class="cap">Note that the plain average error is (5 − 10 + 5) / 3 = 0. Signed errors cancel, which is why accuracy is never measured on them — though their average is a useful check for bias.</span>
+      </div>
+
+      <h3>The benchmarks to beat</h3>
+      <ul>
+        <li><strong>Naive:</strong> F<sub>t+1</sub> = x<sub>t</sub>. Next period equals this period. That is ARIMA(0, 1, 0), or exponential smoothing with α = 1.</li>
+        <li><strong>Seasonal naive:</strong> F<sub>t+1</sub> = x<sub>(t+1)−L</sub>. Next Monday equals last Monday.</li>
+      </ul>
+      <p>A model that can’t beat these on walk-forward validation hasn’t earned its complexity.</p>
+      <p>Finally, check what the model leaves behind. If the model has captured the pattern, the leftover errors should look like <strong>white noise</strong> — ARIMA(0, 0, 0). Remaining correlation means there is structure left to model.</p>
+
+      <div class="ix" data-quiz="m7l8-q1">
+        <div class="ix-head"><span class="ix-kind">calculation trap</span><span class="ix-done">answered</span></div>
+        <p class="prompt">A forecaster’s errors over four weeks are +8, −8, +6, −6. They report “average error: zero — the model is perfect.” What are the MAE and RMSE?</p>
+        <div class="opts">
+          <button class="opt" data-fb="That repeats the forecaster's mistake. Signed errors cancel; absolute and squared ones don't.">MAE 0, RMSE 0</button>
+          <button class="opt" data-right data-fb="MAE = (8 + 8 + 6 + 6)/4 = 7. RMSE = √((64 + 64 + 36 + 36)/4) = √50 ≈ 7.07. The zero average only shows the model isn't biased in one direction. It says nothing about how big the misses are.">MAE 7, RMSE ≈ 7.07</button>
+          <button class="opt" data-fb="50 is the mean squared error. RMSE takes its square root, putting it back in the data's units.">MAE 7, RMSE 50</button>
+          <button class="opt" data-fb="28 is the total absolute error. MAE divides by the number of periods.">MAE 28, RMSE ≈ 14.1</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="branch" data-branch="m7l8-case">
+        <div class="persona">
+          <span class="av">ML</span>
+          <span class="who"><b>Marcus Lee</b><span>Analyst, city water utility</span></span>
+        </div>
+        <div class="scene" data-step="1">
+          <p>Marcus has four years of daily water demand and three candidate models. His usual workflow is 10-fold cross-validation, and on it his ARIMA model scores an RMSE of 2.1 million litres.</p>
+          <p><strong>What should he do before reporting that number?</strong></p>
+          <div class="choices">
+            <button class="choice" data-go="2" data-tone="bad" data-head="What goes wrong"
+              data-outcome="Shuffled folds let the model learn from days after the ones it is tested on. With demand this strongly tied to neighbouring days, that leaks the answer, so 2.1 million is almost certainly optimistic.">
+              Report it — 10-fold cross-validation is the standard method.
+            </button>
+            <button class="choice" data-go="2" data-tone="good" data-head="The right move"
+              data-outcome="Walk-forward validation only ever uses the past to forecast the future, as the utility will have to in operation. Its error is the honest one to report and compare.">
+              Redo the comparison with walk-forward validation, in time order.
+            </button>
+            <button class="choice" data-go="2" data-tone="bad" data-head="What it misses"
+              data-outcome="More folds doesn't fix the problem — every fold still mixes future days into training. The issue is order, not the number of folds.">
+              Switch to 20 folds for a more stable estimate.
+            </button>
+          </div>
+        </div>
+        <div class="scene" data-step="2" data-end="1" hidden>
+          <p><strong>The honest numbers.</strong> Walk-forward RMSE: ARIMA 3.4 million, Holt-Winters 3.1 million, and a seasonal naive forecast (same day last week) 3.2 million.</p>
+          <div class="choices">
+            <button class="choice" data-tone="bad" data-head="What happens"
+              data-outcome="ARIMA is the most complex of the three, and it is also the worst on honest validation. Complexity isn't evidence of quality; the scores are.">
+              Choose ARIMA, since it is the most flexible model.
+            </button>
+            <button class="choice" data-tone="good" data-head="The right call"
+              data-outcome="Holt-Winters is best, but it beats the lazy benchmark by only about 3%. That margin is worth reporting plainly — and worth checking again as more data arrives, since a gap that small can come from which days happened to be held out.">
+              Choose Holt-Winters, and report how narrowly it beats the seasonal naive benchmark.
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-head"><span class="lbl">Class discussion — Lesson 8</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="m7l8" data-placeholder="tsCV(), accuracy(), which metric your stakeholders understand, Ljung–Box tests…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Check</span>
+      <p class="q">Why is MAPE a poor choice for daily sales of a slow-moving spare part?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Many days have zero sales, and MAPE divides by the actual value. On those days it is undefined, and near-zero days blow it up. MAE or a scaled error measure works better.</p>
+      </details>
+    </aside>
+  </div>
+  <div class="row">
+    <div class="main">
+      <h3>More examples: what large forecasting competitions found</h3>
+      <p>Since 1982, Spyros Makridakis has run the “M” competitions, which test many forecasting methods on the same large set of real series. The fourth, M4, finished in 2018 with 100,000 series and 61 methods.</p>
+      <ul>
+        <li><strong>Pure machine-learning methods did worse</strong> than standard statistical ones such as ARIMA and exponential smoothing, and worse still than combinations of them.</li>
+        <li><strong>The winner was a hybrid.</strong> Slawek Smyl, then at Uber, combined exponential smoothing with a recurrent neural network: the smoothing handled level and season, and the network learned the rest.</li>
+        <li><strong>The key benchmark was a simple average.</strong> “Comb” averaged the forecasts of single, Holt and damped-trend exponential smoothing.</li>
+      </ul>
+      <table>
+        <tr><td><strong>M4 method (all 100,000 series)</strong></td><td><strong>sMAPE</strong></td></tr>
+        <tr><td>Single exponential smoothing</td><td>13.09%</td></tr>
+        <tr><td>Holt (with trend)</td><td>13.77%</td></tr>
+        <tr><td>Damped-trend smoothing</td><td>12.66%</td></tr>
+        <tr><td>Comb — the average of the three</td><td>12.55%</td></tr>
+      </table>
+      <p>Two surprises for a student. Adding a trend <em>hurt</em> on average: Holt projects the latest trend forever, and real trends tend to fade. The <strong>damped</strong> version shrinks the trend a little each step ahead and did better. And averaging three simple methods beat each of them — combining forecasts is one of the most reliable improvements in the field.</p>
+      <p>The airline comparison in Lesson 4 used a single 24-month holdout — one forecast origin. Walk-forward validation, with many origins, would give a steadier ranking, especially where the models are as close as the two Holt-Winters versions were.</p>
+
+      <div class="ix" data-quiz="m7l8-q2">
+        <div class="ix-head"><span class="ix-kind">interpretation</span><span class="ix-done">answered</span></div>
+        <p class="prompt">In M4, Holt’s trend method was less accurate overall than single exponential smoothing, and damped-trend smoothing beat both. What is the most likely explanation?</p>
+        <div class="opts">
+          <button class="opt" data-fb="Holt's method is a small, well-understood model. The issue is what it assumes about the future, not its size.">Holt’s method has too many parameters to fit reliably.</button>
+          <button class="opt" data-right data-fb="Holt extends today's trend in a straight line for the whole horizon. When real trends slow down, those forecasts overshoot. Damping the trend keeps its direction but limits how far it runs.">Real trends tend to fade, so projecting them forever overshoots; damping limits that.</button>
+          <button class="opt" data-fb="Plenty of M4 series had trends. The point is that projecting them without limit was the costly part.">Almost none of the series had any trend.</button>
+          <button class="opt" data-fb="sMAPE was the same yardstick for every method, so it can't explain why one ranked above another.">sMAPE unfairly penalises trend methods.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Worth noticing</span>
+      <p class="q">Why might averaging three forecasts beat the best one of them?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Their errors are partly independent, so they partly cancel. The average is also safer: you don’t have to know in advance which method will be best for a given series, and picking wrong is costly.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
+<!-- ==================== LESSON 9 ==================== -->
+<section class="lesson" id="l9" data-short="Exam workout" style="--accent:#131b26">
+  <div class="lesson-head">
+    <span class="ln">Exam workout</span>
+    <h2>Midterm and final-style questions</h2>
+    <p class="keyline">Short calculations, “explain and justify” prompts where the reasoning carries the marks, and multi-part cases where each part builds on the last.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <div class="callout">
+        <p class="tag">How to use this</p>
+        <p>Attempt each question before opening the answer. Recognising a correct answer is much easier than producing one, and exams test producing. Each model answer ends with <em>marking notes</em> on where the marks usually sit.</p>
+      </div>
+
+      <h3>Section A — Multiple choice, midterm style</h3>
+
+      <div class="ix" data-quiz="m7x-q1">
+        <div class="ix-head"><span class="ix-kind">midterm · calculation</span><span class="ix-done">answered</span></div>
+        <p class="prompt">A Holt model (no seasonality) ends the training data with S<sub>t</sub> = 50 and T<sub>t</sub> = 2. Using the standard multi-step form, what is the forecast three periods ahead?</p>
+        <div class="opts">
+          <button class="opt" data-fb="52 is the one-step forecast. Three steps ahead the trend is applied three times.">52</button>
+          <button class="opt" data-right data-fb="F_(t+3) = S_t + 3·T_t = 50 + 6 = 56.">56</button>
+          <button class="opt" data-fb="50 ignores the trend. That would be the forecast from single exponential smoothing.">50</button>
+          <button class="opt" data-fb="54 applies the trend twice — the forecast for t + 2.">54</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="ix" data-quiz="m7x-q2">
+        <div class="ix-head"><span class="ix-kind">midterm · calculation</span><span class="ix-done">answered</span></div>
+        <p class="prompt">With α = 0.3, what weight does the observation from two periods ago, x<sub>t−2</sub>, carry in S<sub>t</sub>?</p>
+        <div class="opts">
+          <button class="opt" data-fb="0.49 is (1 − α)² alone. The weight on any observation also includes a factor of α.">0.490</button>
+          <button class="opt" data-fb="0.21 is α(1 − α) — the weight on x_(t−1), one period back.">0.210</button>
+          <button class="opt" data-right data-fb="α(1 − α)² = 0.3 × 0.49 = 0.147.">0.147</button>
+          <button class="opt" data-fb="0.09 is α². The exponent belongs on (1 − α), not on α.">0.090</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="ix" data-quiz="m7x-q3">
+        <div class="ix-head"><span class="ix-kind">midterm · interpretation</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Software fits single exponential smoothing to a series by minimising squared error and returns α = 0.96. What does that suggest?</p>
+        <div class="opts">
+          <button class="opt" data-fb="It is the reverse. A very noisy series would push α toward 0, so the baseline ignores the noise.">The series is extremely noisy.</button>
+          <button class="opt" data-right data-fb="α near 1 means the best baseline is almost the latest reading. Changes tend to persist rather than reverse, so the series behaves much like a random walk and the forecast is close to the naive one.">Movements tend to persist, so the best forecast is close to the latest observation.</button>
+          <button class="opt" data-fb="α was chosen by minimising error. A high value is a finding about the data, not an error in fitting.">The optimizer failed, since α should never exceed 0.5.</button>
+          <button class="opt" data-fb="Trend is handled by β in double smoothing. A high α in single smoothing doesn't measure trend.">The series has a strong seasonal cycle.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="ix" data-quiz="m7x-q4">
+        <div class="ix-head"><span class="ix-kind">midterm · calculation</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Monthly values: 4, 6, 10, 16, 24, 34. What order of differencing makes this series stationary, and what constant does it reach?</p>
+        <div class="opts">
+          <button class="opt" data-fb="First differences are 2, 4, 6, 8, 10 — still rising.">d = 1, constant 2</button>
+          <button class="opt" data-right data-fb="First differences 2, 4, 6, 8, 10; second differences 2, 2, 2, 2. A quadratic trend needs d = 2.">d = 2, constant 2</button>
+          <button class="opt" data-fb="Second differences are 2, not 4. Check the subtraction on 2, 4, 6, 8, 10.">d = 2, constant 4</button>
+          <button class="opt" data-fb="Third differences would be all zero — already past the point where the series became stationary.">d = 3, constant 0</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="ix" data-quiz="m7x-q5">
+        <div class="ix-head"><span class="ix-kind">final · concept trap</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Which statement about ARIMA and exponential smoothing is <em>false</em>?</p>
+        <div class="opts">
+          <button class="opt" data-fb="True — ARIMA(0, 1, 1) reproduces basic exponential smoothing.">Basic exponential smoothing is a special case of ARIMA.</button>
+          <button class="opt" data-fb="True — both are meant for short-term forecasting.">Both are mainly short-term forecasting tools.</button>
+          <button class="opt" data-right data-fb="False. As the more general model, ARIMA can represent smoothing — but it tends to do best on stable data, and needs around 40 points. On short or spiky series, exponential smoothing often forecasts better.">Because ARIMA is more general, it always forecasts at least as well as exponential smoothing.</button>
+          <button class="opt" data-fb="True — this is the lecture's stated preference.">ARIMA tends to work better on stable data with few outliers.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="ix" data-quiz="m7x-q6">
+        <div class="ix-head"><span class="ix-kind">final · method choice</span><span class="ix-done">answered</span></div>
+        <p class="prompt">For which question is GARCH the most natural fit?</p>
+        <div class="opts">
+          <button class="opt" data-fb="That asks for a level with a weekly cycle — a Holt-Winters or seasonal ARIMA job.">How many meals will the hospital kitchen serve next Tuesday?</button>
+          <button class="opt" data-right data-fb="This asks how volatile something will be — its variance — and currency returns are the classic case of variance that changes over time.">How much will a currency’s daily returns swing over the next month?</button>
+          <button class="opt" data-fb="That is change detection — Module 6's CUSUM.">Has the average defect rate on a production line shifted?</button>
+          <button class="opt" data-fb="That asks for a level from a short, spiky series — exponential smoothing territory.">What will a new product sell next quarter, given 18 months of history?</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="ix" data-quiz="m7x-q7">
+        <div class="ix-head"><span class="ix-kind">final · critical thinking</span><span class="ix-done">answered</span></div>
+        <p class="prompt">A team compares five forecasting models with random 5-fold cross-validation on three years of daily data. What is the main problem?</p>
+        <div class="opts">
+          <button class="opt" data-fb="Five folds is a normal choice. The problem is shuffling, not the fold count.">Five folds is too few; ten would be reliable.</button>
+          <button class="opt" data-right data-fb="Shuffling puts future days in training for past test days. Nearby days are closely related, so the errors are optimistic. Walk-forward validation fixes this.">Training folds contain days after the test days, so future information leaks in.</button>
+          <button class="opt" data-fb="Three years of daily data is over a thousand points — well above ARIMA's rough 40-point guideline.">Three years is too little data to validate anything.</button>
+          <button class="opt" data-fb="Comparing several models by cross-validation is a legitimate use of it. The order of the data is the issue.">Cross-validation can only be used to fit one model at a time.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="ix" data-quiz="m7x-q8">
+        <div class="ix-head"><span class="ix-kind">final · interpretation</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Why does a single-smoothing forecast stay flat as the horizon grows, while its prediction interval widens?</p>
+        <div class="opts">
+          <button class="opt" data-fb="α is fixed once fitted. It doesn't change with the horizon.">α shrinks as the horizon grows.</button>
+          <button class="opt" data-right data-fb="The best guess for every unseen period is the same S_t, so the point forecast doesn't move. But each extra unseen period adds its own randomness, so the range of plausible outcomes keeps growing.">The best guess stays S<sub>t</sub>, but each extra unseen period adds more uncertainty.</button>
+          <button class="opt" data-fb="The forecast is flat because no newer information arrives, not because of a trend term. Single smoothing has no trend term.">The trend term cancels out over long horizons.</button>
+          <button class="opt" data-fb="Seasonal factors don't appear in single smoothing, and the interval widens for reasons unrelated to seasons.">The seasonal factors are unknown for later periods.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">How to read the options</span>
+      <p class="q">Several wrong answers above are the right number for a <em>neighbouring</em> question. Why?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Examiners build wrong answers from specific slips: the one-step instead of three-step forecast, the weight on t−1 instead of t−2, the MSE instead of the RMSE. If your answer appears as an option, check that it answers the question actually asked.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Section B — Short answer and discussion, final style</h3>
+      <p class="frq-lead">Each of these is worth roughly 4–8 marks in a typical paper. Write the answer out before opening it.</p>
+
+      <div class="frq">
+        <p class="qn">B1 · <strong>Explain the name.</strong> Starting from S<sub>t</sub> = αx<sub>t</sub> + (1 − α)S<sub>t−1</sub>, show why the method is called “exponential smoothing”, and state what the expanded form reveals about how past data is used.</p>
+        <details><summary>Model answer</summary>
+          <div class="ans">
+            <p><strong>Smoothing:</strong> with 0 &lt; α &lt; 1, a high reading is weighted by only α and pulled down by the older baseline; a low reading is pulled up the same way. Peaks and valleys are damped.</p>
+            <p><strong>Exponential:</strong> substitute S<sub>t−1</sub> = αx<sub>t−1</sub> + (1 − α)S<sub>t−2</sub> and keep going: S<sub>t</sub> = αx<sub>t</sub> + α(1−α)x<sub>t−1</sub> + α(1−α)²x<sub>t−2</sub> + … The weight on the observation k periods back is α(1−α)<sup>k</sup> — an exponent that rises by one each step back.</p>
+            <p><strong>What it reveals:</strong> every past observation contributes, not just the latest; and because 1 − α &lt; 1, newer observations get more weight than older ones.</p>
+            <p class="mark"><strong>Marking notes.</strong> Most marks go to the substitution and the general weight α(1−α)<sup>k</sup>. Saying “older data gets less weight” without showing the substitution usually earns about half. Pointing out that the one-line equation <em>hides</em> the older data is what separates good answers from complete ones.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="frq">
+        <p class="qn">B2 · <strong>Compute by hand.</strong> With α = 0.5, smooth the series 10, 14, 12, 18. Give S<sub>1</sub> to S<sub>4</sub>, the forecast for period 5, and the sum of squared one-step errors for periods 2 to 4.</p>
+        <details><summary>Model answer</summary>
+          <div class="ans">
+            <p>S<sub>1</sub> = 10 (starting condition). S<sub>2</sub> = 0.5·14 + 0.5·10 = 12. S<sub>3</sub> = 0.5·12 + 0.5·12 = 12. S<sub>4</sub> = 0.5·18 + 0.5·12 = 15. F<sub>5</sub> = S<sub>4</sub> = 15.</p>
+            <p>One-step forecasts are F<sub>2</sub> = S<sub>1</sub> = 10, F<sub>3</sub> = S<sub>2</sub> = 12, F<sub>4</sub> = S<sub>3</sub> = 12. Errors: 10 − 14 = −4, 12 − 12 = 0, 12 − 18 = −6. Sum of squares = 16 + 0 + 36 = 52.</p>
+            <p class="mark"><strong>Marking notes.</strong> The common slip is scoring S<sub>t</sub> against x<sub>t</sub>. S<sub>t</sub> has already seen x<sub>t</sub>, so that isn’t a forecast. The error for period t uses the forecast made at t − 1. Stating S<sub>1</sub> = x<sub>1</sub> explicitly earns its own mark.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="frq">
+        <p class="qn">B3 · <strong>Explain Holt-Winters.</strong> Write the three update equations for triple exponential smoothing with multiplicative seasonality. Explain what each term does, why C<sub>t−L</sub> is used, and give the starting conditions.</p>
+        <details><summary>Model answer</summary>
+          <div class="ans">
+            <p>S<sub>t</sub> = α(x<sub>t</sub>/C<sub>t−L</sub>) + (1−α)(S<sub>t−1</sub> + T<sub>t−1</sub>) — blend the de-seasonalised observation with last period’s baseline projected forward by the trend.</p>
+            <p>T<sub>t</sub> = β(S<sub>t</sub> − S<sub>t−1</sub>) + (1−β)T<sub>t−1</sub> — blend the observed change in baseline with the previous trend.</p>
+            <p>C<sub>t</sub> = γ(x<sub>t</sub>/S<sub>t</sub>) + (1−γ)C<sub>t−L</sub> — blend this period’s observed ratio to baseline with the previous factor for the same stage.</p>
+            <p>C<sub>t−L</sub> is the most recent factor from the same point in the cycle (last Monday for a Monday). Starting conditions: S<sub>1</sub> = x<sub>1</sub>, T<sub>1</sub> = 0, and C<sub>1</sub> … C<sub>L</sub> = 1.</p>
+            <p class="mark"><strong>Marking notes.</strong> Two details are commonly missed: the trend is added to S<sub>t−1</sub> <em>inside</em> the (1 − α) term, and the observation is <em>divided</em> by the factor. Starting conditions for all three components are usually a separate mark.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="frq">
+        <p class="qn">B4 · <strong>Choosing α.</strong> Explain the trade-off α controls. How should the amount of randomness in a system guide it, and how is it chosen in practice?</p>
+        <details><summary>Model answer</summary>
+          <div class="ans">
+            <p>α trades trust in the new reading against trust in the existing baseline. A large α reacts fast to real changes but also chases noise. A small α filters noise but is slow to recognise a real shift.</p>
+            <p>High randomness means most fluctuations are noise, so α should be small. Low randomness means fluctuations probably reflect real change, so α should be large.</p>
+            <p>In practice α (with β and γ) is chosen by minimising the sum of squared one-step forecast errors over the training data, subject to staying between 0 and 1 — and the result is then checked on held-out data.</p>
+            <p class="mark"><strong>Marking notes.</strong> Full marks name both costs — noise-chasing and lag. Answers that say only “small α for noisy data” miss what the small α costs.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="frq">
+        <p class="qn">B5 · <strong>ARIMA in words.</strong> Explain the three components of ARIMA(p, d, q), and give three special cases with the models they correspond to.</p>
+        <details><summary>Model answer</summary>
+          <div class="ans">
+            <p><strong>d — integrated:</strong> difference the data d times so a non-stationary series becomes stationary. <strong>p — autoregressive:</strong> predict the differenced value from its own previous p values. <strong>q — moving average:</strong> also use the previous q forecast errors as predictors.</p>
+            <p>Special cases: ARIMA(0,0,0) is white noise; ARIMA(0,1,0) is a random walk; ARIMA(0,1,1) is basic exponential smoothing. (Also acceptable: ARIMA(p,0,0) is a pure AR model; ARIMA(0,0,q) is a pure MA model.)</p>
+            <p class="mark"><strong>Marking notes.</strong> A key mark is saying that the autoregression runs on the <em>differences</em>, not the raw data. Naming ARIMA(0,1,1) as exponential smoothing is the special case examiners most often look for, because it links the two halves of the module.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="frq">
+        <p class="qn">B6 · <strong>GARCH.</strong> What does GARCH estimate, why would a business want that, and how does its structure differ from ARIMA’s?</p>
+        <details><summary>Model answer</summary>
+          <div class="ans">
+            <p>GARCH estimates and forecasts the <strong>variance</strong> of a time series. Variance tells you how far a forecast might miss, which matters for planning (production, stock). In investing it stands in for volatility, which portfolio optimization balances against expected return.</p>
+            <p>Structurally it resembles ARIMA with two changes: it models variances and squared errors rather than values and plain errors, and it does not difference, so there is no d — the model is GARCH(p, q).</p>
+            <p class="mark"><strong>Marking notes.</strong> Many answers explain the structure and skip the <em>why</em>. The portfolio-risk use is the example most papers expect. Giving the reason there is no d, not just the fact, earns the last mark.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="frq">
+        <p class="qn">B7 · <strong>Validation.</strong> Why is shuffled k-fold cross-validation inappropriate for most time series, and what should replace it?</p>
+        <details><summary>Model answer</summary>
+          <div class="ans">
+            <p>Shuffling places later observations in training for earlier test points. Neighbouring periods are strongly related, so the model is partly shown the answer, and the validation error is optimistic.</p>
+            <p>Use walk-forward validation: fit on data up to time t, forecast t + 1, record the error, add t + 1 to training, and repeat. Average the errors and compare models on that. Compare against a naive or seasonal naive benchmark.</p>
+            <p class="mark"><strong>Marking notes.</strong> The mark sits in the mechanism — “future information leaks into training” — not in “order matters.” Mentioning the naive benchmark shows you know the error needs a reference point.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="frq">
+        <p class="qn">B8 · <strong>Choosing a method.</strong> You have 28 months of spiky monthly sales. A colleague insists on ARIMA because it “includes exponential smoothing as a special case.” Respond.</p>
+        <details><summary>Model answer</summary>
+          <div class="ans">
+            <p>Being more general means ARIMA <em>can</em> represent smoothing, not that it will forecast better. It has more parameters to estimate, and the rule of thumb is about 40 data points — 28 is short. ARIMA also tends to do best on stable data, and this series is spiky.</p>
+            <p>Start with exponential smoothing, fit a few low-order ARIMA models, and let walk-forward validation against a naive benchmark decide.</p>
+            <p class="mark"><strong>Marking notes.</strong> Full marks need both lecture criteria — data size and stability — plus a validation-based way to settle it. “Generality is not accuracy” is the core point.</p>
+          </div>
+        </details>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Where the marks hide</span>
+      <p class="q">Across B2 and B7, what is the shared idea?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">A forecast only counts if it was made before the answer was known. Scoring S<sub>t</sub> against x<sub>t</sub> and shuffled cross-validation both break that rule, in different places.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Section C — Multi-part cases, final style</h3>
+
+      <div class="frq case">
+        <p class="qn">C1 · <strong>Emergency department arrivals.</strong> A hospital records patient arrivals every hour for two years. Arrivals peak each evening, and the evening peak has grown as overall demand has risen. (a) What is L? (b) State the starting conditions for Holt-Winters. (c) Additive or multiplicative seasonality — justify. (d) Describe a validation plan. (e) The staffing manager asks how many extra nurses to roster “just in case.” What do you need to estimate, and with what?</p>
+        <details><summary>Model answer</summary>
+          <div class="ans">
+            <p><strong>(a)</strong> L = 24 for the daily cycle in hourly data. (A weekly pattern would also exist; basic Holt-Winters handles one cycle, so note that as a limitation.)</p>
+            <p><strong>(b)</strong> S<sub>1</sub> = x<sub>1</sub>, T<sub>1</sub> = 0, and the first 24 seasonal factors set to 1.</p>
+            <p><strong>(c)</strong> Multiplicative. The evening peak grows as the level grows, so the seasonal effect is proportional rather than a fixed number of patients.</p>
+            <p><strong>(d)</strong> Walk-forward: fit on the first year or so, forecast the next hour or day, record the error, roll forward, repeat. Compare against a seasonal naive forecast (same hour yesterday or last week) using MAE, which staff can read directly as “patients per hour.”</p>
+            <p><strong>(e)</strong> The variance of the forecast error — how far actual arrivals may run above forecast. If that variance changes over time (bursty periods), a GARCH-type model estimates it; the extra staffing follows from that spread.</p>
+            <p class="mark"><strong>Marking notes.</strong> (c) earns its marks only with the justification “the peak grows with the level.” (e) is the link between the value half and the variance half of the module; answers that just propose a larger point forecast miss it.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="frq case">
+        <p class="qn">C2 · <strong>Diagnosing a model from its symptoms.</strong> Name the likely cause and the fix. (a) Fitted α is 0.99 and the model barely beats a naive forecast. (b) A model on monthly data leaves errors strongly correlated at lag 12. (c) ARIMA with d = 2 on a series with a straight-line trend gives erratic forecasts. (d) Shuffled cross-validation RMSE is half the walk-forward RMSE.</p>
+        <details><summary>Model answer</summary>
+          <div class="ans">
+            <p><strong>(a)</strong> The series behaves close to a random walk, so the latest value is nearly the best forecast. Not a bug — but it means little predictable structure. Report the naive benchmark alongside the model.</p>
+            <p><strong>(b)</strong> Unmodelled yearly seasonality. Add a seasonal component — Holt-Winters with L = 12, or seasonal ARIMA.</p>
+            <p><strong>(c)</strong> Over-differencing. One difference removes a straight-line trend; the second only adds noise. Use d = 1.</p>
+            <p><strong>(d)</strong> Leakage from future periods into training. Trust the walk-forward figure.</p>
+            <p class="mark"><strong>Marking notes.</strong> Each part rewards naming the <em>mechanism</em>. For (a), saying “α is too high, lower it” loses marks — α was chosen by the data. For (c), the phrase “over-differencing” plus the reason earns the full mark.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="frq case">
+        <p class="qn">C3 · <strong>Two funds.</strong> Funds A and B have the same forecast return next month. Over the past year, A’s daily returns were calm for months then very volatile for weeks; B’s were steadily moderate. (a) Which method forecasts each fund’s variance, and why? (b) Why does “calm then volatile” matter for that method? (c) A risk-averse investor must choose one. What would you tell them, and what is the limit of your advice?</p>
+        <details><summary>Model answer</summary>
+          <div class="ans">
+            <p><strong>(a)</strong> GARCH, fitted to each fund’s returns. The question is about variance, which is what GARCH estimates and forecasts.</p>
+            <p><strong>(b)</strong> A’s variance changes over time and depends on recent history — conditional heteroscedasticity. GARCH uses recent variances and squared errors, so its forecast reflects whether A is currently in a calm or volatile spell. A single historical variance would average those spells and misstate next month’s risk either way.</p>
+            <p><strong>(c)</strong> With equal expected return, the fund with lower forecast variance is the better fit for a risk-averse investor; that depends on A’s current state. The limit: these are model estimates, variance is only a proxy for risk, and this is analysis, not financial advice.</p>
+            <p class="mark"><strong>Marking notes.</strong> (b) is the core of the question: a constant variance estimate is wrong for A <em>because</em> of the clustering. In (c), answers that always pick B without checking A’s current regime lose the mark.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="note">
+        <div class="note-head"><span class="lbl">Exam workout — my working</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="m7exam" data-placeholder="Write your answers here before opening the model answers — then compare and note what you left out."></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Where the marks hide</span>
+      <p class="q">Across all three cases, which habit earns the most marks?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Asking whether the question wants the value or the variance before choosing a method. C1(e) and all of C3 turn on it, and it is the easiest distinction to overlook under time pressure.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
+
+<section class="close" style="--accent:#131b26">
+  <h2>How the module fits together</h2>
+  <p class="h2meta">The through-line across all eight lessons, plus the worked examples inside each</p>
+  <ul class="thread">
+    <li><span class="dot" style="--d:#2f6b52"></span><span class="lbl">Lesson 1</span><span>Separates signal from noise with one weighted average and one dial, α.</span></li>
+    <li><span class="dot" style="--d:#8a5a1c"></span><span class="lbl">Lesson 2</span><span>Gives trend and seasonality the same treatment, with β, γ and their own starting values.</span></li>
+    <li><span class="dot" style="--d:#33507f"></span><span class="lbl">Lesson 3</span><span>Unrolls the equation to show every past point counts, with exponentially shrinking weight.</span></li>
+    <li><span class="dot" style="--d:#16697a"></span><span class="lbl">Lesson 4</span><span>Turns the smoother into a forecaster, and fits its constants by minimising squared error.</span></li>
+    <li><span class="dot" style="--d:#6b3fa0"></span><span class="lbl">Lesson 5</span><span>Generalises all of it into ARIMA, with smoothing as the (0, 1, 1) special case.</span></li>
+    <li><span class="dot" style="--d:#a8452c"></span><span class="lbl">Lesson 6</span><span>Points the same machinery at variance, so a forecast can come with its uncertainty.</span></li>
+    <li><span class="dot" style="--d:#3f6b1f"></span><span class="lbl">Lesson 7</span><span>Shows how to pick d by differencing and suggest p and q from correlation plots.</span></li>
+    <li><span class="dot" style="--d:#1d4e89"></span><span class="lbl">Lesson 8</span><span>Adapts validation to time order and adds the naive benchmark every model must beat.</span></li>
+  </ul>
+
+  <h3 style="color:#131b26">Things worth noticing</h3>
+  <ul>
+    <li><strong>One idea, three times.</strong> Baseline, trend and seasonal factor are each “new evidence blended with old belief.” Learn one equation and you have the pattern for all three.</li>
+    <li><strong>α is Module 2’s bias–variance dial again.</strong> Small α: stable but slow (bias). Large α: responsive but noisy (variance). It is chosen the same way — by error on data the fit didn’t see.</li>
+    <li><strong>Every model here nests inside the next.</strong> Single smoothing is ARIMA(0, 1, 1); the naive forecast is ARIMA(0, 1, 0); good residuals are ARIMA(0, 0, 0). ARIMA is the umbrella.</li>
+    <li><strong>Value and variance are different questions.</strong> Smoothing and ARIMA answer “how much?”; GARCH answers “how sure?”. Many real decisions — stock, staffing, portfolios — need both.</li>
+    <li><strong>This module sits next to Module 6.</strong> CUSUM asks whether the level <em>has</em> shifted; exponential smoothing tracks where the level <em>is</em>. Both separate real change from noise, for different decisions.</li>
+  </ul>
+
+  <h3 style="color:#131b26">Likely exam targets</h3>
+  <ul>
+    <li>Write S<sub>t</sub> = αx<sub>t</sub> + (1 − α)S<sub>t−1</sub>, its starting condition, and explain how randomness should guide α.</li>
+    <li>Write the Holt-Winters equations with multiplicative seasonality, and all three starting conditions.</li>
+    <li>Explain why C<sub>t−L</sub>, not C<sub>t−1</sub>, appears in the baseline update.</li>
+    <li>Interpret a seasonal factor and remove it from an observation.</li>
+    <li>Derive the unrolled form and give the weight on x<sub>t−k</sub>.</li>
+    <li>Explain both halves of the name “exponential smoothing.”</li>
+    <li>Derive F<sub>t+1</sub> = S<sub>t</sub>, and give the forecasts with trend and with seasonality.</li>
+    <li>State how α, β and γ are fitted, including the constraints.</li>
+    <li>Define stationarity and explain what differencing does.</li>
+    <li>Explain p, d and q, and name the ARIMA equivalents of white noise, a random walk and basic exponential smoothing.</li>
+    <li>State when ARIMA tends to beat exponential smoothing, and the rough data requirement.</li>
+    <li>Explain what GARCH estimates, why variance matters, and why GARCH has no d.</li>
+    <li>Explain why shuffled cross-validation is wrong for time series and describe walk-forward validation.</li>
+    <li>Compute MAE and RMSE, and say why signed errors can’t measure accuracy.</li>
+    <li>Convert α into a half-life or an average age of the data.</li>
+    <li>Rewrite smoothing in error-correction form and explain why it is ARIMA(0, 1, 1).</li>
+    <li>Update a GARCH(1, 1) variance by hand, and give its persistence and long-run variance.</li>
+    <li>Read an ACF after differencing and name the model it suggests, as with the airline data.</li>
+    <li>Explain why a fitted α of 1 can signal a missing trend or seasonal component.</li>
+  </ul>
+
+  <div class="note">
+    <div class="note-head"><span class="lbl">Module 7 — my own summary</span><span class="hint">click to type; saves automatically</span></div>
+    <div class="note-body" contenteditable="true" data-note="m7summary" data-placeholder="Write the module back in your own words — the fastest way to find out what you don't actually know yet."></div>
+  </div>
+
+  <footer><span class="ai"><strong>Written by an AI model from lecture recordings.</strong> Not reviewed by any instructor or institution — verify anything you rely on against the original lectures. Examples here are generic illustrations rather than the ones used in class, and every worked number and chart is invented or simulated for illustration. The Dana Reyes and Marcus Lee cases, the multi-step Holt forecast note in Lesson 4, the written-out ARIMA and GARCH equations, the additive-versus-multiplicative guidance, the “things worth noticing” list, and Lessons 7 to 9 in their entirety are this summary’s own additions rather than lecture content. They follow standard forecasting practice, in particular <em>Forecasting: Principles and Practice</em> (Hyndman &amp; Athanasopoulos). The “More examples” sections are also additions. The airline passenger figures are Box &amp; Jenkins’ Series G; every model fitted to them on this page (Holt-Winters, single smoothing, the airline model, the correlation plots) was computed for this page with simple code, so results from R or Python packages will differ slightly because of different starting values and fitting methods. Other sources: RFC 6298 (TCP timers); the Nobel Prize committee’s 2003 materials on Engle; Bollerslev (1986); Makridakis, Spiliotis &amp; Assimakopoulos on the M4 competition (2018); Taylor (2003) on double seasonal smoothing; published summaries of the Mauna Loa CO₂ record. The TCP, GARCH, shop and warehouse numbers are illustrative. The lecture showed the ARIMA and GARCH equations only as images, so the notation here may differ from the slides; sign conventions and the order of GARCH’s parameters also vary between software packages.</span></footer>
+</section>
+
+</div>
+
+<dialog id="dlg">
+  <div class="dlg-in">
+    <h3 id="dlgTitle">Your notes</h3>
+    <p id="dlgHelp" style="font-family:var(--sans);font-size:.88rem;color:var(--ink-soft);max-width:none">Copy this text and keep it somewhere safe.</p>
+    <textarea id="dlgText" spellcheck="false"></textarea>
+    <div class="dlg-row">
+      <button class="btn" id="dlgCopy">Copy to clipboard</button>
+      <button class="btn" id="dlgLoad" hidden>Load these notes</button>
+      <button class="btn" id="dlgClose">Close</button>
+      <span class="status" id="dlgStatus"></span>
+    </div>
+  </div>
+</dialog>
+
+<script src="study.js"></script>
+<script>
+/* α explorer (Lesson 1) — not a scored activity */
+(function(){
+  var X=[98.21, 103.58, 98.42, 97.79, 93.49, 98.51, 107.78, 102.97, 107.26, 101.74, 102.76, 101.3, 88.34, 105.99, 103.54, 103.49, 88.16, 87.79, 93.77, 96.72, 102.14, 99.68, 103.65, 95.5, 120.16, 120.76, 113.37, 130.02, 121.9, 126.38, 113.66, 112.82, 115.59, 117.26, 122.42, 119.74], svg=document.getElementById("aeSvg"), sl=document.getElementById("aeSlider");
+  if(!svg||!sl) return;
+  var lo=75, hi=145, px=function(t){return 50+t*(610-50)/(X.length-1);}, py=function(v){return 230-(v-lo)/(hi-lo)*210;};
+  var dots=X.map(function(v,t){return '<circle cx="'+px(t).toFixed(1)+'" cy="'+py(v).toFixed(1)+'" r="3.2" fill="#9aa5b1"/>';}).join("");
+  var frame='<line x1="50" y1="230" x2="610" y2="230" stroke="#131b26" stroke-width="1.2"/><line x1="'+px(24).toFixed(1)+'" y1="20" x2="'+px(24).toFixed(1)+'" y2="230" stroke="#9aa5b1" stroke-dasharray="3 4"/>'+
+    '<text x="'+(px(24)+6).toFixed(1)+'" y="34" font-family="IBM Plex Sans,sans-serif" font-size="11.5" fill="#4a5765">true level steps up</text>';
+  function draw(){
+    var a=+sl.value, S=[X[0]];
+    for(var t=1;t<X.length;t++) S.push(a*X[t]+(1-a)*S[t-1]);
+    var d="M "+S.map(function(v,t){return px(t).toFixed(1)+" "+py(v).toFixed(1);}).join(" L ");
+    svg.innerHTML=frame+dots+'<path d="'+d+'" fill="none" stroke="#2f6b52" stroke-width="2.6"/>';
+    var n=0; for(var k=24;k<X.length;k++){ if(S[k]>=113){ n=k-24; break; } n=-1; }
+    var hl=a<1?Math.log(.5)/Math.log(1-a):0;
+    document.getElementById("aeVal").textContent=a.toFixed(2);
+    document.getElementById("aeStats").textContent="Weight on today: "+Math.round(a*100)+"%  ·  half-life: "+hl.toFixed(1)+" periods  ·  average age of data: "+((1-a)/a).toFixed(1)+" periods  ·  "+
+      (n<0?"never gets within 5 of the new level in this window":(n===0?"reaches within 5 of the new level at once":"reaches within 5 of the new level after "+n+" period"+(n===1?"":"s")));
+  }
+  sl.addEventListener("input",draw); draw();
+})();
+</script>
+
+</body>
+</html>

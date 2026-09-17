@@ -144,7 +144,7 @@
 
 <header>
   <h1>Exam practice</h1>
-  <p class="sub">Six short checkpoints. Work through one at a time — answer, check the reasoning, move on. Nothing is timed and nothing is saved between visits.</p>
+  <p class="sub">Eight short checkpoints. Work through one at a time — answer, check the reasoning, move on. Nothing is timed and nothing is saved between visits.</p>
 
   <svg class="boundary" viewBox="0 0 720 96" role="img" aria-label="Two classes of points separated by a boundary with a margin on either side">
     <defs>
@@ -615,6 +615,209 @@ const MODULES = [
       }
     ]
   }
+  ,{
+    id: "outliers",
+    title: "Kinds of outlier, and what to do with one",
+    blurb: "Hardest to detect and hardest to judge are two different questions.",
+    questions: [
+      {
+        type: "mc",
+        text: "Which type of outlier is hardest to detect, and why?",
+        options: [
+          "Point outliers, because a single wrong value hides easily in a large dataset.",
+          "Contextual outliers, because context is a matter of opinion.",
+          "Collective outliers, because no individual point looks unusual — only the group does.",
+          "All three are equally hard; detection difficulty depends only on dataset size."
+        ],
+        answer: 2,
+        why: "A collective outlier is a set of points that is anomalous as a group while each member looks ordinary. There is nothing for a distance-based test to flag. You may know something is missing without being able to say what or where, which is exactly what makes them the hardest to find."
+      },
+      {
+        type: "mc",
+        text: "How can potential point outliers be identified?",
+        options: [
+          "By calculating the distance between each point and the nearest other point to it, and flagging unusually large values.",
+          "By retraining the model without each point and comparing accuracy.",
+          "By checking whether the value is physically possible.",
+          "Only by manual inspection — there is no systematic method."
+        ],
+        answer: 0,
+        why: "Looking at the distance of a point from all the others — for instance the distance to its nearest neighbour — exposes points sitting far from everything else. Contextual outliers can often be found the same way, once 'nearest' is taken within the relevant context."
+      },
+      {
+        type: "mc",
+        text: "Which type is hardest to deal with once you have identified it?",
+        options: [
+          "Point outliers, because removing them changes the mean.",
+          "Contextual outliers, because it is often hard to tell bad data from correct-but-irrelevant data from correct-and-relevant data.",
+          "Collective outliers, because they are hardest to detect.",
+          "None — once an outlier is identified, the handling is mechanical."
+        ],
+        answer: 1,
+        why: "Detection difficulty and handling difficulty rank differently. Collective outliers are hardest to find; contextual outliers are hardest to rule on, because deciding which of the three verdicts applies is a judgement the data cannot make for you."
+      },
+      {
+        type: "mc",
+        text: "You have determined that a point is an outlier. What are the three possible verdicts?",
+        options: [
+          "Keep, delete, or impute a replacement value.",
+          "Point, contextual, or collective.",
+          "Bad/incorrect data; correct data not relevant to the question; correct data that is relevant to the question.",
+          "Statistically significant, borderline, or negligible."
+        ],
+        answer: 2,
+        why: "The first should be thrown out as an error. The second is real data that is not about what you are modelling, and can be thrown out. The third is real and relevant, and should be retained however inconvenient it is."
+      },
+      {
+        type: "mc",
+        text: "Two of the three verdicts concern data that is correct. What distinguishes them?",
+        options: [
+          "How far the value sits from the mean.",
+          "Whether the data point is relevant to the question being modelled.",
+          "Whether the value was measured or self-reported.",
+          "Whether the dataset is large enough to absorb the point."
+        ],
+        answer: 1,
+        why: "Both are correct data, so no test of data quality can separate them. Only knowing what question the model answers decides whether the point belongs in the analysis — which is why an automatic deletion rule cannot make this call."
+      },
+      {
+        type: "mc",
+        text: "A cleaning script drops every point whose nearest-neighbour distance exceeds a fixed threshold, and the data is declared outlier-free. What is the most serious problem?",
+        options: [
+          "The threshold should have been a percentage rather than an absolute distance.",
+          "Collective outliers go undetected, and every flagged point is treated as bad data when some may be correct and relevant.",
+          "Nearest-neighbour distance is not a valid outlier measure.",
+          "Nothing — this is standard practice."
+        ],
+        answer: 1,
+        why: "Two failures at once. The test cannot see collective outliers, because their members sit close to their neighbours, so 'outlier-free' is unsupported. And deleting on detection applies the 'bad data' verdict to every flagged point, including points that are correct and relevant to the question."
+      },
+      {
+        type: "discussion",
+        text: "A teammate says collective outliers are 'the hardest type, full stop'. Explain what is right and what is missing in that claim.",
+        answer: "<p><strong>What is right:</strong> collective outliers are the hardest to <em>detect</em>. A set of points can be anomalous as a group while every individual member looks ordinary, so the distance-based reasoning that finds point outliers — and, applied within context, many contextual ones — has nothing to point at. You may know something is missing without knowing what or where.</p><p><strong>What is missing:</strong> detection is only half the problem. Once an outlier is identified it still has to be adjudicated, and there contextual outliers are the difficult ones: working out whether a point is bad data, correct data that should not be used in the model, or correct data that should be used is often genuinely hard.</p><p><strong>The correction:</strong> 'hardest' needs a qualifier. Hardest to find is collective; hardest to judge is contextual. An answer that names one type without saying hardest at what has answered half the question.</p>"
+      },
+      {
+        type: "discussion",
+        text: "Work the three verdicts on a single example: a $40,000 charge flagged on a credit card whose typical transaction is under $100. Show how the same flagged point can land in any of the three categories.",
+        answer: "<p><strong>Verdict 1 — bad data.</strong> The amount was mis-keyed, or a currency conversion was applied twice, or a test transaction leaked into the production feed. The value never happened. Throw it out.</p><p><strong>Verdict 2 — correct but not relevant.</strong> The charge is genuine: a corporate account settling a supplier invoice, sitting in a dataset you are using to model ordinary consumer spending. The data is right; it is not about the question. It can be thrown out.</p><p><strong>Verdict 3 — correct and relevant.</strong> The charge is a genuine fraudulent transaction and the model is being built to catch fraud. Here the outlier is the phenomenon. Dropping it removes the signal you are trying to learn.</p><p><strong>The point of the exercise:</strong> the second and third look identical in the data — both are correct values, both are extreme. Nothing about the number distinguishes them. Only the question the model answers does, which is why 'flagged, therefore deleted' is not a defensible cleaning policy.</p>"
+      }
+    ]
+  },
+  {
+    id: "cusum",
+    title: "CUSUM: C, T, and the fixed mean",
+    blurb: "One parameter filters noise, one weighs evidence, and the mean must not move.",
+    questions: [
+      {
+        type: "mc",
+        text: "In a CUSUM set up to detect an increase, what is the effect of raising T?",
+        options: [
+          "Changes are detected faster, and false alarms become more likely.",
+          "Changes take longer to detect, but the model is less likely to declare a change that has not happened.",
+          "The running total resets more often.",
+          "The mean is re-estimated using more data."
+        ],
+        answer: 1,
+        why: "A higher T means the running total has to get larger before a change is declared. Detection is slower, but it is less likely that a total driven up by randomness alone will trip the threshold. T governs how sensitive the model is to changes."
+      },
+      {
+        type: "mc",
+        text: "What role does C play when the running total is updated?",
+        options: [
+          "It is added to each observation to correct for bias.",
+          "It is subtracted, so the total only grows when an observation exceeds the mean by more than C.",
+          "It sets the number of observations kept in the running window.",
+          "It scales the threshold in proportion to the sample size."
+        ],
+        answer: 1,
+        why: "C is subtracted from the deviation, so even an observation above the mean adds nothing unless it is more than C above it. That is how C removes the effect of ordinary variability before it can accumulate."
+      },
+      {
+        type: "mc",
+        text: "The process you are monitoring has a lot of natural random variation. What follows for C?",
+        options: [
+          "C should be lower, to make the detector more responsive.",
+          "C should be higher, so that randomly above-mean observations do not build the total.",
+          "C should be set to zero and the variability handled entirely by T.",
+          "C is unrelated to variability; only T responds to it."
+        ],
+        answer: 1,
+        why: "With high variability you want to ignore the occasions when randomness alone pushes an observation above the mean. A higher C does that. Where there is little variability, C can be lower, because randomness will not push observations far above the mean on its own."
+      },
+      {
+        type: "mc",
+        text: "Why not simply set C = 0 and use a larger T to control false alarms?",
+        options: [
+          "Because a CUSUM is mathematically undefined when C = 0.",
+          "Because T cannot be set above one standard deviation.",
+          "Because random runs above the mean accumulate in full, forcing T high — which then delays detection of a real, fast change.",
+          "Because C and T must always be equal."
+        ],
+        answer: 2,
+        why: "Observations are sometimes randomly above the mean for several periods in a row, which is not unlikely across many observations. With C = 0 those excursions accumulate, so avoiding a false alarm requires a high T. A genuine fast change then also has to climb that inflated threshold, so it is detected later. Handling the variability with C lets T stay low and catches the fast change sooner."
+      },
+      {
+        type: "mc",
+        text: "Which description of the division of labour between C and T is correct?",
+        options: [
+          "C filters each observation before it enters the total; T sets how much accumulated evidence is required.",
+          "C sets the alarm level; T absorbs noise in each observation.",
+          "Both do the same job, so either one can be tuned and the other fixed.",
+          "C applies to increases and T applies to decreases."
+        ],
+        answer: 0,
+        why: "They act at different stages, which is why one cannot substitute for the other. C stops ordinary wobble entering the running total at all; T judges the evidence that survives that filter. Collapsing both into T alone forces T to be large, which is what costs detection speed."
+      },
+      {
+        type: "mc",
+        text: "Should the mean be recalculated as each new observation arrives?",
+        options: [
+          "Yes — a current mean keeps the detector calibrated to recent conditions.",
+          "Yes, but only after a change has been declared.",
+          "No — detecting a change requires comparing against the old mean; updating it masks the change.",
+          "It makes no difference to the result."
+        ],
+        answer: 2,
+        why: "If the aim is to detect whether a change has occurred, the comparison has to be against the original mean. A mean that moves with the data keeps each new observation close to the baseline, so the running total never builds and the change becomes invisible."
+      },
+      {
+        type: "mc",
+        text: "Why is average yearly salary from 1970 to the present used as a warning example?",
+        options: [
+          "Salary data is too noisy for CUSUM to be appropriate.",
+          "Salaries have risen enormously, so a mean recalculated as data arrives rises with them and hides an unmistakable change.",
+          "Salary data has no meaningful mean.",
+          "The example shows that C must be larger than T for trending data."
+        ],
+        answer: 1,
+        why: "There has clearly been a change over this period. But if the mean is recomputed with each new data point it climbs alongside the data, every observation sits near the current mean, and the method reports nothing. The detector has been tuned to agree with whatever is happening."
+      },
+      {
+        type: "mc",
+        text: "Which application category most strongly favours a low T, accepting more false alarms?",
+        options: [
+          "Distinguishing a small change from random noise in a stable process.",
+          "Early detection of a large long-term change where a missed detection is far more costly than an investigated false alarm.",
+          "Any process where the mean is known exactly.",
+          "Processes with very low variability."
+        ],
+        answer: 1,
+        why: "When the cost of missing or being late to a real change dominates the cost of investigating a false alarm, you buy speed with a low T and pay the false-alarm rate. Naming the application category first is what makes a parameter choice defensible rather than arbitrary."
+      },
+      {
+        type: "discussion",
+        text: "Explain why CUSUM is useful for monitoring a model already running in production, and what a signal should prompt.",
+        answer: "<p><strong>Why it applies:</strong> model performance usually changes over time, because the situation or the underlying data changes. That degradation is typically gradual and noisy rather than a single dramatic failure — exactly the small-sustained-shift case CUSUM is built for. Monitoring an accuracy metric or the residuals period by period accumulates evidence that no single period would provide.</p><p><strong>What a signal means:</strong> it is time to do maintenance on the model. Retrain on newer data, and consider whether a different type of model is now a better fit given how the data has changed. The signal is a prompt to investigate, not an automatic verdict.</p><p><strong>Why it beats a schedule:</strong> retraining on a fixed calendar retrains when nothing has changed and waits when something has. Tying the trigger to detected change spends effort when it is warranted.</p><p><strong>Parameter choice follows the failure you fear:</strong> for a slow drift buried in noisy weekly figures, let C absorb the noise — set it near half the drop that would actually matter — so T can stay low enough to catch the drift while it is still small.</p>"
+      },
+      {
+        type: "discussion",
+        text: "A colleague proposes monitoring weekly model precision with C = 0, a high T, and a mean recomputed each week from the trailing twelve weeks. Evaluate both parts of the proposal.",
+        answer: "<p><strong>C = 0 with a high T — a bad trade, not a broken one.</strong> It will control false alarms. But with noisy weekly figures, runs of random above-mean weeks accumulate in full, so T has to be set high to survive them. The real drift then has to climb that same inflated threshold, and since the drift is slow the total builds slowly, so detection arrives long after the damage. Use C to absorb the weekly noise and T can come down.</p><p><strong>The rolling twelve-week mean — this disables the detector.</strong> A slow drift is precisely what a trailing mean will follow. Each week's precision sits close to a baseline computed from the recently degraded weeks, the deviation stays near zero, the total never builds, and the chart certifies that nothing is wrong while performance decays. This is the salary example in production form.</p><p><strong>What to do instead:</strong> fix the mean at the performance level established when the model was validated, since that is the thing you want to know you have departed from. If the metric has genuine known seasonality, remove that known pattern or use a season-appropriate baseline — that is a real objection to a flat mean, and it is different from letting the mean chase the data.</p>"
+      }
+    ]
+  }
+
 ];
 
 /* ---------- render ---------- */
@@ -637,6 +840,7 @@ MODULES.forEach((mod, mi) => {
 
   const section = document.createElement("section");
   section.className = "module";
+  section.id = mod.id;
   section.setAttribute("open-state", mi === 0 ? "open" : "closed");
 
   const head = document.createElement("button");

@@ -86,10 +86,12 @@ p.frq-lead{font-size:.92rem;color:var(--ink-soft,#4a5765);margin:.2rem 0 .8rem}
     <li style="--dot:#4a6b2a"><a href="#l10"><span class="tnum">Lesson 10</span><span class="tname">Where CV breaks</span><span class="tq">When is a held-out set not held out?</span></a></li>
     <li style="--dot:#16697a"><a href="#l11"><span class="tnum">Lesson 11</span><span class="tname">The bootstrap</span><span class="tq">How uncertain is the number itself?</span></a></li>
     <li style="--dot:#131b26"><a href="#l12"><span class="tnum">Exam workout</span><span class="tname">Midterm &amp; final questions</span><span class="tq">Audits, tables, and where marks hide</span></a></li>
+    <li style="--dot:#1f6b6b"><a href="#extra"><span class="tnum">Extra 1–2</span><span class="tname">Resampling zoo, search &amp; compare</span><span class="tq">What if the rows aren’t interchangeable?</span></a></li>
+    <li style="--dot:#8a3d5c"><a href="#x3"><span class="tnum">Extra 3</span><span class="tname">Practice &amp; reading</span><span class="tq">Which splitter, which test, which metric?</span></a></li>
   </ul>
 
   <div class="badge-strip">
-    <p class="cap">Badges unlock when every activity in a lesson is finished.</p>
+    <p class="cap">Badges unlock when every activity in a lesson is finished. The last two cover the additional-resources material, which is not part of the class.</p>
     <ul class="badges">
       <li class="badge" data-for="l1" style="--b:#1f6b6b"><span class="gem">R</span><span class="nm">Random Effects</span></li>
       <li class="badge" data-for="l2" style="--b:#7d4b7a"><span class="gem">T</span><span class="nm">Three Sets</span></li>
@@ -103,6 +105,8 @@ p.frq-lead{font-size:.92rem;color:var(--ink-soft,#4a5765);margin:.2rem 0 .8rem}
       <li class="badge" data-for="l10" style="--b:#4a6b2a"><span class="gem">⚠</span><span class="nm">Leakage</span></li>
       <li class="badge" data-for="l11" style="--b:#16697a"><span class="gem">B</span><span class="nm">Bootstrap</span></li>
       <li class="badge" data-for="l12" style="--b:#131b26"><span class="gem">✓</span><span class="nm">Exam ready</span></li>
+      <li class="badge" data-for="x1" style="--b:#1f6b6b"><span class="gem">⌖</span><span class="nm">Splitter Map</span></li>
+      <li class="badge" data-for="x3" style="--b:#8a3d5c"><span class="gem">✎</span><span class="nm">Worked It Out</span></li>
       <li class="badge" data-for="*" style="--b:#131b26"><span class="gem">★</span><span class="nm">Module 3 complete</span></li>
     </ul>
   </div>
@@ -1851,15 +1855,438 @@ p.frq-lead{font-size:.92rem;color:var(--ink-soft,#4a5765);margin:.2rem 0 .8rem}
     <li>Describe the bootstrap, derive the 63.2% figure, and contrast what it estimates with what cross-validation estimates.</li>
     <li>Say how cross-validation changes for classification, and what to stratify and to cross-validate when a class is rare.</li>
   </ul>
+  <p style="font-family:var(--sans);font-size:.9rem;color:var(--ink-soft);max-width:66ch">Everything above is class material. <a href="#extra">Additional resources</a> follow — the resampling schemes for grouped and time-ordered data, hyperparameter search, the model-comparison tests, metrics and calibration, practice problems and reading — none of it taught in this module.</p>
 
   <div class="note">
     <div class="note-head"><span class="lbl">Module 3 — my own summary</span><span class="hint">click to type; saves automatically</span></div>
     <div class="note-body" contenteditable="true" data-note="m3summary" data-placeholder="Write the module back in your own words — the fastest way to find out what you don't actually know yet."></div>
   </div>
 
-  <footer><span class="ai"><strong>Written by an AI model from lecture recordings.</strong> Not reviewed by any instructor or institution — verify anything you rely on against the original lectures. Examples here are generic illustrations rather than the ones used in class. The Dana Reyes and Tom Oyelaran cases, the point that a test set becomes a validation set once you select on it, “Six things worth noticing”, and Lessons 5 to 12 in their entirety are this summary’s own additions rather than lecture content — they draw on standard treatments of resampling, in particular <em>An Introduction to Statistical Learning</em> (James, Witten, Hastie &amp; Tibshirani), chapters 2 and 5, with the one-standard-error rule from chapter 6. All worked numbers in those lessons are invented for illustration, and notation follows the lecture material where the two differ.</span></footer>
 </section>
 
+<!-- ==================== ADDITIONAL RESOURCES DIVIDER ==================== -->
+<section class="close" id="extra" style="--accent:#1f6b6b">
+  <h2>Additional resources</h2>
+  <p class="h2meta">Everything below this line is <strong>not class material</strong></p>
+  <div class="defn">
+    <span class="term">Read this first</span>
+    <p>The lessons above are the module as taught, plus the extended treatment already flagged in the footer. Everything from here on was assembled from outside sources — textbooks, method papers and the documentation of the standard libraries. None of it is examinable unless your instructor says so, and where a convention differs from the lectures, <strong>the lectures win</strong>.</p>
+  </div>
+  <p>Lessons 4 and 10 establish that plain k-fold assumes rows are independent and interchangeable, and that when they are not it silently fails. The lessons stop at naming the failures. Extra 1 gives the resampling schemes that fix each one. Extra 2 covers the machinery that sits <em>around</em> validation — how to search a hyperparameter space, how to tell whether two models actually differ, and what to do when accuracy is the wrong number. Extra 3 is practice and reading.</p>
+  <ul class="thread">
+    <li><span class="dot" style="--d:#1f6b6b"></span><span class="lbl">Extra 1</span><span>Every resampling scheme, and the failure each one exists to fix.</span></li>
+    <li><span class="dot" style="--d:#2f6b52"></span><span class="lbl">Extra 2</span><span>Searching, comparing and scoring — the apparatus around the validation loop.</span></li>
+    <li><span class="dot" style="--d:#8a3d5c"></span><span class="lbl">Extra 3</span><span>Practice problems and where to read further.</span></li>
+  </ul>
+</section>
+
+<!-- ==================== EXTRA 1 ==================== -->
+<section class="lesson" id="x1" data-short="Resampling zoo" style="--accent:#1f6b6b">
+  <div class="lesson-head">
+    <span class="ln">Extra 1 &middot; not class material</span>
+    <h2>The resampling schemes</h2>
+    <p class="keyline">Plain k-fold makes one assumption: that shuffling the rows is harmless. Every scheme below exists because that assumption fails in a specific, common way.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>The question that picks the scheme</h3>
+      <p>Lesson 10 lists four ways cross-validation quietly breaks. Three of them are structural properties of the data, and each has a standard splitter attached. The question to ask before choosing any of them is: <strong>what would have to be true of a new observation for my estimate to be honest?</strong></p>
+      <table>
+        <tr><th>If a new observation…</th><th>Then the held-out fold must…</th><th>Use</th></tr>
+        <tr><td>is just another draw from the same population</td><td>be a random subset</td><td>KFold</td></tr>
+        <tr><td>is another draw, but a class is rare</td><td>preserve the class proportions</td><td>StratifiedKFold</td></tr>
+        <tr><td>comes from a patient, site, user or device the model has never seen</td><td>contain <em>whole</em> groups, never split one</td><td>GroupKFold</td></tr>
+        <tr><td>happens after everything you trained on</td><td>lie strictly in the future</td><td>TimeSeriesSplit</td></tr>
+        <tr><td>is separated in time from the training data by a lag</td><td>be time-ordered <em>and</em> gapped</td><td>Purged / embargoed CV</td></tr>
+      </table>
+
+      <h3>The catalogue</h3>
+      <table>
+        <tr><th>Scheme</th><th>How it splits</th><th>The failure it fixes</th></tr>
+        <tr><td><strong>KFold</strong></td><td>Partition into k equal parts; hold each out in turn. Lesson 4's method.</td><td>—</td></tr>
+        <tr><td><strong>StratifiedKFold</strong></td><td>As KFold, but each fold keeps the overall class proportions.</td><td>Lesson 9's point. With 2% positives and k = 10, plain KFold will sometimes produce a fold with no positives at all, making metrics undefined and the fold-to-fold variance enormous. <strong>The default for classification</strong>, and there is essentially never a reason not to use it.</td></tr>
+        <tr><td><strong>RepeatedKFold</strong><br><strong>RepeatedStratifiedKFold</strong></td><td>Run the whole k-fold procedure several times with different random partitions, and average everything.</td><td>Lesson 6's drawback, one level up. The k-fold estimate is itself a random variable depending on how the folds fell; repeating and averaging shrinks that. Cheap insurance when the dataset is small — 5-fold repeated 10 times gives 50 fits and a far more stable number than one 50-fold run, which is not the same thing at all.</td></tr>
+        <tr><td><strong>GroupKFold</strong><br><strong>StratifiedGroupKFold</strong><br><strong>LeaveOneGroupOut</strong></td><td>Folds are built from whole groups, so every row sharing a group label lands on the same side.</td><td>Lesson 10's non-independent rows. Multiple scans per patient, multiple sessions per user, multiple photographs of the same object: split them randomly and the model memorises the individual rather than the phenomenon, and the score can be wildly optimistic. <strong>This is the most damaging and most frequently missed failure of the four.</strong></td></tr>
+        <tr><td><strong>ShuffleSplit</strong><br><strong>StratifiedShuffleSplit</strong></td><td>Draw a random train/test split, independently, n times. Folds may overlap and need not cover the data.</td><td>Decouples the number of repetitions from the size of the held-out set — k-fold ties them together, so k = 10 forces a 10% test fold. Also called Monte Carlo cross-validation. Use when you want, say, 30 estimates at a 20% holdout.</td></tr>
+        <tr><td><strong>LeaveOneOut</strong><br><strong>LeavePOut</strong></td><td>Hold out one observation (or p) at a time.</td><td>Lesson 7's method. LeavePOut grows combinatorially and is almost never practical.</td></tr>
+        <tr><td><strong>TimeSeriesSplit</strong></td><td>Expanding window: train on the first <em>i</em> folds, validate on fold <em>i</em> + 1, repeat. Training set grows; the validation set is always later in time.</td><td>Lesson 10's ordered data. Random folds train on the future to predict the past, which is not a task anyone will ever ask the model to perform, and the resulting estimate is meaningless rather than merely optimistic.</td></tr>
+        <tr><td><strong>Rolling / sliding window</strong></td><td>As above, but the training window has a fixed length and slides forward.</td><td>The regime changes over time, so old data is not merely less relevant but actively misleading. Lesson 10's fourth failure — the future not resembling the past.</td></tr>
+        <tr><td><strong>Purged and embargoed CV</strong></td><td>Time-ordered folds, with a gap removed between train and validation, and a further period after the validation fold excluded from training.</td><td>Financial and other data where the label for time <em>t</em> depends on outcomes over the following days. Without a gap, the training rows immediately before the validation fold overlap it in <em>information</em> even though they precede it in time. Standard in quantitative finance; worth knowing whenever a label has a forward-looking horizon.</td></tr>
+        <tr><td><strong>Blocked CV</strong></td><td>Contiguous blocks held out rather than scattered rows.</td><td>Any autocorrelated data — spatial as well as temporal. A scattered holdout is surrounded by its own near-duplicates.</td></tr>
+        <tr><td><strong>Nested CV</strong></td><td>An inner loop tunes, an outer loop assesses.</td><td>Lesson 9's method. Worth restating in this list because the splitter in each loop must independently respect whichever structural constraint applies — a nested scheme on patient data needs GroupKFold in <em>both</em> loops, not just the outer one.</td></tr>
+      </table>
+
+      <div class="callout">
+        <p class="tag">Constraints combine, and they combine in one direction</p>
+        <p>Grouped time-series data with rare classes is not exotic — it is what most production datasets look like. The rule is that each structural constraint <em>removes</em> permissible splits, and you must satisfy all of them at once: time ordering dominates, grouping is next, stratification is applied within whatever freedom remains. If you cannot satisfy them all, the honest move is to satisfy the ones that would otherwise inflate the score and accept a noisier estimate, rather than dropping a constraint because the splitter is awkward to write.</p>
+      </div>
+
+      <div class="ix" data-quiz="m3x1-q1">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">You have 3,000 MRI scans from 300 patients, roughly ten per patient, and you are predicting a diagnosis. Which splitter?</p>
+        <div class="opts">
+          <button class="opt" data-fb="Stratification fixes class imbalance but does nothing about the ten scans per patient. A model can score beautifully by recognising the patient rather than the disease, and StratifiedKFold will happily put six of a patient's scans in training and four in validation.">StratifiedKFold, so each fold has the right proportion of positive diagnoses.</button>
+          <button class="opt" data-right data-fb="StratifiedGroupKFold. Grouping by patient is the binding constraint: every scan from a patient must be on the same side of the split, because a new patient is what the deployed model will actually face. Stratification is then applied within that constraint so the class balance still holds. Getting this wrong is the single most common cause of medical-imaging results that fail to replicate.">StratifiedGroupKFold, grouping by patient.</button>
+          <button class="opt" data-fb="LeaveOneOut ignores the grouping entirely and makes the problem worse: the held-out scan's nine siblings are all in the training set every single time, so the estimate is about as optimistic as it is possible to be.">LeaveOneOut, since 3,000 fits is affordable and it has the lowest bias.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <h3>Bootstrap variants, beyond Lesson 11</h3>
+      <p>Lesson 11 covers the bootstrap for estimating uncertainty and notes why the naive version cannot be used for test error: about 63.2% of the original rows appear in any given resample, so roughly 36.8% are out-of-bag — but the training set is still contaminated by duplicates of the very rows you are scoring on. The standard repairs:</p>
+      <table>
+        <tr><th>Estimator</th><th>What it does</th><th>Note</th></tr>
+        <tr><td><strong>Out-of-bag (OOB) error</strong></td><td>Score each observation using only the resamples that excluded it, and average.</td><td>Clean, and free if you are already bagging. This is why a random forest reports an OOB score without needing cross-validation at all. Biased slightly upward, since each row is scored by an ensemble of about 63% the full size.</td></tr>
+        <tr><td><strong>.632 estimator</strong></td><td>0.368 × training error + 0.632 × OOB error.</td><td>Blends an optimistic number with a pessimistic one in the proportions the resampling implies. Breaks down for models that can memorise, where training error is near zero and the blend is dragged far too low.</td></tr>
+        <tr><td><strong>.632+ estimator</strong></td><td>The same, with the weight adjusted by how much overfitting is actually occurring.</td><td>The repair for that failure. Efron and Tibshirani's recommended version, and competitive with cross-validation on small samples — which is where it earns its keep.</td></tr>
+      </table>
+      <p>The practical position: use cross-validation to estimate error, use the bootstrap to put an interval around a statistic. The .632 family exists for small-sample problems where cross-validation's estimate is itself too noisy to be useful, and it is worth knowing the names mainly so that you recognise them when a paper reports one.</p>
+
+      <div class="ix" data-quiz="m3x1-q2">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Why does purged cross-validation remove a gap between the training and validation folds?</p>
+        <div class="opts">
+          <button class="opt" data-fb="A gap does reduce the training data slightly, but that is the cost, not the purpose. If shrinking the training set were the aim there would be far simpler ways to do it.">To shrink the training set, so that the estimate is conservative rather than optimistic.</button>
+          <button class="opt" data-right data-fb="When a label is computed over a forward window — the return over the next five days, whether a patient relapsed within six months — a training row dated just before the validation fold has a label that depends on events inside that fold. It precedes the validation data in time but overlaps it in information, which is leakage that pure time ordering does not catch. Purging removes those rows; the embargo does the same on the far side.">Because a label computed over a forward window can overlap the validation period even when the row precedes it.</button>
+          <button class="opt" data-fb="Autocorrelation is a real reason to prefer blocked splits over scattered ones, but purging is aimed at something more specific: the label's own construction reaching forward in time. The two concerns often coincide but they are not the same.">Because adjacent observations in time are autocorrelated and therefore near-duplicates.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="note">
+        <div class="note-head"><span class="lbl">Which scheme my data needs</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="m3x1" data-placeholder="What structure your rows actually have — groups, ordering, rare classes — and which constraints bind…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Link to Lesson 10</span>
+      <p class="q">What single habit prevents most of these failures?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Before writing any splitter, describe in one sentence what a genuinely new observation looks like — a new patient, next week, a customer from a region not yet seen. Then check that your held-out fold matches that description. Almost every failure in this list is a case where the held-out data was new in some trivial sense and familiar in the sense that mattered.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+<!-- ==================== EXTRA 2 ==================== -->
+<section class="lesson" id="x2" data-short="Search &amp; compare" style="--accent:#2f6b52">
+  <div class="lesson-head">
+    <span class="ln">Extra 2 &middot; not class material</span>
+    <h2>Searching, comparing and scoring</h2>
+    <p class="keyline">Validation produces a number. Three questions sit around it that the lessons do not answer: how you generated the candidates, whether the difference between two numbers is real, and whether the number was the right one to compute.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>How to generate the candidates</h3>
+      <p>Lesson 9's nested cross-validation assumes a set of candidate models to choose among. Where that set comes from matters more than it looks, because the search strategy determines how much of the hyperparameter space you actually explore per unit of compute.</p>
+      <table>
+        <tr><th>Strategy</th><th>How it works</th><th>When to use it</th></tr>
+        <tr><td><strong>Grid search</strong></td><td>Every combination of a specified list of values per hyperparameter.</td><td>Two or three hyperparameters with a small number of sensible values each. Cost multiplies: 6 × 4 × 5 values is 120 configurations before cross-validation multiplies it again.</td></tr>
+        <tr><td><strong>Random search</strong><br><span class="m">Bergstra &amp; Bengio, 2012</span></td><td>Sample configurations at random from distributions over each hyperparameter, for a fixed budget of trials.</td><td><strong>Almost always better than grid search at the same cost</strong>, and the reason is worth understanding: in practice only a few hyperparameters matter much, and a grid wastes most of its trials re-testing the same values of the important one while varying unimportant ones. With 9 grid points arranged 3 × 3, only 3 distinct values of the important parameter are ever tried; 9 random draws try 9. The advantage grows with the number of hyperparameters.</td></tr>
+        <tr><td><strong>Successive halving / Hyperband</strong></td><td>Evaluate many configurations cheaply — few epochs, a subsample of the data — keep the best fraction, give them more resources, repeat.</td><td>Training is expensive and partial results are informative. A tournament rather than a full evaluation of everyone. Available as <code>HalvingGridSearchCV</code> and <code>HalvingRandomSearchCV</code>.</td></tr>
+        <tr><td><strong>Bayesian optimisation</strong></td><td>Fit a surrogate model of the validation score as a function of the hyperparameters, and use it to choose where to look next, balancing promising regions against unexplored ones.</td><td>Each evaluation is genuinely expensive — hours of GPU time — so it is worth spending computation deciding what to try. Overkill when a fit takes seconds.</td></tr>
+      </table>
+      <div class="callout">
+        <p class="tag">Every one of these is model selection, and the selection effect is the same</p>
+        <p>Lesson 2's argument — that a set becomes a validation set the moment you select on it — does not care how the candidates were generated. Searching 5,000 random configurations produces a winner whose validation score is more optimistically biased than the winner of a 10-configuration grid, because more selection happened. A bigger search therefore <em>increases</em> the need for a clean outer assessment, which is Lesson 9's nested cross-validation. The practical error is to conclude that a thorough search makes the resulting score more trustworthy; it makes it less so.</p>
+      </div>
+
+      <h3>Is the difference between two models real?</h3>
+      <p>Model A averages 0.847 across ten folds and model B averages 0.839. Lesson 8's one-standard-error rule gives one way to think about this; the formal question is whether a paired test can be run on the fold scores. The answer is that the obvious test is wrong, and this has been known since 1998.</p>
+      <div class="defn">
+        <span class="term">Why the paired t-test on fold scores is invalid</span>
+        <p>A paired t-test assumes the paired differences are independent. In k-fold cross-validation the training sets overlap heavily — with k = 10, any two training sets share about 89% of their rows — so the fold results are strongly positively correlated. The test's variance estimate is therefore far too small, and it declares differences significant that are pure noise. Dietterich (1998) measured the type I error rate and concluded the test <strong>should never be used</strong> in this form.</p>
+      </div>
+      <table>
+        <tr><th>Test</th><th>Setting</th><th>Verdict</th></tr>
+        <tr><td><strong>Paired t-test on k-fold scores</strong></td><td>The obvious thing to do.</td><td><strong>Invalid.</strong> Overlapping training sets break independence; false positives are common.</td></tr>
+        <tr><td><strong>Difference of two proportions</strong></td><td>Comparing accuracies as proportions.</td><td><strong>Invalid.</strong> Same conclusion, high type I error, and it ignores that both models were scored on the same instances.</td></tr>
+        <tr><td><strong>McNemar's test</strong></td><td>Two models, one test set, each can be trained only once.</td><td><strong>Recommended</strong> when training is expensive. Build a 2 × 2 table of which instances each model got right; the test uses only the two disagreement cells, ignoring instances both got right or both got wrong. Low type I error.</td></tr>
+        <tr><td><strong>5×2cv paired t-test</strong></td><td>Two models you can afford to train ten times.</td><td><strong>Recommended</strong> by Dietterich. Five replications of a 2-fold split, so train and test halves swap and no two training sets overlap within a replication. Slightly more powerful than McNemar's and it measures variation due to the choice of training set, which McNemar's cannot.</td></tr>
+        <tr><td><strong>Corrected resampled t-test</strong><br><span class="m">Nadeau &amp; Bengio</span></td><td>Repeated k-fold, where you want to use all the fold scores.</td><td>Inflates the variance estimate by a correction factor that accounts for the training-set overlap. The practical compromise when you already have repeated cross-validation results and do not want to rerun everything as 5×2.</td></tr>
+      </table>
+      <p>The honest summary for most coursework and much practice: a gap of a fraction of a percent between two models, on one cross-validation run, is not evidence of anything. Lesson 6 makes the point about the estimate's variance; this is the same point with a decision procedure attached. If the choice matters, use 5×2cv or McNemar's; if it does not, take the simpler model, which is Lesson 8's one-standard-error rule doing the same job informally.</p>
+
+      <div class="ix" data-quiz="m3x2-q1">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Why is a paired t-test on ten fold scores not a valid way to compare two models?</p>
+        <div class="opts">
+          <button class="opt" data-fb="Ten observations is a small sample, but the t-test is designed for small samples — that is the whole reason it exists rather than a z-test. Sample size is not the objection.">Because ten folds is too small a sample for a t-test to apply.</button>
+          <button class="opt" data-right data-fb="The t-test assumes independent paired differences. With k = 10 any two training sets share about 89% of their rows, so the fold results are strongly correlated, the estimated variance of the difference is far too small, and the test declares noise significant. This is Dietterich's 1998 result, and the recommended alternatives are McNemar's test or the 5×2cv procedure.">Because the training sets overlap heavily, so the fold results are not independent and the variance is underestimated.</button>
+          <button class="opt" data-fb="Fold scores are not usually far from normal, and the t-test is fairly robust to mild departures anyway. The violated assumption is independence, not normality.">Because accuracy scores are bounded in [0, 1] and therefore not normally distributed.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <h3>Was the number the right number?</h3>
+      <p>Everything in the module treats "error" as a single quantity. Which quantity is a modelling decision, and on unbalanced or asymmetric problems it is the decision that matters most.</p>
+      <table>
+        <tr><th>Metric</th><th>Answers</th><th>Watch out for</th></tr>
+        <tr><td><strong>Accuracy</strong></td><td>What fraction did it get right?</td><td>Meaningless under imbalance. With 0.2% positives, "always negative" scores 99.8%. Always compare against that do-nothing baseline before quoting an accuracy.</td></tr>
+        <tr><td><strong>Precision / recall / F1</strong></td><td>Of those flagged, how many were real? Of the real ones, how many did we flag? The harmonic mean of the two.</td><td>F1 hides the trade-off it averages. Quote precision and recall separately when the two errors have different costs, which is usually.</td></tr>
+        <tr><td><strong>ROC-AUC</strong></td><td>How well does the model rank positives above negatives, across all thresholds?</td><td>Threshold-free and popular, but optimistic under heavy imbalance because the false-positive rate has a huge denominator. A model can look excellent and still flag mostly false alarms.</td></tr>
+        <tr><td><strong>PR-AUC / average precision</strong></td><td>The same, from the precision–recall curve.</td><td><strong>The right ranking metric when positives are rare.</strong> Its baseline is the positive rate, so it cannot flatter a model the way ROC-AUC can.</td></tr>
+        <tr><td><strong>Log loss / Brier score</strong></td><td>How good are the predicted <em>probabilities</em>?</td><td>Use when the probability itself is the output — a risk score, an expected value. Both punish confident mistakes heavily.</td></tr>
+        <tr><td><strong>MAE / RMSE / MAPE</strong></td><td>Regression error, in absolute, squared and percentage terms.</td><td>RMSE punishes large errors disproportionately, which is right when one big miss is worse than several small ones, and wrong when it is not. MAPE is undefined at zero and asymmetric — it penalises over-prediction and under-prediction differently.</td></tr>
+        <tr><td><strong>Calibration</strong></td><td>When it says 70%, does it happen 70% of the time?</td><td>Not a metric you optimise but a property you check, with a reliability diagram. A well-ranked model can be badly calibrated — which matters enormously if anyone downstream multiplies the probability by a cost.</td></tr>
+      </table>
+      <div class="callout">
+        <p class="tag">The metric belongs inside the loop, not after it</p>
+        <p>If you tune on accuracy and report F1, the model you selected was the one best at accuracy. Cross-validation selects on whatever you score with, so the metric has to be the one you actually care about from the start. The same applies to the decision threshold: choosing it after seeing the test set is selection on the test set, and Lesson 2's warning applies without modification.</p>
+      </div>
+
+      <h3>Two things worth knowing that complicate the lessons</h3>
+      <ul>
+        <li><strong>Learning curves answer a question the validation score cannot.</strong> Plot training and validation error against the number of training observations. If both have flattened and sit close together, the model is limited by its form and more data will not help — get a better model. If they are far apart and the validation curve is still falling, the model is limited by data and more of it will help. This is the practical diagnostic that turns Lesson 5's bias–variance decomposition into a decision about what to do next, and it costs only a handful of extra fits.</li>
+        <li><strong>The U-shaped curve is not the whole story any more.</strong> Lesson 5's U-shape — error falls, then rises as flexibility increases — is correct for the classical regime and is what the exam expects. For very heavily over-parameterised models, empirical work since about 2018 has documented <em>double descent</em>: test error rises to a peak near the point where the model can just interpolate the training data, and then falls again as capacity grows further. It does not overturn the bias–variance decomposition, which still holds as an identity, but it does mean "more flexible is now worse" is not a universal law. Worth knowing about; not worth putting in an exam answer unless asked.</li>
+      </ul>
+
+      <div class="ix" data-quiz="m3x2-q2">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">A fraud model has ROC-AUC 0.94 on a dataset with 0.3% positives. What should you check before celebrating?</p>
+        <div class="opts">
+          <button class="opt" data-right data-fb="ROC-AUC computes the false-positive rate against an enormous negative denominator, so a model can score 0.94 while the alerts an analyst actually receives are overwhelmingly false. PR-AUC has the positive rate as its baseline — here 0.003 — and reports what fraction of flagged cases are real. It routinely tells a much less flattering story on data like this.">The precision–recall curve, since ROC-AUC flatters models on heavily imbalanced data.</button>
+          <button class="opt" data-fb="Worth checking, and a genuine concern in fraud data — but it would make the score wrong for a different reason. The question here is whether a high ROC-AUC means what it appears to mean even when the validation was done correctly.">Whether the folds were stratified, since otherwise some may contain no fraud at all.</button>
+          <button class="opt" data-fb="Accuracy on a 0.3% positive dataset tells you nothing at all — the do-nothing model scores 99.7%. Computing it would not resolve anything.">The accuracy, to confirm it is above 99%.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="note">
+        <div class="note-head"><span class="lbl">Notes on search, comparison and metrics</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="m3x2" data-placeholder="Which metric your problem actually needs, and what the do-nothing baseline scores…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Link to Lesson 2</span>
+      <p class="q">Does a bigger hyperparameter search give you a more trustworthy score?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">The opposite. More candidates means more selection, and selection is precisely what inflates a validation score — the winner of 5,000 trials is more likely to have won on luck than the winner of 10. A large search may well find a better model, but its validation score is a worse estimate of that model's performance, so the outer assessment matters more, not less.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+<!-- ==================== EXTRA 3 ==================== -->
+<section class="lesson" id="x3" data-short="Practice &amp; reading" style="--accent:#8a3d5c">
+  <div class="lesson-head">
+    <span class="ln">Extra 3 &middot; not class material</span>
+    <h2>Practice, reading and tools</h2>
+    <p class="keyline">Problems on the material in Extras 1 and 2 — the resampling schemes, the search, the comparison tests and the metrics. Lesson 12 covers the examinable material; this covers what sits around it.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Part A — choosing the scheme</h3>
+
+      <div class="callout">
+        <p class="tag">Problem 1 — five datasets, five splitters</p>
+        <p>Name the resampling scheme for each and say what goes wrong with plain KFold.<br>
+        (a) 50,000 independent loan applications, 4% default rate.<br>
+        (b) Daily electricity demand for six years; you will forecast next month.<br>
+        (c) 800 speech recordings from 40 speakers; you will deploy to new speakers.<br>
+        (d) 300 rows total, one model, and the estimate is very noisy.<br>
+        (e) Trades labelled by the return over the following ten days.</p>
+        <details><summary>Show worked solution</summary>
+          <p class="a"><strong>(a) StratifiedKFold.</strong> Plain KFold will occasionally produce folds with very few defaults, making the fold-to-fold variance large and some metrics unstable. The rows are independent, so nothing stronger is needed.<br>
+          <strong>(b) TimeSeriesSplit</strong>, or a rolling window if the demand regime has changed. Plain KFold trains on 2025 to predict 2021, which is not a task anyone will ask of the model — the estimate does not merely flatter, it measures the wrong thing.<br>
+          <strong>(c) GroupKFold by speaker.</strong> Plain KFold puts some of a speaker's recordings in training and others in validation, so the model can score well by recognising voices rather than content. The deployment condition is a new speaker, so the folds must reproduce it.<br>
+          <strong>(d) RepeatedStratifiedKFold.</strong> The problem is the variance of the estimate itself, which is Lesson 6's drawback; repeating the whole k-fold procedure with different partitions and averaging shrinks it. Note that this is not the same as raising k — raising k reduces bias and <em>increases</em> the variance of the estimate, which is the opposite of what is wanted here.<br>
+          <strong>(e) Purged and embargoed time-series CV.</strong> Time ordering alone is not enough: a training row from nine days before the validation fold has a label determined by returns inside that fold. Purge the overlapping rows and embargo a period afterwards.</p>
+        </details>
+      </div>
+
+      <div class="callout">
+        <p class="tag">Problem 2 — combining constraints</p>
+        <p>Customer-service transcripts: 40,000 conversations from 5,000 customers over three years, labelled for escalation (7% positive). The model will be deployed next quarter on customers both old and new. Which constraints bind, and in what order?</p>
+        <details><summary>Show worked solution</summary>
+          <p class="a"><strong>Time ordering binds hardest</strong>, because deployment is on the future: validation folds must be later than training folds, or the estimate answers a question nobody asked. <strong>Grouping by customer binds partly</strong> — the model will see some familiar customers and some new ones, so the honest thing is to report both numbers rather than pick one: a grouped split measures performance on genuinely new customers, an ungrouped time split measures performance on the realistic mixture. <strong>Stratification applies within whatever freedom is left</strong>, and with 7% positives in folds of thousands it is unlikely to bind at all.<br><br>
+          The general lesson is the one in Extra 1: constraints only remove permissible splits, and when they conflict the resolution is to report more than one number rather than to silently drop the inconvenient constraint. Two honest estimates bracketing the truth beat one estimate that quietly answers the wrong question.</p>
+        </details>
+      </div>
+
+      <h3>Part B — search and comparison</h3>
+
+      <div class="callout">
+        <p class="tag">Problem 3 — counting fits</p>
+        <p>You search 8 values of one hyperparameter and 5 of another using 5-fold inner cross-validation, assessed by 5-fold outer cross-validation, and then refit the winner on everything. How many fits?</p>
+        <details><summary>Show worked solution</summary>
+          <p class="a">Configurations: 8 × 5 = 40.<br>
+          Inner loop per outer fold: 40 × 5 = 200 fits, plus one refit of the winner on that outer fold's training portion = 201.<br>
+          Across 5 outer folds: 5 × 201 = <strong>1,005</strong>.<br>
+          Final refit on all the data: <strong>1,006 total</strong>.<br><br>
+          The point of the arithmetic is the cost of honesty. A single non-nested search would be 40 × 5 + 1 = 201 fits and would give you a tuned model plus an optimistic score. Nested cross-validation costs five times that and gives you the same tuned model plus an honest score. What you are buying is the estimate, not the model — which is why Lesson 9 insists the two loops are doing different jobs.</p>
+        </details>
+      </div>
+
+      <div class="callout">
+        <p class="tag">Problem 4 — grid or random?</p>
+        <p>You have four hyperparameters and budget for 64 fits. A grid gives you 2, 2, 4 and 4 values. Why is random search likely to do better?</p>
+        <details><summary>Show worked solution</summary>
+          <p class="a">Because in practice only one or two of the four usually matter much, and the grid has decided in advance how finely to explore each — before you know which is which. If the important one is a 2-value axis, the grid tries exactly two values of it, and spends the other 62 fits varying parameters that barely move the score. Random search with 64 draws tries up to 64 distinct values of every parameter, so the important axis is explored 32 times more thoroughly at identical cost.<br><br>
+          This is Bergstra and Bengio's result. The advantage grows with the number of hyperparameters and with how unequal their importance is, which is why random search is the sensible default once you are past two or three parameters. Successive halving does better still when partial training results are informative.</p>
+        </details>
+      </div>
+
+      <div class="callout">
+        <p class="tag">Problem 5 — is the difference real?</p>
+        <p>Model A: 0.8471 mean accuracy over 10 folds, standard deviation 0.019. Model B: 0.8392, standard deviation 0.022. A colleague runs a paired t-test on the fold scores, gets p = 0.03, and declares A the winner. What is wrong, and what should be done?</p>
+        <details><summary>Show worked solution</summary>
+          <p class="a"><strong>The test is invalid.</strong> With k = 10 any two training sets share about 89% of their rows, so the fold scores are strongly correlated and the paired t-test's independence assumption fails. Its variance estimate is far too small, so it produces small p-values for differences that are noise. Dietterich's 1998 paper measured this and recommends the test never be used in this form.<br><br>
+          <strong>What to do instead.</strong> If the models can be trained ten times, run the 5×2cv paired t-test, which avoids overlapping training sets within each replication. If training is expensive and you have one test set, use McNemar's test on the instance-level agreement table. If you already have repeated k-fold results and do not want to rerun, apply the Nadeau–Bengio corrected resampled t-test, which inflates the variance estimate to account for the overlap.<br><br>
+          <strong>And a sanity check.</strong> The gap is 0.0079 against fold standard deviations of about 0.02. Before any test, that is a difference well inside the noise of the estimate — Lesson 8's one-standard-error rule would say take the simpler model and stop.</p>
+        </details>
+      </div>
+
+      <div class="callout">
+        <p class="tag">Problem 6 — the metric</p>
+        <p>A hospital readmission model reports 91% accuracy on data where 11% of patients are readmitted. The team is pleased. Walk through what you would ask.</p>
+        <details><summary>Show worked solution</summary>
+          <p class="a"><strong>First: what does the do-nothing model score?</strong> Predicting "no readmission" for everyone gives 89%. The model's 91% is two points above a model that has learned nothing, which reframes the result entirely.<br>
+          <strong>Second: recall.</strong> The clinical purpose is presumably to intervene before readmission, so what matters is the fraction of actual readmissions caught. A model can reach 91% accuracy while catching almost none of them.<br>
+          <strong>Third: precision, and the cost ratio.</strong> Each flagged patient consumes follow-up resource. The precision–recall curve, not accuracy and not ROC-AUC, is where the usable trade-off lives at an 11% base rate.<br>
+          <strong>Fourth: calibration.</strong> If the output is a risk score that clinicians will act on at different thresholds, it needs to mean what it says — a reliability diagram, not a single number.<br>
+          <strong>Fifth, and easy to miss: was accuracy what the search optimised?</strong> If so, the selected model is the one best at accuracy, and re-scoring it on recall afterwards does not undo that. The metric has to be inside the loop.</p>
+        </details>
+      </div>
+
+      <h3>Part C — self-test</h3>
+
+      <div class="ix" data-quiz="m3x3-q1">
+        <div class="ix-head"><span class="ix-kind">self-test</span><span class="ix-done">answered</span></div>
+        <p class="prompt">What is the difference between RepeatedKFold with k = 5, 10 repeats, and plain KFold with k = 50?</p>
+        <div class="opts">
+          <button class="opt" data-right data-fb="Both give 50 fits, and that is where the similarity ends. Repeated 5-fold trains on 80% each time and averages over ten independent partitions, which reduces the variance of the estimate. KFold with k = 50 trains on 98% each time, which lowers the bias but makes the 50 training sets almost identical — so the fold scores are highly correlated and the estimate's variance goes up. They move the bias–variance dial in opposite directions.">Both do 50 fits, but repeated 5-fold reduces the estimate's variance while k = 50 reduces its bias and raises its variance.</button>
+          <button class="opt" data-fb="They are not equivalent at all, despite the matching fit count. The size of the training set differs — 80% versus 98% — and so does the correlation between the fits, and both of those change what the resulting number means.">They are equivalent — both produce 50 held-out estimates, so they give the same answer.</button>
+          <button class="opt" data-fb="Repeated 5-fold is not more expensive; both are 50 fits. Cost is the one thing they have in common.">Repeated 5-fold is more expensive but produces a lower-bias estimate.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="ix" data-quiz="m3x3-q2">
+        <div class="ix-head"><span class="ix-kind">self-test</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Why does a random forest report an out-of-bag score without needing cross-validation?</p>
+        <div class="opts">
+          <button class="opt" data-fb="A random forest overfits its training data readily — individual trees are grown deep and fit it almost perfectly. The training score is optimistic in the usual way; the OOB score is not, and the difference is the whole point.">Because its training error is already unbiased, so no held-out data is needed.</button>
+          <button class="opt" data-right data-fb="Each tree is grown on a bootstrap resample containing about 63.2% of the rows, so roughly 36.8% are out of bag for that tree. Scoring each observation using only the trees that never saw it gives a held-out estimate for free, as a by-product of the resampling the algorithm was doing anyway. It is mildly pessimistic, since each row is scored by about a third of the forest.">Because each tree omits about 36.8% of the rows, so every observation has trees that never saw it.</button>
+          <button class="opt" data-fb="Random forests do have hyperparameters worth tuning — tree depth, number of features per split, minimum leaf size — and tuning them needs validation. The OOB score is an error estimate, not an escape from model selection.">Because it has no hyperparameters to tune, so there is nothing to validate.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="ix" data-quiz="m3x3-q3">
+        <div class="ix-head"><span class="ix-kind">self-test</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Training error is 0.04 and validation error is 0.31, and the validation curve is still falling as you add data. What does the learning curve say to do?</p>
+        <div class="opts">
+          <button class="opt" data-fb="A large gap between training and validation error with the validation curve still falling is the signature of a variance problem, not a bias one. A more flexible model would widen the gap.">Use a more flexible model — the wide gap means it is underfitting.</button>
+          <button class="opt" data-right data-fb="A large gap plus a validation curve that has not flattened is the data-limited case: the model is fitting the particular sample rather than the phenomenon, and more observations will close the gap. Get more data, or reduce variance by regularising or simplifying. If instead both curves had flattened close together, more data would be wasted effort and the model's form would be the limit.">Get more data, or reduce variance — the gap is large and the curve has not flattened.</button>
+          <button class="opt" data-fb="Nothing here indicates leakage; leakage usually shows up as a validation score that is suspiciously close to the training score, not one far above it. This pattern is ordinary overfitting.">Suspect leakage — the gap is too large to be genuine overfitting.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="ix" data-quiz="m3x3-q4">
+        <div class="ix-head"><span class="ix-kind">self-test</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Which comparison test is recommended when each model can be trained only once?</p>
+        <div class="opts">
+          <button class="opt" data-fb="5×2cv requires ten training runs — five replications of a two-fold split. It is the recommended test when you can afford that, which is precisely the condition ruled out here.">The 5×2cv paired t-test.</button>
+          <button class="opt" data-right data-fb="McNemar's test. It works from a single test set and a 2 × 2 table of which instances each model classified correctly, using only the two disagreement cells. Dietterich recommends it exactly for the single-training-run case, and it has a low false-positive rate. Its limitation is that it cannot measure variation due to the choice of training set, since there was only one.">McNemar's test.</button>
+          <button class="opt" data-fb="The paired t-test on fold scores needs fold scores, which require repeated training — and it is invalid even when you have them, because the training sets overlap.">The paired t-test on cross-validation fold scores.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <h3>Part D — written questions</h3>
+      <p class="frq-lead">These follow the Lesson 12 format but cover the appendix material. Write the answer before opening it.</p>
+
+      <div class="frq">
+        <p class="qn">X1 · <strong>Explain why grouped data breaks k-fold cross-validation,</strong> and describe the fix and what it costs.</p>
+        <details><summary>Model answer</summary>
+          <div class="ans">
+            <p>k-fold assumes rows are exchangeable, so that a randomly held-out row is a fair stand-in for a future observation. When several rows share a source — ten scans per patient, many sessions per user — that assumption fails: split them randomly and the model can score well by recognising the <em>source</em> rather than learning the phenomenon, because the validation fold contains rows whose siblings are in training. The reported error is then an estimate of performance on already-seen sources, which is not the deployment condition if new patients or users will arrive.</p>
+            <p>The fix is GroupKFold, or StratifiedGroupKFold when classes are also unbalanced: folds are assembled from whole groups, so every row sharing a label lands on the same side of the split. The cost is a noisier estimate — with only 40 speakers, say, the fold-to-fold variance is driven by which speakers land where, not by which recordings — and coarser control of fold sizes, since groups differ in size. Both are worth paying, because the alternative is a number that is confidently wrong.</p>
+            <p class="mark"><strong>Marking notes.</strong> The marks are for identifying the deployment condition as the thing the folds must reproduce, not for naming the splitter. A strong answer notes that the failure is silent — the score goes <em>up</em>, so nothing looks broken — and that the same reasoning covers time ordering, where the deployment condition is "later than everything I trained on".</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="frq">
+        <p class="qn">X2 · <strong>A colleague reports that a 5,000-configuration random search found a model scoring 0.91 in cross-validation, up from 0.88 for their previous 20-configuration grid.</strong> Explain what you can and cannot conclude.</p>
+        <details><summary>Model answer</summary>
+          <div class="ans">
+            <p>You can conclude that a wider search found a configuration with a higher cross-validation score, and quite possibly that it is a genuinely better model — more thorough searching does tend to find better configurations.</p>
+            <p>You cannot conclude that the model performs at 0.91. The cross-validation score of the <em>winner of a search</em> is biased upward, and the bias grows with the number of candidates, because the winner is selected partly on the noise in its estimate. With 5,000 candidates, the maximum over 5,000 noisy estimates sits well above the true performance of whichever configuration is actually best. The 0.88 from 20 candidates was less inflated; comparing the two numbers directly therefore overstates the improvement, and some of the apparent three-point gain is selection, not skill.</p>
+            <p>This is Lesson 2's argument — a set becomes a validation set once you select on it — with the selection intensity varied. The remedy is Lesson 9's: an outer loop, or a genuinely untouched test set, to assess the winner. Note the uncomfortable implication, which is worth stating: a more thorough search makes the resulting score <em>less</em> trustworthy, so it increases rather than reduces the need for a clean assessment.</p>
+            <p class="mark"><strong>Marking notes.</strong> The mark is for connecting search intensity to the size of the selection bias. Answers that say only "the winner's score is optimistic" get partial credit; the full answer explains why 5,000 candidates is worse than 20 and what to do about it.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="frq">
+        <p class="qn">X3 · <strong>Explain why the paired t-test on cross-validation fold scores is invalid,</strong> and name the appropriate alternatives for two different situations.</p>
+        <details><summary>Model answer</summary>
+          <div class="ans">
+            <p>The paired t-test assumes the paired differences are independent draws. In k-fold cross-validation the training sets overlap heavily — at k = 10, any two of them share about 89% of their rows — so the fold results are strongly positively correlated. The test estimates the variance of the mean difference as though the folds were independent, which makes that estimate far too small, the t-statistic too large, and the p-value too small. Dietterich (1998) measured the type I error rate empirically and concluded the test should not be used in this form; the difference-of-two-proportions test fails for the same reason.</p>
+            <p><strong>If each model can be trained ten times:</strong> the 5×2cv paired t-test. Five replications of a two-fold split, with train and test halves swapped, so no two training sets within a replication overlap. It is slightly more powerful than the alternative below and it measures variation arising from the choice of training set.</p>
+            <p><strong>If training is expensive and you have one test set:</strong> McNemar's test, built from the 2 × 2 table of which instances each model got right and using only the two disagreement cells. Low type I error, one training run each.</p>
+            <p>A third option, if repeated k-fold results already exist, is the Nadeau–Bengio corrected resampled t-test, which inflates the variance estimate by a factor accounting for the overlap.</p>
+            <p class="mark"><strong>Marking notes.</strong> Marks are for the mechanism — overlapping training sets, correlated folds, underestimated variance, inflated significance — not for the citation. A strong answer adds the practical point that a difference smaller than the fold-to-fold standard deviation needs no test at all, since the one-standard-error rule already says to take the simpler model.</p>
+          </div>
+        </details>
+      </div>
+
+      <h3>Sources and further reading</h3>
+      <table>
+        <tr><th>Source</th><th>What it gives you</th></tr>
+        <tr><td><strong>James, Witten, Hastie &amp; Tibshirani, <em>An Introduction to Statistical Learning</em></strong>, ch. 5</td><td>The lessons' own backbone, and still the clearest treatment of the validation set approach, k-fold, LOOCV and the bootstrap. Chapter 6 has the one-standard-error rule. Free PDF.</td></tr>
+        <tr><td><strong>Hastie, Tibshirani &amp; Friedman, <em>The Elements of Statistical Learning</em></strong>, ch. 7</td><td>The same ground at research level: the full bias–variance–covariance treatment, the .632 and .632+ estimators, AIC/BIC/Cp, and the "one-standard-error" justification. Free PDF.</td></tr>
+        <tr><td><strong>scikit-learn User Guide §3.1 and §3.2</strong><br><span class="m">scikit-learn.org/stable/modules/cross_validation.html</span></td><td>Every splitter in Extra 1 with a picture of how it partitions the data, plus the grid/random/halving search machinery and the pipeline objects that keep preprocessing out of the leakage trap. The visual comparison of CV iterators is the single most useful page.</td></tr>
+        <tr><td><strong>Raschka (2018), "Model Evaluation, Model Selection, and Algorithm Selection in Machine Learning"</strong><br><span class="m">arXiv:1811.12808</span></td><td>Free, long, and the best single document on exactly the Extra 2 material — nested CV, the comparison tests, confidence intervals on performance. If you read one thing from this list, read this.</td></tr>
+        <tr><td><strong>Kuhn &amp; Johnson, <em>Applied Predictive Modeling</em></strong>, ch. 4</td><td>Resampling from a practitioner's angle, with useful judgement about when the differences between schemes actually matter.</td></tr>
+      </table>
+      <ul>
+        <li><strong>Dietterich (1998), "Approximate Statistical Tests for Comparing Supervised Classification Learning Algorithms".</strong> The source of the warning about the paired t-test and of the 5×2cv procedure.</li>
+        <li><strong>Nadeau &amp; Bengio (2003), "Inference for the Generalization Error".</strong> The corrected resampled t-test.</li>
+        <li><strong>Bergstra &amp; Bengio (2012), "Random Search for Hyper-Parameter Optimization".</strong> Short, and the argument is more interesting than the result.</li>
+        <li><strong>Li et al. (2018), "Hyperband".</strong> The bandit-based approach to search under a resource budget.</li>
+        <li><strong>Efron &amp; Tibshirani, <em>An Introduction to the Bootstrap</em>.</strong> Where the .632 and .632+ estimators come from.</li>
+        <li><strong>Varma &amp; Simon (2006), "Bias in error estimation when using cross-validation for model selection".</strong> The empirical demonstration of why Lesson 9's nesting is not optional — the non-nested estimate can be optimistic by a startling margin on small samples.</li>
+        <li><strong>Cawley &amp; Talbot (2010), "On Over-fitting in Model Selection and Subsequent Selection Bias in Performance Evaluation".</strong> The long version of the same point, and the paper to cite when someone insists their hyperparameter search was harmless.</li>
+      </ul>
+      <table>
+        <tr><th>Tool</th><th>Language</th><th>For</th></tr>
+        <tr><td><strong>scikit-learn</strong> <span class="m">sklearn.model_selection</span></td><td>Python</td><td>Every splitter named in Extra 1; <code>cross_validate</code>, <code>GridSearchCV</code>, <code>RandomizedSearchCV</code>, <code>HalvingRandomSearchCV</code>; <code>learning_curve</code> and <code>validation_curve</code>; and <code>Pipeline</code>, which is the mechanism that keeps preprocessing inside the fold.</td></tr>
+        <tr><td><strong>mlxtend</strong></td><td>Python</td><td><code>paired_ttest_5x2cv</code>, <code>mcnemar</code>, <code>paired_ttest_kfold_cv</code> and the corrected variants — the comparison tests from Extra 2, implemented and documented with the caveats attached.</td></tr>
+        <tr><td><strong>Optuna</strong>, <strong>scikit-optimize</strong>, <strong>Ray Tune</strong></td><td>Python</td><td>Bayesian and bandit-based hyperparameter search when random search is not enough.</td></tr>
+        <tr><td><strong>tidymodels</strong> (<code>rsample</code>, <code>tune</code>, <code>yardstick</code>)</td><td>R</td><td>Resampling schemes including grouped, time-series and nested; tuning; and a large metric library. <code>rsample</code> has the cleanest API for rolling-origin resampling of anything listed here.</td></tr>
+        <tr><td><strong>caret</strong></td><td>R</td><td>The older workhorse; still the fastest route to a repeated-CV comparison of several model types at once.</td></tr>
+      </table>
+
+      <div class="callout">
+        <p class="tag">A twenty-minute exercise worth doing</p>
+        <p>Take any dataset with a group column. Cross-validate the same model twice — once with KFold and once with GroupKFold — and look at the gap. On grouped data it is routinely several percentage points, sometimes far more, and the plain-KFold number is the flattering one. Nothing in this module lands as firmly as watching your own score fall by six points when you fix the splitter.</p>
+      </div>
+
+      <div class="note">
+        <div class="note-head"><span class="lbl">Reading log</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="m3x3" data-placeholder="What you read, what it added, what you still don't understand…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Caveat</span>
+      <p class="q">How much of this should you take on trust?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">The splitter descriptions and the comparison-test recommendations are standard and consistent across the sources listed. The 63.2% and 36.8% bootstrap figures are asymptotic limits, exact only as n grows. Defaults such as "random search beats grid search" are empirical regularities with real exceptions, not theorems. Treat the lectures as authoritative wherever the two differ.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
+<section class="close" style="--accent:#131b26">
+  <footer><span class="ai"><strong>Written by an AI model from lecture recordings.</strong> Not reviewed by any instructor or institution — verify anything you rely on against the original lectures. Examples here are generic illustrations rather than the ones used in class. The Dana Reyes and Tom Oyelaran cases, the point that a test set becomes a validation set once you select on it, “Six things worth noticing”, and Lessons 5 to 12 in their entirety are this summary’s own additions rather than lecture content — they draw on standard treatments of resampling, in particular <em>An Introduction to Statistical Learning</em> (James, Witten, Hastie &amp; Tibshirani), chapters 2 and 5, with the one-standard-error rule from chapter 6. All worked numbers in those lessons are invented for illustration, and notation follows the lecture material where the two differ.
+  <br><br>
+  <strong>Everything under “Additional resources” is outside material.</strong> Extras 1 to 3 — the catalogue of resampling schemes, the bootstrap variants, the hyperparameter search strategies, the statistical comparison tests, the metric and calibration material, the learning-curve and double-descent notes, the practice problems and the reading list — were assembled from published sources, principally <em>The Elements of Statistical Learning</em> (ch. 7), the scikit-learn user guide (§3.1 and §3.2), Raschka's <em>Model Evaluation, Model Selection, and Algorithm Selection in Machine Learning</em>, and the original method papers cited in Extra 3. None of it was taught in this module. All worked numbers there are computed for illustration on invented data. Check quantitative claims against a primary source before relying on them, and treat the lectures as authoritative wherever the two differ.</span></footer>
+</section>
 </div>
 
 <dialog id="dlg">

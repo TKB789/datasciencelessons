@@ -27,7 +27,7 @@
 
 <header class="hero">
   <h1>Module 5: Preparing Data</h1>
-  <p class="sub">Before a model sees your data, decide which of the points that don’t fit are mistakes — and which are the most useful observations you have.</p>
+  <p class="sub">Before a model sees your data, decide which of the points that don’t fit are mistakes — and which are the most useful observations you have. Three lessons of class material, followed by an additional-resources appendix on the rest of the detection toolbox and the rest of data preparation.</p>
 
   <svg class="plot" viewBox="0 0 660 330" role="img" aria-label="A time series of twenty readings that hover in a narrow band, with a single reading far above the others circled in red.">
     <line x1="60" y1="280" x2="620" y2="280" stroke="#131b26" stroke-width="1.5"/>
@@ -47,14 +47,18 @@
     <li style="--dot:#2f6b52"><a href="#l1"><span class="tnum">Lesson 1</span><span class="tname">Preparing data</span><span class="tq">Why can’t raw data go straight into a model?</span></a></li>
     <li style="--dot:#33507f"><a href="#l2"><span class="tnum">Lesson 2</span><span class="tname">Finding outliers</span><span class="tq">What counts as a point that doesn’t fit?</span></a></li>
     <li style="--dot:#8a3d5c"><a href="#l3"><span class="tnum">Lesson 3</span><span class="tname">Dealing with outliers</span><span class="tq">You found one. Now what?</span></a></li>
+    <li style="--dot:#1f6b6b"><a href="#extra"><span class="tnum">Extra 1–2</span><span class="tname">Detection toolbox &amp; the rest of prep</span><span class="tq">What else finds them, and what else breaks a model?</span></a></li>
+    <li style="--dot:#8a3d5c"><a href="#x3"><span class="tnum">Extra 3</span><span class="tname">Practice &amp; reading</span><span class="tq">Can you actually do the arithmetic?</span></a></li>
   </ul>
 
   <div class="badge-strip">
-    <p class="cap">Badges unlock when every activity in a lesson is finished.</p>
+    <p class="cap">Badges unlock when every activity in a lesson is finished. The last two cover the additional-resources material, which is not part of the class.</p>
     <ul class="badges">
       <li class="badge" data-for="l1" style="--b:#2f6b52"><span class="gem">P</span><span class="nm">Prep Work</span></li>
       <li class="badge" data-for="l2" style="--b:#33507f"><span class="gem">O</span><span class="nm">Spotter</span></li>
       <li class="badge" data-for="l3" style="--b:#8a3d5c"><span class="gem">D</span><span class="nm">The Verdict</span></li>
+      <li class="badge" data-for="x1" style="--b:#1f6b6b"><span class="gem">⌖</span><span class="nm">Toolbox</span></li>
+      <li class="badge" data-for="x3" style="--b:#8a3d5c"><span class="gem">✎</span><span class="nm">Worked It Out</span></li>
       <li class="badge" data-for="*"  style="--b:#131b26"><span class="gem">★</span><span class="nm">Module 5 complete</span></li>
     </ul>
   </div>
@@ -619,21 +623,497 @@
     <li>Say roughly what fraction of normally distributed data falls beyond two and three standard deviations, and why that matters for large datasets.</li>
     <li>Name the three data-preparation problems and say where each is dealt with.</li>
   </ul>
+  <p style="font-family:var(--sans);font-size:.9rem;color:var(--ink-soft);max-width:66ch">Everything above is class material. <a href="#extra">Additional resources</a> follow — the rest of the detection toolbox, scaling and missing-data methods, the leakage rule, practice problems and reading — none of it taught in this module.</p>
 
   <div class="note">
     <div class="note-head"><span class="lbl">Module 5 — my own summary</span><span class="hint">click to type; saves automatically</span></div>
     <div class="note-body" contenteditable="true" data-note="m5summary" data-placeholder="Write the module back in your own words — the fastest way to find out what you don't actually know yet."></div>
   </div>
 
+</section>
+
+<!-- ==================== ADDITIONAL RESOURCES DIVIDER ==================== -->
+<section class="close" id="extra" style="--accent:#1f6b6b">
+  <h2>Additional resources</h2>
+  <p class="h2meta">Everything below this line is <strong>not class material</strong></p>
+  <div class="defn">
+    <span class="term">Read this first</span>
+    <p>The three lessons above are the module as taught: what preparing data means, what an outlier is and how a box plot finds one, and how to decide what to do once you have found one. Everything from here on was assembled from outside sources — textbooks, the NIST engineering statistics handbook, method papers and library documentation. None of it is examinable unless your instructor says so, and where a convention differs from the lectures, <strong>the lectures win</strong>.</p>
+  </div>
+  <p>Lesson 1 names three data-preparation problems and hands two of them to other topics; Lesson 2 gives one detection method and says there are others. The appendix supplies both missing halves — the full detection toolbox, and the parts of data preparation the lectures deliberately set aside — and adds practice.</p>
+  <ul class="thread">
+    <li><span class="dot" style="--d:#1f6b6b"></span><span class="lbl">Extra 1</span><span>Every standard way of detecting an outlier, from the IQR rule to isolation forests.</span></li>
+    <li><span class="dot" style="--d:#2f6b45"></span><span class="lbl">Extra 2</span><span>The rest of data preparation: scaling, missing values, categories, imbalance — and the leakage rule that governs all of them.</span></li>
+    <li><span class="dot" style="--d:#8a3d5c"></span><span class="lbl">Extra 3</span><span>Practice problems with worked arithmetic, a self-test, and where to read further.</span></li>
+  </ul>
+</section>
+
+<!-- ==================== EXTRA 1 ==================== -->
+<section class="lesson" id="x1" data-short="Detection toolbox" style="--accent:#1f6b6b">
+  <div class="lesson-head">
+    <span class="ln">Extra 1 &middot; not class material</span>
+    <h2>The full detection toolbox</h2>
+    <p class="keyline">Lesson 2's box plot is one of about a dozen standard methods. They disagree with each other routinely, and knowing why is more useful than knowing any one of them.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Two failure modes every method has to handle</h3>
+      <p>Before the catalogue, the two problems that separate the good rules from the naive ones. Both arise because most rules estimate "normal" from the same data that contains the abnormality.</p>
+      <div class="defn">
+        <span class="term">Masking</span>
+        <p>Outliers inflate the estimate of spread, which makes them look less extreme, which can push them back inside the threshold. Two outliers hide each other; one large one can hide a smaller one. <strong>This is why a rule built on the mean and standard deviation is fragile.</strong></p>
+      </div>
+      <div class="defn">
+        <span class="term">Swamping</span>
+        <p>The reverse: an extreme point drags the centre toward itself, so perfectly ordinary points on the opposite side start to look far from the mean and get flagged. The method reports outliers that are artefacts of the outlier it should have found.</p>
+      </div>
+
+      <div class="callout">
+        <p class="tag">Worked demonstration — the same twenty values, three rules</p>
+        <p>Order-fulfilment times, in hours: 12, 14, 14, 15, 15, 16, 16, 17, 18, 19, 20, 21, 22, 23, 25, 26, 28, 31, <strong>88</strong>, <strong>96</strong>. Two values are clearly wrong. Mean = 26.80, standard deviation = 22.90, median = 19.5, MAD = 4.5, Q1 = 15.5, Q3 = 25.5, IQR = 10.</p>
+        <table>
+          <tr><th>Value</th><th>Classical z<br><span class="m">(x − mean) / sd</span></th><th>Modified z<br><span class="m">0.6745 (x − median) / MAD</span></th><th>Tukey<br><span class="m">beyond Q3 + 1.5 × IQR = 40.5</span></th></tr>
+          <tr><td>31 <span class="m">(ordinary)</span></td><td>0.18</td><td>1.72</td><td>no</td></tr>
+          <tr><td><strong>88</strong></td><td><strong>2.67 — passes</strong></td><td>10.27 — flagged</td><td>flagged</td></tr>
+          <tr><td><strong>96</strong></td><td>3.02 — just flagged</td><td>11.47 — flagged</td><td>flagged</td></tr>
+        </table>
+        <p>Under the usual "|z| &gt; 3" rule, <strong>88 goes undetected</strong> — not because it is borderline but because 96 inflated the standard deviation to 22.9, making everything look less extreme. That is masking, in a dataset small enough to eyeball. The two robust rules, built on the median rather than the mean, are unaffected and flag both at enormous margins.</p>
+      </div>
+
+      <h3>Family 1 — Univariate rules of thumb</h3>
+      <table>
+        <tr><th>Rule</th><th>Flags a point when</th><th>Notes</th></tr>
+        <tr><td><strong>Tukey / IQR fences</strong><br><span class="m">the box plot's whiskers</span></td><td>It falls beyond Q1 − 1.5 × IQR or Q3 + 1.5 × IQR. Some software also draws "far out" fences at 3 × IQR.</td><td>Lesson 2's method. Distribution-free, robust, and visual. The 1.5 is a convention, not a test: on normally distributed data it flags about 0.7% of points by chance, so a clean sample of 1,000 produces roughly seven "outliers" that are nothing of the sort.</td></tr>
+        <tr><td><strong>Classical z-score</strong></td><td>|x − mean| / sd exceeds 2 or 3.</td><td>Easy, familiar, and the most fragile thing here. Masking and swamping both hit it directly, as above. Use it only when you already know the data is clean, which is a strange condition for an outlier rule.</td></tr>
+        <tr><td><strong>Modified z-score</strong><br><span class="m">Iglewicz &amp; Hoaglin</span></td><td>0.6745 × |x − median| / MAD exceeds about 3.5.</td><td>The same idea with the median for centre and the median absolute deviation for spread, so neither estimate can be dragged by the points being tested. The 0.6745 factor makes MAD comparable to a standard deviation under normality. <strong>The drop-in replacement for the z-score, and almost always the better default.</strong></td></tr>
+        <tr><td><strong>Hampel filter</strong></td><td>The same rule applied in a sliding window.</td><td>The version for time series, where "normal" drifts. Related to Lesson 2's point that a contextual outlier needs a local notion of expectation.</td></tr>
+        <tr><td><strong>Percentile / winsorising bounds</strong></td><td>It falls outside, say, the 1st or 99th percentile.</td><td>Crude but predictable, and it names in advance how much data you will treat as extreme. Often paired with capping rather than deletion.</td></tr>
+      </table>
+
+      <h3>Family 2 — Formal statistical tests</h3>
+      <p>These give a p-value rather than a flag, which matters when you have to justify the decision to someone. All of them assume the data is approximately normal apart from the outliers, and all of them are misleading if it is not — a skewed distribution produces "significant" outliers in its long tail forever.</p>
+      <table>
+        <tr><th>Test</th><th>Designed for</th><th>Caveat</th></tr>
+        <tr><td><strong>Grubbs' test</strong></td><td>Exactly one outlier, in roughly normal data, n &gt; 25 or so. The statistic is simply the largest |z| in the sample, compared against a critical value that depends on n.</td><td>Applying it repeatedly to find several outliers is <em>wrong</em> — masking means the second one may never reach significance, and the significance level is not maintained across repeated tests.</td></tr>
+        <tr><td><strong>Dixon's Q</strong></td><td>One outlier in a very small sample, roughly n &lt; 25. Based on the gap to the nearest neighbour relative to the total range.</td><td>Low power; really a laboratory convention for triplicate measurements.</td></tr>
+        <tr><td><strong>Generalised ESD (Rosner)</strong></td><td><strong>Up to a stated number of outliers.</strong> Removes the most extreme point, re-tests, and adjusts the critical values for the sequence of tests.</td><td>The right answer when you suspect more than one. You must specify an upper bound on how many; overstating it is safer than understating it.</td></tr>
+        <tr><td><strong>Tietjen–Moore</strong></td><td>An exact number of outliers, known in advance.</td><td>Rarely the situation you are actually in, which is why ESD is more used.</td></tr>
+      </table>
+      <div class="callout">
+        <p class="tag">On the fulfilment data above</p>
+        <p>Grubbs computes the largest z, which is 3.02 for 96 against a 5% critical value of about 2.71 at n = 20 — significant, so 96 is declared an outlier. Then you stop, because Grubbs tests <em>one</em> point. Iterating it naively would next test 88 against a recomputed mean and standard deviation, and while here it would in fact be caught, the significance level of that second test is not the one you think it is. If you suspect two, the correct tool is generalised ESD with an upper bound of two or three, which handles the sequencing properly.</p>
+      </div>
+
+      <h3>Family 3 — More than one dimension at a time</h3>
+      <p>Lesson 2 raises this: a point can be entirely ordinary on every attribute separately and absurd in combination — a 22-year-old with 40 years of driving experience. Column-by-column rules cannot see it.</p>
+      <ul>
+        <li><strong>Mahalanobis distance.</strong> Distance from the centre measured in units of the data's own covariance, so it accounts for how attributes vary together. Under normality its square follows a chi-squared distribution with as many degrees of freedom as there are attributes, which gives a threshold with a real significance level attached. The standard multivariate rule.</li>
+        <li><strong>Robust Mahalanobis (MCD).</strong> Same idea, but the centre and covariance are estimated from the most tightly packed subset of the data — the minimum covariance determinant — so the outliers cannot inflate the covariance that is meant to catch them. This is the masking fix, applied in many dimensions, and it matters more here than in one dimension because a few bad points can distort a covariance matrix badly.</li>
+        <li><strong>Regression influence measures.</strong> When there is a fitted model, "outlier" splits into three distinguishable things: a large <em>residual</em> (the model predicts this point badly), high <em>leverage</em> (the point sits far out in the space of the inputs, so it has the <em>opportunity</em> to move the fit), and high <em>influence</em> (it actually does move the fit). <strong>Cook's distance</strong> measures the third by refitting without the point and seeing how much the predictions change; DFFITS and DFBETAS do the same per-prediction and per-coefficient. A high-leverage point that happens to sit on the line is harmless; a moderate residual with high leverage can be the most damaging point in the dataset. This is Lesson 2's "fit a model and look at the error" made precise.</li>
+      </ul>
+
+      <h3>Family 4 — Machine-learning detectors</h3>
+      <p>For many attributes, non-normal data, or where the notion of "unusual" is about local structure rather than distance from a single centre.</p>
+      <table>
+        <tr><th>Method</th><th>Idea</th><th>Best for</th></tr>
+        <tr><td><strong>Isolation Forest</strong><br><span class="m">Liu, Ting &amp; Zhou, 2008</span></td><td>Build random trees that split on random attributes at random values. Anomalies get isolated in <em>few</em> splits because they sit apart; normal points need many. The anomaly score is the average path length.</td><td>The practical default for tabular data. Fast, scales well, needs little tuning, handles many attributes. Note the inversion: it models what is <em>easy to separate</em> rather than what is normal.</td></tr>
+        <tr><td><strong>Local Outlier Factor</strong><br><span class="m">Breunig et al., 2000</span></td><td>Compare each point's local density with the density of its neighbours. A point in a sparse region surrounded by sparse regions is fine; a point in a sparse region next to a dense one is not.</td><td><strong>Data with clusters of differing density</strong>, where a global threshold is meaningless. A point that is unremarkable in a sparse cluster would be extreme inside a tight one, and only a local method sees that.</td></tr>
+        <tr><td><strong>One-class SVM</strong></td><td>Learn a boundary enclosing the normal data; anything outside is an anomaly.</td><td>Novelty detection, where you have a clean training set and want to flag genuinely new things. Sensitive to its kernel parameters.</td></tr>
+        <tr><td><strong>Elliptic envelope</strong></td><td>Fit a robust Gaussian and flag points outside a confidence ellipse.</td><td>Essentially robust Mahalanobis in a scikit-learn wrapper. Good when the data really is roughly elliptical.</td></tr>
+        <tr><td><strong>DBSCAN</strong></td><td>Points that fall in no dense region are labelled noise.</td><td>A free by-product if you are clustering anyway (Module 4). The noise label <em>is</em> an outlier flag.</td></tr>
+        <tr><td><strong>Autoencoder reconstruction error</strong></td><td>Train a network to compress and rebuild the data; points it rebuilds badly are unlike what it learned.</td><td>Images, sensor arrays, high-dimensional data. Heavy machinery for a tabular problem.</td></tr>
+      </table>
+
+      <h3>Family 5 — Outliers in time series</h3>
+      <p>Lesson 2's contextual outlier lives here, and the general recipe is the one the lesson describes: <strong>model what the value should have been, then examine the residual.</strong> What varies is the model.</p>
+      <ul>
+        <li><strong>Seasonal decomposition (STL) residuals.</strong> Strip out trend and seasonality, then apply any of the univariate rules above to what is left. A 35°C reading in July is only an outlier once July has been accounted for.</li>
+        <li><strong>Forecast residuals.</strong> Fit an ARIMA or exponential-smoothing model and flag points far from their one-step-ahead prediction. Module 6's CUSUM is the same trick with the residuals accumulated rather than judged one at a time — which is precisely the difference between an outlier and a change.</li>
+        <li><strong>Hampel filter.</strong> Rolling median and rolling MAD, so "normal" is defined locally and can drift.</li>
+      </ul>
+
+      <h3>Choosing</h3>
+      <table>
+        <tr><th>Situation</th><th>Start with</th></tr>
+        <tr><td>One column, quick screen, want to see the data</td><td>Box plot / Tukey fences — Lesson 2's method</td></tr>
+        <tr><td>One column, need a defensible number</td><td>Modified z-score; generalised ESD if you need a p-value</td></tr>
+        <tr><td>One column, several suspected outliers</td><td>Modified z-score or generalised ESD — <em>never</em> iterated Grubbs</td></tr>
+        <tr><td>Several correlated columns</td><td>Robust Mahalanobis (MCD)</td></tr>
+        <tr><td>A fitted model exists</td><td>Cook's distance, leverage, standardised residuals</td></tr>
+        <tr><td>Many columns, mixed types, no distributional assumption</td><td>Isolation Forest</td></tr>
+        <tr><td>Clusters of differing density</td><td>Local Outlier Factor</td></tr>
+        <tr><td>Time series</td><td>Decompose or forecast first, then any rule on the residuals</td></tr>
+      </table>
+      <div class="callout">
+        <p class="tag">When two methods disagree, that <em>is</em> the result</p>
+        <p>Running three detectors and getting three different sets of flagged points is the normal outcome, not a sign that something is broken. Each encodes a different definition of "doesn't fit", which is Lesson 2's opening complication restated: the definition was never settled in the first place. The productive response is to treat every disagreement as a point worth looking at by hand — and none of it changes Lesson 3's verdict, which still comes from knowing where the data came from rather than from any statistic.</p>
+      </div>
+
+      <div class="ix" data-quiz="m5x1-q1">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Why did the value 88 escape the |z| &gt; 3 rule in the worked example?</p>
+        <div class="opts">
+          <button class="opt" data-fb="88 is genuinely far from the rest of the data — it is more than eight times the median absolute deviation above the median. The rule missed it for a reason internal to the rule, not because the point is borderline.">Because 88 is genuinely close to the rest of the data, and the other rules over-flagged it.</button>
+          <button class="opt" data-right data-fb="Masking. The value 96 pushed the standard deviation up to 22.9, so the denominator of every z-score grew and 88 fell to 2.67. The rule's own estimate of spread was corrupted by the very points it was supposed to find, which is exactly why median-and-MAD rules exist.">Because 96 inflated the standard deviation, shrinking every z-score including 88's.</button>
+          <button class="opt" data-fb="Twenty points is small, but sample size is not the mechanism here. The same thing happens with two extreme values in a sample of ten thousand; the standard deviation is simply not robust.">Because the sample is too small for a z-score to be meaningful at n = 20.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="ix" data-quiz="m5x1-q2">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">A data point has high leverage but a small residual. Should you worry?</p>
+        <div class="opts">
+          <button class="opt" data-fb="High leverage is not by itself a problem — it means the point is unusual in the input space and therefore has the opportunity to move the fit, not that it is doing so. A small residual says it is sitting close to the line the rest of the data implies.">Yes — high leverage always means the point is distorting the model.</button>
+          <button class="opt" data-right data-fb="Leverage is opportunity, influence is effect. This point could have moved the fit but is not doing so, since it lies near where the rest of the data predicts. It is worth noting, because if it were wrong by a little the fit would move a lot — but as it stands it is doing no harm. The dangerous combination is high leverage with a moderate residual, which is what Cook's distance is built to catch.">Not much — leverage is the opportunity to move the fit, and a small residual says it is not taking it.</button>
+          <button class="opt" data-fb="It is neither harmless in the sense of being uninformative nor safely ignorable in principle. It is a point whose input values are unusual, which is worth knowing about — for instance it tells you the model is being asked to extrapolate in that region.">No — leverage only matters for classification, not regression.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="note">
+        <div class="note-head"><span class="lbl">Detection methods for my data</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="m5x1" data-placeholder="Which of these suits the data you actually have, and what the flagged points turned out to be…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Link to Lesson 2</span>
+      <p class="q">Does any of this change the box plot's status?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">No. The box plot remains the right first move on a single column, because it flags candidates <em>and</em> shows you the shape of the data at the same time — which no numeric rule does. What the rest of the toolbox adds is what to reach for once one column is not enough: robustness when the data is dirty, a p-value when you need to justify a decision, and multivariate methods when the problem is a combination rather than a value.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+<!-- ==================== EXTRA 2 ==================== -->
+<section class="lesson" id="x2" data-short="The rest of prep" style="--accent:#2f6b45">
+  <div class="lesson-head">
+    <span class="ln">Extra 2 &middot; not class material</span>
+    <h2>The rest of data preparation</h2>
+    <p class="keyline">Lesson 1 names three problems and pursues one. Here are the other two, plus the ones it does not name — and the single rule that governs how all of them must be carried out.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>The rule that comes before every technique on this page</h3>
+      <div class="callout">
+        <p class="tag">Fit every transformation on training data only</p>
+        <p>A scaler needs a mean and a standard deviation. An imputer needs a median. A target encoder needs group averages. <strong>Every one of those is a parameter estimated from data, and if you estimate it from the whole dataset before splitting, information from the validation and test sets has leaked into the training procedure.</strong> The validation score then overstates how well the model will do, in exactly the way Module 3 spends twelve lessons warning about.</p>
+        <p>The correct order is: split first, compute the statistic on the training portion, apply it unchanged to the held-out portion. Inside cross-validation this has to happen <em>within each fold</em>, refitting the transformation k times, which is why every serious library has a pipeline object — it exists precisely so this cannot be got wrong by accident. Standardising the full dataset and then calling <code>train_test_split</code> is the single most common leakage bug in practice, and it is silent: nothing errors, the score is just quietly too good.</p>
+      </div>
+
+      <h3>Problem 1 — Scale, in more detail than Lesson 1 gives it</h3>
+      <p>Lesson 1 makes the case that attributes on wildly different scales break a model. Which fix to use depends on the model and on what the data looks like.</p>
+      <table>
+        <tr><th>Transformation</th><th>Formula</th><th>Use when</th></tr>
+        <tr><td><strong>Standardisation (z-score)</strong></td><td>(x − mean) / sd → mean 0, sd 1</td><td>The general default. Required by anything distance-based (k-means, k-NN, SVM) or regularised (ridge, lasso), since a penalty on coefficient size is meaningless if the coefficients are in different units. Does not bound the range, and is itself dragged by outliers.</td></tr>
+        <tr><td><strong>Min–max normalisation</strong></td><td>(x − min) / (max − min) → [0, 1]</td><td>You need a bounded range — neural network inputs, image pixels, anything fed to a bounded activation. <strong>Extremely sensitive to outliers</strong>, since a single extreme value sets the denominator and squashes everything else into a sliver of the range.</td></tr>
+        <tr><td><strong>Robust scaling</strong></td><td>(x − median) / IQR</td><td>Outliers are present and you are keeping them. Same shape as standardisation, computed from quantities they cannot move — the Extra 1 lesson applied to scaling.</td></tr>
+        <tr><td><strong>Max-abs scaling</strong></td><td>x / max|x| → [−1, 1]</td><td>Sparse data, because it does not shift values and so does not destroy the zeros. Subtracting a mean from a sparse matrix makes it dense and can blow up memory.</td></tr>
+        <tr><td><strong>Unit-norm (L2) scaling</strong></td><td>each <em>row</em> divided by its own length</td><td>Only direction matters — text vectors, profiles. Note this scales rows, not columns, unlike everything else here.</td></tr>
+        <tr><td><strong>Log transform</strong></td><td>log(x) or log(1 + x)</td><td>Strongly right-skewed positive data: income, counts, durations, prices. Often the single most useful transformation there is, because it turns multiplicative structure into additive structure — and it makes extreme values much less extreme without deleting anything, which is sometimes the better answer to a Lesson 3 dilemma.</td></tr>
+        <tr><td><strong>Box–Cox</strong></td><td>a power transform with the exponent fitted</td><td>You want the log idea generalised, with the data choosing the power. <strong>Strictly positive values only.</strong></td></tr>
+        <tr><td><strong>Yeo–Johnson</strong></td><td>the same, extended</td><td>As Box–Cox but handles zero and negative values. The safer default of the two.</td></tr>
+        <tr><td><strong>Quantile transform</strong></td><td>map to ranks, then to a uniform or normal distribution</td><td>Nothing else works and the model needs well-behaved inputs. It forces any distribution into the target shape — but it collapses outliers onto the boundary, making them indistinguishable from ordinary extreme points, which destroys exactly the information Lesson 3 cares about. Powerful and blunt.</td></tr>
+      </table>
+      <p>Two practical notes. <strong>Tree-based models need none of this</strong> — decision trees, random forests and gradient boosting split on thresholds within each column independently, so any monotonic rescaling gives an identical tree. If you are wondering whether to scale, the first question is which model. And <strong>scaling does not remove outliers</strong>: a point three standard deviations out is still three standard deviations out afterwards. Scaling fixes the comparability problem, not the extremity problem.</p>
+
+      <div class="ix" data-quiz="m5x2-q1">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Your data has a few extreme values you have decided to keep, and you need to scale before running k-means. Which scaler?</p>
+        <div class="opts">
+          <button class="opt" data-fb="Min–max is the worst choice here. One extreme value sets the maximum, so every other point gets squeezed into a narrow band near zero and the differences you actually care about are compressed away.">Min–max normalisation, so everything sits neatly in [0, 1].</button>
+          <button class="opt" data-right data-fb="Robust scaling uses the median and IQR, neither of which an extreme value can move. The bulk of the data gets a sensible spread and the outliers stay visibly extreme — which is what you want, since you decided to keep them for a reason.">Robust scaling, using the median and IQR.</button>
+          <button class="opt" data-fb="Standardisation is a reasonable default but not here: the outliers inflate the standard deviation, so the denominator is too large and the ordinary points end up compressed toward zero. It is the same masking problem as the z-score rule, in a different job.">Standardisation, since it is the general default.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <h3>Problem 2 — Missing values</h3>
+      <p>Lesson 1 names this and passes it on. The essential first step is not a technique but a question: <em>why</em> is it missing? The answer determines whether any fix is safe.</p>
+      <table>
+        <tr><th>Mechanism</th><th>Meaning</th><th>Consequence</th></tr>
+        <tr><td><strong>MCAR</strong><br>missing completely at random</td><td>Whether a value is missing has nothing to do with anything — a form was lost, a sensor dropped a packet.</td><td>The easy case. Deleting the rows loses power but introduces no bias.</td></tr>
+        <tr><td><strong>MAR</strong><br>missing at random</td><td>Missingness depends on <em>observed</em> data — older respondents skip a question more often, and you have their age.</td><td>Fixable. Imputation that uses the other columns can recover an unbiased picture.</td></tr>
+        <tr><td><strong>MNAR</strong><br>missing not at random</td><td>Missingness depends on the <em>unobserved value itself</em> — high earners decline to state income; a sensor fails precisely when readings go out of range.</td><td>The dangerous case. No imputation method fixes it, because the information needed is exactly what is absent. <strong>The fact of missingness is itself data</strong> and should be recorded as an indicator column.</td></tr>
+      </table>
+      <p>The techniques, in rough order of sophistication:</p>
+      <ul>
+        <li><strong>Deletion.</strong> Drop rows (listwise) or columns. Safe under MCAR, biased otherwise, and it can throw away most of a dataset when missingness is scattered across many columns.</li>
+        <li><strong>Mean / median / mode imputation.</strong> One number for every gap. Fast, and it systematically shrinks the variance of that column and weakens its correlations with everything else — the imputed points all sit exactly at the centre. Acceptable for a small percentage, misleading beyond that. Use the median for skewed columns.</li>
+        <li><strong>Indicator column.</strong> Add a binary "was missing" flag alongside whatever you impute. Cheap, and it lets the model learn from the missingness itself — essential under MNAR.</li>
+        <li><strong>Regression / k-NN imputation.</strong> Predict the missing value from the other columns. Preserves relationships far better; understates uncertainty, because the imputed value is a point estimate treated as though it were observed.</li>
+        <li><strong>Multiple imputation (MICE).</strong> Generate several complete datasets with different plausible fills, analyse each, and combine the results so the extra uncertainty appears in the standard errors. The statistically correct answer under MAR, and the standard in fields where inference matters more than prediction.</li>
+      </ul>
+
+      <h3>Problem 3 — Categorical attributes</h3>
+      <p>Not mentioned in Lesson 1, but it sits in the same slot: something the model cannot consume as it stands.</p>
+      <ul>
+        <li><strong>One-hot encoding.</strong> One binary column per category. The safe default; explodes in width when a column has thousands of levels.</li>
+        <li><strong>Ordinal encoding.</strong> Map categories to integers. Correct only when there genuinely is an ordering (small &lt; medium &lt; large). Applied to unordered categories it invents a false ordering and false spacing — the same error as numbering regions and computing a distance in Module 4.</li>
+        <li><strong>Target encoding.</strong> Replace each category with the mean response for that category. Handles high-cardinality columns compactly and <strong>leaks badly</strong> if computed on the full data, since each row's own response contributes to its own feature. Must be done inside the cross-validation folds, with smoothing for rare categories.</li>
+        <li><strong>Frequency encoding, hashing, embeddings.</strong> Progressively more compact routes for very high cardinality.</li>
+      </ul>
+
+      <h3>A fourth problem: unbalanced classes</h3>
+      <p>When 0.2% of transactions are fraudulent, a model that predicts "not fraud" every time is 99.8% accurate and completely useless. The standard responses are resampling the training set (oversampling the minority, undersampling the majority, or generating synthetic minority examples with SMOTE), weighting the classes in the loss function, or leaving the data alone and changing the <em>metric</em> — precision, recall, F1 or the area under the precision–recall curve instead of accuracy. Two cautions worth carrying: resampling belongs inside the cross-validation loop, never before the split, for the leakage reason above; and it is applied to the training folds only, never to the held-out fold, which must keep the real class balance or the estimate is meaningless.</p>
+
+      <h3>Where all of this sits</h3>
+      <table class="plain">
+        <tr><th>Order</th><th>Step</th></tr>
+        <tr><td>1</td><td>Split off the test set. Nothing below this line may look at it.</td></tr>
+        <tr><td>2</td><td>Understand missingness and record indicator columns.</td></tr>
+        <tr><td>3</td><td>Detect outlier candidates (Lesson 2, Extra 1) and decide what they are (Lesson 3).</td></tr>
+        <tr><td>4</td><td>Encode categorical attributes.</td></tr>
+        <tr><td>5</td><td>Impute remaining gaps — parameters from training data only.</td></tr>
+        <tr><td>6</td><td>Transform skew, then scale — parameters from training data only.</td></tr>
+        <tr><td>7</td><td>Resample for class balance, training folds only.</td></tr>
+        <tr><td>8</td><td>Fit and validate (Module 3), with steps 4 to 7 refitted inside every fold.</td></tr>
+      </table>
+      <p>Steps 3 and 6 are worth noting together: outlier decisions come <em>before</em> scaling, because a scaler fitted on data containing a bad value inherits the damage. And every step from 4 to 7 estimates something, which is why they all have to live inside the fold.</p>
+
+      <div class="ix" data-quiz="m5x2-q2">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">A sensor reports nothing whenever the true reading exceeds its maximum range. Which missingness mechanism, and what follows?</p>
+        <div class="opts">
+          <button class="opt" data-fb="MCAR would mean the gaps are unrelated to anything — a dropped packet, a lost form. Here the gaps happen precisely when the value is large, which is the opposite of random.">MCAR — the dropouts are a hardware fault and unrelated to the data.</button>
+          <button class="opt" data-right data-fb="MNAR: whether a value is missing depends on the value itself. No imputation can recover it, because every complete observation you would learn from comes from the in-range part of the distribution and tells you nothing about the tail. Imputing the median here would systematically replace the highest readings with typical ones — the exact opposite of the truth. Record an indicator column, and treat the missingness as the signal it is.">MNAR — and imputing the median would replace the largest readings with typical ones.</button>
+          <button class="opt" data-fb="MAR would mean the missingness depends on other things you did observe, in which case the other columns could be used to recover it. Here it depends on the unobserved value itself, which is a strictly harder case.">MAR — so k-NN imputation from the other sensors will recover the values.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="note">
+        <div class="note-head"><span class="lbl">Prep steps for my data</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="m5x2" data-placeholder="Which of these your data needs, in what order, and what you would put in a pipeline…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Link to Module 3</span>
+      <p class="q">Why does preparing data belong in the cross-validation loop?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Because every preparation step that estimates something — a mean, a median, a category average — is part of the modelling procedure, not a fixed property of the world. Module 3's whole argument is that you estimate performance by applying the <em>entire</em> procedure to data it has never seen. Fitting the scaler once on everything and then cross-validating measures a procedure that nobody can actually run on new data, and reports a number that is too good.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+<!-- ==================== EXTRA 3 ==================== -->
+<section class="lesson" id="x3" data-short="Practice &amp; reading" style="--accent:#8a3d5c">
+  <div class="lesson-head">
+    <span class="ln">Extra 3 &middot; not class material</span>
+    <h2>Practice, reading and tools</h2>
+    <p class="keyline">Seven problems with the arithmetic worked out, a self-test, and where to read further. Do Problems 1 and 2 by hand — the fences and the modified z-score are the two calculations most likely to be asked for.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Part A — the arithmetic</h3>
+
+      <div class="callout">
+        <p class="tag">Problem 1 — box plot by hand</p>
+        <p>Twelve values: 4, 7, 8, 9, 11, 12, 13, 14, 16, 18, 21, 42. Find the median, quartiles, IQR, the whisker fences, and say which points the box plot flags.</p>
+        <details><summary>Show worked solution</summary>
+          <p class="a">Already sorted, n = 12.<br>
+          <strong>Median:</strong> mean of the 6th and 7th values = (12 + 13)/2 = <strong>12.5</strong>.<br>
+          <strong>Q1:</strong> median of the lower six (4, 7, 8, 9, 11, 12) = (8 + 9)/2 = <strong>8.5</strong>.<br>
+          <strong>Q3:</strong> median of the upper six (13, 14, 16, 18, 21, 42) = (16 + 18)/2 = <strong>17</strong>.<br>
+          <strong>IQR:</strong> 17 − 8.5 = <strong>8.5</strong>.<br>
+          <strong>Fences:</strong> lower 8.5 − 1.5(8.5) = −4.25; upper 17 + 1.5(8.5) = <strong>29.75</strong>.<br>
+          <strong>Flagged:</strong> 42 only. The whiskers are drawn to the most extreme values <em>inside</em> the fences, so the upper whisker ends at 21, not at 29.75 — a detail people get wrong. The lower whisker ends at 4.<br><br>
+          Note what the box plot does <em>not</em> say: nothing about whether 42 is a typing error, a genuine long job, or a different kind of order altogether. That is Lesson 3's question.</p>
+        </details>
+      </div>
+
+      <div class="callout">
+        <p class="tag">Problem 2 — classical versus modified z-score</p>
+        <p>Same twelve values. Compute the classical z-score of 42 (mean 14.58, sd 10.05) and the modified z-score (median 12.5, MAD 4.5). Compare.</p>
+        <details><summary>Show worked solution</summary>
+          <p class="a"><strong>Classical:</strong> (42 − 14.58) / 10.05 = <strong>2.73</strong>. Under the common |z| &gt; 3 rule this does <em>not</em> flag.<br>
+          <strong>Modified:</strong> 0.6745 × (42 − 12.5) / 4.5 = 0.6745 × 6.56 = <strong>4.42</strong>. Against the usual cut-off of 3.5, this flags clearly.<br><br>
+          The gap is the whole argument for robust rules. 42 has inflated both the mean it is being compared to and the standard deviation it is being divided by, so it shrinks its own score from both directions at once. The median and MAD are computed from the middle of the data and cannot be moved by one extreme point, so the modified score reports the distance honestly. <em>To find the MAD:</em> take |x − 12.5| for every value, giving 8.5, 5.5, 4.5, 3.5, 1.5, 0.5, 0.5, 1.5, 3.5, 5.5, 8.5, 29.5, and take the median of those, which is 4.5.</p>
+        </details>
+      </div>
+
+      <div class="callout">
+        <p class="tag">Problem 3 — how many false alarms should you expect?</p>
+        <p>You apply the 1.5 × IQR rule to a clean sample of 5,000 normally distributed measurements. Roughly how many points get flagged, and what should you conclude?</p>
+        <details><summary>Show worked solution</summary>
+          <p class="a">Under normality the Tukey fences sit at roughly ±2.7 standard deviations, and about <strong>0.7%</strong> of a normal distribution falls beyond them — so roughly <strong>35 points</strong>. Every one of them is a perfectly ordinary observation from the intended process.<br><br>
+          The conclusion is Lesson 3's, arrived at from the other direction: in a large dataset, <em>most flagged points are not errors</em>. The flag rate is a property of the rule and the sample size, not evidence about the data. This is also why "delete everything outside the whiskers" is a bad default — on 5,000 points it discards 35 real observations, and if the distribution has any right skew at all, far more than that.<br><br>
+          For scale, the comparable figures for standard-deviation rules: about 4.6% of normal data lies beyond two standard deviations, and about 0.27% beyond three — roughly 2,700 points per million.</p>
+        </details>
+      </div>
+
+      <div class="callout">
+        <p class="tag">Problem 4 — the multivariate blind spot</p>
+        <p>A dataset of drivers has an age column (range 17–90) and a years-of-experience column (range 0–70). One record reads age 22, experience 40. Would a box plot on either column catch it? What would?</p>
+        <details><summary>Show worked solution</summary>
+          <p class="a"><strong>No.</strong> Age 22 is unremarkable; 40 years of experience is unremarkable. Neither column, examined alone, has anything to report. Yet the combination is impossible — the person would have started driving at two.<br><br>
+          What catches it: <strong>Mahalanobis distance</strong>, because age and experience are strongly correlated and this record sits far from that relationship even though it is near the centre of each margin. Or, more directly, a <strong>domain rule</strong>: experience ≤ age − 17. Or a <strong>derived feature</strong>, age minus experience, which converts the two-dimensional problem into a one-dimensional one that a box plot <em>can</em> see.<br><br>
+          That last option is worth remembering, because it generalises: when you know which combination is the meaningful one, computing it as a new column is usually simpler and more interpretable than reaching for a multivariate detector.</p>
+        </details>
+      </div>
+
+      <h3>Part B — judgement</h3>
+
+      <div class="callout">
+        <p class="tag">Problem 5 — four flagged points, four different answers</p>
+        <p>An A&amp;E department's dataset of patient wait times flags four points. For each, say what you would do and why.<br>
+        (a) A wait of −15 minutes.<br>
+        (b) A wait of 1,440 minutes, on a day the hospital's IT system was down.<br>
+        (c) A wait of 611 minutes, on the night of a major road accident.<br>
+        (d) A wait of 380 minutes, on an ordinary Tuesday, with nothing unusual recorded.</p>
+        <details><summary>Show worked solution</summary>
+          <p class="a"><strong>(a) Remove or correct.</strong> A negative wait is physically impossible, so it is an error — most likely swapped timestamps. If the underlying times are recoverable, correct it; if not, treat the value as missing rather than deleting the whole patient record, since the other columns are probably fine.<br>
+          <strong>(b) Remove, with documentation.</strong> Exactly 1,440 minutes is 24 hours, which is the signature of a default or a fallback value rather than a measurement. Combined with the known IT outage, this is bad data about the recording system rather than data about the patient. Note that you are removing it because you identified the cause, not because it was extreme.<br>
+          <strong>(c) Keep — and consider modelling it separately.</strong> This is real, explicable, and quite possibly the most informative row in the dataset: it is the only evidence you have about how the department performs under surge. Deleting it produces a model that is confidently wrong about exactly the situation anyone would want it to predict. Lesson 3's "split one model into two" applies if there are enough such nights to model.<br>
+          <strong>(d) Keep, and investigate.</strong> Nothing justifies removal. A long wait on an ordinary day is either genuine variation — which the model should learn — or a signal of something not captured in the columns you have, which is worth finding out. The temptation to delete it because it is inconvenient is precisely the failure the module warns about.</p>
+        </details>
+      </div>
+
+      <div class="callout">
+        <p class="tag">Problem 6 — diagnosing a pipeline</p>
+        <p>A colleague's workflow is: load data → standardise all columns → remove points with |z| &gt; 3 → split into train and test → fit → evaluate. Name three separate problems.</p>
+        <details><summary>Show worked solution</summary>
+          <p class="a"><strong>1. Leakage.</strong> The mean and standard deviation are computed from the whole dataset including the test set, so the test score is optimistic. The split must come first and the scaler must be fitted on the training portion only.<br>
+          <strong>2. The wrong scaler for the job, used to find outliers.</strong> Standardisation is computed from the mean and standard deviation, both of which the outliers themselves inflate — so this is the masking problem, and the |z| &gt; 3 step will miss exactly the points it is meant to catch when there is more than one. A modified z-score or IQR rule belongs here.<br>
+          <strong>3. Deleting without asking why.</strong> Everything beyond three standard deviations is removed automatically, which on a large dataset discards thousands of genuine observations, and on a right-skewed column discards one entire tail. This is Lesson 3's central warning, automated.<br><br>
+          A fourth, if you want it: the outlier removal is applied to the test set as well, so the reported performance is on an artificially clean sample that does not resemble what the model will meet in production.</p>
+        </details>
+      </div>
+
+      <div class="callout">
+        <p class="tag">Problem 7 — choosing a method</p>
+        <p>Name a detection method for each and say why.<br>
+        (a) One column, 40 values, roughly normal, you suspect one bad reading and need a p-value for a report.<br>
+        (b) 200,000 rows, 30 mixed columns, no distributional assumptions.<br>
+        (c) A fitted regression where one point seems to be bending the line.<br>
+        (d) Hourly energy demand where the suspect reading is high for 3 a.m. but normal for the day overall.</p>
+        <details><summary>Show worked solution</summary>
+          <p class="a"><strong>(a) Grubbs' test.</strong> Designed for exactly one outlier in approximately normal data, and it returns a p-value. If you suspected two or three, generalised ESD instead — never Grubbs applied repeatedly.<br>
+          <strong>(b) Isolation Forest.</strong> Scales to that size, makes no distributional assumption, handles many columns, and needs almost no tuning. Local Outlier Factor if the data has clusters of clearly different density.<br>
+          <strong>(c) Cook's distance.</strong> It measures influence directly — how much the fitted values change when the point is dropped — which is the actual question. Check leverage and the standardised residual alongside it to see <em>why</em>: high leverage plus a moderate residual is the damaging combination.<br>
+          <strong>(d) Decompose first.</strong> Remove the daily and weekly seasonal pattern with STL or fit a forecasting model, then apply any univariate rule to the residuals. This is Lesson 2's contextual outlier, and the general recipe is always the same: model what the value should have been, then examine the error.</p>
+        </details>
+      </div>
+
+      <h3>Part C — self-test</h3>
+
+      <div class="ix" data-quiz="m5x3-q1">
+        <div class="ix-head"><span class="ix-kind">self-test</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Why is applying Grubbs' test repeatedly a bad way to find several outliers?</p>
+        <div class="opts">
+          <button class="opt" data-right data-fb="Two reasons, both fatal. Masking means the outliers jointly inflate the standard deviation, so the second one may never reach significance after the first is removed. And the stated significance level is not maintained across a sequence of tests. Generalised ESD exists precisely to handle both, by adjusting the critical values for the number of tests performed.">Masking can hide the second one, and the significance level is not maintained across repeated tests.</button>
+          <button class="opt" data-fb="Computational cost is irrelevant here — Grubbs is a single division. The problem is statistical.">It is computationally expensive to recompute the mean and standard deviation each time.</button>
+          <button class="opt" data-fb="Grubbs works on any sample size above roughly 25, and iterating does not change that. Dixon's Q is the small-sample alternative, but sample size is not what makes iteration wrong.">Grubbs is only valid for samples smaller than 25, so it fails after the first removal.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="ix" data-quiz="m5x3-q2">
+        <div class="ix-head"><span class="ix-kind">self-test</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Which of these is <em>not</em> a reason to remove a genuine, correctly recorded outlier?</p>
+        <div class="opts">
+          <button class="opt" data-fb="This is a legitimate reason. Lesson 3's supply-chain example makes exactly this point: a real event that cannot recur — a one-off disruption, a discontinued product line — is real data about a world that no longer exists.">The conditions that produced it cannot occur again in the period being modelled.</button>
+          <button class="opt" data-fb="Also legitimate, and it is Lesson 3's other route: if the outlier represents a genuinely different regime with enough observations behind it, splitting into two models often beats forcing one model to cover both.">It belongs to a distinct regime that deserves its own model.</button>
+          <button class="opt" data-right data-fb="This is the failure the module is built around. Being far from the others is what made it a candidate, not what makes it wrong. Extremity is the observation; the verdict comes from knowing what produced the point, which is information outside the dataset.">It sits far outside the whiskers and is pulling the model's fit around.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="ix" data-quiz="m5x3-q3">
+        <div class="ix-head"><span class="ix-kind">self-test</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Which models need no feature scaling at all?</p>
+        <div class="opts">
+          <button class="opt" data-fb="Both are affected. k-means computes distances, so the largest-range column dominates; ridge penalises coefficient size, which is meaningless when coefficients are in different units.">k-means and ridge regression.</button>
+          <button class="opt" data-right data-fb="Trees split one column at a time on a threshold, so any monotonic rescaling produces an identical tree — the split point simply moves with the data. This holds for single trees, random forests and gradient boosting alike, and it is the first thing to check when wondering whether scaling is needed.">Decision trees, random forests and gradient boosting.</button>
+          <button class="opt" data-fb="Neural networks are among the most scaling-sensitive models there are: unscaled inputs make gradients wildly uneven across weights and training becomes unstable or very slow.">Neural networks, because the weights adapt to any scale during training.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="ix" data-quiz="m5x3-q4">
+        <div class="ix-head"><span class="ix-kind">self-test</span><span class="ix-done">answered</span></div>
+        <p class="prompt">You impute missing incomes with the column median, then cross-validate. What is wrong?</p>
+        <div class="opts">
+          <button class="opt" data-fb="Median imputation on a skewed column like income is the sensible choice of statistic — the mean would be pulled up by high earners. The choice of statistic is not the problem.">The median is the wrong statistic for income; the mean would be better.</button>
+          <button class="opt" data-right data-fb="The median is a parameter estimated from data, so it has to be estimated inside each fold from that fold's training portion only. Computing it once on everything means each fold's held-out rows contributed to the value used to fill their neighbours, and the cross-validation score is optimistic. A pipeline object exists to make this impossible to forget.">The median was computed from the whole dataset, so information leaks into every fold.</button>
+          <button class="opt" data-fb="Imputation is generally better than dropping rows, especially when missingness is scattered across columns and listwise deletion would cost most of the data. The problem is when the statistic is computed, not whether to impute.">Imputing at all is wrong; rows with missing incomes should be dropped.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <h3>Part D — written questions</h3>
+      <div class="callout">
+        <p class="tag">Four to write out</p>
+        <p><strong>1.</strong> Define masking and swamping, and explain why they argue for median-based rules.</p>
+        <details><summary>Show a model answer</summary><p class="a">Masking is when outliers inflate the estimate of spread so much that they fall back inside the threshold built from it — two extreme points hide each other, and one large one can hide a smaller one. Swamping is the reverse: an extreme point pulls the estimated centre toward itself, so ordinary points on the far side start to look distant and get flagged. Both arise because the mean and standard deviation are computed from the same data that contains the contamination, and both are unbounded — a single value can move them arbitrarily far. The median and the median absolute deviation are computed from the middle of the ordered data and cannot be moved by extreme values at all, so a rule built on them reports the distance of a suspect point honestly regardless of how many other suspects there are.</p></details>
+        <p><strong>2.</strong> Explain why the 1.5 × IQR rule flags points in perfectly clean data, and what follows for large datasets.</p>
+        <details><summary>Show a model answer</summary><p class="a">The fences sit at roughly ±2.7 standard deviations under normality, and about 0.7% of a normal distribution lies beyond them. The rule therefore has a fixed false-positive rate by construction: it is a convention about where to draw whiskers, not a test with a null hypothesis. In a sample of 5,000 clean measurements it flags around 35 points; in a million, around 7,000. It follows that in any large dataset most flagged points are ordinary, that the flag count carries no information about data quality, and that automatic deletion of everything outside the whiskers discards genuine observations at a predictable rate — worse on skewed data, where one whole tail is legitimately long.</p></details>
+        <p><strong>3.</strong> A dataset has 15% missing values in one column. Describe how you would decide what to do.</p>
+        <details><summary>Show a model answer</summary><p class="a">Start with why the values are missing, because the mechanism determines what is safe. If missingness is unrelated to anything (MCAR), deletion is unbiased but wasteful at 15%. If it depends on other observed columns (MAR), imputation using those columns — regression, k-NN, or multiple imputation — recovers an unbiased picture. If it depends on the unobserved value itself (MNAR), for example a sensor that fails when readings go out of range or high earners declining to state income, no imputation method can fix it, because every complete case you would learn from comes from the wrong part of the distribution. In that case the fact of missingness is itself information: add an indicator column and let the model use it. Whatever you choose, the imputation statistic must be estimated inside each cross-validation fold, not once on the whole dataset.</p></details>
+        <p><strong>4.</strong> Why must scaling and imputation happen inside the cross-validation loop?</p>
+        <details><summary>Show a model answer</summary><p class="a">Because both estimate parameters from data — a mean and standard deviation, a median — and those estimates are part of the modelling procedure rather than fixed facts about the world. Module 3 estimates generalisation performance by applying the whole procedure to data it has never seen; if the scaler's mean was computed from the full dataset, the held-out rows contributed to it and the score is optimistic. The fix is to refit every transformation on each fold's training portion and apply it unchanged to that fold's held-out portion, which is what a pipeline object automates. The bug is silent — nothing errors, the number is simply too good — which is why it is the most common leakage mistake in practice.</p></details>
+      </div>
+
+      <h3>Sources and further reading</h3>
+      <table>
+        <tr><th>Source</th><th>What it gives you</th></tr>
+        <tr><td><strong>NIST/SEMATECH e-Handbook of Statistical Methods</strong>, §1.3.5.17<br><span class="m">itl.nist.gov/div898/handbook</span></td><td>The free, authoritative reference for Grubbs, Tietjen–Moore and the generalised ESD test, with worked examples and critical values. Start here for anything needing a p-value.</td></tr>
+        <tr><td><strong>Iglewicz &amp; Hoaglin (1993), <em>How to Detect and Handle Outliers</em></strong></td><td>The source of the modified z-score and the 3.5 cut-off, and still the most practical short treatment of the topic.</td></tr>
+        <tr><td><strong>Barnett &amp; Lewis, <em>Outliers in Statistical Data</em></strong></td><td>The comprehensive reference. More than most people need, and the place to look when a specific distribution is involved.</td></tr>
+        <tr><td><strong>Rousseeuw &amp; Leroy, <em>Robust Regression and Outlier Detection</em></strong></td><td>Where MCD, robust Mahalanobis and the influence measures are developed properly.</td></tr>
+        <tr><td><strong>Aggarwal, <em>Outlier Analysis</em></strong></td><td>The modern machine-learning side: isolation forests, LOF, one-class methods, high-dimensional cases.</td></tr>
+        <tr><td><strong>Little &amp; Rubin, <em>Statistical Analysis with Missing Data</em></strong></td><td>The source of MCAR/MAR/MNAR and of multiple imputation.</td></tr>
+        <tr><td><strong>Kuhn &amp; Johnson, <em>Feature Engineering and Selection</em></strong></td><td>Free online. The best single treatment of scaling, transformation and encoding as part of a validated workflow rather than as isolated tricks.</td></tr>
+      </table>
+      <ul>
+        <li><strong>Tukey (1977), <em>Exploratory Data Analysis</em>.</strong> Where the box plot and the 1.5 × IQR convention come from — and where Tukey himself describes it as a screening device rather than a test.</li>
+        <li><strong>Rosner (1983), "Percentage Points for a Generalized ESD Many-Outlier Procedure".</strong></li>
+        <li><strong>Liu, Ting &amp; Zhou (2008), "Isolation Forest".</strong> Short and unusually readable for a method paper.</li>
+        <li><strong>Breunig et al. (2000), "LOF: Identifying Density-Based Local Outliers".</strong></li>
+        <li><strong>Leys et al. (2013)</strong> on why the median and MAD should replace the mean and standard deviation in outlier rules — a good short argument to hand to a colleague.</li>
+      </ul>
+      <table>
+        <tr><th>Tool</th><th>Language</th><th>For</th></tr>
+        <tr><td><strong>scikit-learn</strong></td><td>Python</td><td><code>IsolationForest</code>, <code>LocalOutlierFactor</code>, <code>OneClassSVM</code>, <code>EllipticEnvelope</code>; <code>StandardScaler</code>, <code>MinMaxScaler</code>, <code>RobustScaler</code>, <code>MaxAbsScaler</code>, <code>PowerTransformer</code> (Box–Cox and Yeo–Johnson), <code>QuantileTransformer</code>; <code>SimpleImputer</code>, <code>KNNImputer</code>, <code>IterativeImputer</code>. The <code>Pipeline</code> and <code>ColumnTransformer</code> objects are what keep all of it out of the leakage trap.</td></tr>
+        <tr><td><strong>PyOD</strong></td><td>Python</td><td>Around fifty outlier-detection algorithms behind one interface, with benchmarks. The fastest way to compare several methods on the same data.</td></tr>
+        <tr><td><strong>statsmodels</strong></td><td>Python</td><td><code>OLSInfluence</code> for Cook's distance, leverage, DFFITS and DFBETAS; STL decomposition for the time-series case.</td></tr>
+        <tr><td><strong>outliers</strong>, <strong>EnvStats</strong>, <strong>robustbase</strong>, <strong>mice</strong>, <strong>recipes</strong></td><td>R</td><td>Grubbs and Dixon; Rosner's ESD; MCD and robust regression; multiple imputation; and a pipeline framework that enforces the fit-on-training-only rule.</td></tr>
+      </table>
+
+      <div class="callout">
+        <p class="tag">A twenty-minute exercise worth doing</p>
+        <p>Take any column of real data. Apply the box plot, the classical z-score, the modified z-score and an isolation forest, and list which points each one flags. Then add a single fabricated extreme value and rerun all four. Watching the z-score rule quietly stop working while the other three do not move is worth more than any amount of reading about robustness.</p>
+      </div>
+
+      <div class="note">
+        <div class="note-head"><span class="lbl">Reading log</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="m5x3" data-placeholder="What you read, what it added, what you still don't understand…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Caveat</span>
+      <p class="q">How much of this should you take on trust?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">The formulas and the worked arithmetic are standard and checkable. The threshold conventions — 1.5 for the fences, 3.5 for the modified z-score, 3 for the classical one — are conventions rather than derived quantities, and every one of them assumes roughly normal data. Recompute the false-alarm rate for your own distribution rather than inheriting these numbers, and treat the lectures as authoritative wherever the two differ.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
+<section class="close" style="--accent:#131b26">
   <footer>
     <span class="ai"><strong>Written by an AI model from lecture recordings.</strong> Not reviewed by any instructor or institution — verify anything you rely on against the original lectures.
     <br><br>
     <strong>Lesson 1 is not lecture content in the usual sense.</strong> Its source recording is a short preview that names three data-preparation problems and covers no method. The pipeline diagram, the worked comparison of scales, the pointers to where each problem is solved, and both activities in that lesson are orientation material written for these notes.
     <br><br>
-    <strong>What else goes beyond the transcripts.</strong> Every illustration has been replaced with a generic one, so none of the examples here are the ones used in class. The following are additions rather than lecture content: the 1.5 × IQR whisker convention and the twenty-value order-fulfilment dataset in Lesson 2; the perishable-medicine supply chain in Lesson 3; the Priya Raman scenario, which is invented entirely; all cross-references to Modules 2, 3 and 6; and the whole of “Things worth noticing”. One arithmetic figure has been corrected against the recording: the share of normally distributed data beyond three standard deviations is 0.27%, about 2,700 points per million rather than the rounder figure given in the lecture. All quiz feedback, margin questions and exam targets are written here rather than drawn from the recordings.</span>
+    <strong>What else goes beyond the transcripts.</strong> Every illustration has been replaced with a generic one, so none of the examples here are the ones used in class. The following are additions rather than lecture content: the 1.5 × IQR whisker convention and the twenty-value order-fulfilment dataset in Lesson 2; the perishable-medicine supply chain in Lesson 3; the Priya Raman scenario, which is invented entirely; all cross-references to Modules 2, 3 and 6; and the whole of “Things worth noticing”. One arithmetic figure has been corrected against the recording: the share of normally distributed data beyond three standard deviations is 0.27%, about 2,700 points per million rather than the rounder figure given in the lecture. All quiz feedback, margin questions and exam targets are written here rather than drawn from the recordings.
+    <br><br>
+    <strong>Everything under “Additional resources” is outside material.</strong> Extras 1 to 3 — the detection toolbox, the masking and swamping demonstration, the scaling, missing-data, encoding and imbalance material, the leakage rule, the practice problems and the reading list — were assembled from published sources, principally the NIST/SEMATECH e-Handbook, Iglewicz &amp; Hoaglin's <em>How to Detect and Handle Outliers</em>, Little &amp; Rubin on missing data, Kuhn &amp; Johnson's <em>Feature Engineering and Selection</em>, the original method papers cited in Extra 3, and the scikit-learn documentation. None of it was taught in this module. All worked numbers there are computed for illustration on invented data. Threshold conventions quoted (1.5 for the fences, 3.5 for the modified z-score) assume approximately normal data; check them against a primary source before relying on them, and treat the lectures as authoritative wherever the two differ.</span>
   </footer>
 </section>
-
 </div>
 
 <dialog id="dlg">

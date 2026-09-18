@@ -28,7 +28,7 @@
 <header class="hero">
   
   <h1>Module 4: Clustering</h1>
-  <p class="sub">Group points that are close together — then decide what “close” means, how to find the groups, and how far to trust them.</p>
+  <p class="sub">Group points that are close together — then decide what “close” means, how to find the groups, and how far to trust them. Six lessons of class material, followed by an additional-resources appendix on the algorithms, distances and validation criteria the course does not cover.</p>
 
   <svg class="plot" viewBox="0 0 660 350" role="img" aria-label="Scatter plot of data points resolving into three colored clusters, with axes labeled age and miles driven per year.">
     <defs><pattern id="grid" width="26" height="26" patternUnits="userSpaceOnUse"><path d="M 26 0 L 0 0 0 26" fill="none" stroke="#e3e9ee" stroke-width="1"/></pattern></defs>
@@ -67,10 +67,12 @@
     <li style="--dot:#8a5a1c"><a href="#l4"><span class="tnum">Lesson 4</span><span class="tname">k-means in practice</span><span class="tq">What goes wrong, and how many clusters?</span></a></li>
     <li style="--dot:#33507f"><a href="#l5"><span class="tnum">Lesson 5</span><span class="tname">Clustering for prediction</span><span class="tq">What do we do with a brand-new point?</span></a></li>
     <li style="--dot:#6e4a8c"><a href="#l6"><span class="tnum">Lesson 6</span><span class="tname">Clustering vs. classification</span><span class="tq">How is this different from what we did before?</span></a></li>
+    <li style="--dot:#1f6b6b"><a href="#extra"><span class="tnum">Extra 1–2</span><span class="tname">Other algorithms &amp; distances</span><span class="tq">What else exists, and when would you use it?</span></a></li>
+    <li style="--dot:#8a3d5c"><a href="#x3"><span class="tnum">Extra 3–4</span><span class="tname">Choosing k, practice</span><span class="tq">How do you know the clustering means anything?</span></a></li>
   </ul>
 
   <div class="badge-strip">
-    <p class="cap">Badges unlock when every activity in a lesson is finished.</p>
+    <p class="cap">Badges unlock when every activity in a lesson is finished. The last two cover the additional-resources material, which is not part of the class.</p>
     <ul class="badges">
       <li class="badge" data-for="l1" style="--b:#1b5e7e"><span class="gem">C</span><span class="nm">Segments</span></li>
       <li class="badge" data-for="l2" style="--b:#8a3d5c"><span class="gem">p</span><span class="nm">Norms</span></li>
@@ -78,6 +80,8 @@
       <li class="badge" data-for="l4" style="--b:#8a5a1c"><span class="gem">E</span><span class="nm">Elbow</span></li>
       <li class="badge" data-for="l5" style="--b:#33507f"><span class="gem">V</span><span class="nm">Voronoi</span></li>
       <li class="badge" data-for="l6" style="--b:#6e4a8c"><span class="gem">U</span><span class="nm">Unsupervised</span></li>
+      <li class="badge" data-for="x1" style="--b:#1f6b6b"><span class="gem">⌖</span><span class="nm">Method Map</span></li>
+      <li class="badge" data-for="x3" style="--b:#8a3d5c"><span class="gem">s</span><span class="nm">Silhouette</span></li>
       <li class="badge" data-for="*" style="--b:#131b26"><span class="gem">★</span><span class="nm">Module 4 complete</span></li>
     </ul>
   </div>
@@ -722,15 +726,541 @@
     <li>Distinguish supervised from unsupervised learning, with an example of each.</li>
     <li>Describe a Voronoi diagram and what its boundaries mean.</li>
   </ul>
+  <p style="font-family:var(--sans);font-size:.9rem;color:var(--ink-soft);max-width:66ch">Everything above is class material. <a href="#extra">Additional resources</a> follow — the other clustering algorithms, distance measures beyond the p-norms, the cluster-count and validation criteria, practice problems and reading — none of it taught in this module.</p>
 
   <div class="note">
     <div class="note-head"><span class="lbl">Module 4 — my own summary</span><span class="hint">click to type; saves automatically</span></div>
     <div class="note-body" contenteditable="true" data-note="m4summary" data-placeholder="Write the module back in your own words — the fastest way to find out what you don't actually know yet."></div>
   </div>
 
-  <footer><span class="ai"><strong>Written by an AI model from lecture recordings.</strong> Not reviewed by any instructor or institution — verify anything you rely on against the original lectures. Examples here are generic illustrations rather than the ones used in class. The Marcus Obi case, the comparison with k-nearest neighbours, the note that k-means pairs naturally with the 2-norm, and “Four things worth noticing” are this summary’s own additions rather than lecture content.</span></footer>
 </section>
 
+<!-- ==================== ADDITIONAL RESOURCES DIVIDER ==================== -->
+<section class="close" id="extra" style="--accent:#1f6b6b">
+  <h2>Additional resources</h2>
+  <p class="h2meta">Everything below this line is <strong>not class material</strong></p>
+  <div class="defn">
+    <span class="term">Read this first</span>
+    <p>The six lessons above are the module as taught: what a cluster is, what “close” means, how k-means finds groups, what goes wrong, and how the whole thing differs from classification. Everything from here on was assembled from outside sources — textbooks, method papers and the documentation of the standard libraries. None of it is examinable unless your instructor says so, and where a convention differs from the lectures, <strong>the lectures win</strong>.</p>
+  </div>
+  <p>The lectures present k-means as <em>a</em> clustering algorithm and the p-norm as <em>a</em> way to measure distance, without surveying the alternatives. The appendix fills in both surveys, adds the standard ways of choosing k and judging a clustering that the elbow diagram only gestures at, and provides practice.</p>
+  <ul class="thread">
+    <li><span class="dot" style="--d:#1f6b6b"></span><span class="lbl">Extra 1</span><span>Every major family of clustering algorithm, and what each is actually for.</span></li>
+    <li><span class="dot" style="--d:#2f6b45"></span><span class="lbl">Extra 2</span><span>Distance measures beyond the p-norms — including the ones for text, categories and mixed data.</span></li>
+    <li><span class="dot" style="--d:#8a3d5c"></span><span class="lbl">Extra 3</span><span>Choosing k properly, and how to tell whether a clustering means anything.</span></li>
+    <li><span class="dot" style="--d:#4a5765"></span><span class="lbl">Extra 4</span><span>Practice problems, and where to read further.</span></li>
+  </ul>
+</section>
+
+<!-- ==================== EXTRA 1 ==================== -->
+<section class="lesson" id="x1" data-short="Other algorithms" style="--accent:#1f6b6b">
+  <div class="lesson-head">
+    <span class="ln">Extra 1 &middot; not class material</span>
+    <h2>The other clustering algorithms</h2>
+    <p class="keyline">k-means answers one specific question — split the data into k groups so that total distance to the group centre is small. Every algorithm below answers a slightly different question, and the difference shows up as a different shape of cluster it can find.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>What k-means assumes, and therefore what it cannot find</h3>
+      <p>Before the alternatives, it is worth being explicit about the assumptions baked into Lesson 3's loop, because each alternative exists to relax one of them.</p>
+      <table>
+        <tr><th>Assumption</th><th>Consequence when it fails</th></tr>
+        <tr><td><strong>You know k in advance.</strong></td><td>You have to supply it, and Lesson 4's elbow diagram is a workaround rather than an answer.</td></tr>
+        <tr><td><strong>Clusters are roughly round and similarly sized.</strong></td><td>Minimising distance to a single centre point can only carve out convex, blob-shaped regions. A crescent, a ring or a long thin band gets sliced in half.</td></tr>
+        <tr><td><strong>Every point belongs to some cluster.</strong></td><td>There is no “none of the above” category, so noise and outliers are forced into a group and drag its centre with them — the problem Lesson 4 addresses by hand.</td></tr>
+        <tr><td><strong>Assignments are hard.</strong></td><td>A point halfway between two centres is assigned to one of them with no record that it was borderline.</td></tr>
+        <tr><td><strong>The mean is meaningful.</strong></td><td>Categorical attributes have no mean, so k-means cannot be applied to them directly at all.</td></tr>
+      </table>
+
+      <figure>
+        <svg class="fig" viewBox="0 0 660 290" role="img" aria-label="Two panels showing the same data: forty points arranged as a small ring inside a large ring. The left panel colours the points by the true ring structure. The right panel shows what k-means with k equals two produces: a left half and a right half, cutting both rings down the middle.">
+          <text x="40" y="24" font-family="IBM Plex Sans,sans-serif" font-size="12.5" font-weight="600" fill="#131b26">The structure that is there</text>
+          <text x="40" y="40" font-family="IBM Plex Sans,sans-serif" font-size="11" fill="#4a5765">two rings — what DBSCAN or spectral clustering finds</text>
+          <g fill="#1b5e7e"><circle cx="186.7" cy="152.7" r="3.2"/><circle cx="185.4" cy="136.8" r="3.2"/><circle cx="174.0" cy="121.3" r="3.2"/><circle cx="155.1" cy="112.9" r="3.2"/><circle cx="138.0" cy="113.5" r="3.2"/><circle cx="123.0" cy="123.4" r="3.2"/><circle cx="115.2" cy="131.0" r="3.2"/><circle cx="109.1" cy="152.1" r="3.2"/><circle cx="116.7" cy="163.1" r="3.2"/><circle cx="126.9" cy="180.5" r="3.2"/><circle cx="145.2" cy="190.5" r="3.2"/><circle cx="161.2" cy="188.6" r="3.2"/><circle cx="171.0" cy="182.6" r="3.2"/><circle cx="182.8" cy="164.1" r="3.2"/></g>
+          <g fill="#8a3d5c"><circle cx="245.9" cy="149.3" r="3.2"/><circle cx="247.2" cy="127.5" r="3.2"/><circle cx="237.9" cy="108.1" r="3.2"/><circle cx="219.9" cy="87.2" r="3.2"/><circle cx="207.8" cy="69.3" r="3.2"/><circle cx="183.3" cy="56.8" r="3.2"/><circle cx="161.5" cy="53.7" r="3.2"/><circle cx="140.8" cy="50.1" r="3.2"/><circle cx="112.6" cy="56.9" r="3.2"/><circle cx="94.1" cy="65.3" r="3.2"/><circle cx="78.1" cy="86.4" r="3.2"/><circle cx="66.9" cy="107.6" r="3.2"/><circle cx="53.3" cy="124.0" r="3.2"/><circle cx="48.0" cy="150.1" r="3.2"/><circle cx="49.9" cy="172.1" r="3.2"/><circle cx="64.9" cy="195.2" r="3.2"/><circle cx="79.5" cy="217.2" r="3.2"/><circle cx="95.7" cy="230.5" r="3.2"/><circle cx="115.7" cy="242.8" r="3.2"/><circle cx="141.2" cy="244.0" r="3.2"/><circle cx="161.7" cy="246.6" r="3.2"/><circle cx="181.0" cy="240.5" r="3.2"/><circle cx="207.5" cy="226.8" r="3.2"/><circle cx="226.9" cy="217.5" r="3.2"/><circle cx="236.4" cy="194.4" r="3.2"/><circle cx="241.6" cy="174.0" r="3.2"/></g>
+
+          <text x="380" y="24" font-family="IBM Plex Sans,sans-serif" font-size="12.5" font-weight="600" fill="#131b26">What k-means with k = 2 returns</text>
+          <text x="380" y="40" font-family="IBM Plex Sans,sans-serif" font-size="11" fill="#9d3b3b">a left half and a right half</text>
+          <line x1="490" y1="45" x2="490" y2="255" stroke="#9d3b3b" stroke-width="1.4" stroke-dasharray="5 4"/>
+          <g fill="#4a6b2a"><circle cx="478.0" cy="113.5" r="3.2"/><circle cx="463.0" cy="123.4" r="3.2"/><circle cx="455.2" cy="131.0" r="3.2"/><circle cx="449.1" cy="152.1" r="3.2"/><circle cx="456.7" cy="163.1" r="3.2"/><circle cx="466.9" cy="180.5" r="3.2"/><circle cx="485.2" cy="190.5" r="3.2"/><circle cx="480.8" cy="50.1" r="3.2"/><circle cx="452.6" cy="56.9" r="3.2"/><circle cx="434.1" cy="65.3" r="3.2"/><circle cx="418.1" cy="86.4" r="3.2"/><circle cx="406.9" cy="107.6" r="3.2"/><circle cx="393.3" cy="124.0" r="3.2"/><circle cx="388.0" cy="150.1" r="3.2"/><circle cx="389.9" cy="172.1" r="3.2"/><circle cx="404.9" cy="195.2" r="3.2"/><circle cx="419.5" cy="217.2" r="3.2"/><circle cx="435.7" cy="230.5" r="3.2"/><circle cx="455.7" cy="242.8" r="3.2"/><circle cx="481.2" cy="244.0" r="3.2"/></g>
+          <g fill="#8a5a1c"><circle cx="526.7" cy="152.7" r="3.2"/><circle cx="525.4" cy="136.8" r="3.2"/><circle cx="514.0" cy="121.3" r="3.2"/><circle cx="495.1" cy="112.9" r="3.2"/><circle cx="501.2" cy="188.6" r="3.2"/><circle cx="511.0" cy="182.6" r="3.2"/><circle cx="522.8" cy="164.1" r="3.2"/><circle cx="585.9" cy="149.3" r="3.2"/><circle cx="587.2" cy="127.5" r="3.2"/><circle cx="577.9" cy="108.1" r="3.2"/><circle cx="559.9" cy="87.2" r="3.2"/><circle cx="547.8" cy="69.3" r="3.2"/><circle cx="523.3" cy="56.8" r="3.2"/><circle cx="501.5" cy="53.7" r="3.2"/><circle cx="501.7" cy="246.6" r="3.2"/><circle cx="521.0" cy="240.5" r="3.2"/><circle cx="547.5" cy="226.8" r="3.2"/><circle cx="566.9" cy="216.8" r="3.2"/><circle cx="576.4" cy="194.4" r="3.2"/><circle cx="581.6" cy="174.0" r="3.2"/></g>
+          <g><circle cx="441.0" cy="150.0" r="7" fill="none" stroke="#4a6b2a" stroke-width="1.6"/><circle cx="441.0" cy="150.0" r="2.5" fill="#4a6b2a"/></g>
+          <g><circle cx="539.0" cy="150.5" r="7" fill="none" stroke="#8a5a1c" stroke-width="1.6"/><circle cx="539.0" cy="150.5" r="2.5" fill="#8a5a1c"/></g>
+        </svg>
+        <figcaption>k-means is not making a mistake here — it is correctly minimising total distance to two centres, and the left/right split genuinely does that better than inner/outer would. The ring structure is simply not the kind of structure the objective function can express. No number of restarts and no choice of k fixes this; it needs a different algorithm.</figcaption>
+      </figure>
+
+      <h3>Family 1 — Partitioning methods (k-means and its relatives)</h3>
+      <p>Same loop, different notion of a cluster's representative point, which changes what the method is robust to and what data it can handle.</p>
+      <table>
+        <tr><th>Method</th><th>Centre is…</th><th>Use when</th></tr>
+        <tr><td><strong>k-means</strong></td><td>the mean</td><td>The default. Fast, scales to millions of points, minimises within-cluster <em>squared</em> Euclidean distance.</td></tr>
+        <tr><td><strong>k-medians</strong></td><td>the component-wise median</td><td>You want the 1-norm rather than the 2-norm. Far less sensitive to the outliers Lesson 4 worries about, because the median ignores how far away an extreme point is.</td></tr>
+        <tr><td><strong>k-medoids / PAM</strong></td><td>an actual data point</td><td>The centre must be a real member (a real store to site a depot at, a real patient as the archetype), or your distance measure has no meaningful average. Works with any distance matrix at all. Much slower.</td></tr>
+        <tr><td><strong>k-modes / k-prototypes</strong></td><td>the most common category / a mix</td><td>The data is categorical, or mixed numeric and categorical, where a mean does not exist.</td></tr>
+        <tr><td><strong>Fuzzy c-means</strong></td><td>the mean, weighted by membership</td><td>You want <em>soft</em> assignments — each point gets a degree of membership in every cluster rather than one label. Useful when boundary cases matter.</td></tr>
+        <tr><td><strong>Bisecting k-means</strong></td><td>the mean</td><td>You want a hierarchy as a by-product: repeatedly split the worst cluster in two. Often better than plain k-means on document data.</td></tr>
+      </table>
+
+      <div class="callout">
+        <p class="tag">k-means++ — a better answer to Lesson 4's restart problem</p>
+        <p>Lesson 4's advice is to run k-means many times from random starting points and keep the best result, because the algorithm is a heuristic that can settle into a poor local optimum. The standard improvement is to be cleverer about where the starting points go. <strong>k-means++</strong> (Arthur &amp; Vassilvitskii, 2007) picks the first centre uniformly at random, then picks each subsequent centre with probability proportional to the <em>squared distance</em> from the nearest centre already chosen — so new centres tend to land far from old ones, and the initial k centres are spread across the data rather than clumped.</p>
+        <p>Two things are worth knowing. First, it comes with a guarantee: the expected cost of the initialisation alone is within a factor of 8(ln k + 2) of the optimum, which is the only bound of its kind for a method this cheap. Second, finding the true k-means optimum is NP-hard, so no practical algorithm removes the restart problem entirely — k-means++ makes each restart much more likely to be good, which means you need fewer of them. It is the default initialisation in scikit-learn and in most other implementations, which is why modern k-means feels more stable than the lecture's description suggests.</p>
+      </div>
+
+      <h3>Family 2 — Hierarchical clustering</h3>
+      <p>Instead of committing to k, build the whole nested family of clusterings at once and choose where to cut afterwards.</p>
+      <ul>
+        <li><strong>Agglomerative (bottom-up).</strong> Start with every point as its own cluster; repeatedly merge the two closest clusters until one remains. The merge history draws a <em>dendrogram</em>, a tree whose height records how far apart the things being joined were. Cut the tree at a height, and the number of branches you cross is your k — so k becomes a decision you make after seeing the structure rather than before.</li>
+        <li><strong>Divisive (top-down).</strong> The reverse: start with everything together and split repeatedly. Rarer, because there are many more ways to split than to merge.</li>
+      </ul>
+      <p>The crucial parameter is not k but the <strong>linkage</strong> — how the distance between two <em>clusters</em> is computed from distances between points. Different linkages produce genuinely different shapes.</p>
+      <table>
+        <tr><th>Linkage</th><th>Cluster distance is…</th><th>Tends to produce</th></tr>
+        <tr><td><strong>Single</strong></td><td>the smallest distance between any two members</td><td>Long straggly chains. Can follow a curved band that k-means would cut, but a single bridging point can merge two real clusters — "chaining".</td></tr>
+        <tr><td><strong>Complete</strong></td><td>the largest distance between any two members</td><td>Compact, roughly equal-diameter clusters. Sensitive to outliers, since one far member sets the whole distance.</td></tr>
+        <tr><td><strong>Average</strong></td><td>the mean over all cross pairs</td><td>A compromise between the two; the common default.</td></tr>
+        <tr><td><strong>Ward</strong></td><td>the increase in total within-cluster variance caused by merging</td><td>Round, similar-sized clusters — essentially the hierarchical cousin of k-means, and the one that most often agrees with it.</td></tr>
+      </table>
+      <p>Hierarchical clustering is <em>O(n²)</em> in memory and worse in time, so it stops being practical somewhere in the tens of thousands of points. Its payoff is the dendrogram: for taxonomy-style questions — which customer types sit inside which broader types — a picture of the nesting is the answer, and no partition method gives you one.</p>
+
+      <div class="ix" data-quiz="m4x1-q1">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">You do not know how many clusters there are, and you want to see how groups nest inside each other. Which family?</p>
+        <div class="opts">
+          <button class="opt" data-fb="k-means requires k as an input, and the elbow diagram only suggests one number. It produces a flat partition with no information about which clusters would merge first if you asked for fewer.">k-means, run across a range of k and compared with an elbow diagram.</button>
+          <button class="opt" data-right data-fb="Agglomerative hierarchical clustering builds every k at once. The dendrogram shows exactly which groups merge at which distance, so you can see the nesting and pick the cut afterwards rather than committing beforehand.">Agglomerative hierarchical clustering, reading the dendrogram.</button>
+          <button class="opt" data-fb="DBSCAN does discover the number of clusters rather than taking it as input, which is half of what was asked — but it returns a flat set of clusters with no nesting information. HDBSCAN would be the density-based method that does produce a hierarchy.">DBSCAN, since it works out the number of clusters by itself.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <h3>Family 3 — Density-based clustering</h3>
+      <p>A completely different definition of a cluster: not "points near a centre" but "a connected region where points are packed densely, surrounded by sparser space". Because there is no centre, there is no requirement that the region be round — which is how these methods find the rings in the figure above.</p>
+      <table>
+        <tr><th>Method</th><th>How it works</th><th>Notes</th></tr>
+        <tr><td><strong>DBSCAN</strong><br><span class="m">Ester et al., 1996</span></td><td>Two parameters: a radius <em>ε</em> and a count <em>minPts</em>. A point with at least minPts neighbours within ε is a <em>core point</em>; core points that are within ε of each other join the same cluster; points near a cluster but not dense themselves are border points; everything else is <strong>noise</strong>.</td><td>Finds arbitrary shapes, works out the number of clusters itself, and has an explicit noise label — the "none of the above" that k-means lacks. Struggles when different clusters have very different densities, because one ε cannot suit both.</td></tr>
+        <tr><td><strong>OPTICS</strong></td><td>Generalises DBSCAN by not fixing ε: it orders points by reachability and produces a plot from which clusters at many density levels can be read.</td><td>Removes the hardest parameter choice, at the cost of a less direct output.</td></tr>
+        <tr><td><strong>HDBSCAN</strong></td><td>Runs DBSCAN across all values of ε and extracts the clusters that persist most stably.</td><td>The current practical default for density clustering. Handles varying density, needs essentially one intuitive parameter (minimum cluster size), and returns a hierarchy.</td></tr>
+        <tr><td><strong>Mean shift</strong></td><td>Slide every point uphill along the estimated density until it reaches a peak; points arriving at the same peak form a cluster.</td><td>Discovers the number of clusters, but the bandwidth parameter is doing the same job k did, and it is slow.</td></tr>
+      </table>
+      <div class="callout">
+        <p class="tag">The trade you are making</p>
+        <p>Density methods swap one hard question for another. k-means asks "how many clusters?"; DBSCAN asks "how dense does dense mean?". Neither question has a data-driven answer, and both are ultimately settled by what the clusters will be used for. What changes is which question you find easier to reason about in your domain — and for spatial data, fraud, or anything with genuine noise, "how close do two events have to be to count as the same incident" is often much easier to answer than "how many kinds of incident are there".</p>
+      </div>
+
+      <h3>Family 4 — Model-based clustering</h3>
+      <p><strong>Gaussian mixture models</strong> assume the data was generated by drawing from one of k Gaussian distributions, each with its own mean <em>and its own covariance</em>, and fit those parameters by expectation-maximisation. Lesson 3 already names EM as the general procedure k-means is a special case of — this is the general case made concrete, and the relationship is exact: a GMM with spherical, equal-sized covariances and hard assignments <em>is</em> k-means.</p>
+      <p>Relaxing that gives two things k-means cannot do. Clusters can be elliptical and differently sized, oriented along whatever directions the data actually varies in. And assignments are <em>soft</em>: each point gets a probability of belonging to each cluster, so a point sitting between two groups is reported as ambiguous rather than silently rounded off. Because a GMM is a probability model, you also get a likelihood, which means AIC and BIC can choose k for you — a principled alternative to reading an elbow off a chart.</p>
+
+      <h3>Family 5 — Graph-based clustering</h3>
+      <p><strong>Spectral clustering</strong> builds a graph in which nearby points are connected, computes the eigenvectors of that graph's Laplacian matrix, and runs k-means in the resulting low-dimensional space. The effect is to unbend the geometry: structures that are tangled in the original space — the two rings again — become linearly separable in the embedded space, where k-means then works fine. It handles arbitrary shapes well but scales poorly (building an n × n affinity matrix), needs k as an input, and unlike the density methods has no concept of noise, so every point is assigned to something.</p>
+      <p><strong>Affinity propagation</strong> and <strong>BIRCH</strong> round out the list — the first passes messages between points until a set of exemplars emerges (no k required, but slow), the second builds a compact summary tree in one pass and is designed for data too large to hold in memory.</p>
+
+      <h3>The whole landscape in one table</h3>
+      <table>
+        <tr><th>Method</th><th>Needs k?</th><th>Cluster shapes</th><th>Noise label?</th><th>Scales to</th></tr>
+        <tr><td>k-means</td><td>Yes</td><td>Round, convex</td><td>No</td><td>Millions</td></tr>
+        <tr><td>k-medoids</td><td>Yes</td><td>Round, any distance</td><td>No</td><td>Thousands</td></tr>
+        <tr><td>Hierarchical</td><td>No — cut later</td><td>Depends on linkage</td><td>No</td><td>~10,000</td></tr>
+        <tr><td>DBSCAN</td><td>No</td><td>Arbitrary</td><td><strong>Yes</strong></td><td>Hundreds of thousands</td></tr>
+        <tr><td>HDBSCAN</td><td>No</td><td>Arbitrary, varying density</td><td><strong>Yes</strong></td><td>Hundreds of thousands</td></tr>
+        <tr><td>GMM</td><td>Yes (or by BIC)</td><td>Elliptical</td><td>No — but soft</td><td>Hundreds of thousands</td></tr>
+        <tr><td>Spectral</td><td>Yes</td><td>Arbitrary</td><td>No</td><td>~10,000</td></tr>
+        <tr><td>Mean shift</td><td>No</td><td>Arbitrary-ish</td><td>Yes</td><td>Thousands</td></tr>
+      </table>
+
+      <div class="ix" data-quiz="m4x1-q2">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Lesson 4 says an outlier can be removed or given its own cluster. Which algorithm makes that a built-in decision rather than a manual one?</p>
+        <div class="opts">
+          <button class="opt" data-right data-fb="DBSCAN's definition of a cluster is a dense connected region, so a point in a sparse area simply fails to qualify and is labelled noise. The 'none of the above' category that k-means lacks is built into the algorithm's definition rather than bolted on afterwards.">DBSCAN, because points in sparse regions are labelled as noise rather than assigned.</button>
+          <button class="opt" data-fb="k-medians is much less dragged around by an outlier than k-means, since the median ignores how far away an extreme value is. But it still assigns every point to a cluster — the outlier ends up in one, it just does less damage there.">k-medians, because the median is unaffected by extreme values.</button>
+          <button class="opt" data-fb="A GMM gives a point low membership probability in every cluster, which is informative, but it still assigns it somewhere and the outlier still pulls on the fitted covariance. Soft assignment is not the same as a noise label.">A Gaussian mixture model, because soft assignment gives the outlier low probability everywhere.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="note">
+        <div class="note-head"><span class="lbl">Algorithms to try on my data</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="m4x1" data-placeholder="Which of these suits the data you actually have, and what you would need to check first…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Link to Lesson 3</span>
+      <p class="q">Lesson 3 calls k-means a special case of EM. What exactly is the general case?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">A Gaussian mixture model. Fit one with spherical covariances all of the same size, and replace the soft membership probabilities with hard "assign to the most likely" decisions, and the EM steps become exactly Lesson 3's assign-then-recompute loop. Every extra thing a GMM can do — elliptical clusters, differently sized clusters, ambiguous points — comes from one of those two restrictions being lifted.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+<!-- ==================== EXTRA 2 ==================== -->
+<section class="lesson" id="x2" data-short="More distances" style="--accent:#2f6b45">
+  <div class="lesson-head">
+    <span class="ln">Extra 2 &middot; not class material</span>
+    <h2>Distance beyond the p-norms</h2>
+    <p class="keyline">Lesson 2 gives the p-norm family, which covers numeric attributes measured in comparable units. Real data is often none of those things, and each departure has a standard answer.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>First, the thing that breaks every distance measure</h3>
+      <div class="callout">
+        <p class="tag">Scale decides the answer before the metric does</p>
+        <p>Suppose you cluster customers on age (18–80) and annual spend (£200–£90,000). Every distance is now essentially the difference in spend: a 40-year age gap contributes 40 to the 1-norm while a modest spend difference contributes thousands. The clustering is on spend, and age is decoration — not because you decided that, but because of the units the data happened to arrive in. Change spend to thousands of pounds and you get a different clustering from the same data.</p>
+        <p>So numeric attributes are normally standardised before any distance is computed. That is Module 5's material, and the point here is only that <strong>it is not optional for clustering</strong>. Unlike a regression, which can absorb scale differences into its coefficients, a distance-based method has no way to compensate. Lesson 2's choice of p matters much less than whether you scaled first.</p>
+      </div>
+
+      <h3>When the attributes are correlated: Mahalanobis distance</h3>
+      <p>Euclidean distance treats every direction as equally surprising. If height and weight are strongly correlated, a person who is tall <em>and</em> heavy is unremarkable, while a person equally far from the mean in the tall-and-light direction is genuinely unusual — and the 2-norm gives them the same distance. <strong>Mahalanobis distance</strong> divides out the covariance, so distance is measured in "how surprising is this, given how the data actually varies". Geometrically, it replaces circular contours of equal distance with ellipses aligned to the data's own spread. It is what makes a GMM's elliptical clusters possible, and it is also the standard multivariate outlier measure in Module 5.</p>
+
+      <h3>When only direction matters: cosine distance</h3>
+      <p>For text, recommender data, or anything represented as counts, magnitude is often an artefact. A 400-word article and a 4,000-word article on the same subject have wildly different word counts but the same <em>profile</em>. Cosine similarity measures the angle between two vectors and ignores their lengths entirely; cosine distance is one minus that.</p>
+      <div class="formula">
+        cos(u, v) &nbsp;=&nbsp; (u · v) / ( ‖u‖ ‖v‖ ) &nbsp;&nbsp;&nbsp; cosine distance &nbsp;=&nbsp; 1 − cos(u, v)
+        <span class="cap">Worked contrast: u = (3, 4) and v = (6, 8). Euclidean distance is 5 — they look well separated. Cosine distance is 0, because v is just u doubled: identical direction, identical profile. Which answer is right depends entirely on whether magnitude carries meaning in your data.</span>
+      </div>
+
+      <h3>When the attributes are not numeric</h3>
+      <table>
+        <tr><th>Data type</th><th>Measure</th><th>What it counts</th></tr>
+        <tr><td>Binary presence/absence, sparse sets<br><span class="m">tags, baskets, viewed items</span></td><td><strong>Jaccard distance</strong></td><td>1 − (size of intersection ÷ size of union). Two shopping baskets are close if they share items relative to how many items they have in total. Ignores the vast number of things <em>neither</em> contains, which is what makes it right for sparse data.</td></tr>
+        <tr><td>Categorical of equal length<br><span class="m">genetic sequences, codes</span></td><td><strong>Hamming distance</strong></td><td>The number of positions where the two differ. The natural metric when every attribute is a category with no ordering.</td></tr>
+        <tr><td>Mixed numeric and categorical<br><span class="m">most real business data</span></td><td><strong>Gower distance</strong></td><td>Computes a per-attribute distance in [0, 1] — scaled absolute difference for numeric, match/no-match for categorical, a rank-based measure for ordinal — then averages them. The standard answer to "half my columns are text". Pairs with k-medoids or hierarchical clustering, since neither needs a mean.</td></tr>
+        <tr><td>Sequences of different lengths<br><span class="m">sensor traces, trajectories</span></td><td><strong>Dynamic time warping</strong></td><td>Aligns two series by stretching the time axis, so two shapes that match but occur at different speeds count as close. Standard in time-series clustering.</td></tr>
+        <tr><td>Strings<br><span class="m">names, addresses, product titles</span></td><td><strong>Edit (Levenshtein) distance</strong></td><td>The number of insertions, deletions and substitutions needed to turn one into the other. The basis of most record-matching work.</td></tr>
+      </table>
+      <p>Only k-medoids and hierarchical clustering work directly with all of these, because both need nothing but a table of pairwise distances. k-means needs an <em>average</em>, which is why it is confined to numeric data — a point the lectures make implicitly by defining the centroid as a mean.</p>
+
+      <h3>The problem that gets worse with every extra column</h3>
+      <div class="defn">
+        <span class="term">The curse of dimensionality</span>
+        <p>As the number of attributes grows, the distances between points become increasingly similar to one another: the ratio between the nearest and farthest neighbour approaches 1. "Nearest" stops meaning much, and every distance-based method degrades — clustering, k-nearest neighbours, outlier detection alike.</p>
+      </div>
+      <p>Three standard responses, in increasing order of effort: <strong>drop irrelevant attributes</strong>, since noise dimensions do nothing but dilute the signal; <strong>reduce dimensions first</strong> with PCA or a similar method and cluster in the reduced space (this is essentially what spectral clustering does internally); or <strong>use a method built for it</strong>, such as subspace clustering, which looks for clusters that exist in some subset of the attributes rather than all of them at once. The practical warning is simply that a clustering on 200 columns is often reporting noise, and the fix is upstream of the algorithm.</p>
+
+      <div class="ix" data-quiz="m4x2-q1">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">You are clustering customers on twelve numeric columns and four categorical ones (region, plan type, channel, segment). What is the standard route?</p>
+        <div class="opts">
+          <button class="opt" data-fb="Numbering the categories invents an ordering and a spacing that do not exist — it asserts that 'North' is as far from 'South' as 'South' is from 'East', and that these gaps are comparable to a gap in pounds. One-hot encoding avoids the false ordering but leaves each category contributing an arbitrary amount to the distance.">Convert the categories to numbers and run k-means on all sixteen columns.</button>
+          <button class="opt" data-right data-fb="Gower handles each attribute in its own natural way and puts every one on a [0,1] scale before averaging, which is exactly the mixed-type problem. It produces a distance matrix rather than coordinates, so it pairs with k-medoids or hierarchical clustering — both of which need only distances, never a mean.">Compute Gower distances and use k-medoids or hierarchical clustering.</button>
+          <button class="opt" data-fb="Throwing away four columns to keep the algorithm convenient is the wrong direction — those four may well carry most of the structure you are looking for. Choosing the method to fit the data beats discarding data to fit the method.">Drop the categorical columns, since distance is only defined for numbers.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Link to Lesson 2</span>
+      <p class="q">Does any of this change the p-norm material?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">No — it extends it. The p-norms are still the right family for numeric attributes in comparable units, and Lesson 2's point that you should choose p from how the process behaves is exactly the argument being made again here for cosine, Jaccard and the rest. The metric is a modelling decision either way.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
+<!-- ==================== EXTRA 3 ==================== -->
+<section class="lesson" id="x3" data-short="Choosing k" style="--accent:#8a3d5c">
+  <div class="lesson-head">
+    <span class="ln">Extra 3 &middot; not class material</span>
+    <h2>Choosing k, and judging the result</h2>
+    <p class="keyline">The elbow diagram is the first of about six standard methods, and it is the weakest of them. The rest give a number rather than a shape to squint at.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Why the elbow is unsatisfying, stated precisely</h3>
+      <p>Lesson 4 makes the essential point: total within-cluster distance always falls as k rises, reaching zero when every point is its own cluster, so it cannot be minimised. The elbow heuristic looks instead for the k where the <em>rate</em> of improvement drops off. The trouble is that on real data there is very often no visible elbow at all — the curve bends smoothly — and where there is one, different people read it at different k. It is a diagnostic, not a decision rule.</p>
+
+      <h3>The silhouette — the one worth learning properly</h3>
+      <div class="defn">
+        <span class="term">Silhouette coefficient</span>
+        <p>For each point <em>i</em>: let <span class="m">a(i)</span> be its mean distance to the other points in <em>its own</em> cluster, and <span class="m">b(i)</span> its mean distance to the points of the nearest <em>other</em> cluster. Then</p>
+        <p style="text-align:center"><span class="m">s(i) = ( b(i) − a(i) ) / max{ a(i), b(i) }</span></p>
+        <p>which runs from −1 to +1. Near +1 means the point sits comfortably inside its cluster; near 0 means it is on a boundary; <strong>negative means it is closer on average to a different cluster than to its own</strong> — it is probably in the wrong group. Average <em>s</em> over all points to score the clustering; compare that average across values of k and take the best.</p>
+      </div>
+      <p>Unlike total distance, the silhouette does not improve automatically with k, because splitting a genuine cluster in two lowers <em>b</em> as much as it lowers <em>a</em>. That is what makes it usable as a criterion instead of a curve to interpret.</p>
+
+      <div class="callout">
+        <p class="tag">Worked example — six points, two candidate clusterings</p>
+        <p>Points A(1,1), B(2,1), C(1.5,2) sit together; D(8,8), E(9,8), F(8.5,9) sit together far away. Compare the obvious clustering {A,B,C} | {D,E,F} against a wrong one, {A,B} | {C,D,E,F}.</p>
+        <table>
+          <tr><th>Point</th><th colspan="3">Correct: {A,B,C} | {D,E,F}</th><th colspan="3">Wrong: {A,B} | {C,D,E,F}</th></tr>
+          <tr><th></th><th>a</th><th>b</th><th>s</th><th>a</th><th>b</th><th>s</th></tr>
+          <tr><td>A</td><td>1.06</td><td>10.50</td><td>0.90</td><td>1.00</td><td>8.15</td><td>0.88</td></tr>
+          <tr><td>B</td><td>1.06</td><td>9.81</td><td>0.89</td><td>1.00</td><td>7.64</td><td>0.87</td></tr>
+          <tr><td>C</td><td>1.12</td><td>9.45</td><td>0.88</td><td>9.45</td><td>1.12</td><td><strong>−0.88</strong></td></tr>
+          <tr><td>D</td><td>1.06</td><td>9.32</td><td>0.89</td><td>3.65</td><td>9.56</td><td>0.62</td></tr>
+          <tr><td>E</td><td>1.06</td><td>10.05</td><td>0.90</td><td>3.91</td><td>10.26</td><td>0.62</td></tr>
+          <tr><td>F</td><td>1.12</td><td>10.39</td><td>0.89</td><td>4.05</td><td>10.64</td><td>0.62</td></tr>
+          <tr><td><strong>Mean</strong></td><td></td><td></td><td><strong>0.89</strong></td><td></td><td></td><td><strong>0.45</strong></td></tr>
+        </table>
+        <p>Two things to take from the right-hand columns. The average of 0.45 correctly ranks the wrong clustering below the right one. But more useful than the average is <strong>C's score of −0.88</strong>, which points straight at the specific mistake: C is nine units from its own cluster-mates and one unit from the other cluster. A plot of individual silhouette values, sorted within each cluster, is the standard diagnostic for exactly this reason — the average tells you a clustering is poor, the per-point values tell you where.</p>
+      </div>
+
+      <h3>The rest of the toolbox</h3>
+      <table>
+        <tr><th>Method</th><th>Idea</th><th>Read it as</th></tr>
+        <tr><td><strong>Elbow</strong></td><td>Plot total within-cluster distance against k.</td><td>Look for a bend. Often absent. Diagnostic only.</td></tr>
+        <tr><td><strong>Silhouette</strong></td><td>Cohesion versus separation, per point.</td><td><strong>Maximise.</strong> Also gives a per-point diagnostic.</td></tr>
+        <tr><td><strong>Gap statistic</strong><br><span class="m">Tibshirani et al., 2001</span></td><td>Compare your within-cluster distance at each k against the distance you would get on uniformly random data over the same range. The "gap" is how much better than structureless noise your clustering is.</td><td><strong>Maximise</strong> (with a standard-error rule for choosing the smallest adequate k). The only common method that can return k = 1, i.e. "there is no cluster structure here" — which is sometimes the true answer and which every other method is incapable of saying.</td></tr>
+        <tr><td><strong>Calinski–Harabasz</strong></td><td>Ratio of between-cluster to within-cluster dispersion, adjusted for k.</td><td><strong>Maximise.</strong> Very cheap. Biased toward round clusters, as it is built from the same sums of squares k-means optimises.</td></tr>
+        <tr><td><strong>Davies–Bouldin</strong></td><td>Average, over clusters, of the worst-case similarity to any other cluster.</td><td><strong>Minimise.</strong> Note the reversed direction — a common slip.</td></tr>
+        <tr><td><strong>BIC / AIC</strong></td><td>Only available if you fit a probability model such as a GMM: penalised likelihood.</td><td><strong>Minimise BIC.</strong> The most principled option, and the reason to reach for a GMM when k is genuinely unknown.</td></tr>
+        <tr><td><strong>Stability</strong></td><td>Cluster many bootstrap resamples and measure how often pairs of points end up together.</td><td>A clustering that dissolves under resampling is not a finding. Slow but persuasive.</td></tr>
+      </table>
+      <div class="callout">
+        <p class="tag">Expect them to disagree — that is the finding</p>
+        <p>Run all six on the same data and it is entirely normal to get, say, gap saying 2, silhouette saying 9, Calinski–Harabasz saying 8 and the elbow showing nothing. Published comparisons find exactly this. Disagreement means the data does not have one obvious cluster count — often because it has structure at several scales, or none. The right response is to look at the candidate clusterings and ask which one is useful for the decision you are making, which is where Lesson 4's "understand the situation first" advice comes back in.</p>
+      </div>
+
+      <h3>Judging a clustering when you do have labels</h3>
+      <p>Everything above is an <em>internal</em> measure — computed from the data and the clustering alone, because in genuine unsupervised work there is nothing else. Occasionally you do have a known grouping to compare against (a benchmark dataset, or labels withheld deliberately to test the method), and then <em>external</em> measures apply.</p>
+      <ul>
+        <li><strong>Adjusted Rand index (ARI).</strong> Counts pairs of points that the two groupings agree about, corrected so that random labelling scores 0 and perfect agreement scores 1. The correction matters: the uncorrected Rand index rises with k for no good reason.</li>
+        <li><strong>Normalised mutual information (NMI).</strong> How much knowing the cluster label tells you about the true label, scaled to [0, 1].</li>
+        <li><strong>Purity / homogeneity / completeness.</strong> Simpler and more interpretable, but purity increases with k automatically — the same defect as raw total distance, and the reason ARI exists.</li>
+      </ul>
+      <p>None of these is available in the situation Lesson 6 describes, which is the whole point of that lesson: no responses were observed, so there is nothing to score against. That is precisely why choosing k is hard in a way that choosing a model in Module 3 is not — there is no held-out truth to validate against.</p>
+
+      <div class="ix" data-quiz="m4x3-q1">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">A point has silhouette −0.6. What does that mean?</p>
+        <div class="opts">
+          <button class="opt" data-fb="A silhouette cannot say anything about outlier status directly. A far-flung point in a cluster of its own could score well; this point is not far from everything, it is close to the wrong thing.">It is an outlier and should be removed before reclustering.</button>
+          <button class="opt" data-right data-fb="s is negative exactly when b < a: the point's mean distance to the nearest other cluster is smaller than to its own cluster-mates. It has been put in the wrong group. A handful of these usually indicates a boundary problem; a whole cluster of them usually indicates the wrong k.">On average it is closer to a different cluster than to its own — it is in the wrong group.</button>
+          <button class="opt" data-fb="Borderline is s near zero, where a and b are roughly equal. A clearly negative value is stronger than that: the other cluster is genuinely nearer.">It sits exactly on a boundary between two clusters, which is unavoidable.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="ix" data-quiz="m4x3-q2">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Why can the gap statistic return k = 1 when silhouette and Davies–Bouldin cannot?</p>
+        <div class="opts">
+          <button class="opt" data-right data-fb="The gap statistic compares your clustering against clustering of structureless random data over the same range. If your data is no better than noise, the gap peaks at one cluster. Silhouette and Davies–Bouldin are both defined only when there are at least two clusters to compare against each other, so 'no structure' is not in their answer set at all.">It compares the result against random data, so "no better than noise" is an answer it can express.</button>
+          <button class="opt" data-fb="The gap statistic is considerably more expensive than the others — it requires clustering many reference datasets at every k. Cost is a reason to avoid it, not the reason it can say k = 1.">It is computationally cheaper, so it can afford to test k = 1 as well.</button>
+          <button class="opt" data-fb="It works perfectly well on non-spherical clusters in principle; the reference-distribution idea does not assume a shape. The difference is what it compares against, not what shapes it allows.">It does not assume clusters are spherical, so a single irregular cluster is representable.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="note">
+        <div class="note-head"><span class="lbl">Notes on choosing k</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="m4x3" data-placeholder="Which criteria you would trust for your data, and what the clusters need to be useful for…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Link to Lesson 4</span>
+      <p class="q">Does any of this replace "understand the situation first"?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">No, and the disagreement between criteria is the reason. These methods narrow a continuum down to two or three defensible candidates; which of those you pick still depends on what the clusters are for. Five marketing segments and fifty are both statistically defensible answers, and only the business question settles it.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+<!-- ==================== EXTRA 4 ==================== -->
+<section class="lesson" id="x4" data-short="Practice &amp; reading" style="--accent:#4a5765">
+  <div class="lesson-head">
+    <span class="ln">Extra 4 &middot; not class material</span>
+    <h2>Practice, reading and tools</h2>
+    <p class="keyline">Seven problems with worked solutions, a self-test, and where to go next.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Part A — distance arithmetic</h3>
+
+      <div class="callout">
+        <p class="tag">Problem 1 — the three norms</p>
+        <p>Points P = (3, 1, 7) and Q = (8, 4, 5). Compute the 1-norm, 2-norm and ∞-norm distances.</p>
+        <details><summary>Show worked solution</summary>
+          <p class="a">Component differences: |3 − 8| = 5, |1 − 4| = 3, |7 − 5| = 2.<br>
+          <strong>1-norm:</strong> 5 + 3 + 2 = <strong>10</strong>.<br>
+          <strong>2-norm:</strong> √(25 + 9 + 4) = √38 ≈ <strong>6.16</strong>.<br>
+          <strong>∞-norm:</strong> max{5, 3, 2} = <strong>5</strong>.<br><br>
+          The ordering 1-norm ≥ 2-norm ≥ ∞-norm always holds, which is a useful arithmetic check. The reason is Lesson 2's: as p grows, the largest component increasingly dominates the sum until only it survives.</p>
+        </details>
+      </div>
+
+      <div class="callout">
+        <p class="tag">Problem 2 — when the metric changes the answer</p>
+        <p>Centre A = (0, 0), centre B = (10, 0). Point X = (6, 6). Which centre is X assigned to under the 1-norm, and under the ∞-norm?</p>
+        <details><summary>Show worked solution</summary>
+          <p class="a"><strong>1-norm:</strong> to A, 6 + 6 = 12; to B, 4 + 6 = 10. X goes to <strong>B</strong>.<br>
+          <strong>∞-norm:</strong> to A, max{6, 6} = 6; to B, max{4, 6} = 6. A <strong>tie</strong> — and note that under the 2-norm, to A is √72 ≈ 8.49 and to B is √52 ≈ 7.21, so B again.<br><br>
+          The lesson is that Lesson 2's choice of p is not cosmetic: it changes cluster membership, and therefore the centroids, and therefore the next iteration. The ∞-norm's tie here is characteristic — it discards all information except the single worst coordinate, so ties are common.</p>
+        </details>
+      </div>
+
+      <div class="callout">
+        <p class="tag">Problem 3 — scale</p>
+        <p>You cluster on age (years, range 20–70) and income (pounds, range 20,000–200,000). Without scaling, roughly what fraction of a typical Euclidean distance comes from income?</p>
+        <details><summary>Show worked solution</summary>
+          <p class="a">Essentially all of it. A large age difference is ~50; a large income difference is ~180,000 — about 3,600 times bigger, and squared before summing, so income contributes on the order of ten million times more to the squared distance. Age is not being down-weighted, it is being <em>erased</em>.<br><br>
+          After standardising both to mean 0 and standard deviation 1, each contributes according to how much it actually varies relative to its own spread, which is what you almost always want. The exception is when the units are already comparable and meaningful — three sensor readings all in millivolts, say — where standardising would <em>destroy</em> real information about which sensor moves more.</p>
+        </details>
+      </div>
+
+      <h3>Part B — algorithm behaviour</h3>
+
+      <div class="callout">
+        <p class="tag">Problem 4 — one iteration of k-means by hand</p>
+        <p>Points: (1,1), (2,1), (1,2), (8,8), (9,9). Initial centres c₁ = (1,1) and c₂ = (2,1). Run one full iteration of the Lesson 3 loop using Euclidean distance, then say what happens next.</p>
+        <details><summary>Show worked solution</summary>
+          <p class="a"><strong>Assign step.</strong> (1,1) → c₁ (distance 0 vs 1). (2,1) → c₂ (0 vs 1). (1,2) → c₁ (1 vs √2 ≈ 1.41). (8,8) → c₂ (√98 ≈ 9.90 vs √85 ≈ 9.22). (9,9) → c₂ (√128 ≈ 11.31 vs √113 ≈ 10.63).<br>
+          So cluster 1 = {(1,1), (1,2)}; cluster 2 = {(2,1), (8,8), (9,9)}.<br>
+          <strong>Update step.</strong> c₁ = (1, 1.5). c₂ = ((2+8+9)/3, (1+8+9)/3) = (6.33, 6).<br>
+          <strong>What happens next.</strong> On the second assign step, (2,1) is now 1.12 from c₁ and 7.03 from c₂, so it switches back to cluster 1. The iteration after that gives c₁ = (1.33, 1.33) and c₂ = (8.5, 8.5), assignments stop changing, and the algorithm stops.<br><br>
+          The point of working through this is the intermediate state: after one iteration the clustering is visibly wrong, with (2,1) grouped with two points forty units away. k-means does not converge in one pass, and a bad start costs iterations rather than causing failure — unless it costs correctness, which is the local-optimum problem Lesson 4 raises.</p>
+        </details>
+      </div>
+
+      <div class="callout">
+        <p class="tag">Problem 5 — diagnosing a bad result</p>
+        <p>You run k-means with k = 4 on customer data. One cluster contains 9,800 of the 10,000 points; the other three contain 150, 40 and 10. What are the two most likely explanations, and what would you check first?</p>
+        <details><summary>Show worked solution</summary>
+          <p class="a"><strong>One: unscaled attributes.</strong> If one column has a far larger range than the others, the clustering is effectively one-dimensional on that column, and a few extreme values on it get picked off into tiny clusters while everything else stays together. <strong>Check first</strong> by printing the standard deviation of each column — a spread of several orders of magnitude is the tell.<br>
+          <strong>Two: outliers.</strong> A handful of extreme points can capture centres entirely, which is Lesson 4's problem. The tiny clusters of 40 and 10 look exactly like this.<br><br>
+          Both diagnoses point the same way and are not mutually exclusive. The standard workflow is: standardise, look for and deal with outliers (Module 5), rerun with k-means++ and several restarts. If the imbalance survives all of that, it may be real — some populations genuinely have one dominant group and a few small ones, in which case a density method with an explicit noise label often describes the data better than any k.</p>
+        </details>
+      </div>
+
+      <div class="callout">
+        <p class="tag">Problem 6 — choosing the method</p>
+        <p>For each, name a suitable algorithm and say why.<br>
+        (a) Geo-tagged emergency call locations; you want to find hotspots and expect most calls to be scattered background.<br>
+        (b) 400 patient records with 6 numeric measurements and 3 categorical fields; you want a nested picture of patient types.<br>
+        (c) 5 million web sessions on 12 scaled numeric features; you want 8 segments for a marketing campaign.<br>
+        (d) Overlapping customer groups where you need to know which customers are ambiguous.</p>
+        <details><summary>Show worked solution</summary>
+          <p class="a"><strong>(a) DBSCAN or HDBSCAN.</strong> Hotspots are dense regions of arbitrary shape, the background scatter needs a noise label rather than forced membership, and you do not know how many hotspots there are. Every one of those rules out k-means.<br>
+          <strong>(b) Gower distance with agglomerative hierarchical clustering.</strong> Mixed types rule out k-means (no mean for the categorical fields), 400 rows is comfortably within hierarchical clustering's limits, and "nested picture" asks for a dendrogram specifically.<br>
+          <strong>(c) k-means with k-means++.</strong> Five million points rules out everything except k-means and BIRCH; k is given; the features are already scaled. This is the case k-means was built for.<br>
+          <strong>(d) A Gaussian mixture model.</strong> Soft assignment is precisely the requirement — a customer with 0.55 and 0.45 membership is reported as ambiguous rather than silently rounded into one segment.</p>
+        </details>
+      </div>
+
+      <div class="callout">
+        <p class="tag">Problem 7 — computing a silhouette</p>
+        <p>Three points in cluster 1: X, Y, Z, with d(X,Y) = 2 and d(X,Z) = 4. The nearest other cluster has two points P and Q, with d(X,P) = 5 and d(X,Q) = 7. Compute s(X) and interpret it.</p>
+        <details><summary>Show worked solution</summary>
+          <p class="a"><strong>a(X)</strong> = (2 + 4) / 2 = 3. <strong>b(X)</strong> = (5 + 7) / 2 = 6.<br>
+          <strong>s(X)</strong> = (6 − 3) / max{3, 6} = 3 / 6 = <strong>0.5</strong>.<br><br>
+          Positive, so X is in the right cluster, but only moderately well placed — the other cluster is just twice as far as its own, which is not a wide margin. Values above about 0.7 are usually read as strong structure, 0.5 to 0.7 as reasonable, below 0.25 as essentially no structure, and anything negative as misassigned. These bands are conventions rather than tests, so treat them as rough guidance.</p>
+        </details>
+      </div>
+
+      <h3>Part C — self-test</h3>
+
+      <div class="ix" data-quiz="m4x4-q1">
+        <div class="ix-head"><span class="ix-kind">self-test</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Which statement about k-means is false?</p>
+        <div class="opts">
+          <button class="opt" data-fb="True. Each assign step can only lower total within-cluster distance, and each update step can only lower it too, so the objective decreases monotonically and the algorithm terminates. Terminating is not the same as terminating at the best answer.">It always terminates.</button>
+          <button class="opt" data-right data-fb="False, and this is the key limitation. Finding the true k-means optimum is NP-hard; Lloyd's algorithm converges to a local optimum that depends on where it started. That is exactly why Lesson 4 recommends restarts and why k-means++ exists.">It always finds the partition that minimises total within-cluster distance.</button>
+          <button class="opt" data-fb="True. The result depends on the initial centres, which is why the same data can give different answers on different runs and why restarts are standard practice.">Different starting points can give different final clusters.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="ix" data-quiz="m4x4-q2">
+        <div class="ix-head"><span class="ix-kind">self-test</span><span class="ix-done">answered</span></div>
+        <p class="prompt">In DBSCAN, what is a border point?</p>
+        <div class="opts">
+          <button class="opt" data-fb="That describes a point equidistant from two cluster centres, which is a k-means notion. DBSCAN has no centres at all, so 'between two clusters' is not how it thinks.">A point that sits equally far from two clusters.</button>
+          <button class="opt" data-right data-fb="A border point is within ε of a core point, so it joins that cluster, but does not itself have minPts neighbours within ε, so it cannot extend the cluster further. Core points grow clusters; border points are carried along at the edges; everything else is noise.">A point within ε of a core point, but without enough neighbours to be a core point itself.</button>
+          <button class="opt" data-fb="That is a noise point — too isolated to be in any cluster. The border category sits between core and noise.">A point with no neighbours within ε of it at all.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="ix" data-quiz="m4x4-q3">
+        <div class="ix-head"><span class="ix-kind">self-test</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Why can total within-cluster distance not be used to choose k, while the silhouette can?</p>
+        <div class="opts">
+          <button class="opt" data-right data-fb="Total distance falls monotonically to zero at k = n, so its minimum is always the degenerate answer. The silhouette measures separation as well as cohesion, so splitting a genuine cluster lowers b as much as it lowers a and the score does not improve — which makes its maximum meaningful.">Total distance always falls as k rises, so its optimum is degenerate; the silhouette balances cohesion against separation.</button>
+          <button class="opt" data-fb="Both are computable at any k without labels. Availability is not the issue — the issue is that one of them has a trivial optimum.">Total distance requires knowing the true labels, whereas the silhouette does not.</button>
+          <button class="opt" data-fb="Both are perfectly well defined for non-spherical clusters. The silhouette does tend to favour compact round clusters in practice, which is a real caveat, but it is not why total distance fails.">Total distance only works for spherical clusters, whereas the silhouette works for any shape.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="ix" data-quiz="m4x4-q4">
+        <div class="ix-head"><span class="ix-kind">self-test</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Lesson 6 says clustering is unsupervised. What does that cost you that Module 3 took for granted?</p>
+        <div class="opts">
+          <button class="opt" data-fb="Cross-validation machinery can be applied to clustering in various ways — stability analysis is essentially a resampling method. The obstacle is not the machinery, it is the absence of anything to score against.">You cannot resample the data, so cross-validation is unavailable.</button>
+          <button class="opt" data-right data-fb="There is no held-out truth. Module 3's whole apparatus rests on comparing predictions against observed responses on data the model has not seen; with no responses, every quality measure has to be computed from the geometry alone, which is why internal criteria disagree and why judgement is unavoidable.">There is no held-out answer to validate against, so every quality measure is internal.</button>
+          <button class="opt" data-fb="Clustering handles new points perfectly well — Lesson 5 is about exactly that, assigning a new point to its nearest centre. Prediction is not what is lost.">You cannot make predictions about new data points.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <h3>Part D — written questions</h3>
+      <div class="callout">
+        <p class="tag">Four to write out</p>
+        <p><strong>1.</strong> Explain why k-means cannot find the two rings in the figure in Extra 1, and name two algorithms that can.</p>
+        <details><summary>Show a model answer</summary><p class="a">k-means minimises total distance to k centre points. The set of points closer to one centre than to any other is always a convex region — that is what a Voronoi cell is — so every cluster k-means can produce is convex. A ring is not convex: its own centre region belongs to the other ring. No value of k and no number of restarts changes this, because the limitation is in the objective function rather than the search. DBSCAN finds the rings by treating a cluster as a dense connected region, which follows a curve without difficulty; spectral clustering finds them by embedding the data in a space where the rings become linearly separable and then running k-means there.</p></details>
+        <p><strong>2.</strong> State the k-means++ initialisation rule and explain what problem it addresses.</p>
+        <details><summary>Show a model answer</summary><p class="a">Pick the first centre uniformly at random from the data. Then pick each remaining centre by sampling a data point with probability proportional to the squared distance from the nearest already-chosen centre, until k are chosen; then run the ordinary loop. It addresses the local-optimum problem: with uniform random starts, several centres can land in the same dense region, leaving other regions to share a centre, and the loop cannot recover. Distance-proportional sampling spreads the initial centres out, so each run is far more likely to land in a good basin — reducing how many restarts are needed rather than removing the need for them, since the underlying problem is NP-hard.</p></details>
+        <p><strong>3.</strong> Give the silhouette formula, and explain why its maximum over k is meaningful while the minimum of total within-cluster distance is not.</p>
+        <details><summary>Show a model answer</summary><p class="a">s(i) = (b(i) − a(i)) / max{a(i), b(i)}, where a(i) is the mean distance from i to the other members of its own cluster and b(i) the mean distance to the members of the nearest other cluster. Total within-cluster distance falls monotonically as k rises and hits zero when every point is its own cluster, so minimising it always selects the degenerate answer — the elbow heuristic exists only to work around that. The silhouette rewards separation as well as cohesion: splitting a real cluster in two reduces a but reduces b by a comparable amount, so the score does not improve, and the maximum lands on a genuine structure rather than on k = n.</p></details>
+        <p><strong>4.</strong> Your data has eight numeric and three categorical columns. Explain what must be done before any distance-based method will give a sensible answer.</p>
+        <details><summary>Show a model answer</summary><p class="a">Two things. The numeric columns must be put on a common scale, because otherwise the column with the largest range dominates every distance and the clustering is effectively on that column alone — the metric choice from Lesson 2 has far less influence on the result than this does. And the categorical columns need a distance definition of their own, since they have no mean and no ordering; the standard route is Gower distance, which computes a [0,1] distance per attribute in the way appropriate to its type and averages them. Gower produces a distance matrix rather than coordinates, so it pairs with k-medoids or hierarchical clustering, both of which need only pairwise distances. Encoding the categories as integers and running k-means invents an ordering and a spacing that do not exist.</p></details>
+      </div>
+
+      <h3>Sources and further reading</h3>
+      <table>
+        <tr><th>Source</th><th>What it gives you</th></tr>
+        <tr><td><strong>scikit-learn User Guide §2.3, Clustering</strong><br><span class="m">scikit-learn.org/stable/modules/clustering.html</span></td><td>The best free overview in existence. Covers every algorithm named above with a side-by-side picture of how each behaves on the same awkward datasets — rings, moons, anisotropic blobs — plus the full set of evaluation metrics. Start here.</td></tr>
+        <tr><td><strong>James, Witten, Hastie &amp; Tibshirani, <em>An Introduction to Statistical Learning</em></strong>, ch. 12</td><td>k-means and hierarchical clustering treated properly and readably, with the linkage comparison and a careful discussion of why clustering results need sanity-checking. Free PDF.</td></tr>
+        <tr><td><strong>Hastie, Tibshirani &amp; Friedman, <em>The Elements of Statistical Learning</em></strong>, ch. 14</td><td>The same ground at research level, including k-medoids, self-organising maps and spectral clustering. Free PDF.</td></tr>
+        <tr><td><strong>Aggarwal &amp; Reddy, <em>Data Clustering: Algorithms and Applications</em></strong></td><td>Reference-grade coverage of everything this appendix only names.</td></tr>
+      </table>
+      <ul>
+        <li><strong>Arthur &amp; Vassilvitskii (2007), "k-means++: The Advantages of Careful Seeding".</strong> Short and readable; the source of the initialisation rule and its guarantee.</li>
+        <li><strong>Ester, Kriegel, Sander &amp; Xu (1996), "A Density-Based Algorithm for Discovering Clusters…".</strong> The DBSCAN paper.</li>
+        <li><strong>Tibshirani, Walther &amp; Hastie (2001), "Estimating the number of clusters in a data set via the gap statistic".</strong></li>
+        <li><strong>Rousseeuw (1987), "Silhouettes: a graphical aid to the interpretation and validation of cluster analysis".</strong> The original, and still the clearest account of the per-point plot.</li>
+        <li><strong>Campello, Moulavi &amp; Sander (2013)</strong> and <strong>McInnes, Healy &amp; Astels (2017).</strong> HDBSCAN.</li>
+      </ul>
+      <table>
+        <tr><th>Tool</th><th>Language</th><th>For</th></tr>
+        <tr><td><strong>scikit-learn</strong> <span class="m">sklearn.cluster</span></td><td>Python</td><td>KMeans, MiniBatchKMeans, BisectingKMeans, AgglomerativeClustering, DBSCAN, OPTICS, HDBSCAN, SpectralClustering, MeanShift, Birch, AffinityPropagation — plus <code>sklearn.metrics</code> for silhouette, Calinski–Harabasz, Davies–Bouldin, ARI and NMI.</td></tr>
+        <tr><td><strong>scipy.cluster.hierarchy</strong></td><td>Python</td><td>Linkage computation and dendrogram plotting, which scikit-learn does not draw for you.</td></tr>
+        <tr><td><strong>gower</strong>, <strong>kmodes</strong>, <strong>tslearn</strong></td><td>Python</td><td>Gower distances; k-modes and k-prototypes for categorical and mixed data; DTW-based clustering for time series.</td></tr>
+        <tr><td><strong>cluster</strong>, <strong>factoextra</strong>, <strong>NbClust</strong>, <strong>dbscan</strong>, <strong>mclust</strong></td><td>R</td><td>PAM and Gower (<code>daisy</code>); dendrogram and elbow/silhouette plotting; <code>NbClust</code> runs about thirty cluster-count criteria at once and reports the majority vote; density methods; model-based clustering with BIC selection.</td></tr>
+      </table>
+
+      <div class="callout">
+        <p class="tag">A twenty-minute exercise worth doing</p>
+        <p>Generate three datasets — round blobs, two concentric rings, and two crescents — and run k-means, agglomerative clustering with Ward and with single linkage, DBSCAN and spectral clustering on each. Five algorithms, three datasets, one picture. It takes about fifteen lines of scikit-learn and teaches the shape limitation of each method more durably than any table can, including this one's.</p>
+      </div>
+
+      <div class="note">
+        <div class="note-head"><span class="lbl">Reading log</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="m4x4" data-placeholder="What you read, what it added, what you still don't understand…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Caveat</span>
+      <p class="q">How much of this should you take on trust?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">The algorithm descriptions and the silhouette arithmetic are standard and consistent across the sources listed. The scaling limits in the comparison table are rough orders of magnitude that depend heavily on implementation and hardware, and the silhouette interpretation bands are conventions rather than tests. Treat the lectures as authoritative wherever the two differ.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
+<section class="close" style="--accent:#131b26">
+  <footer><span class="ai"><strong>Written by an AI model from lecture recordings.</strong> Not reviewed by any instructor or institution — verify anything you rely on against the original lectures. Examples here are generic illustrations rather than the ones used in class. The Marcus Obi case, the comparison with k-nearest neighbours, the note that k-means pairs naturally with the 2-norm, and “Four things worth noticing” are this summary’s own additions rather than lecture content.
+  <br><br>
+  <strong>Everything under “Additional resources” is outside material.</strong> Extras 1 to 4 — the survey of other clustering algorithms, the distance measures beyond the p-norms, the cluster-count and validation criteria, the concentric-rings figure, the worked silhouette numbers, the practice problems and the reading list — were assembled from published sources, principally the scikit-learn user guide, <em>An Introduction to Statistical Learning</em> (ch. 12), <em>The Elements of Statistical Learning</em> (ch. 14), and the original method papers cited in Extra 4. None of it was taught in this module. All worked numbers there are computed for illustration on invented data. Check quantitative claims against a primary source before relying on them, and treat the lectures as authoritative wherever the two differ.</span></footer>
+</section>
 </div>
 
 <dialog id="dlg">

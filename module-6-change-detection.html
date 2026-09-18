@@ -27,7 +27,7 @@
 
 <header class="hero">
   <h1>Module 6: Change Detection</h1>
-  <p class="sub">Deciding whether a process has moved — and doing it early enough to act, which means accepting that some of the alarms will be false.</p>
+  <p class="sub">Deciding whether a process has moved — and doing it early enough to act, which means accepting that some of the alarms will be false. Two lessons of class material, followed by an additional-resources appendix covering the methods the course does not.</p>
 
   <svg class="plot" viewBox="0 0 660 330" role="img" aria-label="Two panels. Left: fourteen raw observations scattering around an expected level, then jumping clear above that level from the eleventh. Right: the cumulative sum of those observations, flat for ten periods and then climbing through a threshold line at the fourteenth.">
     <!-- panel A: the raw data -->
@@ -55,14 +55,18 @@
 
   <ul class="track">
     <li style="--dot:#6e4a8c"><a href="#l1"><span class="tnum">Lesson 1</span><span class="tname">Change detection</span><span class="tq">Has the process itself moved?</span></a></li>
-    <li style="--dot:#8a5a1c"><a href="#l2"><span class="tnum">Lesson 2</span><span class="tname">CUSUM</span><span class="tq">How do you notice quickly without crying wolf?</span></a></li>
+    <li style="--dot:#8a5a1c"><a href="#l2"><span class="tnum">CUSUM</span><span class="tname">Both directions</span><span class="tq">How do you notice quickly without crying wolf?</span></a></li>
+    <li style="--dot:#1f6b6b"><a href="#extra"><span class="tnum">Extra 1–2</span><span class="tname">Every other method</span><span class="tq">What else exists, and when would you use it?</span></a></li>
+    <li style="--dot:#8a3d5c"><a href="#x3"><span class="tnum">Extra 3–4</span><span class="tname">Practice &amp; reading</span><span class="tq">Can you actually do the arithmetic?</span></a></li>
   </ul>
 
   <div class="badge-strip">
-    <p class="cap">Badges unlock when every activity in a lesson is finished.</p>
+    <p class="cap">Badges unlock when every activity in a lesson is finished. The last two cover the additional-resources material, which is not part of the class.</p>
     <ul class="badges">
       <li class="badge" data-for="l1" style="--b:#6e4a8c"><span class="gem">Δ</span><span class="nm">Something Moved</span></li>
       <li class="badge" data-for="l2" style="--b:#8a5a1c"><span class="gem">Σ</span><span class="nm">Cumulative Sum</span></li>
+      <li class="badge" data-for="x1" style="--b:#1f6b6b"><span class="gem">⌖</span><span class="nm">Method Map</span></li>
+      <li class="badge" data-for="x3" style="--b:#8a3d5c"><span class="gem">✎</span><span class="nm">Worked It Out</span></li>
       <li class="badge" data-for="*"  style="--b:#131b26"><span class="gem">★</span><span class="nm">Module 6 complete</span></li>
     </ul>
   </div>
@@ -362,28 +366,239 @@
   <div class="row">
     <div class="main">
       <h3>Detecting decreases, and both at once</h3>
-      <p>Nothing about the method is specific to increases. Flip the sign inside the sum and the same machinery looks for a drop:</p>
+      <p>Nothing about the method is specific to increases. Flip the sign of the deviation inside the sum and the same machinery looks for a drop:</p>
       <div class="formula">
-        increase: &nbsp; S<sub>t</sub> &nbsp;=&nbsp; max &#123; 0 , &nbsp; S<sub>t−1</sub> + ( x<sub>t</sub> − μ − C ) &#125;<br>
-        decrease: &nbsp; S<sub>t</sub> &nbsp;=&nbsp; max &#123; 0 , &nbsp; S<sub>t−1</sub> + ( μ − x<sub>t</sub> − C ) &#125;
-        <span class="cap">Same threshold comparison in both cases. To watch for a change in either direction, run both recursions simultaneously on the same data and alarm if either one reaches its threshold.</span>
+        increase &nbsp;(upper CUSUM): &nbsp; S<sup>+</sup><sub>t</sub> &nbsp;=&nbsp; max &#123; 0 , &nbsp; S<sup>+</sup><sub>t−1</sub> + ( x<sub>t</sub> − μ − C ) &#125;<br><br>
+        decrease &nbsp;(lower CUSUM): &nbsp; S<sup>−</sup><sub>t</sub> &nbsp;=&nbsp; max &#123; 0 , &nbsp; S<sup>−</sup><sub>t−1</sub> + ( μ − x<sub>t</sub> − C ) &#125;
+        <span class="cap">Both start at zero. Both raise the alarm on the same test, S<sub>t</sub> ≥ T. To watch both directions, run the two recursions side by side on the same observations and alarm if either reaches its threshold.</span>
       </div>
-      <p>CUSUM is mathematically simple enough to implement in a spreadsheet — one column for the observations, one for the excess, one for the running total, and a comparison against T. That simplicity is a large part of why it is the method taught first.</p>
 
-      <div class="ix" data-quiz="m6l2-q1">
+      <h3>What actually differs between the two equations</h3>
+      <p>Almost nothing — and the parts that look like they might differ do not. Going through them one at a time is the fastest way to stop making sign errors.</p>
+      <table>
+        <tr><th>Piece</th><th>Increase</th><th>Decrease</th><th>Why it is that way</th></tr>
+        <tr>
+          <td><strong>The deviation</strong></td>
+          <td>x<sub>t</sub> − μ</td>
+          <td>μ − x<sub>t</sub></td>
+          <td><strong>This is the only real difference.</strong> Each version measures distance in the direction that counts as evidence. A reading of 460 against μ = 500 contributes −40 to the increase sum and +40 to the decrease sum.</td>
+        </tr>
+        <tr>
+          <td><strong>The allowance C</strong></td>
+          <td>subtracted</td>
+          <td>subtracted</td>
+          <td>C is not a direction, it is a handicap. It always works <em>against</em> accumulation, so it is subtracted in both. Adding it in the decrease version is the single most common error — see below.</td>
+        </tr>
+        <tr>
+          <td><strong>The floor at zero</strong></td>
+          <td>max&#123;0, …&#125;</td>
+          <td>max&#123;0, …&#125;</td>
+          <td>Identical, and it means the same thing in both: evidence pointing the wrong way is thrown away rather than banked.</td>
+        </tr>
+        <tr>
+          <td><strong>The alarm test</strong></td>
+          <td>S<sup>+</sup><sub>t</sub> ≥ T</td>
+          <td>S<sup>−</sup><sub>t</sub> ≥ T</td>
+          <td>Both statistics are non-negative by construction, so both are compared against a <em>positive</em> threshold. There is no −T anywhere.</td>
+        </tr>
+        <tr>
+          <td><strong>What a large value means</strong></td>
+          <td>the process ran high</td>
+          <td>the process ran low</td>
+          <td>S<sup>−</sup> going <em>up</em> means the process went <em>down</em>. The statistic and the thing it measures move in opposite directions, which is why the notation trips people up.</td>
+        </tr>
+      </table>
+      <p>An equivalent way to write the second one, which some texts prefer because it makes the symmetry obvious:</p>
+      <div class="formula">
+        S<sup>−</sup><sub>t</sub> &nbsp;=&nbsp; max &#123; 0 , &nbsp; S<sup>−</sup><sub>t−1</sub> − ( x<sub>t</sub> − μ ) − C &#125;
+        <span class="cap">Same algebra, rearranged. Both forms compute the same number; pick whichever you are less likely to mistype under exam pressure.</span>
+      </div>
+
+      <div class="callout">
+        <p class="tag">Three mistakes that account for most wrong answers</p>
+        <p><strong>1. Writing μ − x<sub>t</sub> + C.</strong> Adding C makes every period contribute <em>more</em>, so the total climbs on ordinary noise and alarms when nothing has happened. On the sales data below this version fires at week 8 — three weeks before the change exists.</p>
+        <p><strong>2. Expecting S<sup>−</sup> to go negative and comparing it against −T.</strong> It cannot go negative; the max with zero forbids it. A downward change makes S<sup>−</sup> climb toward a positive T.</p>
+        <p><strong>3. Running only the increase recursion on a process that fell.</strong> S<sup>+</sup> sits at zero forever and reports "no change" while the process quietly collapses. The direction you monitor is a design decision, not something the method works out for you.</p>
+      </div>
+
+      <div class="ix" data-quiz="m6l2-q4">
         <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
-        <p class="prompt">Your CUSUM keeps raising alarms on a process that turns out to be fine every time. You want fewer false alarms without abandoning the method. What does raising C do?</p>
+        <p class="prompt">A colleague monitoring for a drop writes S<sub>t</sub> = max&#123;0, S<sub>t−1</sub> + (μ − x<sub>t</sub> + C)&#125;. What happens?</p>
         <div class="opts">
-          <button class="opt" data-fb="It reduces false alarms, but not by changing what counts as a change — μ still defines that. C subtracts a fixed amount from every period’s contribution, so ordinary above-average readings no longer accumulate. The definition of the baseline is untouched.">It raises the level the process must reach before the method treats it as changed.</button>
-          <button class="opt" data-right data-fb="Each period contributes x − μ − C instead of x − μ, so a period has to exceed expectation by more than C before it adds anything at all. Ordinary noise gets absorbed, the total stays near zero while the process is healthy, and real changes still accumulate — just from a lower starting point, which is why detection is slightly later.">It subtracts more from each period’s contribution, so ordinary noise stops accumulating.</button>
-          <button class="opt" data-fb="Nothing here is smoothed or averaged. Every observation still enters the total exactly once, at full weight, minus C. Raising C changes how much of each excess survives, not how many periods are considered.">It averages each reading with the previous ones, so single high readings matter less.</button>
+          <button class="opt" data-fb="The opposite. A plus sign makes every period contribute more, not less, so the total grows faster and the method becomes hair-trigger rather than sluggish.">It detects real decreases more slowly, because C now opposes the accumulation twice.</button>
+          <button class="opt" data-right data-fb="C is meant to be a handicap subtracted every period so ordinary noise cannot accumulate. Added instead, it becomes a steady upward push of size C per period: even a perfectly healthy process drifts to the threshold and alarms. On the worked data below this version fires at week 8, three weeks before anything changed.">Every period gets a free push of size C, so the total climbs even on a healthy process and eventually raises a false alarm.</button>
+          <button class="opt" data-fb="It is not equivalent. Sign errors on C change the drift of the statistic; sign errors on the deviation change which direction is monitored. Neither cancels the other.">Nothing — it is algebraically equivalent to the correct form once the max with zero is applied.</button>
         </div>
         <p class="fb"></p>
       </div>
 
+      <h3>A worked example with both recursions running</h3>
+      <p>Weekly unit sales at a store. With no change the expected level is <span class="m">μ = 500</span>, and the scheme is set at <span class="m">C = 12</span>, <span class="m">T = 100</span>. A competitor opens at the start of week 11. Both recursions are computed on every observation, so the method is watching for a move in either direction without knowing in advance which one to expect.</p>
+      <table>
+        <tr><th>t</th><th>x<sub>t</sub></th><th>x<sub>t</sub> − μ</th><th>S<sup>+</sup><sub>t</sub> (increase)</th><th>S<sup>−</sup><sub>t</sub> (decrease)</th></tr>
+        <tr><td>1</td><td>512</td><td>+12</td><td>0</td><td>0</td></tr>
+        <tr><td>2</td><td>487</td><td>−13</td><td>0</td><td>1</td></tr>
+        <tr><td>3</td><td>503</td><td>+3</td><td>0</td><td>0</td></tr>
+        <tr><td>4</td><td>521</td><td>+21</td><td>9</td><td>0</td></tr>
+        <tr><td>5</td><td>478</td><td>−22</td><td>0</td><td>10</td></tr>
+        <tr><td>6</td><td>495</td><td>−5</td><td>0</td><td>3</td></tr>
+        <tr><td>7</td><td>508</td><td>+8</td><td>0</td><td>0</td></tr>
+        <tr><td>8</td><td>469</td><td>−31</td><td>0</td><td>19</td></tr>
+        <tr><td>9</td><td>516</td><td>+16</td><td>4</td><td>0</td></tr>
+        <tr><td>10</td><td>491</td><td>−9</td><td>0</td><td>0</td></tr>
+        <tr><td>11</td><td>436</td><td>−64</td><td>0</td><td>52</td></tr>
+        <tr><td>12</td><td>451</td><td>−49</td><td>0</td><td>89</td></tr>
+        <tr><td>13</td><td>425</td><td>−75</td><td>0</td><td><strong>152</strong></td></tr>
+        <tr><td>14</td><td>443</td><td>−57</td><td>0</td><td>197</td></tr>
+        <tr><td>15</td><td>418</td><td>−82</td><td>0</td><td>267</td></tr>
+        <tr><td>16</td><td>439</td><td>−61</td><td>0</td><td>316</td></tr>
+        <tr><td>17</td><td>430</td><td>−70</td><td>0</td><td>374</td></tr>
+        <tr><td>18</td><td>447</td><td>−53</td><td>0</td><td>415</td></tr>
+      </table>
+      <p>Work one row by hand to check you have it. At <em>t</em> = 5, the observation is 478, so μ − x<sub>t</sub> = 22; subtract C to get 10; add the previous S<sup>−</sup> of 0; the result is positive, so S<sup>−</sup><sub>5</sub> = 10. The increase side gets x<sub>t</sub> − μ = −22, minus 12 is −34, plus 0 is negative, so S<sup>+</sup><sub>5</sub> = 0.</p>
+      <p>Three things to read off the table:</p>
+      <ul>
+        <li><strong>The alarm fires at <em>t</em> = 13</strong>, two weeks after the competitor opened. S<sup>−</sup> reaches 152, clearing T = 100.</li>
+        <li><strong>S<sup>+</sup> never exceeds 9</strong>, and is zero for the whole second half. The increase side is not broken — it is correctly reporting that no increase occurred. Running both directions costs you nothing in accuracy here.</li>
+        <li><strong>Before the change, S<sup>−</sup> peaked at 19</strong>, under a fifth of the threshold. There was never a near-miss.</li>
+      </ul>
+
+      <p>Rerunning the same data with different settings shows what each piece of the equation is buying:</p>
+      <table class="plain">
+        <tr><th>Version</th><th>First alarm</th><th>Highest value before the change</th></tr>
+        <tr><td><strong>C = 12</strong> — correct form</td><td><em>t</em> = 13</td><td>19 — never close to T</td></tr>
+        <tr><td><strong>C = 0</strong> — no allowance</td><td><em>t</em> = 11, immediately</td><td>50 — half way to T on noise alone</td></tr>
+        <tr><td><strong>μ − x<sub>t</sub> + C</strong> — sign error on C</td><td><em>t</em> = 8 &nbsp;<em>(false)</em></td><td>140 — past T before the change exists</td></tr>
+      </table>
+      <p>The middle row is the familiar trade: drop C and you detect two weeks earlier but hand back most of your margin against false alarms. The bottom row is not a trade at all — it is a broken method that would alarm on any process left running long enough.</p>
+
+      <figure>
+        <svg class="fig" viewBox="0 0 660 300" role="img" aria-label="Both CUSUM statistics plotted over eighteen weeks against a threshold of 100. The decrease statistic stays below 20 for the first ten weeks then climbs steeply, crossing the threshold at week 13 and reaching 415 by week 18. The increase statistic stays at or near zero throughout.">
+          <line x1="70" y1="260" x2="645" y2="260" stroke="#131b26" stroke-width="1.5"/>
+          <line x1="70" y1="260" x2="70" y2="40" stroke="#131b26" stroke-width="1.5"/>
+          <text x="355" y="292" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="11.5" fill="#4a5765">week t</text>
+          <text x="26" y="150" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="11.5" fill="#4a5765" transform="rotate(-90 26 150)">CUSUM statistic</text>
+          <text x="70" y="276" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="10" fill="#4a5765">1</text>
+          <text x="204.1" y="276" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="10" fill="#4a5765">5</text>
+          <text x="371.8" y="276" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="10" fill="#4a5765">10</text>
+          <text x="539.4" y="276" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="10" fill="#4a5765">15</text>
+          <text x="640" y="276" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="10" fill="#4a5765">18</text>
+          <line x1="405.3" y1="40" x2="405.3" y2="260" stroke="#9aa5b1" stroke-width="1.2" stroke-dasharray="3 4"/>
+          <text x="410" y="54" font-family="IBM Plex Sans,sans-serif" font-size="11" fill="#4a5765">competitor opens, t = 11</text>
+          <line x1="70" y1="211.1" x2="645" y2="211.1" stroke="#9d3b3b" stroke-width="1.5" stroke-dasharray="6 4"/>
+          <text x="645" y="205" text-anchor="end" font-family="IBM Plex Sans,sans-serif" font-size="11" fill="#9d3b3b">T = 100</text>
+          <polyline points="70.0,260.0 103.5,259.5 137.1,260.0 170.6,260.0 204.1,255.1 237.6,258.5 271.2,260.0 304.7,250.7 338.2,260.0 371.8,260.0 405.3,234.6 438.8,216.5 472.4,185.7 505.9,163.7 539.4,129.5 572.9,105.5 606.5,77.2 640.0,57.1"
+            fill="none" stroke="#1f6b6b" stroke-width="2.5"/>
+          <polyline points="70.0,260.0 103.5,260.0 137.1,260.0 170.6,255.6 204.1,260.0 237.6,260.0 271.2,260.0 304.7,260.0 338.2,258.0 371.8,260.0 405.3,260.0 438.8,260.0 472.4,260.0 505.9,260.0 539.4,260.0 572.9,260.0 606.5,260.0 640.0,260.0"
+            fill="none" stroke="#8a5a1c" stroke-width="2.2" stroke-dasharray="5 4"/>
+          <circle cx="472.4" cy="185.7" r="5.5" fill="#1f6b6b"/>
+          <text x="480" y="180" font-family="IBM Plex Sans,sans-serif" font-size="11" fill="#1f6b6b">alarm, t = 13</text>
+          <text x="108" y="240" font-family="IBM Plex Sans,sans-serif" font-size="11" fill="#1f6b6b">S− (decrease)</text>
+          <text x="108" y="254" font-family="IBM Plex Sans,sans-serif" font-size="11" fill="#8a5a1c">S+ (increase) — flat at zero</text>
+        </svg>
+        <figcaption>Two statistics, one data set. The decrease side carries all the evidence; the increase side correctly reports nothing. Note that S<sup>−</sup> rises as sales fall — the statistic moves opposite to the quantity it is monitoring.</figcaption>
+      </figure>
+
+      <div class="callout">
+        <p class="tag">Running both sides is not free</p>
+        <p>Each period now gives the scheme two chances to alarm instead of one, so at the same T a two-sided scheme raises roughly twice as many false alarms as a one-sided one. If the false-alarm rate is what you were tuning, raise T a little when you add the second side. The two sides do not have to be symmetric either — if an increase is dangerous and a decrease is merely interesting, give them different C and T.</p>
+      </div>
+
+      <p>Which to run is a decision about consequences, not about statistics:</p>
+      <table class="plain">
+        <tr><th>Situation</th><th>Run</th></tr>
+        <tr><td>Bearing temperature, contamination level, server latency, defect rate — only one direction is a problem</td><td><strong>One-sided.</strong> Monitoring the harmless direction buys nothing but false alarms.</td></tr>
+        <tr><td>A machined dimension, a chemical concentration, sales, a calibration reading — either direction signals something worth knowing</td><td><strong>Two-sided.</strong> Both recursions, same data, alarm on either.</td></tr>
+      </table>
+      <p>One practical detail that is easy to forget: <strong>once the alarm fires and the cause has been dealt with, reset the statistic to zero.</strong> Otherwise it stays above T forever and alarms every period from then on.</p>
+
+      <div class="ix" data-quiz="m6l2-q5">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">In the sales example, S<sup>−</sup> reaches 415 by week 18 while S<sup>+</sup> sits at 0. What does the pair of numbers tell you?</p>
+        <div class="opts">
+          <button class="opt" data-fb="Nothing in either statistic is a level. S− = 415 is accumulated evidence measured in unit-weeks of shortfall; the process level is around 435, which you read off x, not off S.">Sales have fallen to roughly 415 units a week.</button>
+          <button class="opt" data-right data-fb="A large S− means sustained running below μ, and S+ pinned at zero means no stretch of above-expectation readings survived the allowance. Together they say: a decrease, no increase, with plenty of margin over the threshold. The magnitude 415 is accumulated evidence, not a level.">The process has moved down and has not moved up — and the evidence for the drop is now four times the threshold.</button>
+          <button class="opt" data-fb="It is working exactly as designed. S+ is supposed to sit at zero when there is no increase; a lower statistic that never moved would be the broken one here.">The increase recursion has failed and needs its floor removed so it can go negative.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Exam target</span>
+      <p class="q">Write both recursions from memory and say what changes between them.</p>
+      <details><summary>Show answer</summary>
+        <p class="a">S<sup>+</sup><sub>t</sub> = max&#123;0, S<sup>+</sup><sub>t−1</sub> + (x<sub>t</sub> − μ − C)&#125; and S<sup>−</sup><sub>t</sub> = max&#123;0, S<sup>−</sup><sub>t−1</sub> + (μ − x<sub>t</sub> − C)&#125;, both from S<sub>0</sub> = 0, both alarming at S<sub>t</sub> ≥ T. The only change is the sign of the deviation: x<sub>t</sub> − μ becomes μ − x<sub>t</sub>. C is subtracted in both, the floor at zero applies to both, and both compare against the same positive threshold.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>The same equations in industrial notation</h3>
+      <p>Quality-control software, textbooks and published tuning tables all write CUSUM with different letters. It is worth being able to read them, because that is where the ready-made parameter values live.</p>
+      <div class="formula">
+        C<sup>+</sup><sub>i</sub> &nbsp;=&nbsp; max &#123; 0 , &nbsp; C<sup>+</sup><sub>i−1</sub> + ( x<sub>i</sub> − μ<sub>0</sub> ) − K &#125;<br>
+        C<sup>−</sup><sub>i</sub> &nbsp;=&nbsp; max &#123; 0 , &nbsp; C<sup>−</sup><sub>i−1</sub> − ( x<sub>i</sub> − μ<sub>0</sub> ) − K &#125;<br><br>
+        signal when &nbsp; C<sup>+</sup><sub>i</sub> &gt; H &nbsp; or &nbsp; C<sup>−</sup><sub>i</sub> &gt; H
+        <span class="cap">Identical to the two recursions above. μ<sub>0</sub> is μ, K is C, H is T. This is the "tabular CUSUM"; the older graphical "V-mask" version is the same decision drawn as a sideways V laid over the plot.</span>
+      </div>
+      <table class="plain">
+        <tr><th>Course notation</th><th>Industrial notation</th><th>Usual name</th></tr>
+        <tr><td>μ</td><td>μ<sub>0</sub></td><td>target, or in-control mean</td></tr>
+        <tr><td>C</td><td>K = k·σ</td><td>reference value, allowance, or slack</td></tr>
+        <tr><td>T</td><td>H = h·σ</td><td>decision interval</td></tr>
+      </table>
+      <p>The useful part is the <em>σ</em>. Expressing the two dials as multiples of the process standard deviation makes them portable: <span class="m">k</span> and <span class="m">h</span> mean the same thing on a temperature probe and on a share price, so published tables of good settings apply to both. The standard starting points:</p>
+      <ul>
+        <li><strong>k = δ/2</strong> — half the shift, measured in standard deviations, that you most want to catch quickly. Aiming at a 1σ shift gives k = 0.5, which is the default in most software. This is not a rule of thumb: k = δ/2 is the value that makes each period's contribution the log-likelihood ratio between "unchanged" and "shifted by δ", which is what makes CUSUM the fastest detector for that particular shift size.</li>
+        <li><strong>h = 4 or 5</strong> — with k = 0.5, h = 4 gives about 168 periods between false alarms and h = 5 about 465. Larger h, rarer false alarms, later detection: the same trade as always, now in numbers you can look up rather than guess.</li>
+        <li><strong>Fast initial response</strong> — start the statistic at H/2 instead of 0 if the process might already be out of control when monitoring begins. Detection is much faster at startup, at the cost of some extra early false alarms.</li>
+      </ul>
+      <p>The cost of that precision is narrowness: k is tuned to <em>one</em> shift size, and performance falls away for shifts much larger or smaller than δ. If you have no particular δ in mind, EWMA (in the extra material below) is the more forgiving choice.</p>
+
+      <h3>The two numbers that price the two mistakes</h3>
+      <div class="defn">
+        <span class="term">Average run length (ARL)</span>
+        <p>The average number of periods a scheme runs before it raises an alarm. Quoted twice: <strong>ARL<sub>0</sub></strong>, measured while the process is healthy, is the average gap between false alarms and should be <em>large</em>. <strong>ARL<sub>1</sub></strong>, measured after a change of a stated size, is the average detection delay and should be <em>small</em>.</p>
+      </div>
+      <p>This is Lesson 1's trade-off turned into two numbers you can actually compute and compare. It also makes the case for CUSUM concrete. Take a plain Shewhart chart, which alarms whenever a single observation falls outside ±3σ: false alarms arrive every 370 periods on average, which sounds excellent, but a sustained 1σ shift takes about 44 periods to catch because a 1σ shift only pushes about 2% of readings past the limit. A CUSUM with k = 0.5 and h = 4 catches the same 1σ shift in about 8 periods.</p>
+      <table>
+        <tr><th>Scheme</th><th>ARL<sub>0</sub> — periods between false alarms</th><th>ARL<sub>1</sub> at a 1σ shift</th></tr>
+        <tr><td>Shewhart chart, ±3σ limits</td><td>≈ 370</td><td>≈ 44</td></tr>
+        <tr><td>CUSUM, k = 0.5, h = 4</td><td>≈ 168</td><td>≈ 8</td></tr>
+        <tr><td>CUSUM, k = 0.5, h = 5</td><td>≈ 465</td><td>≈ 11</td></tr>
+      </table>
+      <p>Read the last row against the first: CUSUM at h = 5 raises <em>fewer</em> false alarms than the Shewhart chart and still detects the shift four times faster. Accumulating evidence is not a compromise here, it is a straight improvement — for small shifts. For a large sudden jump the ordering reverses, because a 4σ jump puts the very first observation outside the Shewhart limits while CUSUM still needs a period or two to accumulate. That is the whole reason both charts are still in use, and why some schemes run both.</p>
+
+      <div class="callout">
+        <p class="tag">What the equations quietly assume</p>
+        <p>CUSUM as written assumes observations are independent and identically distributed around μ when nothing has changed, with a stable spread. Three consequences worth knowing: <strong>autocorrelation inflates false alarms badly</strong>, because runs of similar values look like accumulating evidence; <strong>trend or seasonality must be modelled first</strong>, with CUSUM then run on the residuals rather than the raw series; and <strong>μ and σ have to be estimated from a clean stretch of data</strong> — a "Phase I" period known to be in control. Estimating μ from data that already contains the change is a good way to detect nothing.</p>
+      </div>
+
+      <div class="ix" data-quiz="m6l2-q6">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">A process jumps by 4σ in one step. Which scheme notices first, and why?</p>
+        <div class="opts">
+          <button class="opt" data-right data-fb="A 4σ jump puts the very next observation outside ±3σ, so the Shewhart chart alarms on that single point. CUSUM has to accumulate, which costs at least a period. Accumulation is what wins for small shifts and what loses for large ones — the crossover is roughly around 1.5σ.">Shewhart, because a jump that size puts a single observation outside the limits immediately.</button>
+          <button class="opt" data-fb="CUSUM's advantage is for small sustained shifts that individual observations cannot reveal. When one observation is already conclusive, accumulating is just a delay.">CUSUM, because accumulating evidence is always faster than judging one point.</button>
+          <button class="opt" data-fb="They are not equivalent. The two schemes have genuinely different strengths, which is why combined Shewhart–CUSUM schemes exist.">Neither — for a shift that large the two schemes are mathematically equivalent.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Check</span>
+      <p class="q">Why quote ARL<sub>0</sub> and ARL<sub>1</sub> rather than a single accuracy number?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Because the two mistakes have different costs and no single number can express the trade between them. ARL<sub>0</sub> prices crying wolf, ARL<sub>1</sub> prices reacting late, and tuning C and T just slides you along the curve between them. Which point on the curve is right comes from the costs, not from the data.</p>
+      </details>
+    </aside>
+  </div>
+  <div class="row">
+    <div class="main">
       <div class="callout">
         <p class="tag">What to take from this lesson</p>
-        <p>CUSUM is one method among several, and the course does not attempt to cover the rest. What generalises is the underlying idea — accumulate evidence over time rather than judging each observation alone — and the trade-off between early detection and false detection, which every change-detection method has to make somewhere.</p>
+        <p>CUSUM is one method among several, and the course does not attempt to cover the rest. What generalises is the underlying idea — accumulate evidence over time rather than judging each observation alone — and the trade-off between early detection and false detection, which every change-detection method has to make somewhere. If you want to know what the other methods are, the <a href="#extra">additional resources</a> below map them out; none of that is class material.</p>
       </div>
 
       <div class="note">
@@ -413,6 +628,7 @@
   <ul>
     <li><strong>This is Module 5’s question at a different time scale.</strong> An outlier is one point that doesn’t fit its context; a change is every subsequent point failing to fit the old context. Module 5’s contextual outlier and this module’s level shift differ mainly in how many points are involved.</li>
     <li><strong>CUSUM is the residual trick with a memory.</strong> Module 5 found outliers by fitting a model and looking at where the error was large. CUSUM does the same thing — μ is the model, x<sub>t</sub> − μ is the residual — except that it accumulates residuals instead of judging each one alone. That is the entire difference, and it is what buys early detection.</li>
+    <li><strong>The two recursions are one recursion.</strong> Increase and decrease differ only in the sign of the deviation term — C is subtracted in both, the floor at zero applies to both, both compare against the same positive threshold. Almost every error people make here comes from assuming more differs than actually does, usually by flipping the sign of C as well or expecting the lower statistic to go negative.</li>
     <li><strong>The reset at zero is the whole idea, compressed.</strong> Evidence for an increase is worth keeping; evidence against one is thrown away, because the question is only ever “has it gone up?”. That asymmetry is what makes CUSUM fast, and it is also why C has to exist.</li>
     <li><strong>Neither lesson tells you how to set anything.</strong> C, T and μ are all left to you. Module 3’s validation material is the missing piece, with one twist: “performs well” here has two components — detection delay and false-alarm rate — whose relative weight comes from costs rather than from data.</li>
     <li><strong>Statistical correctness is not the goal.</strong> Lesson 1 rejects hypothesis testing even though it gives the right answer. That is unusual enough to be worth remembering: a method can be correct and still useless, if the deadline is part of the problem.</li>
@@ -425,23 +641,639 @@
     <li>Explain why hypothesis testing can be the wrong tool even when it is statistically correct.</li>
     <li>State the central trade-off between early detection and false detection.</li>
     <li>Write the CUSUM recursion for an increase and for a decrease, and say what each symbol does.</li>
+    <li>State precisely what differs between the two recursions — and what does not.</li>
+    <li>Compute four or five periods of either recursion by hand from a short table of observations, and say whether an alarm fires.</li>
+    <li>Explain why C is subtracted in both directions rather than added in one of them, and what goes wrong if it is not.</li>
     <li>Explain why the running total resets to zero rather than going negative.</li>
     <li>Describe the effect on detection delay and on false alarms of raising C, and of raising T.</li>
+    <li>Say what it means when the decrease statistic is large and the increase statistic is zero.</li>
     <li>Sketch a control chart and mark where a change would be declared.</li>
   </ul>
+  <p style="font-family:var(--sans);font-size:.9rem;color:var(--ink-soft);max-width:66ch">Everything above is class material. <a href="#extra">Additional resources</a> follow — the other detection methods, the industrial k and h notation, ARL, practice problems and reading — none of it taught in this module.</p>
 
   <div class="note">
     <div class="note-head"><span class="lbl">Module 6 — my own summary</span><span class="hint">click to type; saves automatically</span></div>
     <div class="note-body" contenteditable="true" data-note="m6summary" data-placeholder="Write the module back in your own words — the fastest way to find out what you don't actually know yet."></div>
   </div>
 
+</section>
+
+<!-- ==================== ADDITIONAL RESOURCES DIVIDER ==================== -->
+<section class="close" id="extra" style="--accent:#1f6b6b">
+  <h2>Additional resources</h2>
+  <p class="h2meta">Everything below this line is <strong>not class material</strong></p>
+  <div class="defn">
+    <span class="term">Read this first</span>
+    <p>The two lessons above are the module as taught: change detection as a question, and CUSUM as one method for answering it. Everything from here on was assembled from outside sources — textbooks, the NIST engineering statistics handbook, method papers and the documentation of the standard software libraries. None of it is examinable unless your instructor says so, and where a convention differs from the lectures, <strong>the lectures win</strong>.</p>
+  </div>
+  <p>It is here for three reasons. The lectures state that CUSUM is one method among several without covering the rest, so the first section is the map of what those others are and what each is for. The second section is how to choose between them and how to judge whether a detector is any good. The third is extra practice, because the only reliable way to find out whether you can apply CUSUM is to apply it. The last is where to read further.</p>
+  <ul class="thread">
+    <li><span class="dot" style="--d:#1f6b6b"></span><span class="lbl">Extra 1</span><span>The full map of change-detection methods, grouped by the question each family answers.</span></li>
+    <li><span class="dot" style="--d:#2f6b45"></span><span class="lbl">Extra 2</span><span>Choosing between them, and the metrics used to compare detectors.</span></li>
+    <li><span class="dot" style="--d:#8a3d5c"></span><span class="lbl">Extra 3</span><span>Practice problems with worked solutions, and a longer self-test.</span></li>
+    <li><span class="dot" style="--d:#4a5765"></span><span class="lbl">Extra 4</span><span>Sources, further reading and the software you would actually use.</span></li>
+  </ul>
+</section>
+
+<!-- ==================== EXTRA 1 ==================== -->
+<section class="lesson" id="x1" data-short="Method map" style="--accent:#1f6b6b">
+  <div class="lesson-head">
+    <span class="ln">Extra 1 &middot; not class material</span>
+    <h2>The full map of methods</h2>
+    <p class="keyline">Every method here accumulates or compares evidence about whether the data-generating process has moved. They differ in when you need the answer, what kind of change you are looking for, and how much you are willing to assume.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>The one distinction that organises everything</h3>
+      <p>Before the taxonomy, the split that decides which half of the literature applies to you — and it is Lesson 1's three families of question, in disguise.</p>
+      <table>
+        <tr><th></th><th>Online / sequential</th><th>Offline / retrospective</th></tr>
+        <tr><td><strong>The question</strong></td><td>"Has it changed <em>by now</em>?" Asked again after every new observation.</td><td>"Where, in this completed series, did it change?"</td></tr>
+        <tr><td><strong>Data available</strong></td><td>Everything up to <em>t</em>, nothing after.</td><td>All of it, at once.</td></tr>
+        <tr><td><strong>Output</strong></td><td>A stopping time — the period at which you declare a change.</td><td>A set of change-point locations, possibly several.</td></tr>
+        <tr><td><strong>Judged by</strong></td><td>Detection delay against false-alarm rate.</td><td>How close the estimated locations are to the true ones.</td></tr>
+        <tr><td><strong>Maps to Lesson 1's</strong></td><td>"Do we need to do something?"</td><td>"Did our action have an effect?" and "What has drifted?"</td></tr>
+        <tr><td><strong>Examples</strong></td><td>CUSUM, Shewhart, EWMA, Page–Hinkley, Shiryaev–Roberts, ADWIN</td><td>Binary segmentation, PELT, Bai–Perron, BOCPD</td></tr>
+      </table>
+      <p>CUSUM sits squarely in the online column, which is exactly why the lectures introduce it right after arguing that the answer has to arrive in time to act.</p>
+
+      <h3>Family 1 — Sequential monitoring (control charts)</h3>
+      <p>All three of the classical charts monitor a stream and signal when a statistic crosses a limit. What separates them is how much memory the statistic has.</p>
+      <table>
+        <tr><th>Method</th><th>Statistic</th><th>Memory</th><th>Best at</th></tr>
+        <tr>
+          <td><strong>Shewhart chart</strong><br><span class="m">Shewhart, 1925/1931</span></td>
+          <td>The observation itself, against μ ± 3σ</td>
+          <td>None — each point judged alone</td>
+          <td>Large sudden shifts, roughly 2σ and up. Fastest possible response to a big jump; nearly blind to small sustained drift.</td>
+        </tr>
+        <tr>
+          <td><strong>CUSUM</strong><br><span class="m">Page, 1954</span></td>
+          <td>Running total of deviations, discounted by C and floored at zero</td>
+          <td>Full, but reset to zero whenever evidence runs out</td>
+          <td>Small sustained shifts of a size you can name in advance. Optimal for that size; performance drops off either side of it.</td>
+        </tr>
+        <tr>
+          <td><strong>EWMA</strong><br><span class="m">Roberts, 1959</span></td>
+          <td>z<sub>t</sub> = λx<sub>t</sub> + (1 − λ)z<sub>t−1</sub>, against limits that widen then settle</td>
+          <td>Full, geometrically fading</td>
+          <td>Small shifts, without committing to one size. More forgiving than CUSUM across a range of shifts, slightly slower at any one of them.</td>
+        </tr>
+      </table>
+      <div class="formula">
+        EWMA: &nbsp; z<sub>t</sub> &nbsp;=&nbsp; λ x<sub>t</sub> + ( 1 − λ ) z<sub>t−1</sub> , &nbsp;&nbsp; z<sub>0</sub> = μ<br><br>
+        limits: &nbsp; μ &nbsp;±&nbsp; L σ √( λ / (2 − λ) · [ 1 − (1 − λ)<sup>2t</sup> ] )
+        <span class="cap">λ between 0.05 and 0.25, with 0.2 the common default; L is usually 3. Small λ means a long memory and sensitivity to tiny shifts; large λ approaches a Shewhart chart. λ is EWMA's version of C — the single dial that trades speed against false alarms.</span>
+      </div>
+      <p>The comparison is easiest to see on one data set. Below, thirty observations from a standard normal, with a 1σ shift introduced at <em>t</em> = 16:</p>
+
+      <figure>
+        <svg class="fig" viewBox="0 0 660 260" role="img" aria-label="Three panels on the same thirty observations with a one-sigma shift at observation sixteen. Left, a Shewhart chart: every point stays inside the plus or minus three sigma limits, so it never signals. Middle, a CUSUM chart: the statistic climbs after the shift and crosses its limit at observation eighteen. Right, an EWMA chart: the smoothed line crosses its upper limit at observation eighteen.">
+          <text x="40" y="26" font-family="IBM Plex Sans,sans-serif" font-size="12" font-weight="600" fill="#131b26">Shewhart ±3σ</text>
+          <text x="40" y="40" font-family="IBM Plex Sans,sans-serif" font-size="10.5" fill="#9d3b3b">never signals</text>
+          <line x1="40" y1="210" x2="215" y2="210" stroke="#131b26" stroke-width="1.3"/>
+          <line x1="40" y1="210" x2="40" y2="50" stroke="#131b26" stroke-width="1.3"/>
+          <line x1="40" y1="130" x2="215" y2="130" stroke="#9aa5b1" stroke-width="1" stroke-dasharray="4 4"/>
+          <line x1="40" y1="61.4" x2="215" y2="61.4" stroke="#9d3b3b" stroke-width="1.4" stroke-dasharray="5 4"/>
+          <line x1="40" y1="198.6" x2="215" y2="198.6" stroke="#9d3b3b" stroke-width="1.4" stroke-dasharray="5 4"/>
+          <line x1="130.5" y1="50" x2="130.5" y2="210" stroke="#6e4a8c" stroke-width="1.2" stroke-dasharray="3 3"/>
+          <polyline points="40.0,140.7 46.0,101.9 52.1,134.1 58.1,88.6 64.1,150.1 70.2,125.9 76.2,97.8 82.2,154.5 88.3,108.5 94.3,156.1 100.3,121.1 106.4,109.2 112.4,127.3 118.4,89.5 124.5,89.5 130.5,104.9 136.6,97.3 142.6,90.2 148.6,130.9 154.7,131.8 160.7,136.2 166.7,109.4 172.8,133.4 178.8,123.6 184.8,92.1 190.9,95.0 196.9,77.9 202.9,103.3 209.0,111.9 215.0,90.7"
+            fill="none" stroke="#4a5765" stroke-width="1.6"/>
+          <text x="40" y="232" font-family="IBM Plex Sans,sans-serif" font-size="10.5" fill="#4a5765">no single point is extreme enough</text>
+
+          <text x="255" y="26" font-family="IBM Plex Sans,sans-serif" font-size="12" font-weight="600" fill="#131b26">CUSUM k=0.5, h=5</text>
+          <text x="255" y="40" font-family="IBM Plex Sans,sans-serif" font-size="10.5" fill="#2f6b45">signals at t = 18</text>
+          <line x1="255" y1="210" x2="430" y2="210" stroke="#131b26" stroke-width="1.3"/>
+          <line x1="255" y1="210" x2="255" y2="50" stroke="#131b26" stroke-width="1.3"/>
+          <line x1="255" y1="130" x2="430" y2="130" stroke="#9d3b3b" stroke-width="1.4" stroke-dasharray="5 4"/>
+          <text x="430" y="124" text-anchor="end" font-family="IBM Plex Sans,sans-serif" font-size="10" fill="#9d3b3b">h</text>
+          <line x1="345.5" y1="50" x2="345.5" y2="210" stroke="#6e4a8c" stroke-width="1.2" stroke-dasharray="3 3"/>
+          <polyline points="255.0,210.0 261.0,198.3 267.1,209.2 273.1,188.2 279.1,210.0 285.2,210.0 291.2,195.4 297.2,210.0 303.3,203.0 309.3,210.0 315.3,210.0 321.4,203.4 327.4,209.5 333.4,189.2 339.5,168.9 345.5,159.3 351.6,144.4 357.6,124.6 363.6,133.2 369.7,142.5 375.7,154.8 381.7,148.4 387.8,158.8 393.8,162.3 399.8,143.8 405.9,127.3 411.9,98.8 417.9,88.1 424.0,83.4 430.0,63.9"
+            fill="none" stroke="#8a5a1c" stroke-width="2"/>
+          <circle cx="357.6" cy="124.6" r="4.5" fill="#2f6b45"/>
+          <text x="255" y="232" font-family="IBM Plex Sans,sans-serif" font-size="10.5" fill="#4a5765">accumulates, then crosses</text>
+
+          <text x="470" y="26" font-family="IBM Plex Sans,sans-serif" font-size="12" font-weight="600" fill="#131b26">EWMA λ=0.2, L=3</text>
+          <text x="470" y="40" font-family="IBM Plex Sans,sans-serif" font-size="10.5" fill="#2f6b45">signals at t = 18</text>
+          <line x1="470" y1="210" x2="645" y2="210" stroke="#131b26" stroke-width="1.3"/>
+          <line x1="470" y1="210" x2="470" y2="50" stroke="#131b26" stroke-width="1.3"/>
+          <line x1="470" y1="130" x2="645" y2="130" stroke="#9aa5b1" stroke-width="1" stroke-dasharray="4 4"/>
+          <line x1="470" y1="76.7" x2="645" y2="76.7" stroke="#9d3b3b" stroke-width="1.4" stroke-dasharray="5 4"/>
+          <line x1="470" y1="183.3" x2="645" y2="183.3" stroke="#9d3b3b" stroke-width="1.4" stroke-dasharray="5 4"/>
+          <line x1="560.5" y1="50" x2="560.5" y2="210" stroke="#6e4a8c" stroke-width="1.2" stroke-dasharray="3 3"/>
+          <polyline points="470.0,135.0 476.0,120.9 482.1,124.6 488.1,106.4 494.1,120.5 500.2,120.5 506.2,107.3 512.2,123.3 518.3,114.6 524.3,129.8 530.3,125.7 536.4,116.9 542.4,118.2 548.4,101.7 554.5,88.5 560.5,85.0 566.6,78.8 572.6,70.5 578.6,82.8 584.7,93.1 590.7,103.3 596.7,99.1 602.8,106.9 608.8,108.5 614.8,95.1 620.9,85.7 626.9,70.3 632.9,69.7 639.0,73.4 645.0,66.4"
+            fill="none" stroke="#1f6b6b" stroke-width="2"/>
+          <circle cx="572.6" cy="70.5" r="4.5" fill="#2f6b45"/>
+          <text x="470" y="232" font-family="IBM Plex Sans,sans-serif" font-size="10.5" fill="#4a5765">smooths, then crosses</text>
+        </svg>
+        <figcaption>Same thirty observations in all three panels; the dashed vertical line marks the 1σ shift at <em>t</em> = 16. The largest single observation in the whole series is 2.28σ, so the Shewhart chart never signals. Both memory-based charts signal at <em>t</em> = 18 — two observations after the change. This is the argument for accumulation, in one picture.</figcaption>
+      </figure>
+
+      <p>Two more members of this family worth knowing by name:</p>
+      <ul>
+        <li><strong>Page–Hinkley test.</strong> A CUSUM variant that tracks the gap between the running mean and the current observation and signals when the cumulative deviation exceeds a threshold. Essentially the same idea with the baseline estimated on the fly rather than fixed — which is why it is the one that reappears in machine-learning drift libraries.</li>
+        <li><strong>Shiryaev–Roberts procedure.</strong> Sums likelihood ratios over all possible change points instead of taking the maximum, giving a Bayesian-flavoured alternative to CUSUM with comparable performance and sometimes better properties for detecting a change that happened long ago.</li>
+        <li><strong>Combined Shewhart–CUSUM.</strong> Run both, alarm on either. Catches large jumps immediately and small drift eventually, at the cost of a somewhat higher false-alarm rate. Widely used where both failure modes are real.</li>
+      </ul>
+
+      <div class="ix" data-quiz="m6x1-q1">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">What distinguishes a Shewhart chart from CUSUM and EWMA, in one word?</p>
+        <div class="opts">
+          <button class="opt" data-right data-fb="Memory. The Shewhart statistic is the observation itself, so nothing carries forward between periods. CUSUM carries everything forward until the evidence runs out; EWMA carries everything forward with a geometric fade. That single property explains every difference in their behaviour.">Memory — the Shewhart statistic has none, the other two do.</button>
+          <button class="opt" data-fb="All three assume a known in-control mean and spread, usually estimated from a clean stretch of data. None of them is distribution-free in its standard form.">Assumptions — only Shewhart requires the data to be normally distributed.</button>
+          <button class="opt" data-fb="All three are online methods designed for streaming data and used in exactly the same monitoring situations. The difference is in the statistic, not the setting.">Timing — Shewhart is retrospective while CUSUM and EWMA run online.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Link to Lesson 2</span>
+      <p class="q">Where does the course's CUSUM sit in this family?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">It is the tabular CUSUM with C in raw units rather than in multiples of σ, run one-sided in the worked example and two-sided when both recursions are used. Everything in Lesson 2 transfers directly; the industrial notation just renames μ, C and T as μ<sub>0</sub>, K and H.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Family 2 — Offline segmentation: finding change points after the fact</h3>
+      <p>When the series is complete and you want to know where the breaks were — possibly several of them — the problem becomes an optimisation: partition the series so that the data within each segment fits a simple model well, without inventing so many breaks that you are just fitting noise. Every method below is a different way of searching that space.</p>
+      <table>
+        <tr><th>Method</th><th>How it searches</th><th>Trade-off</th></tr>
+        <tr><td><strong>Binary segmentation</strong><br><span class="m">Scott &amp; Knott, 1974</span></td><td>Find the single best split, then recurse into each half.</td><td>Fast, roughly <em>n</em> log <em>n</em>, and easy to implement. Greedy, so not guaranteed to find the best partition — it can miss change points that are close together.</td></tr>
+        <tr><td><strong>Segment neighbourhood</strong><br><span class="m">Auger &amp; Lawrence, 1989</span></td><td>Search the whole solution space by dynamic programming.</td><td>Exact, but expensive enough to be impractical on long series.</td></tr>
+        <tr><td><strong>Dynamic programming (Dynp)</strong></td><td>Exact minimisation when you already know how many change points there are.</td><td>Optimal for a fixed number of breaks. You have to supply that number.</td></tr>
+        <tr><td><strong>PELT</strong><br><span class="m">Killick et al., 2012</span></td><td>Dynamic programming plus pruning of paths that provably cannot be optimal, with a penalty (often BIC) controlling how many breaks are worth having.</td><td>Exact <em>and</em> roughly linear time when change points are spread through the series. The current default for offline work; its assumption is that breaks grow in number with the length of the series rather than clustering in one stretch.</td></tr>
+        <tr><td><strong>Wild binary segmentation</strong><br><span class="m">Fryzlewicz, 2014</span></td><td>Run the search on many randomly drawn sub-intervals and aggregate.</td><td>Much better than plain binary segmentation at multiple or closely spaced change points, at extra computational cost.</td></tr>
+        <tr><td><strong>Bottom-up / window sliding</strong></td><td>Start over-segmented and merge, or slide a window and score the discrepancy either side of it.</td><td>Cheap and intuitive; approximate. Window methods are a natural bridge between offline and online.</td></tr>
+      </table>
+      <div class="callout">
+        <p class="tag">The search method is not the interesting choice — the cost function is</p>
+        <p>All of these algorithms take a <em>cost function</em> that says how badly a stretch of data fits a single regime, and that is what decides <strong>what kind of change you can find</strong>. An L2 cost detects shifts in the mean. A normal cost detects shifts in mean or variance. A linear cost detects changes in a regression relationship between variables. An autoregressive cost detects changes in the dynamics. A kernel or RBF cost detects a change in the whole distribution, without assuming its shape. Choosing PELT over binary segmentation changes how thoroughly you search; choosing the cost changes what you are searching for.</p>
+      </div>
+
+      <h3>Family 3 — Bayesian change point detection</h3>
+      <p><strong>Bayesian online change point detection</strong> (BOCPD, Adams &amp; MacKay 2007) maintains a posterior distribution over the <em>run length</em> — how long it has been since the last change — and updates it with every new observation. Instead of a binary alarm it gives you a probability that a change has just occurred, which is exactly what you want when the decision downstream is itself probabilistic, when the sample is small, or when you need to express uncertainty about <em>where</em> the change was rather than just that there was one. The cost is that you must specify prior beliefs about how often changes happen and what the data looks like within a regime.</p>
+
+      <h3>Family 4 — Structural break tests in fitted models</h3>
+      <p>Econometrics asks a narrower version of the question: not "did the series change?" but "did the <em>relationship</em> I fitted change?" — did the coefficients of a regression shift partway through the sample. This is the natural tool for Lesson 1's second family, "did the action we took have an effect".</p>
+      <table>
+        <tr><th>Test</th><th>Break date</th><th>What it does</th></tr>
+        <tr><td><strong>Chow test</strong><br><span class="m">Chow, 1960</span></td><td>Known in advance</td><td>An F-test of whether the regression coefficients before and after a stated date are equal. The baseline everything else generalises.</td></tr>
+        <tr><td><strong>Quandt–Andrews / supF</strong><br><span class="m">Quandt 1960, Andrews 1993</span></td><td>Unknown</td><td>Compute the Chow statistic at every candidate date and take the maximum. The date of the maximum is the likely break; the distribution of that maximum is non-standard, which is what Andrews supplied.</td></tr>
+        <tr><td><strong>Andrews–Ploberger</strong><br><span class="m">1994</span></td><td>Unknown</td><td>Mean and exponential averages of the Wald statistics rather than the maximum — more powerful against some alternatives.</td></tr>
+        <tr><td><strong>CUSUM of recursive residuals</strong><br><span class="m">Brown, Durbin &amp; Evans, 1975</span></td><td>Unknown, and not estimated</td><td>Accumulate one-step-ahead forecast residuals and see whether the total wanders outside a confidence band. Flags parameter instability without committing to a date. <strong>Note the name collision</strong>: same accumulate-residuals idea as Lesson 2, different statistic and a different purpose. CUSUM-of-squares is the companion test for changes in variance.</td></tr>
+        <tr><td><strong>Bai–Perron</strong><br><span class="m">1998, 2003</span></td><td>Unknown, multiple</td><td>Estimates how many breaks there are and where, simultaneously, by minimising total residual sum of squares with sequential supF tests or an information criterion deciding the count. The workhorse for multi-regime problems.</td></tr>
+      </table>
+
+      <h3>Family 5 — Non-parametric and distribution-change methods</h3>
+      <p>Everything so far assumes you can name the distribution, or at least that the change shows up in the mean. When neither holds — heavy tails, high-dimensional data, a change in shape rather than location — these apply instead.</p>
+      <ul>
+        <li><strong>Two-sample Kolmogorov–Smirnov.</strong> Compare the empirical distributions of two windows. Simple, assumption-light, and the basis of the KSWIN streaming detector.</li>
+        <li><strong>Kernel methods / maximum mean discrepancy.</strong> Map the data into a high-dimensional space through a kernel and look for a mean shift there, which corresponds to a change in the full distribution. Kernel CUSUM and kernel change-point detection are the sequential and offline versions.</li>
+        <li><strong>Rank and energy statistics.</strong> Work on the ordering of the data rather than its values, so they are robust to outliers and need no distributional assumption at all.</li>
+      </ul>
+
+      <h3>Family 6 — Drift detection in machine-learning systems</h3>
+      <p>The version of this problem you are most likely to meet in practice: a deployed model that was accurate at launch and is quietly getting worse. Two things can be moving, and the distinction matters because it changes what you monitor.</p>
+      <table class="plain">
+        <tr><th>Term</th><th>What moved</th><th>Detectable from</th></tr>
+        <tr><td><strong>Data drift</strong></td><td>The distribution of the inputs</td><td>The features alone — no labels needed.</td></tr>
+        <tr><td><strong>Concept drift</strong></td><td>The relationship between inputs and outcome</td><td>Prediction errors, so you need labels, and often they arrive late or never.</td></tr>
+      </table>
+      <table>
+        <tr><th>Detector</th><th>Monitors</th><th>Idea</th></tr>
+        <tr><td><strong>DDM</strong> <span class="m">Gama et al., 2004</span></td><td>Error rate</td><td>Track the classifier's error rate and its standard deviation; warn, then alarm, when they rise past thresholds. Assumes errors are binomial.</td></tr>
+        <tr><td><strong>EDDM</strong></td><td>Distance between errors</td><td>Watches the gap between consecutive errors instead of the rate. Better on gradual drift, weaker on sudden drift.</td></tr>
+        <tr><td><strong>ADWIN</strong> <span class="m">Bifet &amp; Gavaldà, 2007</span></td><td>Any stream of values</td><td>Keeps a window that grows while the data is stable, and whenever two sub-windows differ in mean by more than a bound, drops the older part and declares drift. The window size <em>is</em> the estimate of how long the current regime has lasted.</td></tr>
+        <tr><td><strong>KSWIN</strong></td><td>Any stream of values</td><td>Kolmogorov–Smirnov test between a recent window and a reference window. Distribution-free.</td></tr>
+        <tr><td><strong>Page–Hinkley</strong></td><td>Any stream of values</td><td>CUSUM, essentially. The direct descendant of the method in Lesson 2.</td></tr>
+        <tr><td><strong>HDDM</strong>, <strong>RDDM</strong>, <strong>FHDDM</strong></td><td>Error rate</td><td>Refinements of DDM using Hoeffding or McDiarmid bounds, or pruning, for better sensitivity and tighter guarantees.</td></tr>
+      </table>
+      <p>These all inherit Lesson 1's trade-off exactly. Error-rate detectors like DDM and EDDM are cheap in memory because they hold a few summary numbers; window-based detectors like ADWIN and KSWIN hold data and cost more, but detect changes the summary methods miss. And all of them are sensitive to their threshold parameters in the same way C and T are.</p>
+
+      <h3>Family 7 — Model-based monitoring</h3>
+      <ul>
+        <li><strong>Kalman filter innovations.</strong> If you already have a state-space model of the process, its one-step-ahead prediction errors should be white noise with known variance. Running CUSUM or a Shewhart chart on those innovations detects changes in a system that is supposed to be moving — which the raw-value charts cannot handle.</li>
+        <li><strong>Generalised likelihood ratio (GLR).</strong> CUSUM needs you to name the post-change parameter. GLR estimates it from the data instead, maximising the likelihood ratio over both the change point and the size of the change. More flexible, considerably more computation, and the standard answer when you cannot specify δ.</li>
+      </ul>
+      <div class="callout">
+        <p class="tag">Two more that answer a different question entirely</p>
+        <p><strong>Interrupted time series</strong> and <strong>difference-in-differences</strong> are worth knowing because they are the correct tools for Lesson 1's second family. There you already know when the intervention happened, and the question is whether the change that followed can be attributed to it rather than to whatever else was going on. Detection is trivial; attribution is the hard part. Reaching for CUSUM there answers a question nobody asked.</p>
+      </div>
+
+      <div class="ix" data-quiz="m6x1-q2">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">You have five years of completed monthly data and want to know how many regime changes it contains and roughly when. Which family?</p>
+        <div class="opts">
+          <button class="opt" data-fb="Control charts answer 'has it changed by now', one period at a time, and are built for streams where the answer is needed immediately. With the whole series in hand you would be throwing away the future data at every step.">A control chart — CUSUM run through the series from the start.</button>
+          <button class="opt" data-right data-fb="Offline segmentation: the whole series is available, the number of change points is unknown, and the output you want is a set of locations. PELT with a penalty is the standard choice, with the cost function picked to match the kind of change — L2 for the mean, normal for mean and variance, kernel for the whole distribution.">Offline segmentation — PELT or binary segmentation with a penalty.</button>
+          <button class="opt" data-fb="Drift detectors monitor a deployed model's inputs or errors as they stream in. They are the right tool for a live system, not for characterising a completed historical series.">A drift detector such as ADWIN or DDM.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="note">
+        <div class="note-head"><span class="lbl">Methods I want to look into further</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="m6x1" data-placeholder="Which of these actually apply to your data, papers to read, library functions to try…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Worth noticing</span>
+      <p class="q">What do all seven families have in common?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Each one compares the evidence for "same regime" against the evidence for "different regime", and each one needs a threshold to turn that comparison into a decision. The threshold is never supplied by the data — it comes from the relative cost of detecting late and detecting falsely. That is Lesson 1's trade-off, and it survives every change of method.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+<!-- ==================== EXTRA 2 ==================== -->
+<section class="lesson" id="x2" data-short="Comparing methods" style="--accent:#2f6b45">
+  <div class="lesson-head">
+    <span class="ln">Extra 2 &middot; not class material</span>
+    <h2>Choosing and comparing</h2>
+    <p class="keyline">Four questions narrow the field to one or two candidates, and two numbers tell you whether the one you picked is tuned properly.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Four questions that pick the method</h3>
+      <ol class="steps">
+        <li><strong>When do you need the answer?</strong> Immediately, as data arrives → a sequential method: Shewhart, CUSUM, EWMA, or a drift detector. After the fact, with everything in hand → offline segmentation or a structural break test. This question alone removes about half the options.</li>
+        <li><strong>What is changing?</strong> The mean is the easy case and what most methods assume. A change in variance needs a normal cost, CUSUM-of-squares, or a chart built for dispersion. A change in the <em>relationship</em> between variables needs a structural break test or a linear cost. A change in distribution shape with the mean unmoved needs a kernel or rank method.</li>
+        <li><strong>Do you know how big a shift you care about?</strong> Yes → CUSUM with k = δ/2, which is optimal for that δ. No → EWMA, which spreads its sensitivity across shift sizes, or GLR, which estimates the shift from the data.</li>
+        <li><strong>How much can you assume?</strong> A known distribution and independent observations allow the parametric methods and their published ARL tables. Autocorrelation, heavy tails or high dimensions push you toward non-parametric and kernel methods, or toward modelling the structure first and monitoring the residuals.</li>
+      </ol>
+
+      <h3>A summary table</h3>
+      <table>
+        <tr><th>If you need to…</th><th>Use</th><th>Because</th></tr>
+        <tr><td>Catch a small sustained shift of known size, fast, on a live stream</td><td>CUSUM</td><td>Optimal for the shift size you target; roughly five times faster than a Shewhart chart at 1σ.</td></tr>
+        <tr><td>Catch a large sudden jump on a live stream</td><td>Shewhart</td><td>A single observation is already conclusive; accumulating only adds delay.</td></tr>
+        <tr><td>Catch small shifts without naming a size</td><td>EWMA</td><td>One dial, λ, spreads sensitivity across a range of shift sizes.</td></tr>
+        <tr><td>Catch either, on the same process</td><td>Combined Shewhart–CUSUM</td><td>Run both, alarm on either; accept the higher combined false-alarm rate.</td></tr>
+        <tr><td>Find several change points in a completed series</td><td>PELT</td><td>Exact, near-linear time, and works out the number of breaks from a penalty.</td></tr>
+        <tr><td>Find one break in a fitted regression, date unknown</td><td>Quandt–Andrews (supF)</td><td>Maximum Chow statistic over all candidate dates, with the right critical values.</td></tr>
+        <tr><td>Find several breaks in a fitted regression</td><td>Bai–Perron</td><td>Estimates count and locations jointly rather than sequentially by hand.</td></tr>
+        <tr><td>Express uncertainty about whether and where a change occurred</td><td>BOCPD</td><td>Returns a posterior over run length instead of a binary alarm.</td></tr>
+        <tr><td>Monitor a deployed model with labels arriving</td><td>DDM / EDDM / ADWIN</td><td>Built to watch an error stream and trigger retraining.</td></tr>
+        <tr><td>Monitor a deployed model with no labels</td><td>KSWIN or a distribution distance on the features</td><td>Detects data drift, which is all you can see without outcomes.</td></tr>
+        <tr><td>Monitor a process that is supposed to be moving</td><td>CUSUM on model residuals</td><td>Fit the expected behaviour first; the residuals are what should be stationary.</td></tr>
+      </table>
+
+      <div class="ix" data-quiz="m6x2-q1">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">A sensor reading has strong daily seasonality. You run CUSUM on the raw values against a single μ. What happens?</p>
+        <div class="opts">
+          <button class="opt" data-right data-fb="The seasonal peak is a long run of above-expectation values, which is precisely the pattern CUSUM is built to accumulate — so it alarms every day on a perfectly healthy process. Fit the seasonal model first and run CUSUM on the residuals, where a single μ is actually the right description.">It alarms on every seasonal peak, because a predictable run above μ looks exactly like a change.</button>
+          <button class="opt" data-fb="The floor only discards evidence in the wrong direction; it does nothing about a long run in the right direction, which is what a seasonal peak is. The total climbs freely during the peak.">Nothing — the reset at zero cancels the seasonal pattern out over a full cycle.</button>
+          <button class="opt" data-fb="Slower detection is the symptom of too large a C, not of seasonality. Seasonality causes false alarms, not sluggishness — it adds signal where the method expects noise.">It detects real changes more slowly, because the seasonal variation inflates the estimate of σ.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <h3>How to tell whether a detector is any good</h3>
+      <p>Lesson 2 leaves C and T to you and points at Module 3's validation material. This is what "performs well" actually means once you get there — and it is never a single accuracy number, because there are two mistakes with different prices.</p>
+      <table>
+        <tr><th>Metric</th><th>Measures</th><th>Want</th></tr>
+        <tr><td><strong>ARL<sub>0</sub></strong> — in-control average run length</td><td>Average number of periods between false alarms on a healthy process</td><td>Large. 370 and 500 are conventional targets, chosen to match a Shewhart chart.</td></tr>
+        <tr><td><strong>ARL<sub>1</sub></strong> — out-of-control ARL</td><td>Average number of periods from a change of stated size to the alarm</td><td>Small. Always quoted <em>with</em> the shift size, since it is meaningless without one.</td></tr>
+        <tr><td><strong>EDD</strong> — expected detection delay</td><td>The same idea stated as a delay; the standard metric in the sequential-detection literature</td><td>Small. Usually plotted against log ARL<sub>0</sub>, which is close to a straight line for CUSUM.</td></tr>
+        <tr><td><strong>False alarm rate</strong></td><td>Alarms per period on a healthy process — roughly 1/ARL<sub>0</sub></td><td>Small. The more intuitive form when you are explaining the cost to someone.</td></tr>
+        <tr><td><strong>Detection rate / F1</strong></td><td>For offline work: how many true change points were found, against how many were invented</td><td>High. Needs a tolerance window, since "found at <em>t</em> = 41 when the truth was 40" should usually count as a hit.</td></tr>
+        <tr><td><strong>Annotation error, Hausdorff distance</strong></td><td>For segmentation: difference in the number of change points, and the worst location error</td><td>Small. The standard pair for comparing segmentations.</td></tr>
+      </table>
+      <div class="callout">
+        <p class="tag">Why ARL<sub>0</sub> alone is misleading</p>
+        <p>An average of 370 periods between false alarms does not mean a false alarm arrives on schedule every 370 periods. Run lengths are roughly geometric, so the distribution is heavily skewed: with ARL<sub>0</sub> = 370 you will see gaps of 20 periods and gaps of 1,200, and roughly a quarter of the intervals will be shorter than 110. Quote the ARL, but do not promise it as a rhythm.</p>
+      </div>
+
+      <h3>How to actually pick C and T</h3>
+      <p>Lesson 2's answer is Module 3's answer, and it holds. Concretely:</p>
+      <ol class="steps">
+        <li><strong>Get a clean stretch.</strong> Find a period where the process was demonstrably in control and estimate μ and σ from it. Everything downstream depends on this being uncontaminated.</li>
+        <li><strong>Name the shift that matters.</strong> The smallest change you would actually act on, in σ units. That is δ, and k = δ/2 follows.</li>
+        <li><strong>Pick h from what a false alarm costs.</strong> Work out how often you can tolerate stopping a healthy process, convert it to a target ARL<sub>0</sub>, and read h off a table — h = 4 and h = 5 with k = 0.5 give roughly 168 and 465.</li>
+        <li><strong>Simulate.</strong> With μ and σ estimated, generate healthy data, inject a shift of size δ at a known point, and measure the delay and the false-alarm rate you actually get. Repeat over a grid of (k, h). This is the validation step, and it costs almost nothing because the data is synthetic.</li>
+        <li><strong>Backtest on real history.</strong> Run the chosen settings over past data containing known incidents. Count what you would have caught, how late, and how often you would have stopped production for nothing.</li>
+        <li><strong>Re-estimate periodically.</strong> μ and σ drift for legitimate reasons — new equipment, new suppliers, seasonality. A scheme tuned to a baseline that no longer exists is worse than no scheme.</li>
+      </ol>
+
+      <div class="ix" data-quiz="m6x2-q2">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Two CUSUM schemes both detect a 1σ shift in about 9 periods. Scheme A has ARL<sub>0</sub> = 200, scheme B has ARL<sub>0</sub> = 480. Which is better?</p>
+        <div class="opts">
+          <button class="opt" data-fb="Higher ARL0 is better only when detection speed is equal — which is the stated condition here, so B genuinely dominates. But it is worth being clear about why: this is not a general preference for higher ARL0, it is a free lunch in one specific comparison.">A, because a lower ARL<sub>0</sub> means it is more sensitive and will catch unusual behaviour sooner.</button>
+          <button class="opt" data-right data-fb="Equal detection speed, less than half the false alarms: B dominates on both axes, so there is no trade to make. This is the shape of comparison you are looking for when tuning — not 'which point on the curve do I want' but 'is this point even on the curve'. A scheme that is beaten on both metrics is simply badly tuned.">B, because the detection speed is the same and it raises less than half as many false alarms.</button>
+          <button class="opt" data-fb="Usually you cannot, which is what makes tuning a judgement call — but here you can, because one scheme is better on one metric and equal on the other. Dominance does not require a cost model.">Unanswerable without knowing the cost of each mistake.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="note">
+        <div class="note-head"><span class="lbl">Notes on choosing and tuning</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="m6x2" data-placeholder="Your own decision rules, ARL targets your context would tolerate, what your data violates…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Check</span>
+      <p class="q">Why is ARL<sub>1</sub> meaningless without a stated shift size?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Because detection delay depends entirely on how big the change was. The same scheme might take 3 periods on a 2σ shift and 40 on a 0.5σ one. "ARL<sub>1</sub> = 8" is not a property of the scheme; "ARL<sub>1</sub> = 8 at a 1σ shift, with k = 0.5 and h = 4" is.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+<!-- ==================== EXTRA 3 ==================== -->
+<section class="lesson" id="x3" data-short="Extra practice" style="--accent:#8a3d5c">
+  <div class="lesson-head">
+    <span class="ln">Extra 3 &middot; not class material</span>
+    <h2>Practice and self-test</h2>
+    <p class="keyline">Eight worked problems and a mixed self-test. Do the arithmetic by hand at least once — sign errors are invisible until you make one.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Part A — computing CUSUM by hand</h3>
+
+      <div class="callout">
+        <p class="tag">Problem 1 — the increase recursion</p>
+        <p>A process has <span class="m">μ = 20</span>. You are monitoring for an increase with <span class="m">C = 2</span> and <span class="m">T = 10</span>. The first five observations are 23, 19, 24, 26, 22. Compute S<sub>t</sub> for each period and say whether an alarm fires.</p>
+        <details><summary>Show worked solution</summary>
+          <p class="a"><strong>t = 1:</strong> 23 − 20 − 2 = 1; plus S<sub>0</sub> = 0 gives 1. S<sub>1</sub> = 1.<br>
+          <strong>t = 2:</strong> 19 − 20 − 2 = −3; plus 1 gives −2, which is negative, so the floor applies. S<sub>2</sub> = 0.<br>
+          <strong>t = 3:</strong> 24 − 20 − 2 = 2; plus 0 gives 2. S<sub>3</sub> = 2.<br>
+          <strong>t = 4:</strong> 26 − 20 − 2 = 4; plus 2 gives 6. S<sub>4</sub> = 6.<br>
+          <strong>t = 5:</strong> 22 − 20 − 2 = 0; plus 6 gives 6. S<sub>5</sub> = 6.<br><br>
+          <strong>No alarm</strong> — the maximum is 6 against T = 10. Notice t = 5: an observation genuinely above μ contributed exactly nothing, because it exceeded expectation by precisely C. That is C doing its job.</p>
+        </details>
+      </div>
+
+      <div class="callout">
+        <p class="tag">Problem 2 — the decrease recursion</p>
+        <p>Same five observations, same μ = 20. Now compute the <em>decrease</em> statistic with C = 2. What do you get, and what does it tell you?</p>
+        <details><summary>Show worked solution</summary>
+          <p class="a">Every period: μ − x<sub>t</sub> is 20 − 23 = −3, 20 − 19 = +1, 20 − 24 = −4, 20 − 26 = −6, 20 − 22 = −2. Subtract C = 2 from each and the largest is −1. The running total never becomes positive, so <strong>S<sup>−</sup> = 0 in every period.</strong><br><br>
+          The interpretation is not "the method failed" — it is the correct answer. This process has not gone down. A lower statistic pinned at zero is exactly what a healthy or rising process should produce, and is the same behaviour you saw from S<sup>+</sup> in the sales example in Lesson 2.</p>
+        </details>
+      </div>
+
+      <div class="callout">
+        <p class="tag">Problem 3 — a decrease that does fire</p>
+        <p>A machine's output has <span class="m">μ = 100</span>. Monitoring for a decrease with <span class="m">C = 3</span> and <span class="m">T = 12</span>, the observations are 98, 94, 101, 92, 95, 90. When does the alarm fire?</p>
+        <details><summary>Show worked solution</summary>
+          <p class="a"><strong>t = 1:</strong> 100 − 98 − 3 = −1; floored. S<sup>−</sup> = 0.<br>
+          <strong>t = 2:</strong> 100 − 94 − 3 = 3; plus 0. S<sup>−</sup> = 3.<br>
+          <strong>t = 3:</strong> 100 − 101 − 3 = −4; plus 3 gives −1; floored. S<sup>−</sup> = 0.<br>
+          <strong>t = 4:</strong> 100 − 92 − 3 = 5. S<sup>−</sup> = 5.<br>
+          <strong>t = 5:</strong> 100 − 95 − 3 = 2; plus 5. S<sup>−</sup> = 7.<br>
+          <strong>t = 6:</strong> 100 − 90 − 3 = 7; plus 7 gives 14 ≥ 12. <strong>Alarm at t = 6.</strong><br><br>
+          Note t = 3. A single reading above μ wiped out the accumulated evidence entirely, and the eventual detection was delayed by it. That is the price of the floor — and it is the right price, because the alternative is banking credit from quiet periods.</p>
+        </details>
+      </div>
+
+      <div class="callout">
+        <p class="tag">Problem 4 — diagnosing a broken implementation</p>
+        <p>A colleague's decrease detector alarms within about ten periods on every process they point it at, healthy or not. Their code computes <code>s = max(0, s + (mu - x + C))</code>. Explain the behaviour and give the fix.</p>
+        <details><summary>Show worked solution</summary>
+          <p class="a">C is added rather than subtracted, so every period contributes an extra +C regardless of the data. On a healthy process the deviations μ − x<sub>t</sub> average zero, leaving a steady upward drift of C per period. The total therefore reaches T after roughly T/C periods no matter what the process is doing — which is why the alarms arrive on a schedule rather than in response to anything.<br><br>
+          <strong>Fix:</strong> <code>s = max(0, s + (mu - x - C))</code>. A quick sanity test that catches this class of bug: feed the detector data generated with no change at all and confirm the statistic stays near zero. If it climbs steadily, a sign is wrong.</p>
+        </details>
+      </div>
+
+      <h3>Part B — parameters, tuning and interpretation</h3>
+
+      <div class="callout">
+        <p class="tag">Problem 5 — converting to industrial notation</p>
+        <p>A process has σ = 4. You want to catch a shift of 1.5σ as quickly as possible and can tolerate a false alarm roughly every 465 periods. Give k, h, K, H and the resulting recursion.</p>
+        <details><summary>Show worked solution</summary>
+          <p class="a"><strong>k = δ/2 = 0.75</strong>, so K = kσ = 0.75 × 4 = <strong>3</strong>.<br>
+          An ARL<sub>0</sub> near 465 corresponds to <strong>h = 5</strong>, so H = hσ = 5 × 4 = <strong>20</strong>.<br>
+          The recursions are S<sup>+</sup><sub>t</sub> = max{0, S<sup>+</sup><sub>t−1</sub> + (x<sub>t</sub> − μ − 3)} and S<sup>−</sup><sub>t</sub> = max{0, S<sup>−</sup><sub>t−1</sub> + (μ − x<sub>t</sub> − 3)}, alarming at 20.<br><br>
+          <strong>Caveat worth stating:</strong> the ARL<sub>0</sub> ≈ 465 figure is for k = 0.5, not 0.75. Changing k moves the ARL, so in practice you would read h off a table for your actual k, or simulate. Quoting a table value for the wrong k is a common slip.</p>
+        </details>
+      </div>
+
+      <div class="callout">
+        <p class="tag">Problem 6 — reading a tuning decision</p>
+        <p>A hospital monitors post-operative infection rates with CUSUM. The team proposes halving T to catch outbreaks sooner. What do they need to know before agreeing, and what is the alternative?</p>
+        <details><summary>Show worked solution</summary>
+          <p class="a">They need the cost of a false alarm in this setting — an investigation, staff time, possibly suspending a surgeon's list or closing a ward — against the cost of a week's delay in catching a real outbreak. Halving T will roughly halve the detection delay and increase false alarms substantially; whether that is right is a judgement about consequences, not statistics.<br><br>
+          <strong>The alternative worth raising:</strong> tuning C instead. In Lesson 2's reaction-time example, lowering C bought most of the speed while leaving the false-alarm margin nearly intact. C and T both move you along the same curve, but not at the same rate, and it is worth checking both before changing either.<br><br>
+          <strong>One more thing to check:</strong> whether μ is still right. Infection rates have seasonal and case-mix variation, and a scheme tuned against a stale baseline will look badly calibrated whatever you do to T.</p>
+        </details>
+      </div>
+
+      <div class="callout">
+        <p class="tag">Problem 7 — picking a method</p>
+        <p>For each scenario, name a suitable method and say why.<br>
+        (a) A fraud model deployed six months ago; you have labels arriving with a two-week lag.<br>
+        (b) Twenty years of quarterly GDP; you want to know whether the relationship between GDP and interest rates broke, and when.<br>
+        (c) A vibration sensor sampled at 1 kHz where failures announce themselves as a change in the <em>shape</em> of the distribution, not its mean.<br>
+        (d) A filling machine where over-filling wastes product and under-filling breaks a regulation.</p>
+        <details><summary>Show worked solution</summary>
+          <p class="a"><strong>(a)</strong> A drift detector on the error stream — DDM or EDDM if you want a cheap error-rate monitor, ADWIN if you can afford to hold a window. The two-week label lag is the real constraint: it sets a floor on detection delay no method can beat, and it is worth also monitoring the input features with KSWIN so data drift is visible before labels arrive.<br>
+          <strong>(b)</strong> A structural break test, not a control chart — the question is about a fitted relationship. Bai–Perron if multiple breaks are plausible over twenty years, which they are; Quandt–Andrews if you are confident there is at most one.<br>
+          <strong>(c)</strong> A non-parametric method: kernel change-point detection or kernel CUSUM offline, KSWIN online. Mean-based methods are blind to a change that leaves the mean where it was.<br>
+          <strong>(d)</strong> Two-sided CUSUM, with asymmetric parameters. Under-filling is a regulatory breach and over-filling is a cost, so the two directions deserve different thresholds — probably a tighter T on the under-fill side.</p>
+        </details>
+      </div>
+
+      <div class="callout">
+        <p class="tag">Problem 8 — why the method failed</p>
+        <p>A CUSUM on daily website response times alarms two or three times a week, and every investigation finds nothing. σ and μ were estimated from a month of clean data and C = 0.5σ, T = 5σ are standard settings. What is the most likely explanation?</p>
+        <details><summary>Show worked solution</summary>
+          <p class="a"><strong>Autocorrelation and daily seasonality.</strong> Response times are not independent from one reading to the next, and they follow a weekday/weekend and time-of-day pattern. CUSUM's whole design assumes independent observations scattered around a fixed μ; runs of similar values are exactly the pattern it is built to treat as evidence, so predictable structure reads as change. Published ARL tables silently assume independence, which is why settings that should give a false alarm every 465 periods give one every two days.<br><br>
+          <strong>The fix</strong> is to model the structure first — a seasonal model, or an ARIMA fit — and run CUSUM on the residuals, which are what should be independent and stationary. This is the same "residual trick" noted in the module summary, applied to fix the assumption rather than to find the change.</p>
+        </details>
+      </div>
+
+      <h3>Part C — mixed self-test</h3>
+
+      <div class="ix" data-quiz="m6x3-q1">
+        <div class="ix-head"><span class="ix-kind">self-test</span><span class="ix-done">answered</span></div>
+        <p class="prompt">S<sup>−</sup><sub>t−1</sub> = 14, μ = 50, x<sub>t</sub> = 61, C = 4. What is S<sup>−</sup><sub>t</sub>?</p>
+        <div class="opts">
+          <button class="opt" data-fb="That would be the result of adding the deviation without its sign. μ − x is 50 − 61 = −11, not +11, because the observation came in above expectation.">29</button>
+          <button class="opt" data-right data-fb="μ − x = 50 − 61 = −11; minus C = 4 gives −15; plus 14 gives −1, which is negative, so the floor applies and the answer is 0. A single strongly above-expectation reading wiped out the accumulated evidence for a decrease.">0</button>
+          <button class="opt" data-fb="−1 is the value before the floor is applied. The max with zero is part of the recursion, not an optional display convention — the statistic never takes a negative value.">−1</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="ix" data-quiz="m6x3-q2">
+        <div class="ix-head"><span class="ix-kind">self-test</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Two-sided CUSUM, same T as before on each side. Compared with the one-sided version, what happens to the false-alarm rate?</p>
+        <div class="opts">
+          <button class="opt" data-right data-fb="Two statistics, two chances to cross T each period, so roughly twice the false alarms. If you were tuned to a particular ARL0 before adding the second side, you need to raise T to get back to it.">Roughly doubles, because there are now two statistics that can cross the threshold.</button>
+          <button class="opt" data-fb="They do not share evidence. In any given period at most one of the two can be growing, but each has its own independent opportunity to reach T, so the alarm opportunities add rather than cancel.">Stays the same, because the two statistics cannot both be large at once.</button>
+          <button class="opt" data-fb="Nothing about adding a second recursion makes either one harder to trigger. Each runs exactly as it would alone.">Halves, because each direction only sees half the deviations.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="ix" data-quiz="m6x3-q3">
+        <div class="ix-head"><span class="ix-kind">self-test</span><span class="ix-done">answered</span></div>
+        <p class="prompt">You want to detect a 2σ shift as fast as possible with CUSUM. What is k?</p>
+        <div class="opts">
+          <button class="opt" data-fb="0.5 is the default, and it targets a 1σ shift. It would still detect a 2σ shift, just not as quickly as a scheme tuned for it.">0.5, the standard default.</button>
+          <button class="opt" data-right data-fb="k = δ/2 = 1.0, so K = σ. This is the value that makes each period's contribution the log-likelihood ratio between unchanged and shifted-by-2σ, which is what makes CUSUM fastest for that specific shift.">1.0, since k = δ/2.</button>
+          <button class="opt" data-fb="k = δ would set the allowance equal to the whole shift, so a process that had shifted by exactly 2σ would contribute nothing on average and the statistic would never climb. The halving is what leaves room for the evidence to accumulate.">2.0, matching the shift size you are targeting.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="ix" data-quiz="m6x3-q4">
+        <div class="ix-head"><span class="ix-kind">self-test</span><span class="ix-done">answered</span></div>
+        <p class="prompt">A CUSUM alarms, the engineer investigates, finds a genuine fault and fixes it. What must happen to the statistic?</p>
+        <div class="opts">
+          <button class="opt" data-fb="Leaving it alone is the bug. The statistic is above T and nothing in the recursion brings it back down quickly, so it will keep alarming every period on a process that is now healthy.">Nothing — it will come back down on its own once the process returns to μ.</button>
+          <button class="opt" data-right data-fb="Reset to zero, or to a fast-initial-response headstart if you want extra sensitivity during the restart. Without a reset the statistic stays above T and alarms every period from then on, which is how monitoring systems get ignored.">It must be reset to zero before monitoring resumes.</button>
+          <button class="opt" data-fb="Re-estimating μ after fixing a fault would bake the fault's effects into the baseline if any of that data is included, and there is no reason to think the target changed. Reset the statistic, keep the baseline.">μ must be re-estimated from the data since the alarm.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="ix" data-quiz="m6x3-q5">
+        <div class="ix-head"><span class="ix-kind">self-test</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Which statement about ARL<sub>0</sub> = 370 is correct?</p>
+        <div class="opts">
+          <button class="opt" data-fb="It is an average, not a guarantee or a rhythm. Run lengths are roughly geometrically distributed, so short gaps are common — a substantial fraction of intervals will be well under a third of 370.">A false alarm will occur close to every 370 periods.</button>
+          <button class="opt" data-right data-fb="The average gap between false alarms is 370 periods, but the distribution is skewed and heavy in the short tail: intervals of 20 and of 1,200 both happen routinely. Quote it as an average, never as a schedule.">The average gap between false alarms is 370 periods, but individual gaps vary enormously.</button>
+          <button class="opt" data-fb="ARL0 says nothing about real changes — that is ARL1's job, and it is meaningless without a stated shift size. The two numbers measure the two different mistakes.">Real changes will be detected within 370 periods.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="ix" data-quiz="m6x3-q6">
+        <div class="ix-head"><span class="ix-kind">self-test</span><span class="ix-done">answered</span></div>
+        <p class="prompt">A team wants to know whether a policy introduced on a known date changed an outcome. Which approach fits?</p>
+        <div class="opts">
+          <button class="opt" data-fb="CUSUM finds when a change occurred, which you already know. It says nothing about whether the policy caused it rather than something else happening at the same time.">CUSUM, run from the policy date forward, alarming when the outcome shifts.</button>
+          <button class="opt" data-right data-fb="The date is known, so detection is not the problem — attribution is. Interrupted time series and difference-in-differences are built to separate the policy's effect from the trend that was already underway and from anything else that changed at the same moment.">Interrupted time series or difference-in-differences, since the date is known and the question is attribution.</button>
+          <button class="opt" data-fb="PELT would estimate where the breaks were, which is again something you already know. It cannot tell you whether the policy caused the break it finds.">PELT, to locate all the change points and check whether one falls on the policy date.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <h3>Part D — written questions</h3>
+      <p>No multiple choice. Write the answer out before opening it — recognising a correct answer and producing one are different skills, and only the second is tested.</p>
+      <div class="callout">
+        <p class="tag">Six to write out</p>
+        <p><strong>1.</strong> State both CUSUM recursions and explain, in one sentence each, what the deviation term, the constant C, the max with zero, and the threshold T are for.</p>
+        <details><summary>Show a model answer</summary><p class="a">S<sup>+</sup><sub>t</sub> = max{0, S<sup>+</sup><sub>t−1</sub> + (x<sub>t</sub> − μ − C)} and S<sup>−</sup><sub>t</sub> = max{0, S<sup>−</sup><sub>t−1</sub> + (μ − x<sub>t</sub> − C)}, both from zero, both alarming at S<sub>t</sub> ≥ T. The deviation measures how far the process ran from expectation in the direction being monitored. C is the amount of that deviation dismissed as noise each period, so ordinary fluctuation cannot accumulate. The max with zero discards evidence pointing the wrong way, so a quiet stretch does not delay the next detection. T is how much accumulated evidence is required before a change is declared.</p></details>
+        <p><strong>2.</strong> Explain why a statistically correct hypothesis test can be the wrong tool for change detection.</p>
+        <details><summary>Show a model answer</summary><p class="a">Because reaching a conventional significance threshold requires enough evidence to be confident, and on noisy data that can take longer than the deadline allows — longer than the bearing survives, or longer than the scrap costs justify. The verdict is right and arrives too late to act on. Change detection deliberately trades confidence for speed, accepting false alarms as the price of an answer in time.</p></details>
+        <p><strong>3.</strong> Describe what happens to detection delay and false-alarm rate when C rises, and when T rises. Why are these not the same dial?</p>
+        <details><summary>Show a model answer</summary><p class="a">Both raise the delay and reduce false alarms, but they act differently. C is subtracted every period, so it suppresses accumulation continuously — it stops noise building up at all, which flattens the statistic during healthy stretches. T only decides how much accumulated evidence is required at the end, and does nothing to stop the total climbing beforehand. That is why, in the reaction-time example, raising C from 0 to 15 kept nearly all the detection speed while cutting the pre-change peak from 119 to 23; raising T instead would have cost several periods of delay to achieve the same margin.</p></details>
+        <p><strong>4.</strong> Why does the statistic reset to zero rather than being allowed to go negative?</p>
+        <details><summary>Show a model answer</summary><p class="a">Because the question is only ever "has it moved in this direction?". A run of lower-than-expected readings is no evidence against a later increase, and letting the total bank negative credit would mean the method had to climb out of a hole before it could report one — delaying every subsequent detection by however long the quiet stretch lasted. The floor makes each new stretch of data start from a clean slate, which is what makes CUSUM fast.</p></details>
+        <p><strong>5.</strong> A colleague says CUSUM is strictly better than a Shewhart chart. Respond.</p>
+        <details><summary>Show a model answer</summary><p class="a">Only for small sustained shifts. CUSUM with k = 0.5, h = 5 detects a 1σ shift about four times faster than a ±3σ Shewhart chart while raising fewer false alarms, so for that regime it genuinely dominates. But a 4σ jump puts the very next observation outside the Shewhart limits, while CUSUM still needs a period or two to accumulate — so for large sudden changes Shewhart wins. The crossover sits somewhere around 1.5σ, which is why combined Shewhart–CUSUM schemes exist.</p></details>
+        <p><strong>6.</strong> Give three assumptions CUSUM makes and say what goes wrong when each is violated.</p>
+        <details><summary>Show a model answer</summary><p class="a"><strong>Independence:</strong> autocorrelated data contains runs of similar values, which look exactly like accumulating evidence, so false alarms rise far above the rate the tables promise. <strong>Stationarity around a fixed μ:</strong> trend or seasonality produces long predictable runs above expectation and the method alarms on every seasonal peak; fit the structure first and monitor the residuals. <strong>μ and σ estimated from clean data:</strong> if the baseline period already contains the change, μ is pulled toward the post-change level and the method may never detect anything.</p></details>
+      </div>
+
+      <div class="note">
+        <div class="note-head"><span class="lbl">Problems I got wrong</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="m6x3" data-placeholder="Write down the ones you missed and why — that list is the most useful revision material you will produce."></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">How to use this</span>
+      <p class="q">Which of these is worth doing twice?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Problems 1 to 3, by hand, on paper. Everything else in this module is conceptual and will stick from reading; the arithmetic will not, and a sign error in the recursion is the single most common way to lose marks on an otherwise correct answer.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+<!-- ==================== EXTRA 4 ==================== -->
+<section class="lesson" id="x4" data-short="Reading &amp; tools" style="--accent:#4a5765">
+  <div class="lesson-head">
+    <span class="ln">Extra 4 &middot; not class material</span>
+    <h2>Sources and further reading</h2>
+    <p class="keyline">Where the material in Extras 1 to 3 came from, and what you would actually reach for if you had to build one of these.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Start here</h3>
+      <table>
+        <tr><th>Source</th><th>What it gives you</th></tr>
+        <tr>
+          <td><strong>NIST/SEMATECH e-Handbook of Statistical Methods</strong>, section 6.3 — Univariate and Multivariate Control Charts<br><span class="m">itl.nist.gov/div898/handbook/pmc/section3/pmc3.htm</span></td>
+          <td>The free, authoritative reference for control charts. Section 6.3.2.3 covers CUSUM including the V-mask form; 6.3.1.3.1 is the ARL discussion the numbers in Extra 2 come from. Start with this before any textbook.</td>
+        </tr>
+        <tr>
+          <td><strong>Montgomery, <em>Introduction to Statistical Quality Control</em></strong></td>
+          <td>The standard textbook. Its CUSUM chapter is where the tabular form, the k and h notation, ARL tables and the fast-initial-response headstart are set out properly. If your library has one statistics text on this, it is this one.</td>
+        </tr>
+        <tr>
+          <td><strong>Hawkins &amp; Olwell, <em>Cumulative Sum Charts and Charting for Quality Improvement</em></strong> (Springer, 1998)</td>
+          <td>Book-length treatment of CUSUM specifically — self-starting charts, estimated parameters, non-normal data. Where to go when the standard recipe does not fit your process.</td>
+        </tr>
+        <tr>
+          <td><strong>Basseville &amp; Nikiforov, <em>Detection of Abrupt Changes: Theory and Application</em></strong></td>
+          <td>The classic reference for the theory, long out of print and freely available online. Heavier going, and the place where the optimality results live.</td>
+        </tr>
+      </table>
+
+      <h3>Founding papers, if you want the originals</h3>
+      <ul>
+        <li><strong>Page, E. S. (1954), "Continuous Inspection Schemes", <em>Biometrika</em>.</strong> The paper that introduced CUSUM, published a few years after Wald's sequential probability ratio test and built on the same idea.</li>
+        <li><strong>Shewhart, W. A. (1931), <em>Economic Control of Quality of Manufactured Product</em>.</strong> The origin of the control chart, and of the idea that variation splits into chance causes and assignable ones.</li>
+        <li><strong>Brown, Durbin &amp; Evans (1975), "Techniques for Testing the Constancy of Regression Relationships Over Time", <em>JRSS-B</em>.</strong> The econometric CUSUM and CUSUM-of-squares tests.</li>
+        <li><strong>Lucas, J. M. (1976), "The Design and Use of V-Mask Control Schemes", and (1982), "Combined Shewhart-CUSUM Quality Control Schemes", <em>Journal of Quality Technology</em>.</strong> Where the practical design guidance and the ARL tables come from.</li>
+        <li><strong>Bai &amp; Perron (1998, 2003).</strong> Multiple structural breaks — estimation and computation respectively.</li>
+        <li><strong>Adams &amp; MacKay (2007), "Bayesian Online Changepoint Detection".</strong> Short, readable, and the basis of most Bayesian implementations in use.</li>
+        <li><strong>Killick, Fearnhead &amp; Eckley (2012), "Optimal Detection of Changepoints with a Linear Computational Cost".</strong> The PELT paper.</li>
+        <li><strong>Bifet &amp; Gavaldà (2007), "Learning from Time-Changing Data with Adaptive Windowing".</strong> ADWIN.</li>
+        <li><strong>Gama et al. (2004), "Learning with Drift Detection".</strong> DDM, and the paper that organised drift detectors into the three groups used in Extra 1.</li>
+      </ul>
+
+      <h3>Software you would actually use</h3>
+      <table>
+        <tr><th>Tool</th><th>Language</th><th>For</th></tr>
+        <tr><td><strong>ruptures</strong><br><span class="m">centre-borelli.github.io/ruptures-docs</span></td><td>Python</td><td>Offline change-point detection. Implements PELT, binary segmentation, dynamic programming, bottom-up and window methods, with interchangeable cost functions (l1, l2, normal, linear, autoregressive, RBF kernel, rank). The documentation is unusually good as an introduction to the offline problem in its own right.</td></tr>
+        <tr><td><strong>river</strong><br><span class="m">riverml.xyz</span></td><td>Python</td><td>Streaming machine learning, including a <code>drift</code> module with ADWIN, KSWIN, Page–Hinkley, DDM, EDDM and the HDDM family. The quickest way to see these detectors behave on real data.</td></tr>
+        <tr><td><strong>changepoint</strong>, <strong>strucchange</strong>, <strong>qcc</strong></td><td>R</td><td>PELT and friends; Chow, CUSUM-of-residuals and Bai–Perron tests; and classical control charts including CUSUM and EWMA, respectively. <code>strucchange</code> is the standard route to the econometric tests.</td></tr>
+        <tr><td><strong>statsmodels</strong></td><td>Python</td><td><code>breaks_cusumolsresid</code> and related diagnostics for regression stability, plus the state-space models whose residuals you would monitor.</td></tr>
+        <tr><td><strong>Minitab, JMP, SigmaXL, Statgraphics</strong></td><td>—</td><td>Where tabular and V-mask CUSUM charts live in industry, with built-in ARL calculators for choosing h and k. Worth knowing the interface exists even if you never use it, because it is what the quality engineer you are talking to has open.</td></tr>
+      </table>
+
+      <div class="callout">
+        <p class="tag">A twenty-minute exercise worth doing</p>
+        <p>Generate a few hundred normal observations, inject a 1σ shift somewhere in the middle, and run a Shewhart chart, a CUSUM and an EWMA over the same series. Then vary the shift size from 0.5σ to 4σ and watch the ordering of the three methods change. The three-panel figure in Extra 1 is one instance of this; doing it yourself, with the parameters in your own hands, is what makes the trade-off stop being a slogan.</p>
+      </div>
+
+      <div class="note">
+        <div class="note-head"><span class="lbl">Reading log</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="m6x4" data-placeholder="What you read, what it added, what you still don't understand…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Caveat</span>
+      <p class="q">How much of this should you take on trust?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">The specific numbers — ARL values, k = δ/2, the h = 4 and h = 5 conventions — are standard and consistent across the sources listed here, but they assume independent normally distributed observations. Check any figure you plan to rely on against the NIST handbook or Montgomery, and re-derive it by simulation for your own data rather than quoting a table.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
+<section class="close" style="--accent:#131b26">
   <footer>
     <span class="ai"><strong>Written by an AI model from lecture recordings.</strong> Not reviewed by any instructor or institution — verify anything you rely on against the original lectures.
     <br><br>
-    <strong>What goes beyond the transcripts.</strong> Every illustration has been replaced with a generic one, so none of the examples here are the ones used in class — in particular the motorway-congestion and bearing-temperature illustrations in Lesson 1 stand in for the specific examples used in class. The following are additions rather than lecture content: the eighteen-trial reaction-time dataset in Lesson 2 and every number computed from it, including the whole C = 15 comparison and the control chart; the ideal-versus-real sensor figure; all cross-references to Modules 3 and 5; and the whole of “Things worth noticing”. All quiz feedback, margin questions and exam targets are written here rather than drawn from the recordings.</span>
+    <strong>What goes beyond the transcripts.</strong> Every illustration has been replaced with a generic one, so none of the examples here are the ones used in class — in particular the motorway-congestion and bearing-temperature illustrations in Lesson 1 stand in for the specific examples used in class. The following are additions rather than lecture content: the eighteen-trial reaction-time dataset in Lesson 2 and every number computed from it, including the whole C = 15 comparison and the control chart; the eighteen-week sales dataset and its two-sided CUSUM table, chart and C-versus-sign-error comparison; the ideal-versus-real sensor figure; all cross-references to Modules 3 and 5; and the whole of “Things worth noticing”. All quiz feedback, margin questions and exam targets are written here rather than drawn from the recordings.
+    <br><br>
+    <strong>Everything under “Additional resources” is outside material.</strong> Extras 1 to 4 — the map of methods, the industrial k and h notation, ARL figures, the Shewhart/CUSUM/EWMA comparison, the practice problems and the reading list — were assembled from published sources, principally the NIST/SEMATECH e-Handbook, Montgomery’s <em>Introduction to Statistical Quality Control</em>, the original method papers cited in Extra 4, and the documentation of the ruptures and river libraries. None of it was taught in this module. Quantitative claims (ARL values, parameter conventions) are standard in those sources but assume independent, normally distributed observations; check them against a primary source before relying on them, and treat the lectures as authoritative wherever the two differ.</span>
   </footer>
 </section>
-
 </div>
 
 <dialog id="dlg">

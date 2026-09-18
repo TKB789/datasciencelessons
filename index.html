@@ -56,15 +56,20 @@
   padding-bottom:3px;border-bottom:1px solid var(--rule-faint);
 }
 .cbody h4:first-child{margin-top:2px}
-.cbody ul{margin:0;padding:0;list-style:none}
-.cbody li{margin:0 0 5px;padding-left:11px;text-indent:-11px}
+/* study.css sets `.modgrid li{display:flex}` for the card tiles themselves.
+   These bullets live inside a tile, so that rule reaches them too and turns
+   every bullet into a flex row — the bold term and the rest of the sentence
+   become separate columns that overlap. Both selectors below outrank it. */
+.modgrid .cbody ul{display:block;margin:0;padding:0;list-style:none;max-width:none}
+.modgrid .cbody li{display:block;margin:0 0 5px;padding-left:12px;text-indent:-12px}
 .cbody li::before{content:"\00B7";color:var(--c);font-weight:700;margin-right:6px}
 .cbody b{font-weight:600}
 .cbody i{font-style:italic;color:var(--ink-soft)}
-.cbody .eqs li{
-  font-family:var(--mono);font-size:.78rem;line-height:1.45;
+.modgrid .cbody .eqs li{
+  display:block;font-family:var(--mono);font-size:.78rem;line-height:1.45;
   background:var(--rule-faint);padding:5px 8px;margin:0 0 4px;
-  text-indent:0;border-left:2px solid var(--c);
+  padding-left:8px;text-indent:0;border-left:2px solid var(--c);
+  overflow-wrap:anywhere;
 }
 .cbody .eqs li::before{content:none}
 .cbody .eqs li i{font-family:var(--sans);font-style:normal;color:var(--ink-soft);display:block;font-size:.76rem}

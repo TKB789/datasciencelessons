@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Exam Practice — Model Selection, Classification &amp; Clustering</title>
+<title>Exam Practice — All Topics</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
@@ -144,7 +144,7 @@
 
 <header>
   <h1>Exam practice</h1>
-  <p class="sub">Eight short checkpoints. Work through one at a time — answer, check the reasoning, move on. Nothing is timed and nothing is saved between visits.</p>
+  <p class="sub">Nineteen checkpoints across every topic in the course. The first eight follow the instructor’s forum threads; the rest are written as transfer practice — unfamiliar settings that call for the same reasoning, so that the concept is what you recall rather than the example. Work through one at a time; nothing is timed and nothing is saved between visits.</p>
 
   <svg class="boundary" viewBox="0 0 720 96" role="img" aria-label="Two classes of points separated by a boundary with a margin on either side">
     <defs>
@@ -817,6 +817,546 @@ const MODULES = [
       }
     ]
   }
+,
+
+  {
+    id: "bias-variance",
+    title: "Bias, variance, and what error is made of",
+    blurb: "Why a more flexible model is not automatically a better one.",
+    questions: [
+      {
+        type: "mc",
+        text: "A team keeps adding variables and interaction terms. Training error falls steadily; validation error falls, flattens, then rises. What is the rise?",
+        options: [
+          "Bias increasing as the model grows.",
+          "Variance increasing — the extra flexibility is fitting patterns specific to the training sample.",
+          "The irreducible error growing with model size.",
+          "A sign the validation set is too small to trust."
+        ],
+        answer: 1,
+        why: "<p>Flexibility lowers bias and raises variance. Early on the bias reduction dominates and validation error falls. Past a point there is little bias left to remove, and each new term mostly lets the model chase quirks of the particular records it was fitted on — quirks that do not recur. That is variance, and it shows up only on data the model did not see.</p>"
+      },
+      {
+        type: "mc",
+        text: "Two analysts model the same process. One reports test error of 0.08, the other claims a method that will reach 0.00 with enough tuning. What is wrong with the second claim?",
+        options: [
+          "Nothing — zero error is achievable with a flexible enough model.",
+          "Test error cannot fall below the irreducible error, which no model can remove.",
+          "Zero error is only possible for classification, not regression.",
+          "The second analyst must be using a larger dataset."
+        ],
+        answer: 1,
+        why: "<p>Expected test error decomposes into variance, squared bias and irreducible error. The first two can in principle be driven toward zero; the third is the part of the outcome that the available inputs simply do not determine. A model reporting zero error on new data is either measuring on data it was fitted to, or the outcome is a deterministic function of the inputs.</p>"
+      },
+      {
+        type: "mc",
+        text: "Which change moves a model toward high bias and low variance?",
+        options: [
+          "Increasing k in k-nearest neighbours.",
+          "Decreasing the regularisation weight toward zero.",
+          "Switching from a linear boundary to a flexible kernel.",
+          "Adding interaction terms."
+        ],
+        answer: 0,
+        why: "<p>Larger k averages over more neighbours, so the prediction at any point is smoother and less sensitive to which particular records landed nearby — lower variance. It is also less able to follow genuine local structure — higher bias. The other three options all add flexibility, which runs the other way.</p>"
+      },
+      {
+        type: "discussion",
+        text: "A stakeholder asks why you are not simply using the most powerful model available. Answer in terms of bias, variance and what the data can support.",
+        answer: "<p>Points to hit:</p><p><strong>Power is flexibility, and flexibility is paid for in variance.</strong> A more flexible model can represent more shapes, which reduces bias. It can also represent the accidental shapes in this particular sample, which raises variance — and variance is error on new data just as surely as bias is.</p><p><strong>The right amount depends on how much data there is.</strong> Variance falls as records accumulate, so the flexibility that overfits a few hundred records may be exactly right for a few hundred thousand. There is no model that is best independent of sample size.</p><p><strong>There is a floor either way.</strong> Irreducible error means some part of the outcome is not predictable from the inputs held. Past that point extra capacity buys nothing and costs interpretability and compute.</p><p><strong>How the question gets settled:</strong> not by argument but by validation — fit the candidates, compare them on held-out data, and keep the one that wins there rather than the one that wins on the fitting data.</p>"
+      }
+    ]
+  },
+
+  {
+    id: "cross-validation",
+    title: "Cross-validation, and the ways it goes wrong",
+    blurb: "What k changes, and the four situations where resampling quietly lies.",
+    questions: [
+      {
+        type: "mc",
+        text: "A pipeline standardises every record, then splits into ten folds and cross-validates. What has gone wrong?",
+        options: [
+          "Nothing — standardisation is a fixed transformation.",
+          "The mean and standard deviation were computed using the held-out records, so each fold's score is optimistic.",
+          "Standardising before splitting changes the class balance across folds.",
+          "Ten folds is too many for standardised data."
+        ],
+        answer: 1,
+        why: "<p>Any quantity estimated from the data is part of the fit. Computing the mean and standard deviation over all records lets information from the held-out fold influence the transformation applied to the training records, so the fold is no longer genuinely held out. The same applies to imputation values, variable selection, and any binning or encoding learned from the data. The fix is to derive these inside each fold, from the training part only.</p>"
+      },
+      {
+        type: "mc",
+        text: "Moving from 5-fold to leave-one-out cross-validation on the same dataset does what to the estimate?",
+        options: [
+          "Lowers both bias and variance.",
+          "Lowers bias, because each model trains on nearly all the data, but raises variance, because the models are nearly identical and their errors are correlated.",
+          "Raises bias and lowers variance.",
+          "Leaves both unchanged; only the runtime differs."
+        ],
+        answer: 1,
+        why: "<p>Each leave-one-out model trains on n−1 records, so it is almost the model you would fit on everything — little bias. But the n models differ from one another by a single record, so their errors move together, and averaging quantities that are highly correlated stabilises very little. Five or ten folds sits between the two effects, which is why it is the usual default.</p>"
+      },
+      {
+        type: "mc",
+        text: "Records are repeated measurements on the same forty patients. Folds are assigned at random across all records. What is the consequence?",
+        options: [
+          "None, as long as each fold has roughly equal size.",
+          "The estimate is optimistic, because a patient's other measurements sit in the training data and the model can recognise the individual rather than the pattern.",
+          "The estimate is pessimistic, because repeated records add noise.",
+          "It only matters if the outcome is numeric."
+        ],
+        answer: 1,
+        why: "<p>Cross-validation assumes the held-out records are new in the sense that matters. Splitting within a patient leaves the model with other rows from that same patient, so predicting the held-out one is much easier than predicting a patient it has never seen — which is the task it will actually face. Group the folds by patient instead, so every record from an individual falls on the same side of the split.</p>"
+      },
+      {
+        type: "discussion",
+        text: "You inherit a model reported at 91% accuracy from 10-fold cross-validation. List what you would check before repeating that number to anyone.",
+        answer: "<p>Things to establish, roughly in order of how often they are the problem:</p><p><strong>Was any preprocessing done before the split?</strong> Scaling, imputation, encoding or variable selection computed over the full dataset leaks held-out information and inflates the score.</p><p><strong>Was the model chosen using the same cross-validation?</strong> If several candidates or parameter settings were compared on these folds, 91% is a selection winner, not an unbiased estimate. That needs either a held-out test set or nested cross-validation.</p><p><strong>Are the records independent?</strong> Repeated measures, households, sessions from one user, or near-duplicate rows all break the assumption that a held-out record is genuinely new.</p><p><strong>Is there a time order?</strong> If so, random folds train on the future and the number is meaningless for forecasting use.</p><p><strong>Are the classes balanced, and is accuracy the right measure at all?</strong> At 91% accuracy with a 90/10 split, the model may be little better than always predicting the majority class.</p><p><strong>What was shipped?</strong> If a single fold model went to production rather than a refit on all the data, the deployed model is not the one that was measured.</p>"
+      }
+    ]
+  },
+
+  {
+    id: "bootstrap",
+    title: "The bootstrap",
+    blurb: "Resampling with replacement, and the question it actually answers.",
+    questions: [
+      {
+        type: "mc",
+        text: "What question is the bootstrap designed to answer?",
+        options: [
+          "Which of several candidate models is best.",
+          "How uncertain an estimate is, when no formula for its standard error is available.",
+          "Whether a dataset contains outliers.",
+          "How many folds cross-validation should use."
+        ],
+        answer: 1,
+        why: "<p>The bootstrap measures the variability of a statistic. Resampling n records with replacement, recomputing the statistic, and repeating many times produces a spread of estimates that approximates how much that statistic would move if you could collect fresh samples. It is the general-purpose answer for quantities — a median, a ratio, a model coefficient under a complicated procedure — where the textbook standard error formula does not exist.</p>"
+      },
+      {
+        type: "mc",
+        text: "In a single bootstrap sample of size n drawn with replacement from n records, roughly what share of the original records appears at least once?",
+        options: [
+          "About 50%.",
+          "About 63%.",
+          "About 90%.",
+          "All of them — that is what resampling means."
+        ],
+        answer: 1,
+        why: "<p>A given record avoids selection on one draw with probability (1 − 1/n), and across n draws with probability (1 − 1/n)ⁿ, which converges to 1/e ≈ 0.368. So about 63.2% of the distinct records appear in any one sample and about 36.8% are left out. Those omitted records are the out-of-bag set, and they can serve as a free held-out sample for the model fitted on that draw.</p>"
+      },
+      {
+        type: "mc",
+        text: "Drawing without replacement instead would break the method. Why?",
+        options: [
+          "It would be computationally slower.",
+          "Every sample would be the original dataset in a different order, so all the estimates would be identical and the spread would be zero.",
+          "It would introduce bias into the statistic.",
+          "It would only work for numeric outcomes."
+        ],
+        answer: 1,
+        why: "<p>Drawing n records from n without replacement returns exactly the same set every time. The whole mechanism depends on some records appearing more than once and others not at all — that variation between samples is what stands in for the variation between hypothetical fresh datasets.</p>"
+      },
+      {
+        type: "discussion",
+        text: "A colleague says bootstrapping gives a model more data to learn from. Correct the misconception and say what the method does provide.",
+        answer: "<p><strong>The correction.</strong> Resampling creates no new information. Every bootstrap record is a copy of one already held, so the total information about the process is fixed by the original sample. Nothing about the dataset's coverage, its biases or its blind spots improves.</p><p><strong>What it does provide.</strong> A way to observe how much an estimate moves when the sample composition shifts. If the statistic is stable across resamples, it is well determined by the data at hand; if it swings widely, the single number from the full dataset is not something to lean on.</p><p><strong>Where the limit bites.</strong> The bootstrap can only reflect variability that the original sample is capable of showing. If the sample missed a segment of the population entirely, every resample misses it too, and the confidence interval will be confidently wrong. It measures sampling variability, not sampling bias.</p>"
+      }
+    ]
+  },
+
+  {
+    id: "distance",
+    title: "Choosing a distance measure",
+    blurb: "What each norm treats as close, and when the choice changes the answer.",
+    questions: [
+      {
+        type: "mc",
+        text: "Two customers have identical spending profiles across categories, but one spends roughly ten times as much overall. Which pair of verdicts is right?",
+        options: [
+          "Euclidean distance calls them close; cosine distance calls them far apart.",
+          "Euclidean distance calls them far apart; cosine distance calls them nearly identical.",
+          "Both call them close.",
+          "Both call them far apart."
+        ],
+        answer: 1,
+        why: "<p>Euclidean distance measures the gap between the two points in space, and a tenfold difference in magnitude puts them a long way apart. Cosine distance compares only the direction of the two vectors, so identical proportions across categories register as the same profile regardless of size. Which is correct depends entirely on the question: segmenting by taste favours cosine, segmenting by value favours Euclidean.</p>"
+      },
+      {
+        type: "mc",
+        text: "A delivery service cares about the worst single leg of a route rather than the total. Which norm matches that concern?",
+        options: [
+          "The 1-norm, which sums absolute differences.",
+          "The 2-norm, which is straight-line distance.",
+          "The infinity norm, which takes the largest single coordinate difference.",
+          "Cosine distance."
+        ],
+        answer: 2,
+        why: "<p>As p rises in the p-norm, larger coordinate differences dominate the total. At the limit only the single biggest difference contributes at all. That is exactly the right measure when what matters is the worst case along any one dimension, not the aggregate across all of them.</p>"
+      },
+      {
+        type: "mc",
+        text: "Attributes are age in years, income in dollars and number of purchases. Euclidean distance is computed without transformation. What effectively happens?",
+        options: [
+          "Each attribute contributes roughly equally.",
+          "Income dominates almost entirely, because its numbers are orders of magnitude larger.",
+          "Age dominates, because it has the narrowest range.",
+          "The result is identical to computing distance on the standardised data."
+        ],
+        answer: 1,
+        why: "<p>Distance sums squared differences, so an attribute measured in tens of thousands contributes thousands of times more than one measured in tens. The model then reflects the units the data happened to be recorded in rather than any judgement about what matters. Standardising or scaling first makes the weighting deliberate instead of accidental — and if one attribute really should count more, weight it explicitly.</p>"
+      },
+      {
+        type: "discussion",
+        text: "You are grouping hospitals by their patient-mix. Some attributes are percentages, some are counts, and two of them are strongly correlated with each other. Work through how you would set up the distance calculation.",
+        answer: "<p><strong>Put the attributes on comparable footing first.</strong> Percentages and raw counts cannot go into the same distance untransformed — the counts will dominate. Standardise, or convert the counts to rates so that every attribute is in the same kind of unit.</p><p><strong>Decide whether size should matter.</strong> If two hospitals with the same case mix at different volumes should count as similar, work with proportions or use cosine distance. If volume is part of what distinguishes them, keep it in and use Euclidean.</p><p><strong>Handle the correlated pair.</strong> Two attributes measuring nearly the same thing effectively vote twice, quietly doubling that dimension's weight. Options: drop one, combine them into a single index, or use a distance that accounts for the correlation structure (Mahalanobis) rather than treating dimensions as independent.</p><p><strong>Say what you assumed.</strong> The distance measure is a modelling choice, not a neutral preliminary. Two defensible choices can produce different groupings from identical data, so the choice belongs in the write-up alongside the results.</p>"
+      }
+    ]
+  },
+
+  {
+    id: "kmeans-behaviour",
+    title: "How k-means behaves",
+    blurb: "Why two runs disagree, what makes it stop, and the shapes it cannot find.",
+    questions: [
+      {
+        type: "mc",
+        text: "Two runs of k-means on the same data with the same k produce different groupings. What does this indicate?",
+        options: [
+          "A bug — the algorithm is deterministic.",
+          "Normal behaviour: it is a heuristic that converges from wherever it starts, and different starting centres can converge differently.",
+          "The data has no cluster structure at all.",
+          "k has been set too low."
+        ],
+        answer: 1,
+        why: "<p>k-means converges to a configuration no record wants to leave, which need not be the arrangement with the lowest total distance overall. Where it lands depends on the initial centres. The standard response is to run it from several different starts and keep the best result, and to use a spread-out initialisation so that a poor start is less likely in the first place.</p>"
+      },
+      {
+        type: "mc",
+        text: "What condition tells the algorithm it has finished?",
+        options: [
+          "The total distance stops decreasing by more than a set tolerance.",
+          "No record changes cluster on an iteration — so the centres are unchanged, and the next assignment would reproduce itself.",
+          "A fixed number of iterations has elapsed.",
+          "Every cluster has roughly equal membership."
+        ],
+        answer: 1,
+        why: "<p>If no record moves, the membership is identical to the previous round, so the centroids computed from that membership are identical too, so the next assignment step produces the same result again. The algorithm has reached a fixed point and further iterations change nothing.</p>"
+      },
+      {
+        type: "mc",
+        text: "The true groups in a dataset are two long, curved, interleaved bands. k-means with k = 2 splits each band across both clusters. What is the explanation?",
+        options: [
+          "Too few restarts.",
+          "k-means assigns by proximity to a single centre, which carves the space into convex regions — it cannot represent elongated or curved groups.",
+          "The data needs standardising.",
+          "k should be raised to 4."
+        ],
+        answer: 1,
+        why: "<p>Assigning each record to its nearest centre divides the space into straight-edged convex regions. A curved band cannot be captured by such a region, so the algorithm cuts across the true structure no matter how well it is initialised. This is a limit of the method rather than a tuning problem: a different algorithm, or a transformation of the space, is what the situation calls for.</p>"
+      },
+      {
+        type: "discussion",
+        text: "A single record in your dataset sits far from everything else. Trace what it does to k-means, and set out your options.",
+        answer: "<p><strong>What it does.</strong> A cluster centre is a mean, and a mean is pulled by extreme values. The outlier drags whichever centre claims it away from the bulk of that cluster's records, which distorts the boundary and can shift memberships that have nothing to do with the outlier. If k is large enough, it may capture an entire centre to itself, spending one of your groups on a single record.</p><p><strong>The options, and what each costs.</strong></p><p><em>Investigate first.</em> If it is a recording error, correcting or removing it is straightforward and uncontroversial.</p><p><em>Remove a genuine extreme.</em> Cluster without it and assign it afterwards to the nearest resulting centre. Clean, but you have decided it is not worth a group of its own — sometimes wrong, since rare cases are occasionally the interesting ones.</p><p><em>Use a method less sensitive to means.</em> Choosing an actual record as each centre rather than a computed average limits how far a single point can pull.</p><p><em>Keep it and report it.</em> Legitimate if the extreme record is genuinely part of what you are describing, as long as the write-up says the grouping was shaped by it.</p><p>What should not happen is silent deletion: the decision changes the output, so it belongs in the record.</p>"
+      }
+    ]
+  },
+
+  {
+    id: "choosing-k",
+    title: "Choosing the number of clusters",
+    blurb: "Why the obvious objective fails, and what to use instead.",
+    questions: [
+      {
+        type: "mc",
+        text: "A colleague proposes selecting k by choosing whichever value minimises total distance from records to their cluster centre. What will this produce?",
+        options: [
+          "The natural number of groups in the data.",
+          "k equal to the number of records — every record becomes its own cluster at zero distance.",
+          "k = 1, since one cluster has the fewest centres.",
+          "An unstable answer that varies between runs."
+        ],
+        answer: 1,
+        why: "<p>Total distance falls monotonically as k rises, because adding a centre can only shorten the distance from records to their nearest one. Taken to its conclusion, every record becomes its own centre at distance zero. The objective is useful for comparing solutions at a fixed k and useless for choosing k.</p>"
+      },
+      {
+        type: "mc",
+        text: "What is the elbow method actually looking for?",
+        options: [
+          "The k with the lowest total distance.",
+          "The k past which additional clusters stop producing a worthwhile reduction in total distance.",
+          "The k at which all clusters contain equal numbers of records.",
+          "The largest k that still runs in reasonable time."
+        ],
+        answer: 1,
+        why: "<p>Since total distance always falls, the informative quantity is the rate at which it falls. A pronounced bend suggests that up to that point each new cluster was separating something real, and after it each one is mostly subdividing groups that were already coherent. It is a judgement read off a curve, not a test — and on many real datasets the bend is ambiguous or absent.</p>"
+      },
+      {
+        type: "mc",
+        text: "A record has a silhouette value of −0.4. What does that say?",
+        options: [
+          "It sits comfortably inside its cluster.",
+          "It is on the boundary between two clusters.",
+          "It is on average closer to the records of a neighbouring cluster than to those of its own, so it is probably assigned to the wrong one.",
+          "Its cluster has too few members."
+        ],
+        answer: 2,
+        why: "<p>The silhouette compares the mean distance to a record's own cluster against the mean distance to the nearest other cluster. Values near +1 indicate a comfortable fit, near 0 a boundary case, and negative values say the record would look more at home elsewhere. Averaging the silhouette across all records scores a whole clustering — and unlike total distance, it does not automatically improve as k grows, which is what makes it usable for choosing k.</p>"
+      },
+      {
+        type: "discussion",
+        text: "You are clustering retail locations to decide how many regional depots to build. The elbow is ambiguous and silhouette scores are similar for k between 3 and 7. How do you settle on a number?",
+        answer: "<p><strong>Accept that the data is not going to decide it.</strong> Ambiguous diagnostics across a range usually mean the structure is genuinely graded rather than sharply grouped. Forcing a statistical answer out of that is false precision.</p><p><strong>Let the decision supply the constraint.</strong> The question is not really how many groups exist but how many depots to build, and that has its own answer: the capital available, the maximum acceptable distance from a depot to a location, the staffing each site needs. Clustering at k = 3 through 7 and costing each option is a better use of the ambiguity than picking one and presenting it as discovered.</p><p><strong>Check stability across the range.</strong> If certain locations group together at every k, that grouping is a real feature of the data and can be relied on. If memberships reshuffle completely between k = 4 and k = 5, none of the solutions is describing something solid.</p><p><strong>Report the ambiguity.</strong> A note that k between 3 and 7 fits the data about equally well, with the choice made on cost grounds, is more useful to whoever inherits the analysis than a bare assertion that there are five regions.</p>"
+      }
+    ]
+  },
+
+  {
+    id: "classifier-metrics",
+    title: "Measuring a classifier",
+    blurb: "When accuracy is the wrong number, and what to report instead.",
+    questions: [
+      {
+        type: "mc",
+        text: "One record in 200 is fraudulent. A model reports 99.5% accuracy. What is the first thing to check?",
+        options: [
+          "Whether the model simply predicts not fraudulent for every record, which would score 99.5% and catch nothing.",
+          "Whether the training set was large enough.",
+          "Whether the model was cross-validated.",
+          "Whether accuracy was computed on the test set."
+        ],
+        answer: 0,
+        why: "<p>With a 199:1 imbalance, the majority-class rule alone scores 99.5%. Accuracy cannot distinguish that from a model with real skill, because the metric is dominated by the class that is easy to get right. Recall on the rare class — what share of actual fraud was caught — is the number that separates the two, alongside precision to show how many false accusations it took to get there.</p>"
+      },
+      {
+        type: "mc",
+        text: "A screening test is tuned so its threshold flags more cases as positive. What happens to precision and recall?",
+        options: [
+          "Both rise.",
+          "Recall rises and precision generally falls.",
+          "Precision rises and recall falls.",
+          "Neither changes; the threshold affects only accuracy."
+        ],
+        answer: 1,
+        why: "<p>Lowering the bar for a positive verdict catches more of the true positives — recall rises — while also sweeping in more records that were not positive, so a smaller share of the flags are correct and precision falls. The two move against each other as the threshold slides, which is what the ROC and precision-recall curves trace out. There is no threshold that maximises both; the choice depends on which error costs more.</p>"
+      },
+      {
+        type: "mc",
+        text: "A missed case costs roughly twenty times what a false alarm costs. How should the model be evaluated?",
+        options: [
+          "By accuracy, which already accounts for both error types.",
+          "By expected cost — the false positive count times its cost plus the false negative count times its cost.",
+          "By the F1 score, which balances the two errors.",
+          "By precision alone."
+        ],
+        answer: 1,
+        why: "<p>Accuracy and F1 both treat the two mistakes as comparable, which is exactly what the situation says they are not. Weighting each error count by its cost and minimising the total makes the asymmetry explicit, and it is what justifies shifting the decision threshold away from the default. A model that is worse on accuracy can easily be better on expected cost, and that is the one to deploy.</p>"
+      },
+      {
+        type: "discussion",
+        text: "You are asked for a single number summarising a classifier for a non-technical audience. Explain why you would resist, and what you would provide instead.",
+        answer: "<p><strong>Why a single number misleads here.</strong> Any one metric hides the trade-off the model actually embodies. Accuracy hides class imbalance; precision hides how much was missed; recall hides how many false alarms it took. A model is a threshold sitting somewhere on a curve, and reporting one point as if it were the model's quality conceals that the threshold is a choice someone made.</p><p><strong>What to offer instead.</strong> The confusion matrix itself, in the audience's own terms: of 1,000 cases, this many caught, this many missed, this many false alarms. That is concrete, needs no statistical vocabulary, and lets the audience apply their own sense of what each error costs.</p><p><strong>Then attach the consequence.</strong> If the costs of the two errors are known even roughly, expected cost converts the matrix into one number that genuinely means something — and if the audience disagrees with the cost assumptions, the disagreement is now about the right thing.</p><p><strong>And say what moves.</strong> Make clear the threshold can be retuned: more catches at the price of more false alarms, or the reverse. That is usually the decision the audience is actually being asked to make.</p>"
+      }
+    ]
+  },
+
+  {
+    id: "data-prep",
+    title: "Missing values, encoding, and leakage",
+    blurb: "The preparation choices that quietly become modelling choices.",
+    questions: [
+      {
+        type: "mc",
+        text: "A column is 30% missing. Which consideration matters most in deciding what to do?",
+        options: [
+          "The percentage itself — above a fixed threshold the column should be dropped.",
+          "Why the values are missing, since missingness that relates to the outcome carries information and cannot be filled in neutrally.",
+          "Whether the column is numeric or categorical.",
+          "Whether the dataset is large enough to drop the affected records."
+        ],
+        answer: 1,
+        why: "<p>Filling in the mean is defensible when values are missing for reasons unrelated to what you are predicting. When the reason is related — an income field left blank more often by those with no income, a test result absent because nobody ordered the test — imputation invents data that systematically differs from the truth and erases a real signal. Adding an indicator column recording that the value was missing keeps that signal available to the model.</p>"
+      },
+      {
+        type: "mc",
+        text: "A categorical column holds four unordered values. Someone codes them 1, 2, 3, 4 and feeds it into a distance-based method. What does the method now believe?",
+        options: [
+          "Nothing problematic; the codes are just labels.",
+          "That the categories are ordered and that the first and fourth are three times further apart than the first and second.",
+          "That the column is numeric and should be standardised.",
+          "That there are four clusters in the data."
+        ],
+        answer: 1,
+        why: "<p>A distance calculation reads those codes as positions on a line. The arbitrary assignment of numbers has invented an ordering and a set of spacings that do not exist in the data. Indicator columns — one per category, each 0 or 1 — leave every pair of categories equidistant, which is the honest representation of an unordered variable.</p>"
+      },
+      {
+        type: "mc",
+        text: "Which of these is a leakage problem rather than an ordinary modelling weakness?",
+        options: [
+          "Using a model that is too simple for the underlying relationship.",
+          "Selecting predictor variables by testing them against the outcome over the whole dataset, then cross-validating the resulting model.",
+          "Having fewer records than you would like.",
+          "Choosing Euclidean distance where cosine would suit better."
+        ],
+        answer: 1,
+        why: "<p>Variable selection is part of fitting. Doing it across all records means the held-out folds influenced which variables the model contains, so the cross-validation score reflects a model that has already seen them. The effect can be severe: selection on noise alone can produce impressive cross-validated scores on data with no real signal whatsoever. The selection step has to happen inside each fold.</p>"
+      },
+      {
+        type: "discussion",
+        text: "Write down the preparation steps that must be carried out inside a cross-validation fold rather than once over the whole dataset, and explain the common principle.",
+        answer: "<p><strong>The principle:</strong> any step that learns a quantity from the data is part of the model. If it is computed using records that are supposed to be held out, those records are no longer held out, and the resulting estimate is optimistic.</p><p><strong>Steps that must go inside the fold:</strong></p><p>Scaling and standardisation — the minimum, maximum, mean and standard deviation are estimated quantities.</p><p>Imputation — mean, median or model-based fills are learned from the training records.</p><p>Variable selection and dimensionality reduction — which columns survive, and any components derived from them.</p><p>Encoding schemes learned from the data, such as replacing a category by its average outcome.</p><p>Outlier removal rules based on data-derived thresholds.</p><p>Any parameter tuning, which is why nested cross-validation exists.</p><p><strong>What can safely happen once:</strong> transformations fixed in advance and independent of the values, such as converting units, parsing dates, or applying a log to a variable chosen for subject-matter reasons rather than because the data suggested it.</p>"
+      }
+    ]
+  },
+
+  {
+    id: "smoothing",
+    title: "Exponential smoothing and its parameters",
+    blurb: "What α, β and γ trade against each other, and which variant a series calls for.",
+    questions: [
+      {
+        type: "mc",
+        text: "A forecast consistently lags several periods behind turning points in the series. Which adjustment addresses that?",
+        options: [
+          "Lower α, so the forecast is smoother.",
+          "Raise α, so more weight falls on recent observations.",
+          "Lower γ, so seasonal factors update more slowly.",
+          "Increase the differencing order."
+        ],
+        answer: 1,
+        why: "<p>The weight on the observation k periods back is α(1−α)ᵏ. A small α spreads weight far into the past, which smooths noise and makes the estimate slow to acknowledge genuine change — visible as a lag at every turning point. Raising α shortens that memory. The cost is that the forecast also reacts to noise, so the adjustment is a trade rather than a fix.</p>"
+      },
+      {
+        type: "mc",
+        text: "Monthly sales show a seasonal swing that grows proportionally as the overall level rises. Which formulation fits?",
+        options: [
+          "Additive seasonality, subtracting a fixed seasonal amount.",
+          "Multiplicative seasonality, dividing by a seasonal factor.",
+          "Simple exponential smoothing with a higher α.",
+          "Differencing the series once."
+        ],
+        answer: 1,
+        why: "<p>Additive seasonality assumes December adds a fixed quantity regardless of the level; multiplicative assumes December runs at a fixed ratio to the level. A swing that grows with the series is the multiplicative pattern, and forcing an additive form on it will under-predict peaks late in the series and over-predict them early on.</p>"
+      },
+      {
+        type: "mc",
+        text: "Fitting α, β and γ by minimising squared forecast error yields α = 0.95 on a visibly noisy series. What is the concern?",
+        options: [
+          "None — the optimiser found the best value.",
+          "The fitted parameters may be chasing noise, since one-step-ahead error can be reduced by tracking the last observation closely, which does not imply useful forecasts further out.",
+          "α above 0.9 is mathematically invalid.",
+          "It means the series has a trend that has not been modelled."
+        ],
+        answer: 1,
+        why: "<p>An α near 1 means the forecast is close to the naive last-value rule. On a noisy series that can genuinely minimise one-step-ahead squared error while producing forecasts that simply repeat the most recent fluctuation. Check the fitted model against the naive benchmark on held-out data, and consider whether the objective being optimised matches the horizon you actually forecast over.</p>"
+      },
+      {
+        type: "discussion",
+        text: "Hourly demand at a call centre shows a daily pattern, a weekly pattern, a slow upward trend and occasional spikes from marketing campaigns. Discuss how you would approach forecasting it.",
+        answer: "<p><strong>Separate the components deliberately.</strong> There is a baseline, a trend, and seasonality — but two seasonal cycles, one of length 24 and one of length 168. Standard Holt-Winters carries a single seasonal length, so either model the dominant cycle and accept residual structure, or use a formulation that supports multiple seasonalities.</p><p><strong>The spikes are a different kind of thing.</strong> Campaign effects are not seasonality and not noise: they are driven by a known external event. Leaving them in the series corrupts the seasonal factors, since the smoother will attribute a one-off surge to whatever hour and weekday it fell on. Either flag those periods and handle them separately, or include the campaign as an input rather than letting the smoother absorb it.</p><p><strong>Set the parameters against the horizon.</strong> If the forecast is used to staff tomorrow, one-step-ahead accuracy is the right objective. If it staffs next month, fit and evaluate at that horizon — the α that is best for one is frequently not best for the other.</p><p><strong>Validate forward.</strong> Hold out the most recent stretch, forecast it period by period refitting as you go, and compare against both the naive and the seasonal naive rule. A model that cannot beat last-Tuesday-at-this-hour has not earned the complexity.</p>"
+      }
+    ]
+  },
+
+  {
+    id: "arima",
+    title: "Stationarity, differencing and ARIMA",
+    blurb: "What the I does, what p and q describe, and what GARCH is for.",
+    questions: [
+      {
+        type: "mc",
+        text: "What does differencing a series accomplish?",
+        options: [
+          "It removes noise, leaving the underlying signal.",
+          "It removes drift in the level, so that the mean and variance no longer change systematically over time.",
+          "It converts a seasonal series into a non-seasonal one.",
+          "It reduces the number of parameters that need fitting."
+        ],
+        answer: 1,
+        why: "<p>Modelling with past values assumes the relationship between them is stable over time. A series wandering steadily upward violates that, because the mean depends on when you look. Working with period-to-period changes rather than levels removes the drift and yields a series whose statistical behaviour is consistent — which is what the model requires. d is simply how many times this was necessary, and d = 1 handles most series that need it.</p>"
+      },
+      {
+        type: "mc",
+        text: "On a differenced series, the autocorrelation function falls away gradually while the partial autocorrelation cuts off sharply after lag 2. What does this suggest?",
+        options: [
+          "A moving-average model of order 2.",
+          "An autoregressive model of order 2.",
+          "That further differencing is required.",
+          "That the series is white noise."
+        ],
+        answer: 1,
+        why: "<p>The two functions are read as a pair. An autoregressive process produces a gradually decaying autocorrelation and a partial autocorrelation that cuts off at the model's order — so a sharp cut at lag 2 points to AR(2). The mirror image, a sharp cut in the autocorrelation with gradual decay in the partial, points to a moving-average process. When both decay gradually, a mixed model is likely and small p and q are compared on an information criterion.</p>"
+      },
+      {
+        type: "mc",
+        text: "An analyst wants to forecast how volatile a daily return series will be next week, not what the return will be. Which tool fits?",
+        options: [
+          "ARIMA with a higher differencing order.",
+          "A GARCH model, which forecasts the variance rather than the value.",
+          "Holt-Winters with weekly seasonality.",
+          "A larger α in exponential smoothing."
+        ],
+        answer: 1,
+        why: "<p>ARIMA and exponential smoothing both forecast the level of the series. GARCH models the variance, which is the right target when volatility itself clusters — calm stretches followed by turbulent ones — and when the size of the uncertainty is the quantity the decision depends on. Risk limits, option pricing and position sizing all want the second thing, not the first.</p>"
+      },
+      {
+        type: "discussion",
+        text: "You have 26 monthly observations of a new product's sales and are asked for a twelve-month forecast. Discuss what is realistic.",
+        answer: "<p><strong>State the limits before the method.</strong> Twenty-six observations is a short series, and a twelve-month horizon is nearly half its length again. Any forecast that far out rests mostly on an assumed trend rather than on evidence, and the honest deliverable includes a wide interval rather than a line.</p><p><strong>Why ARIMA is a poor fit here.</strong> It estimates autoregressive and moving-average structure from the data and generally wants a substantially longer history — commonly quoted as around forty observations or more — before those estimates mean anything. With 26 points it will fit something, and that something will largely be noise.</p><p><strong>What is more defensible.</strong> Exponential smoothing with a trend, kept deliberately simple, copes better with short series. A single seasonal cycle cannot be estimated from two years of monthly data with any confidence, so either leave seasonality out or borrow a seasonal profile from a comparable established product and say that you have done so.</p><p><strong>Frame the output honestly.</strong> Give a range rather than a point, note that a new product's trajectory frequently changes character as it saturates its early market, and propose revisiting the forecast as observations accumulate rather than treating it as settled.</p>"
+      }
+    ]
+  },
+
+  {
+    id: "forecast-validation",
+    title: "Judging a forecast",
+    blurb: "Why the usual validation machinery fails on time, and what replaces it.",
+    questions: [
+      {
+        type: "mc",
+        text: "A forecaster is evaluated with shuffled 10-fold cross-validation and scores well. Why is the result meaningless?",
+        options: [
+          "Ten folds is too many for time-series data.",
+          "Most folds train on periods that come after the periods being predicted, and adjacent periods are related, so the task is far easier than forecasting.",
+          "Forecast errors cannot be averaged across folds.",
+          "Cross-validation requires a categorical outcome."
+        ],
+        answer: 1,
+        why: "<p>Random folds scatter the held-out periods through the series, so the model routinely has both neighbours of a held-out point in its training data. Interpolating between known values is a much easier problem than extrapolating past the end of what you know, which is what forecasting actually is. The reported error reflects the easier task.</p>"
+      },
+      {
+        type: "mc",
+        text: "Four forecast errors are +8, −8, +6 and −6. What do the mean error and the mean absolute error say?",
+        options: [
+          "Both are 0, indicating an unbiased and accurate forecaster.",
+          "Mean error is 0 and MAE is 7 — unbiased on average, but wrong by about 7 every period.",
+          "Mean error is 7 and MAE is 0.",
+          "Both are 7."
+        ],
+        answer: 1,
+        why: "<p>Signed errors cancel, so a mean of zero says only that the forecast is not systematically high or low. It says nothing about accuracy: a forecaster that alternates large overshoots and undershoots scores the same zero as one that is right every time. Absolute or squared errors are what measure size, and the mean signed error is worth reporting only alongside them, as a check on bias.</p>"
+      },
+      {
+        type: "mc",
+        text: "What is the purpose of comparing a forecasting model against the naive rule that next period equals this period?",
+        options: [
+          "It is a formality; any fitted model beats it.",
+          "It establishes whether the model's complexity buys anything, since a model that cannot beat a rule requiring no fitting has not earned its place.",
+          "It calibrates the confidence intervals.",
+          "It determines the correct differencing order."
+        ],
+        answer: 1,
+        why: "<p>The naive rule and its seasonal counterpart cost nothing to build, need no data beyond the last observation, and are surprisingly hard to beat on many real series. Reporting a model's error without that comparison leaves the reader unable to tell whether the number is good. On a strongly seasonal series the seasonal naive rule is the benchmark that matters, since beating the plain naive rule can be trivial.</p>"
+      },
+      {
+        type: "discussion",
+        text: "Set out how you would validate a weekly demand forecast that will be used to place purchase orders, and what you would report.",
+        answer: "<p><strong>Validate in time order.</strong> Fit on an initial stretch, forecast the next week, record the error, add that week to the training data, refit, and repeat to the end of the series. Average the recorded errors. Every forecast scored this way used only information available before the week it predicted, which is the condition that makes the number mean something.</p><p><strong>Match the horizon to the use.</strong> If orders are placed three weeks ahead, evaluate three-week-ahead forecasts, not one-week-ahead. Accuracy degrades with horizon and a one-step figure will flatter a model that will never be used that way.</p><p><strong>Report error in decision terms.</strong> MAE in units is directly interpretable as typical shortfall or excess. RMSE is worth adding where large misses hurt disproportionately, since it penalises them more heavily. MAPE is convenient for comparing across products of different sizes but becomes unstable when demand approaches zero.</p><p><strong>Report bias separately.</strong> Mean signed error shows whether the forecast systematically over- or under-orders, which is a different and often more expensive problem than imprecision.</p><p><strong>Include the benchmarks and the residual check.</strong> Give the naive and seasonal naive errors alongside the model's, and confirm that what is left over looks like noise — remaining structure in the residuals means there is signal the model has not used.</p>"
+      }
+    ]
+  }
 
 ];
 
@@ -961,5 +1501,6 @@ function mark(modId, qi) {
 
 meterLabel.textContent = "0 of " + total + " done";
 </script>
+<script src="search.js" defer></script>
 </body>
 </html>

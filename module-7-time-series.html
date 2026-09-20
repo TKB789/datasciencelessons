@@ -1769,7 +1769,65 @@ figure{overflow-x:auto}
 </section>
 
 
-<section class="close" style="--accent:#131b26">
+<section class="close" id="targets" style="--accent:#2f6b52">
+  <h2>Transfer practice &mdash; Time series</h2>
+  <p class="h2meta">Same ideas, unfamiliar settings</p>
+  <div class="defn">
+    <span class="term">Why these are here</span>
+    <p>Each prompt below moves the module&rsquo;s ideas into a situation the lessons never mentioned. If you can only answer a question in the wording it was taught in, what you have memorised is the example rather than the concept &mdash; and an exam that changes the setting will find that out. Answer these out loud before opening them.</p>
+  </div>
+  <aside class="check">
+    <span class="n">Exam target</span>
+    <p class="q">Daily website traffic shows a weekly pattern and a slowly growing baseline. Which formulation, and what is L?</p>
+    <details><summary>Show answer</summary>
+      <p class="a">Holt-Winters &mdash; baseline, trend and seasonality &mdash; with L = 7, since the cycle repeats every seven observations. Simple exponential smoothing would lag the growth, and adding trend alone would leave the day-of-week pattern in the residuals.</p>
+    </details>
+  </aside>
+  <aside class="check">
+    <span class="n">Exam target</span>
+    <p class="q">The size of the weekly swing grows as overall traffic grows. Additive or multiplicative seasonality?</p>
+    <details><summary>Show answer</summary>
+      <p class="a">Multiplicative. Additive seasonality assumes each day adds a fixed quantity regardless of the level; multiplicative assumes each day runs at a fixed ratio to it. A swing that scales with the series is the second pattern, and forcing the first will under-predict peaks late in the series and over-predict them early.</p>
+    </details>
+  </aside>
+  <aside class="check">
+    <span class="n">Exam target</span>
+    <p class="q">Your forecast lags every turning point by several periods. Which parameter, and which direction?</p>
+    <details><summary>Show answer</summary>
+      <p class="a">Raise &alpha;, so more weight falls on recent observations and the memory is shorter. The weight on the observation k periods back is &alpha;(1&minus;&alpha;)&#8305;; a small &alpha; spreads weight far into the past, which smooths noise and makes the estimate slow to acknowledge genuine change. The cost is that the forecast also reacts more to noise.</p>
+    </details>
+  </aside>
+  <aside class="check">
+    <span class="n">Exam target</span>
+    <p class="q">Fitting by minimising squared error on a visibly noisy series gives &alpha; = 0.95. What should you suspect?</p>
+    <details><summary>Show answer</summary>
+      <p class="a">That the fit is chasing noise. An &alpha; near 1 makes the forecast close to the naive last-value rule, which can genuinely minimise one-step-ahead error on a noisy series while forecasting nothing useful further out. Check it against the naive benchmark on held-out data, and fit at the horizon you actually forecast over.</p>
+    </details>
+  </aside>
+  <aside class="check">
+    <span class="n">Exam target</span>
+    <p class="q">A forecaster is evaluated with shuffled ten-fold cross-validation and scores well. Why is that meaningless?</p>
+    <details><summary>Show answer</summary>
+      <p class="a">Most folds train on periods that come after the periods being predicted, and adjacent periods are related, so the model usually has both neighbours of a held-out point in its training data. Interpolating between known values is a much easier task than extrapolating past the end of what is known, which is what forecasting is.</p>
+    </details>
+  </aside>
+  <aside class="check">
+    <span class="n">Exam target</span>
+    <p class="q">Your model's mean absolute error beats the seasonal naive rule by 1%. What does that tell you?</p>
+    <details><summary>Show answer</summary>
+      <p class="a">That the model has barely earned its complexity. The seasonal naive rule &mdash; this period equals the same period last cycle &mdash; requires no fitting, no parameters and no maintenance. A 1% improvement is unlikely to justify the cost of building, validating and running the alternative, and may not survive on the next stretch of data.</p>
+    </details>
+  </aside>
+  <aside class="check">
+    <span class="n">Exam target</span>
+    <p class="q">A team wants to forecast how volatile next week's returns will be, not what the returns will be. Which tool?</p>
+    <details><summary>Show answer</summary>
+      <p class="a">A GARCH-type model, which forecasts the variance rather than the level. ARIMA and exponential smoothing both target the value of the series. When volatility clusters &mdash; calm stretches followed by turbulent ones &mdash; and the decision depends on the size of the uncertainty, it is the second quantity that matters.</p>
+    </details>
+  </aside>
+</section>
+
+<section id="sec-11" class="close" style="--accent:#131b26">
   <h2>How the module fits together</h2>
   <p class="h2meta">The through-line across all eight lessons, plus the worked examples inside each</p>
   <ul class="thread">
@@ -1864,5 +1922,6 @@ figure{overflow-x:auto}
 })();
 </script>
 
+<script src="search.js" defer></script>
 </body>
 </html>

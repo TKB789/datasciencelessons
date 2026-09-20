@@ -1806,7 +1806,58 @@ p.frq-lead{font-size:.92rem;color:var(--ink-soft,#4a5765);margin:.2rem 0 .8rem}
 </section>
 
 
-<section class="close" style="--accent:#131b26">
+<section class="close" id="targets" style="--accent:#1f6b6b">
+  <h2>Transfer practice &mdash; Validation</h2>
+  <p class="h2meta">Same ideas, unfamiliar settings</p>
+  <div class="defn">
+    <span class="term">Why these are here</span>
+    <p>Each prompt below moves the module&rsquo;s ideas into a situation the lessons never mentioned. If you can only answer a question in the wording it was taught in, what you have memorised is the example rather than the concept &mdash; and an exam that changes the setting will find that out. Answer these out loud before opening them.</p>
+  </div>
+  <aside class="check">
+    <span class="n">Exam target</span>
+    <p class="q">A pipeline standardises the full dataset, then splits it into ten folds and cross-validates. Name the problem and its consequence.</p>
+    <details><summary>Show answer</summary>
+      <p class="a">Leakage. The mean and standard deviation were computed using the held-out records, so each fold was not genuinely held out and every fold score is optimistic. The same applies to imputation values, variable selection and any encoding learned from the data. All of it belongs inside the fold, computed from the training part only.</p>
+    </details>
+  </aside>
+  <aside class="check">
+    <span class="n">Exam target</span>
+    <p class="q">Thirty model configurations were compared on the same validation set. None of them saw validation data during fitting. Why is the winner's score still optimistic?</p>
+    <details><summary>Show answer</summary>
+      <p class="a">Because the selection step used it. Each configuration's validation score contains a component of luck &mdash; how well it happens to fit that set's random patterns &mdash; and taking the maximum over thirty of them preferentially selects a large lucky component. The fitting was clean; the choosing was not. An untouched test set is what restores an unbiased estimate.</p>
+    </details>
+  </aside>
+  <aside class="check">
+    <span class="n">Exam target</span>
+    <p class="q">With three hundred records, argue for ten folds over two, and over leave-one-out.</p>
+    <details><summary>Show answer</summary>
+      <p class="a">Two folds train each model on 150 records, so the estimate describes a weaker model than the one you will ship &mdash; pessimistic. Leave-one-out requires 300 fits whose models differ by a single record, so their errors are highly correlated and averaging them stabilises little, giving a high-variance estimate at high cost. Ten folds trains on 270, leaving modest bias, and averages ten reasonably distinct results.</p>
+    </details>
+  </aside>
+  <aside class="check">
+    <span class="n">Exam target</span>
+    <p class="q">One class makes up 5% of the records. What changes about how the folds are built?</p>
+    <details><summary>Show answer</summary>
+      <p class="a">Use stratified folds, which preserve each class's proportion in every fold. With random assignment and a rare class, some folds may contain very few positive records or none at all, making their scores erratic and, in the extreme, undefined for metrics that depend on the rare class.</p>
+    </details>
+  </aside>
+  <aside class="check">
+    <span class="n">Exam target</span>
+    <p class="q">Cross-validation has selected a model form. What exactly goes into production?</p>
+    <details><summary>Show answer</summary>
+      <p class="a">That model form refitted on all the data available &mdash; training and validation together. Not the best-performing fold model, which saw less data than necessary, and not an average of the fold coefficients, which corresponds to no fitted model at all. The folds were a measurement procedure, not a set of candidate deliverables.</p>
+    </details>
+  </aside>
+  <aside class="check">
+    <span class="n">Exam target</span>
+    <p class="q">Records are hourly readings from one sensor over two years. Why would standard k-fold mislead, and what replaces it?</p>
+    <details><summary>Show answer</summary>
+      <p class="a">The records are ordered in time and adjacent readings are related, so random folds let the model train on the hours either side of a held-out reading &mdash; interpolation rather than prediction. Validate forward instead: fit on an initial stretch, predict the next period, add it to the training data, refit, repeat.</p>
+    </details>
+  </aside>
+</section>
+
+<section id="sec-14" class="close" style="--accent:#131b26">
   <h2>How the module fits together</h2>
   <p class="h2meta">The through-line across all four lessons</p>
   <ul class="thread">
@@ -2282,7 +2333,7 @@ p.frq-lead{font-size:.92rem;color:var(--ink-soft,#4a5765);margin:.2rem 0 .8rem}
   </div>
 </section>
 
-<section class="close" style="--accent:#131b26">
+<section id="sec-19" class="close" style="--accent:#131b26">
   <footer><span class="ai"><strong>Written by an AI model from lecture recordings.</strong> Not reviewed by any instructor or institution — verify anything you rely on against the original lectures. Examples here are generic illustrations rather than the ones used in class. The Dana Reyes and Tom Oyelaran cases, the point that a test set becomes a validation set once you select on it, “Six things worth noticing”, and Lessons 5 to 12 in their entirety are this summary’s own additions rather than lecture content — they draw on standard treatments of resampling, in particular <em>An Introduction to Statistical Learning</em> (James, Witten, Hastie &amp; Tibshirani), chapters 2 and 5, with the one-standard-error rule from chapter 6. All worked numbers in those lessons are invented for illustration, and notation follows the lecture material where the two differ.
   <br><br>
   <strong>Everything under “Additional resources” is outside material.</strong> Extras 1 to 3 — the catalogue of resampling schemes, the bootstrap variants, the hyperparameter search strategies, the statistical comparison tests, the metric and calibration material, the learning-curve and double-descent notes, the practice problems and the reading list — were assembled from published sources, principally <em>The Elements of Statistical Learning</em> (ch. 7), the scikit-learn user guide (§3.1 and §3.2), Raschka's <em>Model Evaluation, Model Selection, and Algorithm Selection in Machine Learning</em>, and the original method papers cited in Extra 3. None of it was taught in this module. All worked numbers there are computed for illustration on invented data. Check quantitative claims against a primary source before relying on them, and treat the lectures as authoritative wherever the two differ.</span></footer>
@@ -2304,5 +2355,6 @@ p.frq-lead{font-size:.92rem;color:var(--ink-soft,#4a5765);margin:.2rem 0 .8rem}
 </dialog>
 
 <script src="study.js"></script>
+<script src="search.js" defer></script>
 </body>
 </html>

@@ -616,7 +616,58 @@
   </div>
 </section>
 
-<section class="close" style="--accent:#131b26">
+<section class="close" id="targets" style="--accent:#6e4a8c">
+  <h2>Transfer practice &mdash; Change detection</h2>
+  <p class="h2meta">Same ideas, unfamiliar settings</p>
+  <div class="defn">
+    <span class="term">Why these are here</span>
+    <p>Each prompt below moves the module&rsquo;s ideas into a situation the lessons never mentioned. If you can only answer a question in the wording it was taught in, what you have memorised is the example rather than the concept &mdash; and an exam that changes the setting will find that out. Answer these out loud before opening them.</p>
+  </div>
+  <aside class="check">
+    <span class="n">Exam target</span>
+    <p class="q">Server response time is monitored. A false alarm costs a wasted engineer-hour; a missed slowdown costs customers. Which way do you move C and T?</p>
+    <details><summary>Show answer</summary>
+      <p class="a">Down, both. Lower values detect real changes sooner at the price of more frequent false alarms, which is the correct trade when late detection is the expensive mistake. The decision is a cost comparison, not a statistical one &mdash; the parameters encode which error the organisation would rather make.</p>
+    </details>
+  </aside>
+  <aside class="check">
+    <span class="n">Exam target</span>
+    <p class="q">Your CUSUM never alarms, even across a period when the process is known to have shifted. Give two candidate causes.</p>
+    <details><summary>Show answer</summary>
+      <p class="a">Either the allowance C is large enough to absorb the size of the shift, so each period contributes nothing to the running total, or the threshold T is set higher than the accumulated evidence ever reaches. A third possibility worth checking: &mu; was estimated from data that already included the shifted period, so the shift is built into the baseline.</p>
+    </details>
+  </aside>
+  <aside class="check">
+    <span class="n">Exam target</span>
+    <p class="q">Why does the max{0, &middot;} matter? Predict the behaviour if it were removed.</p>
+    <details><summary>Show answer</summary>
+      <p class="a">It discards the running total whenever evidence turns negative, so ordinary variation cannot accumulate a head start toward the threshold. Without it the statistic would drift in both directions and a stretch of high readings before the real change would leave the total already part-way to the threshold &mdash; or, after a stretch of low readings, deep in negative territory and slow to respond to a genuine rise.</p>
+    </details>
+  </aside>
+  <aside class="check">
+    <span class="n">Exam target</span>
+    <p class="q">A colleague proposes setting C to zero and compensating with a much larger T. What behaviour do you predict?</p>
+    <details><summary>Show answer</summary>
+      <p class="a">The running total drifts upward on ordinary variation alone, since nothing subtracts from it, so it can sit close to the threshold while nothing is wrong. Detection time also becomes erratic, depending on where the total happened to be when the change began. The two parameters do different jobs: C filters noise period by period, T weighs accumulated evidence.</p>
+    </details>
+  </aside>
+  <aside class="check">
+    <span class="n">Exam target</span>
+    <p class="q">You need to catch both a slowdown and a speed-up. What do you run?</p>
+    <details><summary>Show answer</summary>
+      <p class="a">Both recursions in parallel &mdash; one accumulating (x &minus; &mu; &minus; C) for increases and one accumulating (&mu; &minus; x &minus; C) for decreases &mdash; each against its own threshold. A single one-sided statistic is blind in the other direction by construction.</p>
+    </details>
+  </aside>
+  <aside class="check">
+    <span class="n">Exam target</span>
+    <p class="q">What would updating &mu; from recent observations as they arrive do to the scheme?</p>
+    <details><summary>Show answer</summary>
+      <p class="a">It would absorb the shift. A baseline that tracks the data gradually redefines the new behaviour as normal, and the deviations that should be accumulating shrink toward zero. The fixed mean is what the whole method is measuring against; letting it move removes the reference point.</p>
+    </details>
+  </aside>
+</section>
+
+<section id="sec-4" class="close" style="--accent:#131b26">
   <h2>How the module fits together</h2>
   <p class="h2meta">The through-line across the two lessons</p>
   <ul class="thread">
@@ -1265,7 +1316,7 @@
   </div>
 </section>
 
-<section class="close" style="--accent:#131b26">
+<section id="sec-10" class="close" style="--accent:#131b26">
   <footer>
     <span class="ai"><strong>Written by an AI model from lecture recordings.</strong> Not reviewed by any instructor or institution — verify anything you rely on against the original lectures.
     <br><br>
@@ -1291,5 +1342,6 @@
 </dialog>
 
 <script src="study.js"></script>
+<script src="search.js" defer></script>
 </body>
 </html>

@@ -16,7 +16,7 @@ results can link to them.
 
 import re, os, json, glob, html as htmllib
 
-SKIP_FILES = {"search-index.js"}
+SKIP_FILES = {"search-index.js", "analytics-modeling-study-guide.html"}
 
 PAGE_TITLES = {
     "index.html": "Home",

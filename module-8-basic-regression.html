@@ -1,0 +1,1528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Module 8: Basic Regression — Study Notes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="study.css">
+</head>
+<body data-page="m8">
+<div class="wrap">
+
+<div class="topbar">
+  <div class="topline">
+    <a class="brand" href="index.html">Analytics Modeling &middot; Study Notes</a>
+    <nav class="tabs" aria-label="Modules"></nav>
+    <div class="toolbar">
+      <button class="btn" id="exportBtn">Export</button>
+      <button class="btn" id="importBtn">Import</button>
+    </div>
+  </div>
+  <nav class="rail" id="rail" aria-label="Lessons in this module"></nav>
+</div>
+
+<header class="hero">
+
+  <h1>Module 8: Basic Regression</h1>
+  <p class="sub">Fit a line through the data, measure how well it fits, then decide what the fitted numbers are allowed to tell you. Six lessons of class material, followed by an additional-resources appendix on assumptions, diagnostics and careful inference that the course does not cover.</p>
+
+  <svg class="plot" viewBox="0 0 660 350" role="img" aria-label="Scatter plot of points rising from left to right, with a fitted straight line through them and dashed vertical residuals from each point to the line. Axes are labelled predictor and response.">
+    <defs><pattern id="grid" width="26" height="26" patternUnits="userSpaceOnUse"><path d="M 26 0 L 0 0 0 26" fill="none" stroke="#e3e9ee" stroke-width="1"/></pattern></defs>
+    <rect x="62" y="24" width="576" height="276" fill="url(#grid)"/>
+    <line x1="62" y1="300" x2="638" y2="300" stroke="#131b26" stroke-width="1.5"/>
+    <line x1="62" y1="300" x2="62" y2="24" stroke="#131b26" stroke-width="1.5"/>
+    <text x="350" y="332" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="13" fill="#4a5765">predictor x</text>
+    <text x="30" y="162" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="13" fill="#4a5765" transform="rotate(-90 30 162)">response y</text>
+    <g class="ctr" stroke="#a0452e" stroke-width="1.2" stroke-dasharray="3 3" opacity=".75">
+      <line x1="87" y1="276" x2="87" y2="269.0"/><line x1="113" y1="273" x2="113" y2="259.1"/><line x1="151" y1="232" x2="151" y2="244.7"/><line x1="180" y1="231" x2="180" y2="233.8"/><line x1="203" y1="210" x2="203" y2="225.1"/><line x1="233" y1="209" x2="233" y2="213.7"/><line x1="269" y1="198" x2="269" y2="200.1"/><line x1="296" y1="175" x2="296" y2="189.9"/><line x1="332" y1="196" x2="332" y2="176.2"/><line x1="358" y1="153" x2="358" y2="166.4"/><line x1="398" y1="185" x2="398" y2="151.3"/><line x1="417" y1="152" x2="417" y2="144.1"/><line x1="444" y1="143" x2="444" y2="133.9"/><line x1="485" y1="127" x2="485" y2="118.3"/><line x1="505" y1="84" x2="505" y2="110.8"/><line x1="538" y1="83" x2="538" y2="98.3"/><line x1="571" y1="91" x2="571" y2="85.8"/><line x1="595" y1="79" x2="595" y2="76.7"/>
+    </g>
+    <g class="ctr"><line x1="62" y1="278.4" x2="638" y2="60.4" stroke="#a0452e" stroke-width="2.5"/></g>
+    <g style="--dot:#a0452e">
+      <circle class="pt" cx="87" cy="276" r="5.5" style="animation-delay:0.35s"/><circle class="pt" cx="113" cy="273" r="5.5" style="animation-delay:0.41s"/><circle class="pt" cx="151" cy="232" r="5.5" style="animation-delay:0.47s"/><circle class="pt" cx="180" cy="231" r="5.5" style="animation-delay:0.53s"/><circle class="pt" cx="203" cy="210" r="5.5" style="animation-delay:0.59s"/><circle class="pt" cx="233" cy="209" r="5.5" style="animation-delay:0.65s"/><circle class="pt" cx="269" cy="198" r="5.5" style="animation-delay:0.71s"/><circle class="pt" cx="296" cy="175" r="5.5" style="animation-delay:0.77s"/><circle class="pt" cx="332" cy="196" r="5.5" style="animation-delay:0.83s"/><circle class="pt" cx="358" cy="153" r="5.5" style="animation-delay:0.89s"/><circle class="pt" cx="398" cy="185" r="5.5" style="animation-delay:0.95s"/><circle class="pt" cx="417" cy="152" r="5.5" style="animation-delay:1.01s"/><circle class="pt" cx="444" cy="143" r="5.5" style="animation-delay:1.07s"/><circle class="pt" cx="485" cy="127" r="5.5" style="animation-delay:1.13s"/><circle class="pt" cx="505" cy="84" r="5.5" style="animation-delay:1.19s"/><circle class="pt" cx="538" cy="83" r="5.5" style="animation-delay:1.25s"/><circle class="pt" cx="571" cy="91" r="5.5" style="animation-delay:1.31s"/><circle class="pt" cx="595" cy="79" r="5.5" style="animation-delay:1.37s"/>
+    </g>
+  </svg>
+
+  <ul class="track">
+    <li style="--dot:#1b5e7e"><a href="#l1"><span class="tnum">Lesson 1</span><span class="tname">Introduction to regression</span><span class="tq">What does a regression line look like, and what makes one good?</span></a></li>
+    <li style="--dot:#8a3d5c"><a href="#l2"><span class="tnum">Lesson 2</span><span class="tname">Likelihood and information criteria</span><span class="tq">How do we measure fit — and fit against simplicity?</span></a></li>
+    <li style="--dot:#4a6b2a"><a href="#l3"><span class="tnum">Lesson 3</span><span class="tname">Using regression</span><span class="tq">What do the coefficients answer, and what do the predictions answer?</span></a></li>
+    <li style="--dot:#8a5a1c"><a href="#l4"><span class="tnum">Lesson 4</span><span class="tname">Causation vs. correlation</span><span class="tq">When can a good fit claim that x drives y?</span></a></li>
+    <li style="--dot:#33507f"><a href="#l5"><span class="tnum">Lesson 5</span><span class="tname">Transformations and interactions</span><span class="tq">What if the relationship isn’t a straight line?</span></a></li>
+    <li style="--dot:#6e4a8c"><a href="#l6"><span class="tnum">Lesson 6</span><span class="tname">Reading regression output</span><span class="tq">Which attributes matter, and how much does the model explain?</span></a></li>
+    <li style="--dot:#1f6b6b"><a href="#extra"><span class="tnum">Extra 1–2</span><span class="tname">Assumptions &amp; careful inference</span><span class="tq">What must be true for the output to mean what it says?</span></a></li>
+    <li style="--dot:#4a5765"><a href="#x3"><span class="tnum">Extra 3</span><span class="tname">Practice, reading &amp; tools</span><span class="tq">Can you do it with numbers you haven’t seen?</span></a></li>
+  </ul>
+
+  <div class="badge-strip">
+    <p class="cap">Badges unlock when every activity in a lesson is finished. The last three cover the additional-resources material, which is not part of the class.</p>
+    <ul class="badges">
+      <li class="badge" data-for="l1" style="--b:#1b5e7e"><span class="gem">ŷ</span><span class="nm">Least Squares</span></li>
+      <li class="badge" data-for="l2" style="--b:#8a3d5c"><span class="gem">L</span><span class="nm">Likelihood</span></li>
+      <li class="badge" data-for="l3" style="--b:#4a6b2a"><span class="gem">a</span><span class="nm">Coefficients</span></li>
+      <li class="badge" data-for="l4" style="--b:#8a5a1c"><span class="gem">⇄</span><span class="nm">Direction</span></li>
+      <li class="badge" data-for="l5" style="--b:#33507f"><span class="gem">x²</span><span class="nm">Transforms</span></li>
+      <li class="badge" data-for="l6" style="--b:#6e4a8c"><span class="gem">p</span><span class="nm">The Output</span></li>
+      <li class="badge" data-for="x1" style="--b:#1f6b6b"><span class="gem">e</span><span class="nm">Residuals</span></li>
+      <li class="badge" data-for="x2" style="--b:#2f6b45"><span class="gem">α</span><span class="nm">Inference</span></li>
+      <li class="badge" data-for="x3" style="--b:#4a5765"><span class="gem">✎</span><span class="nm">Practice</span></li>
+      <li class="badge" data-for="*" style="--b:#131b26"><span class="gem">★</span><span class="nm">Module 8 complete</span></li>
+    </ul>
+  </div>
+</header>
+
+<!-- ============ LESSON 1 ============ -->
+<section class="lesson" id="l1" data-short="Intro" style="--accent:#1b5e7e">
+  <div class="lesson-head">
+    <span class="ln">Lesson 1</span>
+    <h2>Introduction to regression</h2>
+    <p class="keyline">Regression estimates a response from a set of predictors. The linear version looks for the line — or, with more predictors, the flat surface — whose squared errors add up to as little as possible.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Two kinds of question</h3>
+      <div class="defn">
+        <span class="term">Regression</span>
+        <p>A model that uses a set of factors, called predictors, to estimate a numeric quantity called the response. There are many variations and add-ons; this module covers the basic linear version.</p>
+      </div>
+      <p>Regression answers two different kinds of question, and it is worth knowing which one you are asking before you fit anything.</p>
+      <table>
+        <tr><th>Question type</th><th>What you want out of it</th></tr>
+        <tr><td>How does the system work?</td><td>The size of each factor’s effect — how much an extra year of experience is worth in salary, which features matter most in a purchase decision, how strongly an economic indicator moves an outcome.</td></tr>
+        <tr><td>What will happen?</td><td>A predicted value for a case you haven’t observed yet — next quarter’s electricity demand, the selling price of a house not yet on the market, the remaining life of a machine part.</td></tr>
+      </table>
+      <p>Every use shares the same shape: a set of <strong>predictors</strong> that you know, and a <strong>response</strong> you are trying to estimate.</p>
+
+      <div class="ix" data-quiz="m8l1-q1">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">A hospital wants to know how much each additional nurse on a ward shift changes the rate of patient falls. Which kind of regression question is this?</p>
+        <div class="opts">
+          <button class="opt" data-fb="A forecast would produce a number for a future shift. What is wanted here is the size of an effect — the answer is a coefficient, not a predicted value.">A prediction question — it forecasts next month’s fall rate.</button>
+          <button class="opt" data-right data-fb="The answer the hospital wants is “one more nurse is associated with this much change”, which is the coefficient on staffing. That is the “how does the system work” use of regression.">A “how does the system work” question — the answer is the size of one factor’s effect.</button>
+          <button class="opt" data-fb="Regression can’t directly tell the hospital what to do, but that isn’t what this question asks. It asks for the effect of a factor; any staffing decision would come afterwards.">A prescriptive question — it tells the hospital how many nurses to hire.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Check 1</span>
+      <p class="q">Name the two kinds of question regression answers, and say what the “answer” is in each case.</p>
+      <details><summary>Show answer</summary>
+        <p class="a">How a system works: the answer is the coefficients — the size of each factor’s effect.</p>
+        <p class="a">What will happen: the answer is the predicted response for a new data point.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Simple linear regression</h3>
+      <div class="defn">
+        <span class="term">Simple linear regression</span>
+        <p>Linear regression with a single predictor. The relationship between predictor and response is assumed to be a straight line.</p>
+      </div>
+      <div class="formula">y = a₀ + a₁x₁<span class="cap">One predictor. a₀ is the intercept — the predicted response when x₁ is zero — and a₁ is the slope, the change in predicted response for each one-unit increase in x₁.</span></div>
+      <div class="formula">y = a₀ + Σⱼ₌₁..ₘ aⱼxⱼ<span class="cap">m predictors. The picture is no longer a line but a flat surface (a hyperplane) in m + 1 dimensions. Drawings stay two-dimensional only because that is what fits on a page.</span></div>
+
+      <figure class="hotwrap" data-hotspot="m8l1-hot">
+        <svg class="fig" viewBox="0 0 700 400" role="img" aria-label="Scatter plot with a fitted regression line. Five clickable areas: an observed point, its fitted value on the line, the residual between them, the intercept, and the slope triangle.">
+          <defs><pattern id="g81" width="30" height="30" patternUnits="userSpaceOnUse"><path d="M 30 0 L 0 0 0 30" fill="none" stroke="#eef1f4" stroke-width="1"/></pattern></defs>
+          <rect x="70" y="30" width="590" height="300" fill="url(#g81)"/>
+          <line x1="70" y1="330" x2="660" y2="330" stroke="#131b26" stroke-width="1.5"/>
+          <line x1="70" y1="330" x2="70" y2="30" stroke="#131b26" stroke-width="1.5"/>
+          <text x="365" y="362" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="12.5" fill="#4a5765">predictor x₁</text>
+          <text x="32" y="180" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="12.5" fill="#4a5765" transform="rotate(-90 32 180)">response y</text>
+          <polygon points="188,235.6 306,235.6 306,193.6" fill="#1b5e7e" opacity=".10" stroke="#1b5e7e" stroke-width="1" stroke-dasharray="4 3"/>
+          <text x="238" y="252" font-family="IBM Plex Mono,monospace" font-size="11" fill="#1b5e7e">run</text>
+          <text x="312" y="219" font-family="IBM Plex Mono,monospace" font-size="11" fill="#1b5e7e">rise</text>
+          <line x1="70" y1="277.7" x2="660" y2="67.3" stroke="#1b5e7e" stroke-width="2.5"/>
+          <g fill="#131b26" opacity=".78">
+            <circle cx="117.2" cy="263.9" r="5"/><circle cx="164.4" cy="225.4" r="5"/><circle cx="205.7" cy="253.0" r="5"/><circle cx="252.9" cy="199.7" r="5"/><circle cx="300.1" cy="207.4" r="5"/><circle cx="341.4" cy="193.2" r="5"/><circle cx="435.8" cy="152.5" r="5"/><circle cx="488.9" cy="138.0" r="5"/><circle cx="536.1" cy="106.8" r="5"/><circle cx="583.3" cy="82.9" r="5"/><circle cx="624.6" cy="90.8" r="5"/>
+          </g>
+          <line x1="388.6" y1="135.4" x2="388.6" y2="164.1" stroke="#9d3b3b" stroke-width="2.2"/>
+          <circle cx="388.6" cy="135.4" r="6" fill="#9d3b3b"/>
+          <circle cx="388.6" cy="164.1" r="5.5" fill="#ffffff" stroke="#1b5e7e" stroke-width="2"/>
+          <text x="416" y="155" font-family="IBM Plex Mono,monospace" font-size="12" fill="#9d3b3b">eᵢ = yᵢ − ŷᵢ</text>
+          <circle cx="70" cy="277.7" r="5" fill="#1b5e7e"/>
+          <text x="80" y="300" font-family="IBM Plex Mono,monospace" font-size="12" fill="#1b5e7e">a₀</text>
+          <text x="70" y="390" font-family="IBM Plex Sans,sans-serif" font-size="11.5" fill="#4a5765">Click each of the five outlined areas.</text>
+
+          <g class="hs" data-title="An observed data point"
+             data-body="The red dot is one real observation: its predictor value xᵢ and its true response yᵢ. Regression treats these as fixed — they are the data the line is being fitted to.">
+            <rect class="hit" x="371" y="116" width="36" height="32"/><rect class="ring" x="371" y="116" width="36" height="32" rx="3"/>
+          </g>
+          <g class="hs" data-title="The fitted value ŷᵢ"
+             data-body="The open circle is where the line sits at the same xᵢ: the model’s estimate, ŷᵢ = a₀ + a₁xᵢ. Every observed point has a fitted value directly above or below it.">
+            <rect class="hit" x="371" y="152" width="36" height="26"/><rect class="ring" x="371" y="152" width="36" height="26" rx="3"/>
+          </g>
+          <g class="hs" data-title="The error, or residual"
+             data-body="The vertical gap between the observed and fitted values. It is measured straight up and down — in units of the response — not as the shortest distance to the line. Squaring these gaps and adding them up gives the sum of squared errors the fit minimises.">
+            <rect class="hit" x="410" y="139" width="112" height="24"/><rect class="ring" x="410" y="139" width="112" height="24" rx="3"/>
+          </g>
+          <g class="hs" data-title="The intercept a₀"
+             data-body="Where the line crosses x₁ = 0: the predicted response when the predictor is zero. Often it is just the constant that positions the line, with no sensible real-world reading — a predictor value of zero may lie far outside the data.">
+            <rect class="hit" x="56" y="262" width="44" height="46"/><rect class="ring" x="56" y="262" width="44" height="46" rx="3"/>
+          </g>
+          <g class="hs" data-title="The slope a₁"
+             data-body="Rise over run: how much the predicted response changes for each one-unit increase in x₁. Turning and sliding the line changes a₁ and a₀ together; the best-fit pair is the one with the smallest sum of squared errors.">
+            <rect class="hit" x="184" y="188" width="160" height="56"/><rect class="ring" x="184" y="188" width="160" height="56" rx="3"/>
+          </g>
+        </svg>
+        <div class="hotpanel"><span class="hint">Five areas are clickable. Open all five to finish this activity.</span></div>
+      </figure>
+    </div>
+    <aside class="check">
+      <span class="n">Check 2</span>
+      <p class="q">In y = a₀ + a₁x₁, which symbols are data and which are what the regression finds?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">x₁ and y come from the data. a₀ and a₁ are the unknowns — the regression coefficients — chosen so the line fits the data as closely as possible.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>What “fits best” means</h3>
+      <p>For each data point, the <strong>error</strong> is the gap between the true response and the model’s estimate. Square each error and add them up; the line with the smallest total is the best fit.</p>
+      <div class="formula">eᵢ = yᵢ − ŷᵢ = yᵢ − (a₀ + a₁xᵢ₁)<span class="cap">The error for data point i. yᵢ is the observed response, ŷᵢ (“y-hat”) the regression’s estimate.</span></div>
+      <div class="formula">SSE = Σᵢ₌₁..ₙ ( yᵢ − (a₀ + Σⱼ aⱼxᵢⱼ) )²<span class="cap">The sum of squared errors over all n data points. As the line turns and slides, a₀ and a₁ change and so does this total.</span></div>
+      <div class="defn">
+        <span class="term">Best-fit regression line</span>
+        <p>The values of a₀, a₁, …, aₘ that minimise the sum of squared errors. Why squared errors rather than some other measure is the subject of Lesson 2.</p>
+      </div>
+      <h3>How the minimum is found</h3>
+      <ol class="steps">
+        <li>The sum of squared errors is a <strong>convex</strong> function of the coefficients — bowl-shaped, with a single lowest point.</li>
+        <li>Take the partial derivative of the SSE with respect to each coefficient.</li>
+        <li>Set every partial derivative equal to zero.</li>
+        <li>Solve those equations simultaneously. The solution is the minimum — the best-fit coefficients.</li>
+      </ol>
+
+      <div class="ix" data-quiz="m8l1-q2">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Why do we square the errors before adding them, rather than simply adding the errors?</p>
+        <div class="opts">
+          <button class="opt" data-right data-fb="Plain errors are positive above the line and negative below it, so they cancel: a line that misses badly in both directions can total zero. Squaring makes every miss count, and — as Lesson 2 shows — it is exactly the right measure when errors are normal and independent.">Positive and negative errors would cancel out, so a terrible line could score zero.</button>
+          <button class="opt" data-fb="Squaring does make big errors count more, but that is a consequence, not the reason the plain sum fails. The plain sum fails because errors of opposite sign cancel.">Squaring makes the numbers bigger and easier to compare.</button>
+          <button class="opt" data-fb="Absolute errors also avoid cancellation and are sometimes used. Squaring isn’t the only possible choice — but it is the one with a clean justification when errors are normally distributed.">Absolute values can’t be computed by software.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="note">
+        <div class="note-head"><span class="lbl">Class discussion — Lesson 1</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="m8l1" data-placeholder="lm() in R, the formula notation y ~ x1 + x2, anything the TA said about intercepts…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Check 3</span>
+      <p class="q">Why is it enough to set the partial derivatives to zero, rather than having to check every candidate line?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Because the SSE is convex: it has one minimum and no misleading local dips. Where every partial derivative is zero, the bowl is at its bottom, so solving those equations gives the global best fit directly.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
+<!-- ============ LESSON 2 ============ -->
+<section class="lesson" id="l2" data-short="Likelihood &amp; AIC" style="--accent:#8a3d5c">
+  <div class="lesson-head">
+    <span class="ln">Lesson 2</span>
+    <h2>Likelihood and information criteria</h2>
+    <p class="keyline">Likelihood measures how well a model fits. AIC and BIC charge it for every parameter it uses, so that extra complexity has to earn its place.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Likelihood</h3>
+      <div class="defn">
+        <span class="term">Likelihood</span>
+        <p>For a given set of parameter values, the probability — strictly, the probability density — of seeing the data we actually observed, under an assumed model of the errors. It is the most basic measure of model quality.</p>
+      </div>
+      <div class="defn">
+        <span class="term">Maximum likelihood</span>
+        <p>The set of parameters that gives the highest likelihood. That set is the best-fit set of parameters, and the likelihood it reaches is written L*.</p>
+      </div>
+      <div class="callout">
+        <p class="tag">Lecture vs standard practice — which way round the probability runs</p>
+        <p><strong>Lecture:</strong> describes likelihood as the probability that the model would generate the estimates it does, treating the observed data as the correct values.</p>
+        <p><strong>Standard definition:</strong> the probability (density) of the <em>observed data</em> given the parameters. The lecture’s worked derivation below uses exactly this form — the probability of observing zᵢ if the true value is yᵢ — so the two agree once the math starts. Learn the standard wording; it is what textbooks and exams use.</p>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Check 4</span>
+      <p class="q">What is being varied, and what is being held fixed, when you maximise a likelihood?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">The data are held fixed — they are what was observed. The parameters are varied, and you keep the set that makes the observed data most probable.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Why least squares is maximum likelihood</h3>
+      <p>Assume the errors are <strong>normally distributed</strong> with mean 0 and variance σ², and <strong>independent</strong> from one data point to the next. Let z₁ … zₙ be the observed values and y₁ … yₙ the model’s estimates.</p>
+      <div class="formula">P(zᵢ | yᵢ) = ( 1 / (σ√(2π)) ) · exp( −(zᵢ − yᵢ)² / (2σ²) )<span class="cap">Probability density of observing zᵢ if the true value is yᵢ.</span></div>
+      <div class="formula">L = Πᵢ P(zᵢ | yᵢ) = ( 1 / (σ√(2π)) )ⁿ · exp( −(1/(2σ²)) · Σᵢ (zᵢ − yᵢ)² )<span class="cap">Independent errors, so the joint probability is the product — which collapses into a single exponential.</span></div>
+      <p>The exponential gets larger as its exponent gets larger, so maximising L means maximising the exponent. Strip the constants and what’s left is <strong>minus the sum of squared errors</strong>. Maximising that is the same as minimising the SSE.</p>
+      <div class="formula">maximise L &nbsp;⇔&nbsp; minimise Σᵢ ( zᵢ − (a₀ + Σⱼ aⱼxᵢⱼ) )²<span class="cap">Substituting the regression estimate for yᵢ. With independent, identically distributed normal errors, least squares <em>is</em> the maximum likelihood fit.</span></div>
+
+      <div class="ix" data-order="m8l2-order" data-win="Assumption first, then one point’s density, then the product, then the exponent, then drop the constants — and the sum of squared errors falls out.">
+        <div class="ix-head"><span class="ix-kind">put in order</span><span class="ix-done">solved</span></div>
+        <p class="prompt">Put the steps of the argument that least squares is maximum likelihood in order. Drag, or use the arrows.</p>
+        <ol class="order">
+          <li data-pos="1">Assume errors are normal with mean 0 and variance σ², independent across data points</li>
+          <li data-pos="2">Write the normal density of observing each zᵢ when the true value is yᵢ</li>
+          <li data-pos="3">Multiply the n densities together, because the errors are independent</li>
+          <li data-pos="4">Combine the product into one exponential, and note that it is largest when its exponent is largest</li>
+          <li data-pos="5">Drop the constants, leaving the negative sum of squared errors</li>
+          <li data-pos="6">Conclude that minimising the sum of squared errors gives the maximum likelihood parameters</li>
+        </ol>
+        <button class="btn check">Check order</button>
+        <p class="fb"></p>
+      </div>
+
+      <p>Likelihood can also compare two models directly: take the <strong>likelihood ratio</strong> and run a hypothesis test on it. The conditions that test needs are in Extra 2.</p>
+      <p>Beyond simple regression — other estimating formulas, other error assumptions — maximum likelihood gets complex and may not have an easy solution. Good statistical software handles much of that for you.</p>
+    </div>
+    <aside class="check">
+      <span class="n">Check 5</span>
+      <p class="q">Which two assumptions about the errors make least squares equivalent to maximum likelihood?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">They are normally distributed (with mean 0 and a common variance), and they are independent of one another — together, independent and identically distributed normal errors.</p>
+        <p class="a">Drop either one and minimising the SSE is no longer guaranteed to be the maximum likelihood fit.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Trading fit against complexity: AIC</h3>
+      <p>Adding parameters can always improve the fit — but it can also lead to <strong>overfitting</strong>, where the extra parameters fit random effects rather than real ones. The information criteria balance the two.</p>
+      <div class="formula">AIC = 2k − 2 ln(L*)<span class="cap">Akaike information criterion. L* is the maximum likelihood value, k the number of parameters being estimated. 2k is the penalty term. Smaller AIC is preferred.</span></div>
+      <div class="formula">AIC = n · ln( SSE / n ) + 2k &nbsp;(+ a constant)<span class="cap">The regression version, with normal errors substituted into the likelihood. The constant is the same for every model fitted to the same data, so it never changes which model wins.</span></div>
+      <p>Making AIC smaller pushes two ways at once: toward <strong>higher likelihood</strong> and toward <strong>fewer parameters</strong>. The underlying math comes from information theory.</p>
+      <div class="formula">AICc = AIC + 2k(k + 1) / (n − k − 1)<span class="cap">Corrected AIC. AIC’s nice properties hold as the number of data points goes to infinity; the correction term handles the ordinary case of a finite dataset. It shrinks toward zero as n grows.</span></div>
+      <div class="callout">
+        <p class="tag">Lecture vs standard practice — how many parameters k counts</p>
+        <p><strong>Lecture:</strong> for regression, k = m + 1 — one for each coefficient a₀ … aₘ.</p>
+        <p><strong>Common software practice:</strong> the error variance σ² is also estimated, so many packages (R’s <code>AIC()</code> on a linear model, for example) count k = m + 2. Every model on the same data gets the same extra 1, so AIC <em>differences</em> — the only thing you compare — come out the same either way. Just don’t compare a hand-computed AIC to a software-reported one.</p>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Check 6</span>
+      <p class="q">Adding a parameter raises ln(L*) by 0.6. Does AIC go up or down?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Up. The penalty rises by 2, and the fit term falls by 2 × 0.6 = 1.2, a net increase of 0.8. The parameter improved the fit, but not by enough to pay for itself.</p>
+        <p class="a">Under AIC, an extra parameter has to raise ln(L*) by more than 1 to be worth keeping.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Comparing two AIC values</h3>
+      <p>The gap between two models’ AIC values converts into a relative probability that one is better than the other.</p>
+      <div class="formula">relative likelihood = exp( (AIC<sub>low</sub> − AIC<sub>high</sub>) / 2 )<span class="cap">How likely the higher-AIC model is to be the better one, relative to the lower-AIC model.</span></div>
+      <p>Example: two models differ by 4 in AIC. exp(−4/2) = e<sup>−2</sup> ≈ 0.135, so the higher-AIC model is about <strong>13.5%</strong> as likely as the lower-AIC one to be the better model.</p>
+      <div class="callout">
+        <p class="tag">Lecture vs standard practice — the exponent</p>
+        <p>The recording’s spoken version of this formula comes through garbled in the transcript. Its own worked number, though — a 5-point AIC gap giving a relative likelihood of 8.2% — is exactly e<sup>−2.5</sup>, which is the standard formula above with the difference halved. Learn it as exp(−ΔAIC / 2).</p>
+      </div>
+
+      <div class="ix" data-quiz="m8l2-q1">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Model A has AIC 318; model B has AIC 324. Roughly how likely is B, relative to A, to be the better model?</p>
+        <div class="opts">
+          <button class="opt" data-fb="That would be exp(−1): a gap of 2. The gap here is 6, and the formula halves it: exp(−6/2) = exp(−3).">About 37%</button>
+          <button class="opt" data-fb="The AIC values themselves aren’t probabilities, and their ratio (324/318) means nothing. Only the difference matters.">About 98% — the two values are nearly the same size.</button>
+          <button class="opt" data-right data-fb="exp((318 − 324)/2) = e⁻³ ≈ 0.050. B is about 5% as likely as A to be the better model — strong evidence for A.">About 5%</button>
+          <button class="opt" data-fb="exp(−6) ≈ 0.25% forgets to halve the difference.">About 0.25%</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Check 7</span>
+      <p class="q">Why can you compare AIC values between two models on the same data, but not between two models fitted to different datasets?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">The likelihood depends on the data. A different dataset — more points, different values — changes ln(L*) for reasons that have nothing to do with the model, so the AIC gap no longer measures which model is better.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>BIC: a heavier penalty</h3>
+      <div class="formula">BIC = k · ln(n) − 2 ln(L*)<span class="cap">Bayesian information criterion. Same structure as AIC, but the penalty per parameter is ln(n) rather than 2. Smaller is preferred.</span></div>
+      <p>Because ln(n) exceeds 2 once n is 8 or more, BIC’s penalty is generally larger than AIC’s, and it tends to favour models with fewer parameters.</p>
+      <table>
+        <tr><th>BIC difference</th><th>Smaller-BIC model is …</th></tr>
+        <tr><td>more than 10</td><td>very likely better</td></tr>
+        <tr><td>6 to 10</td><td>likely better</td></tr>
+        <tr><td>2 to 6</td><td>somewhat likely better</td></tr>
+        <tr><td>0 to 2</td><td>only slightly likely better</td></tr>
+      </table>
+      <p>That table is a rule of thumb. It is an inexact science, and there is no hard-and-fast rule for choosing between AIC, BIC or plain maximum likelihood. For readers with a statistics background, AIC comes from a frequentist point of view and BIC from a Bayesian one. All three give valuable information, and looking at them together helps you choose among the models you are testing.</p>
+      <div class="callout">
+        <p class="tag">Lecture vs standard practice — when BIC “breaks down”</p>
+        <p><strong>Lecture:</strong> BIC breaks down as the number of data points gets close to the number of parameters, so only use it when you have a lot more data than parameters.</p>
+        <p><strong>Standard view:</strong> the advice is right — BIC’s justification is a large-sample approximation, so it is unreliable when n is not much bigger than k. But the formula itself doesn’t misbehave there; the criterion whose formula literally blows up as n approaches k + 1 is AICc, through its n − k − 1 denominator. Both point to the same practical rule: with few data points per parameter, trust none of these numbers very far.</p>
+      </div>
+
+      <div class="ix" data-match="m8l2-match" data-win="Likelihood measures fit; AIC and BIC charge for parameters at different rates; AICc repairs AIC for finite data; the likelihood ratio compares two models head-on.">
+        <div class="ix-head"><span class="ix-kind">match the pairs</span><span class="ix-done">matched</span></div>
+        <p class="prompt">Click a measure, then what it does.</p>
+        <div class="match">
+          <div class="col" data-side="a"><h4>Measure</h4>
+            <button class="cell" data-pair="1">Maximum likelihood</button>
+            <button class="cell" data-pair="2">AIC</button>
+            <button class="cell" data-pair="3">AICc</button>
+            <button class="cell" data-pair="4">BIC</button>
+            <button class="cell" data-pair="5">Likelihood ratio</button>
+          </div>
+          <div class="col" data-side="b"><h4>What it does</h4>
+            <button class="cell" data-pair="1" data-fb="Maximum likelihood rewards fit only. More parameters can never make it worse, which is exactly why it needs a partner that charges for complexity.">Picks the parameters that make the observed data most probable, with no charge for complexity</button>
+            <button class="cell" data-pair="2" data-fb="AIC = 2k − 2 ln L*: a flat charge of 2 per parameter.">Charges 2 per parameter against the log-likelihood</button>
+            <button class="cell" data-pair="3" data-fb="The correction 2k(k+1)/(n−k−1) matters most when n is small relative to k, and fades as n grows.">Adds a correction for datasets that are not infinitely large</button>
+            <button class="cell" data-pair="4" data-fb="BIC = k ln n − 2 ln L*: the charge per parameter grows with the amount of data, so it usually prefers smaller models than AIC does.">Charges ln(n) per parameter, usually more than AIC</button>
+            <button class="cell" data-pair="5" data-fb="Two models’ likelihoods, divided, then put through a hypothesis test.">Compares two models’ likelihoods directly with a hypothesis test</button>
+          </div>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="ix" data-quiz="m8l2-q2">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">On 500 data points, AIC prefers a 9-parameter model and BIC prefers a 6-parameter model. What is the most sensible reading?</p>
+        <div class="opts">
+          <button class="opt" data-fb="Neither criterion is the correct one and the other wrong — they encode different trade-offs, and disagreement is information in itself.">One of the two criteria has been computed incorrectly.</button>
+          <button class="opt" data-right data-fb="With n = 500, BIC charges ln(500) ≈ 6.2 per parameter against AIC’s 2, so it favours the smaller model. The three extra parameters improve fit a little — enough for AIC, not enough for BIC. Their value is marginal, which is worth reporting and worth checking on validation data.">Expected: BIC penalises each parameter more heavily at this n, so the three extra parameters buy some fit, but not much.</button>
+          <button class="opt" data-fb="Maximum likelihood alone will always prefer the larger model, since adding parameters can’t lower the likelihood. It can’t referee this disagreement.">Go with whichever has the higher maximum likelihood.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="note">
+        <div class="note-head"><span class="lbl">Class discussion — Lesson 2</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="m8l2" data-placeholder="AIC() and BIC() in R, what counts as k in the homework, anything said about the likelihood ratio test…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Check 8</span>
+      <p class="q">At what sample size does BIC start penalising parameters more heavily than AIC, and why?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">From n = 8. BIC charges ln(n) per parameter and AIC charges 2; ln(n) passes 2 when n passes e² ≈ 7.39.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
+<!-- ============ LESSON 3 ============ -->
+<section class="lesson" id="l3" data-short="Using it" style="--accent:#4a6b2a">
+  <div class="lesson-head">
+    <span class="ln">Lesson 3</span>
+    <h2>Using regression</h2>
+    <p class="keyline">For questions about how a system works, the coefficients are the answer. For forecasts, the predicted responses are. The same fitted equation serves both.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Notation</h3>
+      <table>
+        <tr><th>Symbol</th><th>Meaning</th></tr>
+        <tr><td>n</td><td>Number of data points</td></tr>
+        <tr><td>m</td><td>Number of predictors</td></tr>
+        <tr><td>yᵢ</td><td>Response of the i-th data point</td></tr>
+        <tr><td>xᵢⱼ</td><td>Value of the j-th predictor for data point i</td></tr>
+        <tr><td>a₀</td><td>The constant (intercept)</td></tr>
+        <tr><td>a₁ … aₘ</td><td>The coefficients, one per predictor, chosen so the model best fits the data</td></tr>
+      </table>
+      <div class="formula">ŷᵢ = a₀ + a₁xᵢ₁ + a₂xᵢ₂ + … + aₘxᵢₘ<span class="cap">The fitted equation. Every use of regression in this lesson reads something off it.</span></div>
+    </div>
+    <aside class="check">
+      <span class="n">Check 9</span>
+      <p class="q">In xᵢⱼ, which index runs over data points and which over predictors?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">i runs over data points (1 to n); j runs over predictors (1 to m). So x₄₂ is the second predictor’s value for the fourth data point.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Describing how a system works: read the coefficients</h3>
+      <p>Suppose a retailer compiles, for many store-weeks, the number of units sold (the response) and predictors such as price, advertising spend, number of promotions running and whether the week contained a holiday. After fitting, there is one coefficient per predictor.</p>
+      <p>Each coefficient says how much the predicted response changes when that predictor goes up by one unit, with the others unchanged. If the advertising coefficient comes out at 40 with spend measured in thousands of dollars, then every extra thousand dollars of advertising is associated with about 40 more units sold, on average.</p>
+      <div class="defn">
+        <span class="term">Coefficient aⱼ (descriptive reading)</span>
+        <p>The change in the predicted response for a one-unit increase in predictor j, holding the other predictors fixed. Its units are “response units per predictor unit”.</p>
+      </div>
+
+      <div class="ix" data-quiz="m8l3-q1">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">A regression of monthly electricity use (kWh) on floor area (square metres) and occupants gives a floor-area coefficient of 0.8. What does 0.8 mean?</p>
+        <div class="opts">
+          <button class="opt" data-fb="That is a reading of R², not of a coefficient. A coefficient carries units and describes a rate of change.">80% of the variation in electricity use is explained by floor area.</button>
+          <button class="opt" data-fb="0.8 is a slope, not a proportion of total use. A 100 m² home isn’t predicted to use 80% of anything — it is predicted to use about 80 kWh more than a 0 m² home with the same occupants.">Floor area accounts for 0.8 of each home’s electricity use.</button>
+          <button class="opt" data-right data-fb="Units of kWh per m², with occupants unchanged. A home 50 m² larger is predicted to use about 40 kWh more per month.">Each extra square metre is associated with about 0.8 kWh more per month, with the number of occupants held the same.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Check 10</span>
+      <p class="q">Why does “holding the other predictors fixed” matter when you read a coefficient?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Because each coefficient is estimated alongside the others. The advertising coefficient answers “what if spend rises and price, promotions and holidays stay as they were?” — which can differ a lot from what happens when advertising tends to rise together with promotions.</p>
+        <p class="a">That caution is also the bridge to Lesson 4: a coefficient describes an association, not automatically a cause.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Predicting what will happen: read the responses</h3>
+      <p>Suppose instead you want to predict the selling price of a used car. Compile data on many past sales: the response is the sale price, and the predictors might be age, mileage, engine size and a condition rating. Fit the model and you again have one coefficient per predictor.</p>
+      <p>Now take a new car that hasn’t sold. You know its predictors but not its response. Plug the predictors into the fitted equation and the output ŷ is the predicted selling price. Here the coefficients are only the means to an end; the number you act on is the prediction.</p>
+
+      <div class="ix" data-quiz="m8l3-q2">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Which of these is <em>not</em> something regression directly answers?</p>
+        <div class="opts">
+          <button class="opt" data-fb="That is a descriptive question — the answer is a coefficient.">How much does an extra year of warranty raise the resale price of an appliance?</button>
+          <button class="opt" data-fb="That is a predictive question — the answer is a fitted value for a new case.">What will this applicant’s credit-card balance be in six months?</button>
+          <button class="opt" data-right data-fb="That is a prescriptive question: it asks for the best action. Regression can supply inputs to it — a demand estimate at each price, say — but choosing the action needs something else, typically optimisation.">What price should the store charge next week to maximise profit?</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Check 11</span>
+      <p class="q">Descriptive, predictive and prescriptive analytics: which does regression cover directly, and why is it so widely used?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">It covers descriptive (via the coefficients) and predictive (via the fitted responses) — two of the three. Only prescriptive questions fall outside it, which is why regression is one of the most commonly used tools in analytics.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <div class="note">
+        <div class="note-head"><span class="lbl">Class discussion — Lesson 3</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="m8l3" data-placeholder="predict() on new data, interpreting coefficients in the homework, units…"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ LESSON 4 ============ -->
+<section class="lesson" id="l4" data-short="Causation" style="--accent:#8a5a1c">
+  <div class="lesson-head">
+    <span class="ln">Lesson 4</span>
+    <h2>Causation vs. correlation</h2>
+    <p class="keyline">A regression that predicts well shows that two things move together. Whether one drives the other is a separate question that the fit itself cannot settle.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>The two words</h3>
+      <div class="defn">
+        <span class="term">Causation</span>
+        <p>One thing causes another.</p>
+      </div>
+      <div class="defn">
+        <span class="term">Correlation</span>
+        <p>Two things tend to happen, or not happen, together — but neither of them need cause the other.</p>
+      </div>
+      <h3>Run the regression backwards</h3>
+      <p>Take a dataset of daily rainfall and umbrella sales across many towns. Regress umbrella sales on rainfall and the coefficient is strongly significant: wetter days sell more umbrellas. Saying “because it rained, people bought umbrellas” is reasonable.</p>
+      <p>Now swap the roles. Regress rainfall on umbrella sales, using the same data. The p-value and the model’s quality measures come out <strong>exactly the same</strong>. Does that show that buying umbrellas makes it rain? Obviously not — yet the model is just as good at prediction: tell me one town sold far more umbrellas than another today and I can predict it was the wetter one.</p>
+      <div class="formula">y = a₀ + a₁x₁ &nbsp;&nbsp;and&nbsp;&nbsp; x₁ = b₀ + b₁y<span class="cap">Both directions of a simple regression on the same data have identical p-values and fit quality. The model’s statistics cannot tell you which way the arrow points.</span></div>
+    </div>
+    <aside class="check">
+      <span class="n">Check 12</span>
+      <p class="q">If a regression’s quality metrics are identical in both directions, what information must decide which direction is causal?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Knowledge from outside the model — which came first, whether a mechanism makes sense, and whether some other factor could be driving both. The data alone, fitted this way, is symmetric.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>The third factor</h3>
+      <p>Sometimes neither variable causes the other, and both are driven by something else. Weekly ice-cream sales and weekly drownings rise and fall together; a regression would predict one from the other quite well. Neither causes the other: hot weather sends more people to buy ice cream and more people into the water.</p>
+      <div class="defn">
+        <span class="term">Outside factor (confounder)</span>
+        <p>A factor that influences both the predictor and the response, producing a correlation between them even when there is no causal link between the two.</p>
+      </div>
+
+      <div class="ix" data-match="m8l4-match" data-win="Four different stories can sit behind the same correlation. Only one of them is “x causes y”.">
+        <div class="ix-head"><span class="ix-kind">match the pairs</span><span class="ix-done">matched</span></div>
+        <p class="prompt">Click an observed correlation, then the explanation that best fits it.</p>
+        <div class="match">
+          <div class="col" data-side="a"><h4>Observed correlation</h4>
+            <button class="cell" data-pair="1">Towns with more fire engines at a blaze see more damage</button>
+            <button class="cell" data-pair="2">People who carry an asthma inhaler have more asthma attacks</button>
+            <button class="cell" data-pair="3">A country’s honey production tracks its number of chess grandmasters over a decade</button>
+            <button class="cell" data-pair="4">Fields given more fertiliser, in a randomised trial, yield more grain</button>
+          </div>
+          <div class="col" data-side="b"><h4>Most likely explanation</h4>
+            <button class="cell" data-pair="1" data-fb="Bigger fires both cause more damage and summon more engines. The size of the fire drives both.">An outside factor drives both</button>
+            <button class="cell" data-pair="2" data-fb="People carry inhalers because they have asthma. The condition comes first and causes the inhaler, not the other way round.">The arrow runs the other way</button>
+            <button class="cell" data-pair="3" data-fb="Two unrelated series that both happen to trend over the same years will correlate. Search enough pairs and you will always find some.">Coincidence between two trending series</button>
+            <button class="cell" data-pair="4" data-fb="Randomisation breaks the link between fertiliser and every other factor, so a difference in yield can be put down to the fertiliser.">A genuine cause</button>
+          </div>
+        </div>
+        <p class="fb"></p>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Check 13</span>
+      <p class="q">Why is “no outside factor” the hardest of the causal rules of thumb to satisfy?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Because it requires thinking of every possible external factor, and no one can do that with certainty. The other two — cause before effect, and the idea making sense — can be checked directly.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>So when can you claim causation?</h3>
+      <p>There is a fair amount of philosophical thought on this, including the view that proving causation is theoretically impossible. Fortunately absolute proof isn’t needed. People draw causal conclusions from rules of thumb all the time and are often right. Most rules of thumb boil down to three conditions:</p>
+      <ol class="steps">
+        <li><strong>The cause comes before the effect.</strong></li>
+        <li><strong>The idea of causation makes sense.</strong> There is a plausible mechanism.</li>
+        <li><strong>No outside factor could be causing the relationship.</strong> The hardest to ensure.</li>
+      </ol>
+      <p>Randomised experiments and controls help with the third condition, but you may still miss something — which is why so many studies, especially of human behaviour, are controversial. It is usually not hard to find a possible outside factor that might be part of the cause.</p>
+      <p>None of this means models can’t suggest causation. Coming up with insightful causal relationships is an important part of analytics. It means being careful, and thinking through every possibility you can, <em>before</em> claiming that a model shows causation.</p>
+
+      <div class="branch" data-branch="m8l4-case">
+        <div class="persona">
+          <span class="av">PR</span>
+          <span class="who"><b>Priya Raman</b><span>Analyst, regional school district</span></span>
+        </div>
+        <div class="scene" data-step="1">
+          <p>Priya regresses end-of-year maths scores on hours of after-school tutoring, across two thousand students. The tutoring coefficient is negative and highly significant: every extra ten hours is associated with a lower score.</p>
+          <p class="said">A board member: “So tutoring is hurting them. Let’s cut the programme and save the money.”</p>
+          <p><strong>What should Priya say first?</strong></p>
+          <div class="choices">
+            <button class="choice" data-go="2" data-tone="bad" data-head="What happens"
+              data-outcome="The programme is cut. The next year, the students who would have been tutored — the ones who were already struggling — fall further behind. The regression was describing who gets tutored, not what tutoring does.">
+              Agree — the p-value is tiny, so the effect is real.
+            </button>
+            <button class="choice" data-go="2" data-tone="good" data-head="The right first question"
+              data-outcome="The board member pauses. Priya points out that students are referred to tutoring <em>because</em> their scores are low, so low scores come first. The arrow in the data may run from grades to tutoring, not from tutoring to grades.">
+              Ask which came first: are students tutored because they are struggling?
+            </button>
+            <button class="choice" data-go="2" data-tone="bad" data-head="What goes wrong"
+              data-outcome="The reverse model comes back with the same p-value and the same fit quality — a simple regression is equally good in either direction. Swapping the roles tells you nothing about which way the effect runs.">
+              Re-run the regression with scores predicting tutoring hours to see which direction is stronger.
+            </button>
+          </div>
+        </div>
+        <div class="scene" data-step="2" data-end="1" hidden>
+          <p><strong>The board still wants an answer.</strong> Is the tutoring worth paying for?</p>
+          <div class="choices">
+            <button class="choice" data-tone="bad" data-head="Still correlation"
+              data-outcome="Adding prior scores helps — it removes one outside factor — but others remain: motivation, home support, which teachers make referrals. The coefficient is better, and still not a clean causal estimate.">
+              Add last year’s score as a predictor and report the new tutoring coefficient as the effect of tutoring.
+            </button>
+            <button class="choice" data-tone="good" data-head="What would settle it"
+              data-outcome="Among students who qualify, randomly offer tutoring this term to some and next term to the rest. Randomisation breaks the link between being tutored and everything else about the student, so a difference in outcomes can be put down to the tutoring. Priya reports the observational result as correlation and recommends the trial.">
+              Propose a randomised rollout among eligible students, and describe the current result as correlation only.
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="ix" data-quiz="m8l4-q1">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">A model predicts a patient’s recovery time very accurately from the number of follow-up appointments they attend. What does the accuracy establish?</p>
+        <div class="opts">
+          <button class="opt" data-fb="Accuracy is exactly what correlation delivers. It tells you nothing about the direction or the mechanism.">That follow-up appointments speed recovery.</button>
+          <button class="opt" data-right data-fb="Good prediction is empirical: the two quantities move together. Slower recoverers may simply need more appointments — the arrow could run the other way — and severity of illness could drive both.">That the two are correlated, and can be used to predict one another — nothing about which causes which.</button>
+          <button class="opt" data-fb="The correlation is real enough to predict with. Calling it spurious would throw away a usable pattern; the point is only that it isn’t evidence of cause.">That the correlation is spurious and the model should be discarded.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="note">
+        <div class="note-head"><span class="lbl">Class discussion — Lesson 4</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="m8l4" data-placeholder="Spurious-correlation examples from the forums, experiments vs observational data…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Check 14</span>
+      <p class="q">State the three rules of thumb for inferring causation from a correlation.</p>
+      <details><summary>Show answer</summary>
+        <p class="a">The cause comes before the effect. The causal idea makes sense. No outside factor could be causing the relationship.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
+<!-- ============ LESSON 5 ============ -->
+<section class="lesson" id="l5" data-short="Transforms" style="--accent:#33507f">
+  <div class="lesson-head">
+    <span class="ln">Lesson 5</span>
+    <h2>Transformations and interactions</h2>
+    <p class="keyline">“Linear” regression only has to be linear in its coefficients. Squares, logs and products of the attributes all go in as new columns of data, and the fitting works exactly as before.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>When the data isn’t a straight line</h3>
+      <p>In the basic formula each attribute appears linearly: its value xⱼ is multiplied by a coefficient aⱼ. That works when the data looks linear. When it curves, a straight line fits badly, and a curve fits much closer.</p>
+      <figure>
+        <svg class="fig" viewBox="0 0 680 310" role="img" aria-label="Two panels. Left: curved data with a poorly fitting straight line and a closely fitting quadratic curve. Right: two groups of points whose fitted lines have different slopes, showing an interaction.">
+          <defs><clipPath id="c5a"><rect x="40" y="30" width="280" height="232"/></clipPath></defs>
+          <g font-family="IBM Plex Sans,sans-serif" font-size="12" fill="#4a5765">
+            <line x1="40" y1="262" x2="320" y2="262" stroke="#131b26" stroke-width="1.3"/>
+            <line x1="40" y1="262" x2="40" y2="30" stroke="#131b26" stroke-width="1.3"/>
+            <g clip-path="url(#c5a)">
+              <line x1="40" y1="276.8" x2="320" y2="80.2" stroke="#9aa5b1" stroke-width="2" stroke-dasharray="6 4"/>
+              <polyline points="40.0,240.3 54.0,240.6 68.0,239.8 82.0,238.0 96.0,235.1 110.0,231.1 124.0,226.1 138.0,220.0 152.0,212.9 166.0,204.6 180.0,195.3 194.0,185.0 208.0,173.5 222.0,161.0 236.0,147.5 250.0,132.8 264.0,117.1 278.0,100.3 292.0,82.5 306.0,63.6 320.0,43.6" fill="none" stroke="#33507f" stroke-width="2.5"/>
+            </g>
+            <g fill="#131b26" opacity=".78"><circle cx="54.0" cy="250.3" r="4.5"/><circle cx="75.0" cy="233.8" r="4.5"/><circle cx="96.0" cy="223.8" r="4.5"/><circle cx="117.0" cy="230.4" r="4.5"/><circle cx="138.0" cy="228.8" r="4.5"/><circle cx="159.0" cy="206.8" r="4.5"/><circle cx="180.0" cy="189.0" r="4.5"/><circle cx="201.0" cy="168.5" r="4.5"/><circle cx="222.0" cy="171.7" r="4.5"/><circle cx="243.0" cy="153.1" r="4.5"/><circle cx="264.0" cy="114.1" r="4.5"/><circle cx="285.0" cy="92.7" r="4.5"/><circle cx="306.0" cy="57.7" r="4.5"/></g>
+            <text x="40" y="286" font-weight="600" fill="#131b26">Curvature → add x₁²</text>
+            <text x="40" y="303">dashed: a₀ + a₁x₁ &nbsp;·&nbsp; solid: a₀ + a₁x₁ + a₂x₁²</text>
+
+            <line x1="380" y1="262" x2="660" y2="262" stroke="#131b26" stroke-width="1.3"/>
+            <line x1="380" y1="262" x2="380" y2="30" stroke="#131b26" stroke-width="1.3"/>
+            <line x1="390" y1="226" x2="650" y2="196" stroke="#8a5a1c" stroke-width="2.5"/>
+            <line x1="390" y1="232" x2="650" y2="62" stroke="#33507f" stroke-width="2.5"/>
+            <g fill="#8a5a1c"><circle cx="410" cy="232" r="4.5"/><circle cx="452" cy="212" r="4.5"/><circle cx="498" cy="220" r="4.5"/><circle cx="540" cy="200" r="4.5"/><circle cx="585" cy="210" r="4.5"/><circle cx="628" cy="192" r="4.5"/></g>
+            <g fill="#33507f"><circle cx="418" cy="206" r="4.5"/><circle cx="460" cy="193" r="4.5"/><circle cx="505" cy="146" r="4.5"/><circle cx="548" cy="136" r="4.5"/><circle cx="592" cy="94" r="4.5"/><circle cx="635" cy="78" r="4.5"/></g>
+            <text x="560" y="58" fill="#33507f" font-weight="600">x₂ high</text>
+            <text x="572" y="226" fill="#8a5a1c" font-weight="600">x₂ low</text>
+            <text x="380" y="286" font-weight="600" fill="#131b26">Interaction → add x₁x₂</text>
+            <text x="380" y="303">the slope on x₁ depends on the level of x₂</text>
+          </g>
+        </svg>
+        <figcaption>Left: a straight line misses the bend at both ends and in the middle; a quadratic term follows it. Right: when one attribute changes how strongly the other matters, the lines are not parallel — the product term is what lets the slopes differ.</figcaption>
+      </figure>
+      <p>So transform the data to make the fit linear. If the data looks like y = x², include a <strong>quadratic term</strong>. Doing so simply creates a new column of data, x₁², and the regression treats it like any other attribute.</p>
+      <div class="formula">y = a₀ + a₁x₁ + a₂x₁²<span class="cap">Still linear regression: the equation is linear in a₀, a₁ and a₂, even though it is curved in x₁.</span></div>
+      <p>Any other function of the attributes can be used the same way, if it fits the data — a log, a square root, a reciprocal.</p>
+    </div>
+    <aside class="check">
+      <span class="n">Check 15</span>
+      <p class="q">Why is y = a₀ + a₁x₁ + a₂x₁² still “linear” regression?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">“Linear” refers to the coefficients, not the attributes. x₁² is just another column of numbers; the response is still a₀ plus a sum of coefficients times columns, so the same least-squares fitting applies unchanged.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Transforming the response</h3>
+      <p>The response can be transformed too — for example, regress the <strong>log of the response</strong> instead of the response itself — or both the attributes and the response can be transformed together.</p>
+      <div class="defn">
+        <span class="term">Box-Cox transformation</span>
+        <p>A family of power transformations of the response, indexed by a single parameter λ, that most statistical software can choose automatically.</p>
+      </div>
+      <div class="formula">y(λ) = (y<sup>λ</sup> − 1) / λ &nbsp; for λ ≠ 0 , &nbsp;&nbsp; y(0) = ln y<span class="cap">The standard Box-Cox form (the lecture names the method without writing it out). λ = 1 leaves the shape unchanged, λ = 0.5 is a square-root transform, λ = 0 a log. It needs y &gt; 0.</span></div>
+
+      <div class="ix" data-quiz="m8l5-q1">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Plotting delivery cost against distance, the points rise steeply at first and then level off. Which change to the model is the natural first try?</p>
+        <div class="opts">
+          <button class="opt" data-fb="A positive squared term makes the curve get steeper as distance grows — the opposite of levelling off. Rising fast and then flattening is the classic shape for a log.">Add distance² with a positive coefficient.</button>
+          <button class="opt" data-right data-fb="A log grows quickly at first and then flattens, which is exactly the shape described. Add ln(distance) as a column and fit as usual.">Use ln(distance) as the predictor instead of distance.</button>
+          <button class="opt" data-fb="More unrelated predictors won’t straighten a curved relationship with this one. The shape problem is in how distance enters the model.">Add more predictors so the straight line fits better.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Check 16</span>
+      <p class="q">Name three things you can transform in a regression.</p>
+      <details><summary>Show answer</summary>
+        <p class="a">An attribute (for example, add x² or use ln x); the response (for example, regress ln y); or both at once. Box-Cox is a family of response transformations that software can fit for you.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Interactions</h3>
+      <p>Sometimes attributes interact. Take crop yield as a function of irrigation and fertiliser. Yield may depend on each separately, and also on their <strong>product</strong>: fertiliser may help far more on a well-watered field than on a dry one. The individual terms alone can’t capture that; an interaction term can.</p>
+      <div class="formula">y = a₀ + a₁x₁ + a₂x₂ + a₃(x₁x₂)<span class="cap">The interaction term x₁x₂ becomes a new column of data and is treated like any other attribute. It can be transformed too.</span></div>
+      <div class="defn">
+        <span class="term">Interaction term</span>
+        <p>A term built from two or more attributes together — typically their product — that lets the effect of one attribute depend on the value of another.</p>
+      </div>
+      <p>Once transformations and interaction terms are included as columns, software finds the best-fit coefficients in exactly the same way as before.</p>
+
+      <div class="ix" data-quiz="m8l5-q2">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">In y = a₀ + a₁x₁ + a₂x₂ + a₃x₁x₂, by how much does the predicted y change when x₁ rises by one unit?</p>
+        <div class="opts">
+          <button class="opt" data-fb="That ignores the interaction. x₁ also appears in a₃x₁x₂, so raising it by one adds a₃x₂ as well.">By a₁, always.</button>
+          <button class="opt" data-fb="a₁ + a₃ would be right only when x₂ = 1.">By a₁ + a₃.</button>
+          <button class="opt" data-right data-fb="The change is a₁ + a₃x₂. The effect of x₁ depends on the level of x₂ — which is exactly what the interaction was put in to allow.">By a₁ + a₃x₂ — it depends on the value of x₂.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="ix" data-order="m8l5-order" data-win="Look, choose a form, build the column, refit, then judge — the new column is just another attribute to the fitting routine.">
+        <div class="ix-head"><span class="ix-kind">put in order</span><span class="ix-done">solved</span></div>
+        <p class="prompt">Put the steps for adding a transformed term to a regression in order.</p>
+        <ol class="order">
+          <li data-pos="1">Plot the response against the attribute and see that the relationship curves</li>
+          <li data-pos="2">Choose a function of the attribute that matches the shape — a square, a log, a product with another attribute</li>
+          <li data-pos="3">Compute that function for every data point, creating a new column</li>
+          <li data-pos="4">Refit the regression with the new column included like any other attribute</li>
+          <li data-pos="5">Compare the new model with the old one — for instance on AIC or BIC — before keeping the term</li>
+        </ol>
+        <button class="btn check">Check order</button>
+        <p class="fb"></p>
+      </div>
+
+      <div class="note">
+        <div class="note-head"><span class="lbl">Class discussion — Lesson 5</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="m8l5" data-placeholder="I(x^2) and x1:x2 in R formulas, boxcox() in MASS, homework hints…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Check 17</span>
+      <p class="q">In a model with an interaction, why can’t you read a₁ on its own as “the effect of x₁”?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Because x₁’s effect is a₁ + a₃x₂, which changes with x₂. a₁ alone is the effect of x₁ only at x₂ = 0 — a value that may not even occur in the data.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
+<!-- ============ LESSON 6 ============ -->
+<section class="lesson" id="l6" data-short="Output" style="--accent:#6e4a8c">
+  <div class="lesson-head">
+    <span class="ln">Lesson 6</span>
+    <h2>Reading regression output</h2>
+    <p class="keyline">Fitting is not the end. The output tells you which attributes are really significant, whether they matter in practice, and how much of the variation the model accounts for — if you know how far to trust each number.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>What a standard output looks like</h3>
+      <p>A delivery firm regresses delivery time in minutes on trip distance, number of stops and a weekend indicator, using 100 past deliveries. The printed summary looks like the one below; every package lays it out in roughly this way.</p>
+
+      <figure class="hotwrap" data-hotspot="m8l6-hot">
+        <svg class="fig" viewBox="0 0 700 330" role="img" aria-label="A regression output table with coefficient estimates, standard errors, t values and p-values for an intercept and three predictors, followed by R-squared and adjusted R-squared. Six clickable areas.">
+          <rect x="0" y="0" width="700" height="330" fill="#fbfcfd"/>
+          <g font-family="IBM Plex Mono,monospace" font-size="13" fill="#131b26">
+            <text x="24" y="36" fill="#4a5765">Coefficients:</text>
+            <text x="250" y="36" text-anchor="end" fill="#4a5765"></text>
+            <text x="330" y="36" text-anchor="end" fill="#4a5765">Estimate</text>
+            <text x="440" y="36" text-anchor="end" fill="#4a5765">Std. Error</text>
+            <text x="540" y="36" text-anchor="end" fill="#4a5765">t value</text>
+            <text x="650" y="36" text-anchor="end" fill="#4a5765">Pr(&gt;|t|)</text>
+            <line x1="24" y1="48" x2="676" y2="48" stroke="#c9d2db"/>
+            <text x="24" y="76">(Intercept)</text><text x="330" y="76" text-anchor="end">12.40</text><text x="440" y="76" text-anchor="end">3.10</text><text x="540" y="76" text-anchor="end">4.00</text><text x="650" y="76" text-anchor="end">0.0001</text>
+            <text x="24" y="106">distance_km</text><text x="330" y="106" text-anchor="end">2.85</text><text x="440" y="106" text-anchor="end">0.21</text><text x="540" y="106" text-anchor="end">13.57</text><text x="650" y="106" text-anchor="end">&lt;2e-16</text>
+            <text x="24" y="136">stops</text><text x="330" y="136" text-anchor="end">1.92</text><text x="440" y="136" text-anchor="end">0.64</text><text x="540" y="136" text-anchor="end">3.00</text><text x="650" y="136" text-anchor="end">0.0034</text>
+            <text x="24" y="166">weekend</text><text x="330" y="166" text-anchor="end">-0.40</text><text x="440" y="166" text-anchor="end">0.95</text><text x="540" y="166" text-anchor="end">-0.42</text><text x="650" y="166" text-anchor="end">0.6750</text>
+            <line x1="24" y1="184" x2="676" y2="184" stroke="#c9d2db"/>
+            <text x="24" y="214" fill="#4a5765">Residual standard error: 4.1 on 96 degrees of freedom</text>
+            <text x="24" y="244">Multiple R-squared: 0.71</text>
+            <text x="330" y="244">Adjusted R-squared: 0.70</text>
+          </g>
+          <text x="24" y="310" font-family="IBM Plex Sans,sans-serif" font-size="11.5" fill="#4a5765">Click each of the six outlined areas.</text>
+
+          <g class="hs" data-title="Estimate — the coefficients"
+             data-body="The fitted a₀ … a₃. Each extra kilometre adds about 2.85 minutes, each extra stop about 1.92, with the other predictors unchanged. Always ask whether the size matters as well as whether it is significant: coefficient × a typical change in the attribute is the real-world effect.">
+            <rect class="hit" x="262" y="56" width="76" height="120"/><rect class="ring" x="262" y="56" width="76" height="120" rx="3"/>
+          </g>
+          <g class="hs" data-title="Std. Error"
+             data-body="How uncertain each estimate is. A 95% confidence interval is roughly the estimate ± 2 standard errors — for distance, about 2.43 to 3.27 minutes per km. An interval far from zero says the coefficient is very unlikely to be zero; one that straddles zero says it might be.">
+            <rect class="hit" x="358" y="56" width="90" height="120"/><rect class="ring" x="358" y="56" width="90" height="120" rx="3"/>
+          </g>
+          <g class="hs" data-title="t value"
+             data-body="The coefficient divided by its standard error: 2.85 / 0.21 ≈ 13.6. It carries the same information as the p-value in another form — the further from zero, the smaller the p-value.">
+            <rect class="hit" x="468" y="56" width="80" height="120"/><rect class="ring" x="468" y="56" width="80" height="120" rx="3"/>
+          </g>
+          <g class="hs" data-title="Pr(>|t|) — the p-value"
+             data-body="The hypothesis test on each coefficient. Distance, stops and the intercept are all far below 0.05 — unambiguous. Most real output looks like this: values are either tiny or large, and few sit close to the threshold.">
+            <rect class="hit" x="568" y="56" width="92" height="94"/><rect class="ring" x="568" y="56" width="92" height="94" rx="3"/>
+          </g>
+          <g class="hs" data-title="An attribute that doesn’t earn its place"
+             data-body="weekend: estimate −0.40, standard error 0.95, p = 0.675. The data are entirely consistent with a coefficient of zero. Under the usual rule of thumb this attribute is a candidate for removal from the model.">
+            <rect class="hit" x="18" y="150" width="642" height="24"/><rect class="ring" x="18" y="150" width="642" height="24" rx="3"/>
+          </g>
+          <g class="hs" data-title="R-squared and adjusted R-squared"
+             data-body="R² = 0.71: the model accounts for about 71% of the variability in delivery time; the other 29% is randomness or factors not in the model. Adjusted R² makes an allowance for the number of attributes used, which is why it is slightly lower.">
+            <rect class="hit" x="18" y="226" width="642" height="26"/><rect class="ring" x="18" y="226" width="642" height="26" rx="3"/>
+          </g>
+        </svg>
+        <div class="hotpanel"><span class="hint">Six areas are clickable. Open all six to finish this activity.</span></div>
+      </figure>
+    </div>
+    <aside class="check">
+      <span class="n">Check 18</span>
+      <p class="q">Four numbers on each coefficient row carry overlapping information. Which three are really the same test?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">The p-value, the t-statistic (coefficient ÷ standard error) and the 95% confidence interval. All three ask how far the estimate sits from zero relative to its uncertainty.</p>
+        <p class="a">The estimate itself answers a different question: how big the effect is.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>p-values</h3>
+      <div class="defn">
+        <span class="term">p-value (of a coefficient)</span>
+        <p>The result of a hypothesis test on whether the coefficient could really be zero. Small p-values say the attribute very probably matters; large ones say the data are consistent with no effect.</p>
+      </div>
+      <p>The common rule of thumb: if a coefficient’s p-value is greater than <strong>0.05</strong>, remove that attribute from the model. Other thresholds can be used, depending on how conservative you want to be:</p>
+      <table>
+        <tr><th>Threshold</th><th>Effect</th></tr>
+        <tr><td>higher (e.g. 0.10)</td><td>More attributes kept; more likely an irrelevant one ends up in the model.</td></tr>
+        <tr><td>lower (e.g. 0.01)</td><td>Fewer attributes kept; more risk of leaving out a relevant one.</td></tr>
+      </table>
+      <p>For most attributes the decision isn’t close. p-values tend to be very low — 0.001 or less, so the attribute is almost certainly important — or very high, 0.3 or more.</p>
+      <div class="callout">
+        <p class="tag">Lecture vs standard practice — what a p-value is</p>
+        <p><strong>Lecture:</strong> the p-value estimates the probability that the coefficient really might be zero.</p>
+        <p><strong>Standard definition:</strong> assuming the true coefficient <em>is</em> zero, the p-value is the probability of getting an estimate at least as far from zero as the one observed. It is a statement about the data given “no effect”, not the probability that “no effect” is true. The practical rule — small p means keep, large p means doubtful — is the same under either reading, but on a written exam, give the standard one.</p>
+      </div>
+      <div class="formula">t = aⱼ / SE(aⱼ) &nbsp;&nbsp;·&nbsp;&nbsp; 95% CI ≈ aⱼ ± 2·SE(aⱼ)<span class="cap">The t-statistic and the approximate 95% confidence interval, both built from the estimate and its standard error. (The exact multiplier comes from the t distribution and is about 1.96–2 for moderately large samples.)</span></div>
+    </div>
+    <aside class="check">
+      <span class="n">Check 19</span>
+      <p class="q">Lowering the p-value threshold from 0.05 to 0.01: which mistake becomes more likely, and which less?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Keeping an irrelevant attribute becomes less likely; leaving out a relevant one becomes more likely. A threshold trades one error against the other.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Two warnings about p-values</h3>
+      <p><strong>1 · With a great deal of data, p-values get small.</strong> They can become tiny even for attributes that have no meaningful relationship to the response, so with very large datasets be careful about relying on them.</p>
+      <p><strong>2 · They are only probabilities, so some will be wrong.</strong> Test many attributes and some that look significant will not be. If you run a hundred tests on attributes that truly have no effect, a 0.02 threshold will let about two of them through by chance. When the findings are acted on — people change what they eat, what they buy, what they prescribe — those false positives have real consequences.</p>
+      <div class="callout">
+        <p class="tag">Lecture vs standard practice — the two warnings, stated exactly</p>
+        <p><strong>Large data.</strong> The lecture says p-values shrink even when an attribute is “not at all related” to the response. Strictly, if the true effect is exactly zero, p-values do not drift toward zero as data grows. What large samples do is make a <em>tiny but non-zero</em> effect highly significant — statistically real, practically meaningless. The lecture’s advice (don’t lean on p-values with huge data; look at effect size) is standard.</p>
+        <p><strong>Many tests.</strong> The lecture frames it as “each attribute with p = 0.02 has a 2% chance of not being significant, so about two in a hundred are irrelevant.” The standard framing: 2% is the false-positive rate among attributes whose true effect is zero, so the expected number of spurious findings depends on how many of the tested attributes are truly null. The conclusion — test many things and some “discoveries” will be noise — is exactly the standard multiple-comparisons problem. Corrections for it are in Extra 2.</p>
+      </div>
+
+      <div class="ix" data-quiz="m8l6-q1">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">A model of household water use, fitted on 3 million homes, gives a coefficient for “house painted light colour” of 0.02 litres per day, p &lt; 0.0001. What should you conclude?</p>
+        <div class="opts">
+          <button class="opt" data-fb="Significance says the effect is probably not exactly zero. It says nothing about whether the effect is big enough to care about.">Paint colour is an important driver of water use — the p-value is tiny.</button>
+          <button class="opt" data-right data-fb="With 3 million rows, almost any non-zero effect is significant. 0.02 litres a day is a few litres a year — negligible next to daily use in the hundreds of litres. Check the size, not just the p-value.">It is probably a real but negligible effect; with this much data the p-value alone is not a guide to importance.</button>
+          <button class="opt" data-fb="A tiny p-value can’t be dismissed as an error either. The effect is likely real — just too small to matter.">The p-value must be wrong because the effect is so small.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Check 20</span>
+      <p class="q">Why can the number of attributes you test turn a sound analysis into a misleading one?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Each test has some chance of a false positive. Across many tests those chances add up, so a list of “significant” attributes will contain some that are pure noise — and you can’t tell from the p-values which ones.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Look at the coefficient itself</h3>
+      <p>Even with a very low p-value, a coefficient multiplied by a realistic range of its attribute may make almost no difference. Suppose a model of house sale prices, in the hundreds of thousands of dollars, gives a coefficient of $15 per electrical outlet. Across the realistic range — say 10 to 40 outlets — that moves the prediction by under $500. Not meaningful at that scale, however small its p-value.</p>
+      <div class="defn">
+        <span class="term">Practical significance</span>
+        <p>Whether an effect is large enough to matter, judged by coefficient × a realistic change in the attribute, compared with the size of the response. Distinct from statistical significance, which is what the p-value measures.</p>
+      </div>
+
+      <h3>How much the model explains: R²</h3>
+      <div class="defn">
+        <span class="term">R² (coefficient of determination)</span>
+        <p>An estimate of how much of the variability in the response the model accounts for. R² = 0.59 means about 59% is accounted for; the remaining 41% is randomness or factors the model doesn’t capture.</p>
+      </div>
+      <div class="defn">
+        <span class="term">Adjusted R²</span>
+        <p>R² adjusted for the number of attributes used. Plain R² can only rise when attributes are added; the adjusted version can fall if an attribute doesn’t pull its weight.</p>
+      </div>
+      <div class="formula">R² = 1 − SSE / SST , &nbsp;&nbsp; SST = Σᵢ (yᵢ − ȳ)²<span class="cap">Standard definition: one minus the unexplained share of the total variation around the mean.</span></div>
+      <div class="formula">adjusted R² = 1 − (1 − R²) · (n − 1) / (n − m − 1)<span class="cap">n data points, m attributes. The factor (n − 1)/(n − m − 1) grows with m, so extra attributes are charged for.</span></div>
+      <p>Keep expectations realistic. Textbook exercises often come with clean datasets and R² of 90% or more; real systems rarely allow that, because so much affects them. Where humans are involved — social science, behavioural analytics — <strong>R² of 0.3 or 0.4 can be quite good.</strong></p>
+
+      <div class="ix" data-quiz="m8l6-q2">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Adding a fifth attribute raises R² from 0.412 to 0.415 and lowers adjusted R² from 0.401 to 0.399. What does that say?</p>
+        <div class="opts">
+          <button class="opt" data-fb="R² always rises (or stays level) when an attribute is added, even a random one. Its rise here is not evidence the attribute helps.">The attribute helps — R² went up.</button>
+          <button class="opt" data-right data-fb="Plain R² can only go up with more attributes. Adjusted R² charges for each one, and it fell: the improvement is smaller than you’d expect from adding a useless column.">The attribute adds less than its cost in complexity; adjusted R² falling is the signal.</button>
+          <button class="opt" data-fb="An R² of about 0.4 can be quite good, especially for data involving human behaviour. The level isn’t the issue; the change is.">The model is bad because R² is below 0.5.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Check 21</span>
+      <p class="q">A model predicting whether customers renew a subscription has R² = 0.35. Is that a poor model?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Not necessarily. Renewal is human behaviour, driven by many things no dataset records. R² of 0.3–0.4 is often quite good in that setting. Judge it against what is achievable for the problem, and against simpler models, not against textbook 90%s.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <div class="branch" data-branch="m8l6-case">
+        <div class="persona">
+          <span class="av">TK</span>
+          <span class="who"><b>Tomás Kerr</b><span>Pricing analyst, online grocer</span></span>
+        </div>
+        <div class="scene" data-step="1">
+          <p>Tomás fits basket value on 40 customer attributes, using 8 million orders. Every one of the 40 p-values is below 0.001. R² is 0.22.</p>
+          <p class="said">His manager: “Forty significant drivers — let’s build a campaign around each of them.”</p>
+          <p><strong>What should Tomás look at next?</strong></p>
+          <div class="choices">
+            <button class="choice" data-go="2" data-tone="bad" data-head="What he’d miss"
+              data-outcome="Tightening the threshold to 0.0001 barely changes anything. With 8 million orders, almost any non-zero effect clears any threshold you pick. The problem isn’t where the line is — it’s that significance is not the question.">
+              Lower the p-value threshold to 0.0001 and keep whatever survives.
+            </button>
+            <button class="choice" data-go="2" data-tone="good" data-head="What he finds"
+              data-outcome="He multiplies each coefficient by a realistic change in its attribute. Five attributes move the predicted basket by several dollars; thirty-one move it by less than ten cents. They are statistically real and commercially irrelevant.">
+              The size of each coefficient times a realistic change in its attribute.
+            </button>
+            <button class="choice" data-go="2" data-tone="bad" data-head="What goes wrong"
+              data-outcome="With 40 attributes and 8 million rows, the fit is not the issue — R² of 0.22 is ordinary for purchasing behaviour. Chasing a higher R² by adding more columns would give still more tiny “significant” effects.">
+              Add more attributes until R² passes 0.5, because 0.22 means the model is useless.
+            </button>
+          </div>
+        </div>
+        <div class="scene" data-step="2" data-end="1" hidden>
+          <p><strong>The manager asks for the recommendation.</strong></p>
+          <div class="choices">
+            <button class="choice" data-tone="good" data-head="Size, not stars"
+              data-outcome="The campaign focuses on the five attributes that move basket value by amounts worth acting on. Tomás reports R² honestly — most of what drives a basket isn’t in the data — and marks the coefficients as associations to be tested before anyone treats them as levers.">
+              Recommend the handful of attributes with meaningful effects, and say that these are associations, not proven causes.
+            </button>
+            <button class="choice" data-tone="bad" data-head="Forty campaigns"
+              data-outcome="Budget is spread across thirty-five campaigns built on effects worth pennies. Nothing measurable happens, and the model is blamed for what was a reading error.">
+              Recommend all forty, since each passed the significance test.
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="ix" data-quiz="m8l6-q3">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">A coefficient’s 95% confidence interval runs from −0.8 to 3.1. What is the best reading?</p>
+        <div class="opts">
+          <button class="opt" data-right data-fb="The interval includes zero, so the data are consistent with no effect; its p-value will be above 0.05. It could also be as large as 3.1 — the estimate is simply imprecise.">The coefficient may be zero; its p-value will be above 0.05, and the estimate is imprecise.</button>
+          <button class="opt" data-fb="Most of the interval being positive doesn’t make it significant. What matters is whether zero is inside it.">The coefficient is significantly positive, since most of the interval is above zero.</button>
+          <button class="opt" data-fb="A confidence interval isn’t a range of attribute values; it is a range of plausible values for the coefficient.">The attribute only varies between −0.8 and 3.1 in the data.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="note">
+        <div class="note-head"><span class="lbl">Class discussion — Lesson 6</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="m8l6" data-placeholder="summary(lm) output, confint(), which threshold the homework expects…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Check 22</span>
+      <p class="q">List the four things on a coefficient row you can use to judge an attribute, and the one extra check that the p-value can’t do for you.</p>
+      <details><summary>Show answer</summary>
+        <p class="a">The p-value, the 95% confidence interval, the t-statistic, and the coefficient itself.</p>
+        <p class="a">The extra check: multiply the coefficient by a realistic change in the attribute and compare with the size of the response. That tells you whether a significant effect is big enough to matter.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
+<section class="close" id="targets" style="--accent:#a0452e">
+  <h2>Transfer practice &mdash; Basic regression</h2>
+  <p class="h2meta">Same ideas, unfamiliar settings</p>
+  <div class="defn">
+    <span class="term">Why these are here</span>
+    <p>Each prompt below moves the module&rsquo;s ideas into a situation the lessons never mentioned. If you can only answer a question in the wording it was taught in, what you have memorised is the example rather than the concept &mdash; and an exam that changes the setting will find that out. Answer these out loud before opening them.</p>
+  </div>
+  <aside class="check">
+    <span class="n">Exam target</span>
+    <p class="q">Across a hospital&rsquo;s patients, length of stay rises strongly with the number of prescriptions written, p &lt; 0.001. An administrator proposes capping prescriptions to shorten stays. What is wrong with the reasoning?</p>
+    <details><summary>Show answer</summary>
+      <p class="a">It reads a correlation as a cause. Severity of illness is an obvious outside factor: sicker patients both stay longer and receive more prescriptions. The arrow may also partly run the other way &mdash; a longer stay gives more occasions to prescribe. A small p-value says the association is unlikely to be chance; it says nothing about which of these stories is true. Capping prescriptions could lengthen stays.</p>
+    </details>
+  </aside>
+  <aside class="check">
+    <span class="n">Exam target</span>
+    <p class="q">Plant growth rises with watering up to a point and falls when plants are overwatered. A straight-line regression of growth on water gives a slope of nearly zero, p = 0.6. Is watering irrelevant?</p>
+    <details><summary>Show answer</summary>
+      <p class="a">No. The relationship is strong but curved: the rising and falling halves cancel in a straight-line fit, so the linear coefficient is near zero. Add a squared term (water²) as a new column. Expect a positive coefficient on water and a negative one on water², giving a hump; the p-values and fit should change dramatically. A large p-value on a linear term means &ldquo;no <em>linear</em> relationship&rdquo;, not &ldquo;no relationship&rdquo;.</p>
+    </details>
+  </aside>
+  <aside class="check">
+    <span class="n">Exam target</span>
+    <p class="q">Two models of server response time, fitted to the same logs, have AIC 1,204 and 1,210. How much more likely is the first to be the better model?</p>
+    <details><summary>Show answer</summary>
+      <p class="a">exp((1,204 &minus; 1,210)/2) = e<sup>&minus;3</sup> &asymp; 0.05. The second model is about 5% as likely as the first to be the better one &mdash; equivalently, the first is about twenty times as likely. Only the difference matters; the size of the AIC values themselves carries no meaning.</p>
+    </details>
+  </aside>
+  <aside class="check">
+    <span class="n">Exam target</span>
+    <p class="q">A startup has 12 months of revenue data and a model with 9 parameters. Which of AIC, AICc and BIC would you trust to compare it with a 3-parameter model?</p>
+    <details><summary>Show answer</summary>
+      <p class="a">AICc is the appropriate one of the three, and it will be damning: its correction 2k(k+1)/(n&minus;k&minus;1) is 2&middot;9&middot;10/2 = 90 for the large model, against 2&middot;3&middot;4/8 = 3 for the small one. Plain AIC assumes plenty of data and BIC is a large-sample approximation, so neither is reliable here. The deeper point: 12 observations cannot support 9 parameters at all, and the large model is almost certainly fitting random effects.</p>
+    </details>
+  </aside>
+  <aside class="check">
+    <span class="n">Exam target</span>
+    <p class="q">A price model for 45 wines uses 40 descriptive attributes and reports R&sup2; = 0.96. Adjusted R&sup2; is 0.56. Explain the gap.</p>
+    <details><summary>Show answer</summary>
+      <p class="a">With 40 attributes and only 45 data points, the model has almost one coefficient per observation, so it can follow the data &mdash; including its randomness &mdash; nearly perfectly. R&sup2; can only rise as attributes are added. Adjusted R&sup2; = 1 &minus; (1 &minus; 0.96)&middot;44/4 = 0.56 charges for each one. The gap is the signature of overfitting; the 0.96 will not survive new wines.</p>
+    </details>
+  </aside>
+  <aside class="check">
+    <span class="n">Exam target</span>
+    <p class="q">A study tests 200 genetic markers for association with a condition, one regression each, at the 0.05 level. Fourteen come out significant. How excited should anyone be?</p>
+    <details><summary>Show answer</summary>
+      <p class="a">Not very. If none of the 200 markers had any real association, about 200 &times; 0.05 = 10 would still pass by chance. Fourteen is only modestly more than that, so most of the list may be noise, and the p-values can&rsquo;t say which entries are real. A multiple-testing correction (Extra 2) or an independent replication is needed before acting on any of them.</p>
+    </details>
+  </aside>
+  <aside class="check">
+    <span class="n">Exam target</span>
+    <p class="q">An online shop fits spend = a&#8320; + a&#8321;&middot;discount + a&#8322;&middot;member + a&#8323;&middot;(discount &times; member), where member is 1 for loyalty-scheme members and 0 otherwise. The fit gives a&#8321; = 3 and a&#8323; = 4. What does each extra unit of discount do?</p>
+    <details><summary>Show answer</summary>
+      <p class="a">For non-members (member = 0) the discount effect is a&#8321; = 3 per unit. For members it is a&#8321; + a&#8323; = 7 per unit. The interaction term lets the discount&rsquo;s effect differ between the two groups; without it, the model would force one common slope and report something in between that is right for neither.</p>
+    </details>
+  </aside>
+</section>
+
+<section id="wrap" class="close" style="--accent:#131b26">
+  <h2>How the module fits together</h2>
+  <p class="h2meta">The through-line across all six lessons</p>
+  <ul class="thread">
+    <li><span class="dot" style="--d:#1b5e7e"></span><span class="lbl">Lesson 1</span><span>Defines the model — a line or hyperplane — and the fit criterion: the smallest sum of squared errors.</span></li>
+    <li><span class="dot" style="--d:#8a3d5c"></span><span class="lbl">Lesson 2</span><span>Justifies that criterion — least squares is maximum likelihood under normal, independent errors — and adds AIC and BIC to charge for complexity.</span></li>
+    <li><span class="dot" style="--d:#4a6b2a"></span><span class="lbl">Lesson 3</span><span>Puts the fitted equation to work: coefficients answer how a system works, predictions answer what will happen.</span></li>
+    <li><span class="dot" style="--d:#8a5a1c"></span><span class="lbl">Lesson 4</span><span>Limits what the coefficients can claim. A good fit shows correlation; causation needs time order, sense, and no outside factor.</span></li>
+    <li><span class="dot" style="--d:#33507f"></span><span class="lbl">Lesson 5</span><span>Widens the model: squares, logs, Box-Cox and products go in as new columns, and the same fitting applies.</span></li>
+    <li><span class="dot" style="--d:#6e4a8c"></span><span class="lbl">Lesson 6</span><span>Reads the result: p-values, intervals, t-statistics and coefficient sizes for each attribute; R² and adjusted R² for the whole model.</span></li>
+  </ul>
+
+  <h3 style="color:#131b26">Four things worth noticing</h3>
+  <ul>
+    <li><strong>Complexity is charged three times over.</strong> AIC and BIC in Lesson 2, adjusted R² in Lesson 6, and the p-value threshold in Lesson 6 all exist to stop a model keeping parameters that only fit noise.</li>
+    <li><strong>Every quality number is symmetric about direction.</strong> Lesson 4’s reverse regression has the same p-value and R² as the forward one — none of Lesson 6’s output can tell you which way cause runs.</li>
+    <li><strong>“Linear” is about coefficients.</strong> Lesson 5’s transformations are why a method that draws straight lines can still fit curves and interactions.</li>
+    <li><strong>Significance and importance are different questions.</strong> A p-value asks whether an effect might be zero; the coefficient times a realistic change asks whether it matters. Large datasets pull the two apart.</li>
+  </ul>
+
+  <h3 style="color:#131b26">Likely exam targets</h3>
+  <ul>
+    <li>Write the regression equation and the sum of squared errors, and say what is minimised over.</li>
+    <li>Explain why least squares is the maximum likelihood fit, and which assumptions that needs.</li>
+    <li>State AIC, AICc and BIC; say which penalises parameters most and when to prefer each.</li>
+    <li>Convert an AIC difference into a relative likelihood.</li>
+    <li>Interpret a coefficient in units; distinguish descriptive from predictive use.</li>
+    <li>Give the three rules of thumb for causation and an example of an outside factor.</li>
+    <li>Explain why a model with x² or x₁x₂ is still linear regression; interpret an interaction.</li>
+    <li>Read an output table: p-values, confidence intervals, t, R², adjusted R² — and the two warnings about p-values.</li>
+  </ul>
+  <p style="font-family:var(--sans);font-size:.9rem;color:var(--ink-soft);max-width:66ch">Everything above is class material. <a href="#extra">Additional resources</a> follow — the assumptions behind least squares and how to check them, careful inference, practice problems and reading — none of it taught in this module.</p>
+
+  <div class="note">
+    <div class="note-head"><span class="lbl">Module 8 — my own summary</span><span class="hint">click to type; saves automatically</span></div>
+    <div class="note-body" contenteditable="true" data-note="m8summary" data-placeholder="Write the module back in your own words — the fastest way to find out what you don't actually know yet."></div>
+  </div>
+
+</section>
+
+<!-- ==================== ADDITIONAL RESOURCES DIVIDER ==================== -->
+<section class="close" id="extra" style="--accent:#1f6b6b">
+  <h2>Additional resources</h2>
+  <p class="h2meta">Everything below this line is <strong>not class material</strong></p>
+  <div class="defn">
+    <span class="term">Read this first</span>
+    <p>The six lessons above are the module as taught: the regression model and its fit, likelihood and the information criteria, what coefficients and predictions answer, the limits of causal claims, transformations and interactions, and how to read the output. Everything from here on was assembled from outside sources — textbooks, method papers and the documentation of the standard libraries. None of it is examinable unless your instructor says so, and where a convention differs from the lectures, <strong>the lectures win</strong>.</p>
+  </div>
+  <p>The lectures show how to fit and read a regression but leave its assumptions mostly implicit, and they mention hypothesis tests and multiple-testing risk without the machinery for handling them. The appendix fills in both, then provides practice.</p>
+  <ul class="thread">
+    <li><span class="dot" style="--d:#1f6b6b"></span><span class="lbl">Extra 1</span><span>What least squares assumes, how to check it from the residuals, and the standard fixes.</span></li>
+    <li><span class="dot" style="--d:#2f6b45"></span><span class="lbl">Extra 2</span><span>Inference done carefully: p-values, multiple-testing corrections, interval types, and the likelihood ratio test.</span></li>
+    <li><span class="dot" style="--d:#4a5765"></span><span class="lbl">Extra 3</span><span>Practice problems with worked solutions, and where to read further.</span></li>
+  </ul>
+</section>
+
+<!-- ==================== EXTRA 1 ==================== -->
+<section class="lesson" id="x1" data-short="Assumptions" style="--accent:#1f6b6b">
+  <div class="lesson-head">
+    <span class="ln">Extra 1 &middot; not class material</span>
+    <h2>What least squares assumes, and how to check it</h2>
+    <p class="keyline">The coefficients come out whatever the data look like. Whether the p-values, intervals and R² mean what Lesson 6 says depends on assumptions you can check in the residuals.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>The assumptions, and what breaks without each</h3>
+      <table>
+        <tr><th>Assumption</th><th>What fails if it doesn’t hold</th></tr>
+        <tr><td><strong>Linearity</strong></td><td>The mean response really is a₀ + Σaⱼxⱼ (after any transformations). If not, coefficients describe the wrong shape and predictions are biased in systematic places.</td></tr>
+        <tr><td><strong>Independence</strong></td><td>Errors don’t influence one another. Time-ordered or clustered data (repeat customers, the same patient measured weekly) break this, and standard errors come out too small — p-values too optimistic.</td></tr>
+        <tr><td><strong>Constant variance</strong></td><td>Errors have the same spread everywhere (homoscedasticity). A fan shape — spread growing with the fitted value — also makes the standard errors wrong.</td></tr>
+        <tr><td><strong>Normal errors</strong></td><td>Needed for exact p-values and intervals in small samples, and for Lesson 2’s maximum-likelihood argument. With large n the coefficient tests are fairly robust to non-normality; prediction intervals are not.</td></tr>
+        <tr><td><strong>No perfect collinearity</strong></td><td>No predictor is an exact combination of others. If one is, the coefficients can’t be separated at all; if nearly so, they become unstable.</td></tr>
+      </table>
+      <h3>The one plot to always make</h3>
+      <p>Plot residuals against fitted values. What you want is a shapeless horizontal band around zero. A curve means a missing transformation (Lesson 5); a fan means non-constant variance, often fixed by logging the response; a few far-off points are candidates for Module 5’s outlier questions. A normal Q–Q plot of the residuals checks the normality assumption.</p>
+
+      <div class="ix" data-quiz="m8x1-q1">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">A residuals-versus-fitted plot shows residuals tightly packed for small fitted values and widely spread for large ones. What is the usual first move?</p>
+        <div class="opts">
+          <button class="opt" data-fb="Removing the large-response points discards exactly the cases where the spread is informative, and would bias the fit toward small values.">Delete the points with large fitted values.</button>
+          <button class="opt" data-right data-fb="A fan shape is non-constant variance. When spread grows with the level, errors are roughly proportional, and a log (or another Box-Cox power) of the response usually evens them out. Robust standard errors are the alternative if you must keep the original scale.">Transform the response — a log is the common choice — and re-check the plot.</button>
+          <button class="opt" data-fb="A squared term addresses curvature in the mean, not unequal spread around it.">Add a squared term for every predictor.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Worth noticing</span>
+      <p class="q">Which assumptions affect the coefficients themselves, and which only the uncertainty around them?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Linearity affects the coefficients: fit the wrong shape and they are wrong. Independence, constant variance and normality mainly affect the standard errors — and so the p-values and intervals — while leaving the least-squares estimates themselves unbiased.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>The closed-form solution</h3>
+      <p>Lesson 1 sets the partial derivatives of the SSE to zero and solves. Written in matrices, with X the n × (m+1) data matrix whose first column is all ones, the solution is</p>
+      <div class="formula">â = (XᵀX)⁻¹ Xᵀy<span class="cap">The normal equations. Software rarely inverts XᵀX directly — it uses a QR decomposition for numerical stability — but the answer is the same.</span></div>
+      <div class="formula">a₁ = Σ(xᵢ − x̄)(yᵢ − ȳ) / Σ(xᵢ − x̄)² , &nbsp;&nbsp; a₀ = ȳ − a₁x̄<span class="cap">The one-predictor case. The fitted line always passes through the point of means (x̄, ȳ).</span></div>
+
+      <h3>Influence, collinearity and categories</h3>
+      <div class="defn">
+        <span class="term">Leverage and Cook’s distance</span>
+        <p>Leverage measures how unusual a point’s predictor values are; Cook’s distance measures how much the fitted coefficients change when the point is removed. A point with high leverage and a large residual can move the whole line. Common flags are Cook’s D above 4/n (screening) or above 1 (serious).</p>
+      </div>
+      <div class="defn">
+        <span class="term">Variance inflation factor (VIF)</span>
+        <p>VIFⱼ = 1 / (1 − R²ⱼ), where R²ⱼ comes from regressing predictor j on all the other predictors. It says how much collinearity inflates that coefficient’s variance. Rules of thumb treat values above 5 or 10 as a problem.</p>
+      </div>
+      <div class="defn">
+        <span class="term">Dummy (indicator) variables</span>
+        <p>A categorical predictor with c levels enters as c − 1 columns of 0/1, one level left out as the reference. Each coefficient is that level’s difference from the reference. Including all c columns alongside the intercept is perfect collinearity.</p>
+      </div>
+      <div class="defn">
+        <span class="term">The hierarchy principle</span>
+        <p>If an interaction x₁x₂ or a power x₁² is in the model, keep the main effect x₁ (and x₂) too, even if its own p-value is large. Removing it forces the effect through zero at an arbitrary point. Centering predictors before forming products makes the main effects interpretable and reduces collinearity with the product.</p>
+      </div>
+
+      <div class="ix" data-quiz="m8x1-q2">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Two predictors — home floor area and number of rooms — have a VIF of 12 each. The model’s R² is high but neither coefficient is significant. What is happening?</p>
+        <div class="opts">
+          <button class="opt" data-right data-fb="They carry largely the same information, so the fit can’t tell how to split the credit between them. The pair jointly matters; each coefficient on its own is unstable. Drop one, combine them, or accept that only the joint effect is identifiable.">They are highly collinear, so the model can’t separate their effects even though together they explain a lot.</button>
+          <button class="opt" data-fb="If neither mattered, R² wouldn’t be high. The individual p-values are large because the effects can’t be separated, not because they are absent.">Neither predictor matters and both should be removed.</button>
+          <button class="opt" data-fb="The data size doesn’t cause this pattern; the overlap between the two predictors does.">The sample is too large, making p-values unreliable.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="ix" data-quiz="m8x1-q3">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">A “region” predictor has four values: North, South, East, West. How should it enter a regression with an intercept?</p>
+        <div class="opts">
+          <button class="opt" data-fb="Coding the regions as 1, 2, 3, 4 invents an order and equal spacing — it forces East to be exactly halfway between South and West.">As one column coded 1 to 4.</button>
+          <button class="opt" data-fb="Four indicators plus an intercept are perfectly collinear: the four always add up to the intercept column.">As four 0/1 columns, one per region.</button>
+          <button class="opt" data-right data-fb="Three indicators with one region as the reference. Each coefficient is that region’s difference from the reference, other predictors held fixed.">As three 0/1 columns, with the fourth region as the reference.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="note">
+        <div class="note-head"><span class="lbl">Notes — assumptions</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="m8x1" data-placeholder="plot(lm) diagnostics, which assumption your homework data breaks…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Worth noticing</span>
+      <p class="q">Why can collinearity leave predictions fine while ruining interpretation?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Prediction needs only the combined effect of the correlated predictors, which is estimated well. Interpretation needs each one’s separate effect, which the data can’t pin down. Lesson 3’s two uses of regression react very differently to the same problem.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
+<!-- ==================== EXTRA 2 ==================== -->
+<section class="lesson" id="x2" data-short="Inference" style="--accent:#2f6b45">
+  <div class="lesson-head">
+    <span class="ln">Extra 2 &middot; not class material</span>
+    <h2>Inference done carefully</h2>
+    <p class="keyline">What a p-value can and can’t say, how to correct for testing many things, which interval to report, and when a likelihood ratio test is valid.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>What p-values are not</h3>
+      <p>The American Statistical Association’s 2016 statement on p-values (Wasserstein &amp; Lazar) sets out the standard cautions. A p-value is not the probability that the null hypothesis is true; it does not measure the size or importance of an effect; and a scientific conclusion should not rest on whether it crosses a threshold. Report estimates and intervals alongside it.</p>
+      <h3>Multiple testing</h3>
+      <div class="formula">Bonferroni: test each of M hypotheses at α / M<span class="cap">Controls the chance of even one false positive across the whole family. Simple and very conservative.</span></div>
+      <div class="formula">Benjamini–Hochberg: sort p₍₁₎ ≤ … ≤ p₍M₎ ; find the largest k with p₍k₎ ≤ (k/M)·q ; reject hypotheses 1 … k<span class="cap">Controls the false discovery rate — the expected share of false positives among the discoveries — at q. Much less conservative when many effects are real.</span></div>
+      <h3>Stepwise selection and p-values</h3>
+      <p>Lesson 6’s rule of thumb — drop attributes with p &gt; 0.05 — is sometimes automated as backward elimination. Two standard cautions. Removing one attribute changes the others’ p-values, especially under collinearity, so drop one at a time and refit. And the p-values of the final model no longer mean what they claim, because the model was chosen by looking at them. Validation on held-out data (Module 3) or penalised methods such as the lasso are the usual alternatives.</p>
+
+      <div class="ix" data-quiz="m8x2-q1">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">You test 50 predictors and want at most a 5% chance of any false positive across all of them. What threshold does Bonferroni give each test?</p>
+        <div class="opts">
+          <button class="opt" data-fb="0.05 per test gives roughly a 92% chance of at least one false positive across 50 null tests (1 − 0.95⁵⁰).">0.05</button>
+          <button class="opt" data-right data-fb="α / M = 0.05 / 50 = 0.001. Each test becomes much stricter so that the family as a whole keeps a 5% error rate.">0.001</button>
+          <button class="opt" data-fb="That multiplies instead of dividing.">2.5</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Worth noticing</span>
+      <p class="q">When would you prefer Benjamini–Hochberg to Bonferroni?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">When testing many hypotheses as a screen, where some false leads are acceptable as long as most discoveries are real — gene screens, feature screening. Bonferroni suits a small number of tests where any single false positive is costly.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Confidence interval vs prediction interval</h3>
+      <p>Around a predicted value there are two intervals. The <strong>confidence interval</strong> covers the <em>average</em> response at those predictor values; it narrows as n grows. The <strong>prediction interval</strong> covers a <em>single new</em> observation, so it adds the error variance σ² and never shrinks below it however much data you have. For a forecast of one case — one house, one delivery — the prediction interval is the honest one.</p>
+      <h3>The likelihood ratio test</h3>
+      <div class="formula">LR = 2 · ( ln L*<sub>big</sub> − ln L*<sub>small</sub> ) &nbsp;~&nbsp; χ² with (k<sub>big</sub> − k<sub>small</sub>) degrees of freedom<span class="cap">Valid when the smaller model is <em>nested</em> in the bigger one — obtainable by setting some of its parameters to zero — and the sample is reasonably large. Non-nested models are compared with AIC or BIC instead.</span></div>
+      <h3>Two facts about direction and scale</h3>
+      <p><strong>Reverse regression is not the inverse line.</strong> In Lesson 4’s swap, the two slopes satisfy a₁ · b₁ = r², the squared correlation. Unless the fit is perfect, b₁ is not 1/a₁: each regression pulls toward its own mean.</p>
+      <p><strong>Reading logged models.</strong> With ln y as the response, a coefficient a means each unit of x multiplies y by eᵃ — roughly a 100·a% change when a is small. With both sides logged, the coefficient is an elasticity: a 1% change in x goes with about an a% change in y.</p>
+
+      <div class="ix" data-quiz="m8x2-q2">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">A model of ln(salary) gives a coefficient of 0.04 on years of experience. What does it say?</p>
+        <div class="opts">
+          <button class="opt" data-fb="That would be the reading if salary itself, not its log, were the response.">Each year adds 0.04 currency units to salary.</button>
+          <button class="opt" data-right data-fb="e^0.04 ≈ 1.041, so each year multiplies predicted salary by about 1.04 — roughly 4% more, whatever the starting level.">Each year is associated with about 4% higher salary.</button>
+          <button class="opt" data-fb="An elasticity reading needs both sides logged. Here only salary is.">A 1% increase in experience gives a 0.04% increase in salary.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="ix" data-quiz="m8x2-q3">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">You want to test whether adding three interaction terms improves a model significantly. Which comparison is valid?</p>
+        <div class="opts">
+          <button class="opt" data-right data-fb="The smaller model is the bigger one with three coefficients set to zero — nested — so 2·Δln L* against χ² with 3 degrees of freedom is a valid test. AIC would also work.">A likelihood ratio test with 3 degrees of freedom, since the smaller model is nested in the larger.</button>
+          <button class="opt" data-fb="Raw R² always rises when terms are added, so a higher R² can’t show the terms are worth it.">Compare raw R²: if it rises, keep the terms.</button>
+          <button class="opt" data-fb="Individual p-values test each term separately; a joint question about all three together needs a joint test.">Keep the terms if any one of them has p &lt; 0.05.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="note">
+        <div class="note-head"><span class="lbl">Notes — inference</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="m8x2" data-placeholder="p.adjust() methods, predict(..., interval=) in R, anova() for nested models…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Worth noticing</span>
+      <p class="q">Why does a prediction interval never collapse to zero width, even with unlimited data?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">More data pins down the line — the average — ever more precisely. But a single new case still scatters around that line with the error variance σ², and no amount of data removes that. The interval’s floor is the irreducible noise.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
+<!-- ==================== EXTRA 3 ==================== -->
+<section class="lesson" id="x3" data-short="Practice &amp; reading" style="--accent:#4a5765">
+  <div class="lesson-head">
+    <span class="ln">Extra 3 &middot; not class material</span>
+    <h2>Practice, reading and tools</h2>
+    <p class="keyline">Six problems with worked solutions, a self-test, and where to go next.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Part A — fitting and reading</h3>
+
+      <div class="callout">
+        <p class="tag">Problem 1 — a fit by hand</p>
+        <p>Data: x = 1, 2, 3, 4, 5 and y = 3, 5, 4, 8, 10. Find the least-squares line, the SSE and R².</p>
+        <details><summary>Show worked solution</summary>
+          <p class="a">x̄ = 3, ȳ = 6. Σ(x − x̄)(y − ȳ) = 6 + 1 + 0 + 2 + 8 = 17; Σ(x − x̄)² = 10.<br>
+          <strong>a₁</strong> = 17 / 10 = <strong>1.7</strong>; <strong>a₀</strong> = 6 − 1.7·3 = <strong>0.9</strong>.<br>
+          Fitted: 2.6, 4.3, 6.0, 7.7, 9.4. Residuals: 0.4, 0.7, −2.0, 0.3, 0.6 — they sum to zero, as least-squares residuals with an intercept always do.<br>
+          <strong>SSE</strong> = 0.16 + 0.49 + 4 + 0.09 + 0.36 = <strong>5.1</strong>. SST = 9 + 1 + 4 + 4 + 16 = 34.<br>
+          <strong>R²</strong> = 1 − 5.1/34 = <strong>0.85</strong>. Adjusted R² = 1 − 0.15·4/3 = 0.80.</p>
+        </details>
+      </div>
+
+      <div class="callout">
+        <p class="tag">Problem 2 — a coefficient row</p>
+        <p>An estimate is 1.8 with standard error 0.6, on a large sample. Give t, an approximate 95% interval, and whether p is above or below 0.05.</p>
+        <details><summary>Show worked solution</summary>
+          <p class="a">t = 1.8 / 0.6 = <strong>3.0</strong>. Interval ≈ 1.8 ± 2·0.6 = <strong>0.6 to 3.0</strong>. Zero is outside it, so p is <strong>below 0.05</strong> (about 0.003). All three say the same thing, which is the point of Check 18.</p>
+        </details>
+      </div>
+
+      <h3>Part B — choosing between models</h3>
+
+      <div class="callout">
+        <p class="tag">Problem 3 — AIC, AICc and BIC disagreeing</p>
+        <p>On n = 50 points, model A has k = 3 and SSE = 400; model B has k = 5 and SSE = 340. Using AIC = n·ln(SSE/n) + 2k and the analogous forms, compare them.</p>
+        <details><summary>Show worked solution</summary>
+          <p class="a"><strong>AIC</strong>: A = 50·ln 8 + 6 = 109.97; B = 50·ln 6.8 + 10 = 105.85. B lower by 4.12; A is exp(−2.06) ≈ <strong>13%</strong> as likely to be better.<br>
+          <strong>AICc</strong>: add 2k(k+1)/(n−k−1): A + 0.52 = 110.49; B + 1.36 = 107.21. B still lower by 3.3.<br>
+          <strong>BIC</strong>: replace 2k with k·ln 50 = 3.91k: A = 115.71; B = 115.41. B lower by only 0.30 — “only slightly likely” better on the rule-of-thumb table.<br><br>
+          The heavier BIC penalty nearly cancels the fit improvement. Report that the two extra parameters help modestly, and check on validation data before committing.</p>
+        </details>
+      </div>
+
+      <div class="callout">
+        <p class="tag">Problem 4 — how many false positives?</p>
+        <p>A team screens 200 candidate predictors, one test each at α = 0.05, and finds 14 significant. (a) How many would you expect by chance if none mattered? (b) What is the Bonferroni per-test threshold?</p>
+        <details><summary>Show worked solution</summary>
+          <p class="a">(a) 200 × 0.05 = <strong>10</strong>. Fourteen is barely above chance. (b) 0.05 / 200 = <strong>0.00025</strong>. Only predictors clearing that bar would be reported under family-wise control; Benjamini–Hochberg would be the less strict alternative for a screen.</p>
+        </details>
+      </div>
+
+      <h3>Part C — transformations and interactions</h3>
+
+      <div class="callout">
+        <p class="tag">Problem 5 — an interaction with a 0/1 variable</p>
+        <p>y = 20 + 3d + 5m + 4dm, where m is 1 for members. Give the intercept and slope in d for each group.</p>
+        <details><summary>Show worked solution</summary>
+          <p class="a">Non-members (m = 0): y = 20 + 3d — intercept 20, slope 3.<br>
+          Members (m = 1): y = 25 + 7d — intercept 20 + 5, slope 3 + 4.<br>
+          A 0/1 interaction is exactly “a separate line per group”, fitted in one model.</p>
+        </details>
+      </div>
+
+      <div class="callout">
+        <p class="tag">Problem 6 — a logged response</p>
+        <p>ln(y) = 2.1 + 0.03x. By how much does a one-unit increase in x change y?</p>
+        <details><summary>Show worked solution</summary>
+          <p class="a">It multiplies y by e<sup>0.03</sup> ≈ 1.0305, a <strong>3.05%</strong> increase — close to the 3% shortcut because 0.03 is small. The absolute change depends on where you start; the percentage doesn’t.</p>
+        </details>
+      </div>
+
+      <h3>Part D — self-test</h3>
+
+      <div class="ix" data-quiz="m8x3-q1">
+        <div class="ix-head"><span class="ix-kind">self-test</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Which statement about least-squares residuals, in a model with an intercept, is always true?</p>
+        <div class="opts">
+          <button class="opt" data-fb="Residuals can be large and still come from the best-fitting line; the minimum SSE need not be small.">They are all smaller than the standard deviation of y.</button>
+          <button class="opt" data-right data-fb="Setting the derivative with respect to a₀ to zero forces Σeᵢ = 0. It is why a mean residual of zero tells you nothing about fit quality.">They add up to zero.</button>
+          <button class="opt" data-fb="Normality is an assumption about the errors, not a property least squares guarantees.">They are normally distributed.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="ix" data-quiz="m8x3-q2">
+        <div class="ix-head"><span class="ix-kind">self-test</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Adding a predictor of pure random noise to a regression will…</p>
+        <div class="opts">
+          <button class="opt" data-fb="R² can’t fall when a column is added — least squares could always set the new coefficient to zero.">lower R².</button>
+          <button class="opt" data-fb="It adds a parameter without improving the likelihood much, so AIC will usually rise, not fall.">lower AIC.</button>
+          <button class="opt" data-right data-fb="Raw R² can only rise (slightly) — the fit will find some chance correlation — while adjusted R² will typically fall, because the gain doesn’t cover the charge for the extra parameter.">raise R² slightly and usually lower adjusted R².</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="ix" data-quiz="m8x3-q3">
+        <div class="ix-head"><span class="ix-kind">self-test</span><span class="ix-done">answered</span></div>
+        <p class="prompt">An observational study finds that coffee drinkers have fewer heart attacks, adjusting for age and sex. What is the strongest claim it supports?</p>
+        <div class="opts">
+          <button class="opt" data-right data-fb="Adjustment removes two outside factors, not all of them — income, exercise, smoking and health-driven changes in habit remain possible. The finding is an association that justifies further study.">An association that persists after adjusting for age and sex.</button>
+          <button class="opt" data-fb="Adjusting for two factors can’t rule out every outside factor, which is the hardest causal condition to meet.">That coffee protects against heart attacks.</button>
+          <button class="opt" data-fb="A good fit and a small p-value make chance an unlikely explanation. The open question is cause, not chance.">Nothing — observational data can never show anything.</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <h3>Sources and further reading</h3>
+      <table>
+        <tr><th>Source</th><th>What it gives you</th></tr>
+        <tr><td><strong>James, Witten, Hastie &amp; Tibshirani, <em>An Introduction to Statistical Learning</em></strong>, ch. 3</td><td>Linear regression treated readably: least squares, the output table, interactions, polynomial terms, and the residual diagnostics in Extra 1. Chapter 6 covers AIC, BIC, adjusted R² and the lasso. Free PDF.</td></tr>
+        <tr><td><strong>Hastie, Tibshirani &amp; Friedman, <em>The Elements of Statistical Learning</em></strong>, ch. 3 and 7</td><td>The same ground at research level, including the matrix derivation and the theory behind the information criteria. Free PDF.</td></tr>
+        <tr><td><strong>Burnham &amp; Anderson, <em>Model Selection and Multimodel Inference</em></strong></td><td>The standard reference for AIC, AICc and relative likelihoods (“Akaike weights”).</td></tr>
+        <tr><td><strong>Hernán &amp; Robins, <em>Causal Inference: What If</em></strong></td><td>A careful, free book on when regression estimates can be read causally, and what confounding does to them.</td></tr>
+      </table>
+      <ul>
+        <li><strong>Akaike (1974); Schwarz (1978); Hurvich &amp; Tsai (1989).</strong> The original AIC, BIC and AICc papers.</li>
+        <li><strong>Kass &amp; Raftery (1995), “Bayes Factors”.</strong> Source of the BIC difference bands used in Lesson 2.</li>
+        <li><strong>Box &amp; Cox (1964), “An analysis of transformations”.</strong></li>
+        <li><strong>Wasserstein &amp; Lazar (2016), “The ASA statement on p-values”.</strong> Short, and worth reading in full.</li>
+        <li><strong>Benjamini &amp; Hochberg (1995).</strong> The false discovery rate procedure.</li>
+        <li><strong>Hill (1965), “The environment and disease: association or causation?”.</strong> The fuller list of causal criteria that Lesson 4’s three rules summarise.</li>
+      </ul>
+      <table>
+        <tr><th>Tool</th><th>Language</th><th>For</th></tr>
+        <tr><td><strong>lm</strong>, <strong>summary</strong>, <strong>confint</strong>, <strong>predict</strong></td><td>R</td><td>Fitting, the output table, confidence intervals, and confidence or prediction intervals for new data (<code>interval=</code>). <code>AIC()</code>, <code>BIC()</code>, <code>anova()</code> for nested comparisons, <code>p.adjust()</code> for Bonferroni and BH.</td></tr>
+        <tr><td><strong>MASS</strong>, <strong>car</strong></td><td>R</td><td><code>boxcox()</code> to choose λ; <code>vif()</code> and diagnostic plots.</td></tr>
+        <tr><td><strong>statsmodels</strong> <span class="m">sm.OLS</span></td><td>Python</td><td>The full output table, AIC/BIC, influence measures, prediction intervals, and <code>multipletests</code> for corrections.</td></tr>
+        <tr><td><strong>scikit-learn</strong> <span class="m">LinearRegression</span></td><td>Python</td><td>Fast fitting and prediction, but no p-values or standard errors — use statsmodels when you need the output table. <code>scipy.stats.boxcox</code> for the transformation.</td></tr>
+      </table>
+
+      <div class="callout">
+        <p class="tag">A twenty-minute exercise worth doing</p>
+        <p>Simulate 1,000 rows where y depends on x₁ only, then add 50 columns of pure noise and fit. Count how many noise columns come out “significant” at 0.05, watch R² rise and adjusted R² fall as you add them, and compare AIC and BIC. Repeat with 1,000,000 rows and a tiny true effect on x₂. It demonstrates both of Lesson 6’s warnings more durably than any explanation.</p>
+      </div>
+
+      <div class="note">
+        <div class="note-head"><span class="lbl">Reading log</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="m8x3" data-placeholder="What you read, what it added, what you still don't understand…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Caveat</span>
+      <p class="q">How much of this should you take on trust?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">The formulas and the worked arithmetic are standard and consistent across the sources listed. The VIF, Cook’s distance and BIC-difference cut-offs are conventions rather than tests. Treat the lectures as authoritative wherever the two differ.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
+<section id="foot" class="close" style="--accent:#131b26">
+  <footer><span class="ai"><strong>Written by an AI model from lecture recordings.</strong> Not reviewed by any instructor or institution — verify anything you rely on against the original lectures. Examples here are generic illustrations rather than the ones used in class. The Priya Raman and Tomás Kerr cases, the delivery-time output table, the “Lecture vs standard practice” callouts, and “Four things worth noticing” are this summary’s own additions rather than lecture content. Formulas for quantities the lectures named without writing out — Box-Cox, R², adjusted R², the t-statistic and interval — are given in their standard textbook form.
+  <br><br>
+  <strong>Everything under “Additional resources” is outside material.</strong> Extras 1 to 3 — the assumptions and diagnostics, the multiple-testing corrections, interval types, the likelihood ratio test, the practice problems and the reading list — were assembled from published sources, principally <em>An Introduction to Statistical Learning</em> (ch. 3 and 6), <em>The Elements of Statistical Learning</em>, Burnham &amp; Anderson, and the original papers cited in Extra 3. None of it was taught in this module. All worked numbers there are computed for illustration on invented data. Check quantitative claims against a primary source before relying on them, and treat the lectures as authoritative wherever the two differ.</span></footer>
+</section>
+</div>
+
+<dialog id="dlg">
+  <div class="dlg-in">
+    <h3 id="dlgTitle">Your notes</h3>
+    <p id="dlgHelp" style="font-family:var(--sans);font-size:.88rem;color:var(--ink-soft);max-width:none">Copy this text and keep it somewhere safe.</p>
+    <textarea id="dlgText" spellcheck="false"></textarea>
+    <div class="dlg-row">
+      <button class="btn" id="dlgCopy">Copy to clipboard</button>
+      <button class="btn" id="dlgLoad" hidden>Load these notes</button>
+      <button class="btn" id="dlgClose">Close</button>
+      <span class="status" id="dlgStatus"></span>
+    </div>
+  </div>
+</dialog>
+
+<script src="study.js"></script>
+<script src="search.js" defer></script>
+</body>
+</html>

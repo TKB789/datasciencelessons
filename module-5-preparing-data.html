@@ -596,7 +596,58 @@
   </div>
 </section>
 
-<section class="close" style="--accent:#131b26">
+<section class="close" id="targets" style="--accent:#8a5a1c">
+  <h2>Transfer practice &mdash; Data preparation</h2>
+  <p class="h2meta">Same ideas, unfamiliar settings</p>
+  <div class="defn">
+    <span class="term">Why these are here</span>
+    <p>Each prompt below moves the module&rsquo;s ideas into a situation the lessons never mentioned. If you can only answer a question in the wording it was taught in, what you have memorised is the example rather than the concept &mdash; and an exam that changes the setting will find that out. Answer these out loud before opening them.</p>
+  </div>
+  <aside class="check">
+    <span class="n">Exam target</span>
+    <p class="q">A sensor logs the value 999 whenever it fails. What kind of problem is this, and what does detection alone tell you?</p>
+    <details><summary>Show answer</summary>
+      <p class="a">A recording error presenting as an extreme value. Detection tells you only that the value is unlike the others; it cannot tell you that 999 is a failure code rather than a genuine reading. That comes from knowing how the data was produced &mdash; which is why detection yields candidates and the cause determines the action.</p>
+    </details>
+  </aside>
+  <aside class="check">
+    <span class="n">Exam target</span>
+    <p class="q">One record shows an unremarkable height and an unremarkable weight, but the combination is impossible. Would a box plot find it?</p>
+    <details><summary>Show answer</summary>
+      <p class="a">No. A box plot examines one attribute at a time, and neither value is extreme on its own. Finding it requires looking at the attributes jointly &mdash; in practice, fitting a model relating them and inspecting the largest residuals, since that identifies records the rest of the data does not account for.</p>
+    </details>
+  </aside>
+  <aside class="check">
+    <span class="n">Exam target</span>
+    <p class="q">In a million records, about 2,700 fall beyond three standard deviations from the mean. What should you conclude?</p>
+    <details><summary>Show answer</summary>
+      <p class="a">Nothing yet &mdash; that is precisely what normally distributed noise produces, since P(|x &minus; &mu;| &gt; 3&sigma;) = 0.270%. Being extreme is not evidence of error. In a large dataset, extreme values are expected in quantity, and treating all of them as problems removes real data.</p>
+    </details>
+  </aside>
+  <aside class="check">
+    <span class="n">Exam target</span>
+    <p class="q">Two teams report different outlier counts from the same column. What is the first question?</p>
+    <details><summary>Show answer</summary>
+      <p class="a">Which whisker convention each used. The common default extends whiskers to the furthest record within 1.5 &times; IQR of the box; percentile conventions such as 10th/90th or 5th/95th are also used and flag a different number of points on identical data. Neither is wrong, but a count is meaningless without the convention attached.</p>
+    </details>
+  </aside>
+  <aside class="check">
+    <span class="n">Exam target</span>
+    <p class="q">A column is 40% missing. What are the options and what does each cost?</p>
+    <details><summary>Show answer</summary>
+      <p class="a">Drop the column, losing whatever signal it carries; drop the affected records, losing 40% of the dataset and biasing what remains if the missingness relates to the outcome; or impute and add an indicator column recording that the value was absent. The decision turns on <em>why</em> the values are missing, since missingness that relates to the outcome is itself information and cannot be filled in neutrally.</p>
+    </details>
+  </aside>
+  <aside class="check">
+    <span class="n">Exam target</span>
+    <p class="q">A text column holds city names and you intend to cluster. How do you encode it?</p>
+    <details><summary>Show answer</summary>
+      <p class="a">As indicator columns, one per city, each 0 or 1 &mdash; which leaves every pair of cities equidistant. Assigning the numbers 1, 2, 3 instead would tell the distance calculation that the cities are ordered and that some pairs are three times further apart than others, neither of which is true.</p>
+    </details>
+  </aside>
+</section>
+
+<section id="sec-5" class="close" style="--accent:#131b26">
   <h2>How the module fits together</h2>
   <p class="h2meta">The through-line across the three lessons</p>
   <ul class="thread">
@@ -1103,7 +1154,7 @@
   </div>
 </section>
 
-<section class="close" style="--accent:#131b26">
+<section id="sec-10" class="close" style="--accent:#131b26">
   <footer>
     <span class="ai"><strong>Written by an AI model from lecture recordings.</strong> Not reviewed by any instructor or institution — verify anything you rely on against the original lectures.
     <br><br>
@@ -1131,5 +1182,6 @@
 </dialog>
 
 <script src="study.js"></script>
+<script src="search.js" defer></script>
 </body>
 </html>

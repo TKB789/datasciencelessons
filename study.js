@@ -37,6 +37,10 @@ var MODULES = [
     title:"Time Series", colour:"#2f6b52",
     blurb:"Data measured period after period: exponential smoothing with trend and seasonality, forecasting, ARIMA for the value, GARCH for the variance, and how to validate in time order." },
 
+  { id:"m8", file:"module-8-basic-regression.html", tab:"Module 8 — Basic Regression",
+    title:"Basic Regression", colour:"#a0452e",
+    blurb:"Fitting a line by least squares, why that is maximum likelihood, AIC and BIC for trading fit against complexity, what coefficients can and can’t claim, transformations and interactions, and how to read the output." },
+
   /* Not lecture modules — study tools arranged by topic rather than by lecture.
      `label` overrides the "Module N" caption on the index card. */
   { id:"disc", file:"discussion.html", tab:"Study tools — Discussion",
@@ -48,7 +52,7 @@ var MODULES = [
     title:"Exam Prep", colour:"#4a6b2a", label:"Exam prep",
     blurb:"The textbook half of the course on one page: bias and variance, cross-validation, the classifiers and what each assumes, regression diagnostics, ridge and lasso, forests, PCA and clustering." }
 
-  /* , { id:"m8", file:"module-8-something.html", tab:"Module 8 — Title",
+  /* , { id:"m9", file:"module-9-something.html", tab:"Module 9 — Title",
        title:"Title", colour:"#7a5c2e", blurb:"One line about the module." } */
 ];
 
@@ -79,15 +83,74 @@ var MODULES = [
   }
   if (!STATE.notes) STATE.notes = {};
   if (!STATE.done)  STATE.done  = {};
+  if (!STATE.flag)  STATE.flag  = {};   /* answered right, but keep testing me */
 
   function save(){
     if (!write(STATE)) toast("Storage is blocked here — use Export to keep a copy.");
   }
   function markDone(id){
-    if (!id || STATE.done[id]) return;
-    STATE.done[id] = 1; save(); refreshProgress();
+    if (!id) return;
+    if (STATE.done[id]) { syncFlags(); return; }
+    STATE.done[id] = 1; save(); refreshProgress(); syncFlags();
   }
-  function isDone(id){ return !!STATE.done[id]; }
+  /* A flagged item counts as not done, so it reappears unanswered on the
+     next visit and keeps the module bar short of complete. */
+  function isDone(id){ return !!STATE.done[id] && !STATE.flag[id]; }
+  function isFlagged(id){ return !!STATE.flag[id]; }
+  function toggleFlag(id){
+    if (!id) return false;
+    if (STATE.flag[id]) delete STATE.flag[id];
+    else STATE.flag[id] = 1;
+    save();
+    refreshProgress();
+    syncFlags();
+    return !!STATE.flag[id];
+  }
+
+  /* ---------------- flag controls ----------------
+     Added to every widget that has a right answer. Hidden until the item
+     has been answered correctly, or is already flagged. */
+  var flagged = [];
+
+  function buildFlag(box, id){
+    if (!id) return;
+    var row = document.createElement("div");
+    row.className = "flagrow";
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "flagbtn";
+    var note = document.createElement("span");
+    note.className = "flagnote";
+    row.appendChild(btn);
+    row.appendChild(note);
+    box.appendChild(row);
+
+    function sync(){
+      var on = isFlagged(id);
+      var answered = !!STATE.done[id];
+      row.hidden = !(on || answered);
+      btn.setAttribute("aria-pressed", String(on));
+      btn.textContent = on ? "\u2691 Flagged for retesting" : "\u2691 Test me again";
+      note.innerHTML = on
+        ? 'Kept out of the progress count, so it comes back next visit. <a href="#" data-reload>Retry now</a>'
+        : "";
+      var link = note.querySelector("[data-reload]");
+      if (link) link.addEventListener("click", function(e){ e.preventDefault(); location.reload(); });
+    }
+
+    btn.addEventListener("click", function(){ toggleFlag(id); });
+    flagged.push(sync);
+    sync();
+  }
+
+  function syncFlags(){ flagged.forEach(function(fn){ fn(); }); }
+
+  function initFlags(){
+    var sel = "[data-quiz],[data-order],[data-match]";
+    Array.prototype.forEach.call(document.querySelectorAll(sel), function(box){
+      buildFlag(box, itemId(box));
+    });
+  }
 
   function toast(msg){
     var s = document.getElementById("dlgStatus");
@@ -602,7 +665,7 @@ var MODULES = [
     var reset = document.getElementById("resetBtn");
     if (reset) reset.addEventListener("click", function(){
       if (!confirm("Clear all answers and typed notes on every module? This cannot be undone.")) return;
-      STATE = {notes:{}, done:{}}; save(); location.reload();
+      STATE = {notes:{}, done:{}, flag:{}}; save(); location.reload();
     });
   }
 
@@ -615,6 +678,7 @@ var MODULES = [
     initMatches();
     initHotspots();
     initBranches();
+    initFlags();
     buildRail();
     initDialog();
     if (HERE === "index" && typeof buildIndex === "function") buildIndex(MODULES);

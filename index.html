@@ -9,6 +9,83 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="study.css">
+<style>
+/* ============================================================
+   Index-only additions: the collapsible cram sheet on each card.
+   Kept here rather than in study.css so the shared stylesheet
+   stays untouched.
+   ============================================================ */
+
+/* The card is now a <div>, not an <a>, because a <details> cannot
+   live inside a link. The whole surface is still clickable via a
+   stretched pseudo-element on .go, and the cram sheet is lifted
+   above it so its toggle keeps working. */
+.modcard{
+  position:relative;
+  background:var(--surface);border:1px solid var(--rule);border-top:4px solid var(--c);
+  padding:24px 26px 20px;display:flex;flex-direction:column;flex:1 1 auto;
+  color:inherit;transition:border-color .15s,box-shadow .15s;
+}
+.modcard:hover,.modcard:focus-within{border-color:var(--c);box-shadow:0 2px 14px rgba(19,27,38,.09)}
+.modcard:hover .go{text-decoration:underline}
+.modcard .go{font-family:var(--sans);font-size:.9rem;font-weight:600;color:var(--c);text-decoration:none}
+.modcard .go::after{content:"";position:absolute;inset:0;z-index:1}
+.modcard p.blurb{flex:0 0 auto}
+
+/* ---- cram sheet ---- */
+.cram{position:relative;z-index:2;margin:2px 0 16px;border-top:1px solid var(--rule-faint)}
+.cram summary{
+  list-style:none;cursor:pointer;display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+  font-family:var(--sans);font-size:.78rem;font-weight:600;letter-spacing:.02em;
+  text-transform:uppercase;color:var(--c);padding:10px 0 2px;
+}
+.cram summary::-webkit-details-marker{display:none}
+.cram summary::before{
+  content:"+";font-family:var(--mono);font-weight:500;font-size:.95rem;line-height:1;
+  width:16px;height:16px;display:grid;place-items:center;
+  border:1px solid currentColor;border-radius:2px;flex:0 0 auto;
+}
+.cram[open] summary::before{content:"\2212"}
+.cram summary .hint-lbl{font-weight:400;text-transform:none;letter-spacing:0;color:var(--ink-soft);font-size:.76rem}
+.cram summary:hover{text-decoration:underline}
+
+.cbody{padding:8px 0 4px;font-family:var(--sans);font-size:.82rem;line-height:1.5;color:var(--ink)}
+.cbody h4{
+  font-family:var(--mono);font-size:.68rem;font-weight:500;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--ink-soft);margin:14px 0 5px;
+  padding-bottom:3px;border-bottom:1px solid var(--rule-faint);
+}
+.cbody h4:first-child{margin-top:2px}
+/* study.css sets `.modgrid li{display:flex}` for the card tiles themselves.
+   These bullets live inside a tile, so that rule reaches them too and turns
+   every bullet into a flex row — the bold term and the rest of the sentence
+   become separate columns that overlap. Both selectors below outrank it. */
+.modgrid .cbody ul{display:block;margin:0;padding:0;list-style:none;max-width:none}
+.modgrid .cbody li{display:block;margin:0 0 5px;padding-left:12px;text-indent:-12px}
+.cbody li::before{content:"\00B7";color:var(--c);font-weight:700;margin-right:6px}
+.cbody b{font-weight:600}
+.cbody i{font-style:italic;color:var(--ink-soft)}
+.modgrid .cbody .eqs li{
+  display:block;font-family:var(--mono);font-size:.78rem;line-height:1.45;
+  background:var(--rule-faint);padding:5px 8px;margin:0 0 4px;
+  padding-left:8px;text-indent:0;border-left:2px solid var(--c);
+  overflow-wrap:anywhere;
+}
+.cbody .eqs li::before{content:none}
+.cbody .eqs li i{font-family:var(--sans);font-style:normal;color:var(--ink-soft);display:block;font-size:.76rem}
+.cbody .knob li b{font-family:var(--mono);font-weight:500;color:var(--c)}
+.cbody .warn{color:var(--no);font-weight:600}
+
+/* print: everything open, so the page prints as one long cheat sheet */
+@media print{
+  .topbar,.disclosure,.toolbar,.bar,.pct,.go,dialog{display:none !important}
+  .cram .cbody{display:block !important}
+  .cram summary{display:none}
+  .modgrid{display:block}
+  .modcard{break-inside:avoid;border:none;box-shadow:none;padding:0 0 14px}
+  body{font-size:11px}
+}
+</style>
 </head>
 <body data-page="index">
 <div class="wrap">
@@ -18,6 +95,7 @@
     <a class="brand" href="index.html">Analytics Modeling &middot; Study Notes</a>
     <nav class="tabs" aria-label="Modules"></nav>
     <div class="toolbar">
+      <button class="btn" id="cramAll">Expand summaries</button>
       <button class="btn" id="exportBtn">Export</button>
       <button class="btn" id="importBtn">Import</button>
       <button class="btn" id="resetBtn">Reset</button>
@@ -28,7 +106,7 @@
 
 <header class="hero">
   <h1>Analytics Modeling</h1>
-  <p class="sub">Study notes written from lecture recordings — one page per module, with the activities that make the ideas stick.</p>
+  <p class="sub">Study notes written from lecture recordings — one page per module, with the activities that make the ideas stick. Each card carries a collapsible cram sheet: the terms, equations and parameter behaviour worth copying onto a handwritten page.</p>
 </header>
 
 <div class="disclosure">
@@ -61,47 +139,421 @@
    the cards below. If you add or remove an activity on a module
    page, update its number here.
 
-   Counted directly from the page source:
+   Counted directly from the page source (every data-quiz, data-order,
+   data-match, data-hotspot and data-branch id on the page):
      m1   =  21  (16 quizzes, 2 hotspots — the matches and the ordering
                   activity were rebuilt as multiple choice)
      m2   =  15  (7 quizzes, 2 orders, 3 matches, 2 hotspots, 1 branch)
-     m5   =   7  (2 quizzes, 1 order, 1 match, 2 hotspots, 1 branch)
-     m6   =   5  (2 quizzes, 1 order, 1 match, 1 hotspot)
+     m3   =  40
+     m4   =  17  (15 quizzes, 1 hotspot, 1 branch)
+     m5   =  17
+     m6   =  19
      m7   =  34  (27 quizzes, 2 orders, 2 matches, 1 hotspot, 2 branches;
                   the 11 written answers and the α explorer are not scored)
-     disc =  12  (12 quizzes; the 5 open prompts are not scored)
-     exam = 103  (16 original activities + 87 bank questions in Topics 9–11;
-                  the 12 written answers are not scored)
+     m8   =  29  (21 quizzes, 2 orders, 2 matches, 2 hotspots, 2 branches)
+     disc =  25
+     exam = 110  (22 topics: 85 multiple choice + 25 discussion — revealing
+                  a model answer counts as done on that page)
    ============================================================ */
 window.MODULE_ITEM_COUNTS = {
   m1: 21,
   m2: 15,
-  m3: 12,   /* CHECK — carry over from your existing index.html */
-  m4: 12,   /* CHECK — carry over from your existing index.html */
-  m5: 7,
-  m6: 5,
+  m3: 40,
+  m4: 17,
+  m5: 17,
+  m6: 19,
   m7: 34,
-  disc: 12,
-  exam: 103
+  m8: 29,
+  disc: 25,
+  exam: 110
+};
+
+/* ============================================================
+   CRAM — the collapsible summary on each module card.
+
+   One entry per module id, written for transcription onto a
+   handwritten crib sheet: definitions in the fewest words that
+   still distinguish them, every equation the module states, and
+   a "turn the knob" block saying what moving each parameter does.
+
+   >>> TO EDIT: change the HTML string for that module id.
+   >>> TO ADD A MODULE: add an entry keyed by the module's id.
+       A module with no entry here simply shows no cram sheet.
+   ============================================================ */
+window.CRAM = {
+
+m1: `
+<h4>The three questions</h4>
+<ul>
+<li><b>Descriptive</b> — explains a pattern already in past data. Clustering, change detection, dimensionality reduction.</li>
+<li><b>Predictive</b> — a value not yet observed. Classification, regression, time-series forecasting.</li>
+<li><b>Prescriptive</b> — a course of action, usually with an objective to optimise. Optimization, simulation, probability models.</li>
+<li><b>The test</b> — ask what the <i>answer</i> would be: an explanation of the past → descriptive; a value → predictive; an action → prescriptive.</li>
+</ul>
+<h4>Definitions</h4>
+<ul>
+<li><b>Modeling</b> — expressing the <i>key</i> parts of a real-life situation in math, so the math can be analysed and the analysis turned back into a real-life answer.</li>
+<li><b>Three legs</b> — situation → math &nbsp;·&nbsp; analysis &nbsp;·&nbsp; math → recommendation. Teaching covers the middle; projects fail at the ends.</li>
+<li><b>"Model" has 3 zoom levels</b> — (1) the method ("regression"); (2) method + its chosen variables; (3) the fitted equation with numbers in it. "Compare five SVM models" = level 2; "retrain the model" = a level-2 spec producing a level-3 equation.</li>
+</ul>
+<h4>Cross-cutting (used by every method)</h4>
+<ul>
+<li>Data preparation · scaling · distance metrics · validation · missing data · variable selection · outliers · measuring model quality.</li>
+</ul>
+<h4>Project shape — 7 steps</h4>
+<ul>
+<li>Frame the question → get &amp; clean data → prepare it → fit candidate models → validate &amp; choose one → estimate its true quality → interpret it for the organisation. Loop back when it isn't good enough.</li>
+<li>Only one box is "doing analytics". Acquiring and cleaning takes the largest share of the time.</li>
+</ul>`,
+
+m2: `
+<h4>Terms</h4>
+<ul>
+<li><b>Classification</b> — putting things into categories. Response coded <b>y = ±1</b> (not 1/0) so both classes collapse into one inequality.</li>
+<li><b>Hyperplane</b> — the boundary. Parallel lines share a₁…aₙ and differ only in a₀ — which is why the intercept is the thing you slide when costs are unequal.</li>
+<li><b>Margin</b> — the gap between the two parallel lines touching the nearest points.</li>
+<li><b>Support vectors</b> — the points on the margin edges; only they determine the boundary, and that is where the name comes from.</li>
+<li><b>Hard vs soft margin</b> — hard requires perfect separation; soft pays a penalty (hinge loss) for violations.</li>
+<li><b>KNN</b> — no boundary at all. Keep every training point, classify by majority vote of the k closest. Multi-class needs no extra machinery.</li>
+</ul>
+<h4>Equations</h4>
+<ul class="eqs">
+<li>a₁x₁ + … + aₙxₙ + a₀ = 0 <i>the hyperplane</i></li>
+<li>blue: Σⱼ aⱼxᵢⱼ + a₀ ≥ +1 &nbsp;&nbsp; red: Σⱼ aⱼxᵢⱼ + a₀ ≤ −1</li>
+<li>yᵢ ( Σⱼ aⱼxᵢⱼ + a₀ ) ≥ 1 &nbsp; for every i <i>the two merged — why y = ±1</i></li>
+<li>margin = 2 / √( Σⱼ aⱼ² ) <i>coefficients in the denominator: small aⱼ ⇒ wide margin</i></li>
+<li>hard margin: min Σⱼ aⱼ² &nbsp; s.t. &nbsp; yᵢ(Σⱼ aⱼxᵢⱼ + a₀) ≥ 1</li>
+<li>errorᵢ = max{ 0 , 1 − yᵢ(Σⱼ aⱼxᵢⱼ + a₀) } <i>hinge loss: 0 when comfortably right</i></li>
+<li>soft margin: min Σᵢ max{0, 1 − yᵢ(Σⱼ aⱼxᵢⱼ + a₀)} + λ · Σⱼ aⱼ²</li>
+<li>scaling: xᵢⱼ' = (xᵢⱼ − x min,j) / (x max,j − x min,j)</li>
+<li>standardizing: xᵢⱼ' = (xᵢⱼ − μⱼ) / σⱼ</li>
+<li>cost 2:1 → intercept = ⅔(a₀ − 1) + ⅓(a₀ + 1) <i>weighted blend, pulled toward the costly side</i></li>
+</ul>
+<h4>Turn the knob</h4>
+<ul class="knob">
+<li><b>λ ↑</b> — a wide margin outweighs mistakes on known points: simpler, more robust, more training errors.</li>
+<li><b>λ → 0</b> — avoiding mistakes outweighs a wide margin: narrow margin, fits noise, overfits.</li>
+<li><b>aⱼ ↓</b> — margin widens; they sit in the denominator.</li>
+<li><b>k ↑ (KNN)</b> — smoother, more bias, less variance. <b>k ↓</b> — jumpy, fits noise. Choose k by <i>validation</i>, not by a formula.</li>
+<li><b>Unequal costs</b> — don't change the slope; slide the intercept toward the expensive mistake.</li>
+</ul>
+<h4>Scaling vs standardizing</h4>
+<ul>
+<li><b>Scaling</b> → bounded [0,1], keeps the distribution's shape, easily dragged by one outlier. For another range [a,b]: take the 0–1 value, ×(b−a), +a.</li>
+<li><b>Standardizing</b> → mean 0, sd 1, unbounded; reads as "how many σ from the mean"; better with roughly normal data or when outliers exist.</li>
+<li><span class="warn">Do it before fitting.</span> Coefficients of 5 and 700 mean a 1% nudge to the big attribute moves the objective as much as a 600% change to the small one.</li>
+<li>Only <i>after</i> scaling can |aⱼ| be read as variable importance.</li>
+</ul>
+<h4>Three different k's</h4>
+<ul>
+<li>KNN: how many neighbours vote. k-means: how many clusters. k-fold: how many parts the data splits into.</li>
+</ul>`,
+
+m3: `
+<h4>Terms</h4>
+<ul>
+<li><b>Real vs random effects</b> — every dataset holds both; a model fits both, but only the real ones reappear in new data. That is why a training score always flatters.</li>
+<li><b>Training set</b> fits the model · <b>validation set</b> chooses among models · <b>test set</b> estimates the chosen model's true quality, once.</li>
+<li><b>Overfitting</b> — fitting random effects. <b>Leakage</b> — held-out data influencing the fit.</li>
+<li><b>k-fold CV</b> — split into k parts, train on k−1 and score on the held-out part, rotate, average. <b>LOOCV</b> — the extreme case, k = n.</li>
+<li><b>Bootstrap</b> — resample n observations <i>with replacement</i>, B times, to measure how uncertain a statistic is.</li>
+</ul>
+<h4>Equations &amp; numbers</h4>
+<ul class="eqs">
+<li>E[test error] = variance + (bias)² + irreducible error <i>all ≥ 0 — error can never beat the irreducible term</i></li>
+<li>CV(n) = (1/n) Σᵢ MSEᵢ , &nbsp; MSEᵢ = (yᵢ − ŷᵢ)²</li>
+<li>classification: CV(n) = (1/n) Σᵢ Errᵢ , &nbsp; Errᵢ = 1 if misclassified</li>
+<li>LOOCV shortcut (linear fits): CV(n) = (1/n) Σᵢ [ (yᵢ − ŷᵢ) / (1 − hᵢ) ]² <i>hᵢ = leverage, between 1/n and 1</i></li>
+<li>P(obs appears in a bootstrap sample) = 1 − (1 − 1/n)ⁿ → 1 − 1/e ≈ 63.2% <i>≈ 36.8% out-of-bag</i></li>
+<li>each fold model trains on (k − 1)/k of the data</li>
+</ul>
+<h4>Turn the knob</h4>
+<ul class="knob">
+<li><b>k ↑</b> — bias ↓ (each fit sees more data), variance ↑ (fold models near-identical, so their errors are correlated), cost ↑. k = 5 or 10 is the empirical compromise.</li>
+<li><b>k = 2</b> — trains on 50%, badly pessimistic. <b>k = 5</b> → 80%. <b>k = 10</b> → 90%. <b>k = n</b> — bias ≈ 0, highest variance, n fits.</li>
+<li><b>more models compared</b> — the winner's validation score is more inflated by luck, so the separate test set matters more.</li>
+</ul>
+<h4>Rules that carry marks</h4>
+<ul>
+<li>Typical split: 20% test; the other 80% divided into k folds for train/validate.</li>
+<li>Quote the validation figure, not the training one (the lecture's 80%, not 90%) — and only if it was the single model you built.</li>
+<li>After choosing: <span class="warn">retrain on all the data.</span> Never deploy a fold model; never average fold coefficients.</li>
+<li>In four-fold CV each point helps train 3 of the 4 models and is held out exactly once.</li>
+<li><b>CV breaks when</b> — preprocessing happened before the split; the data is ordered in time; rows aren't independent; the future won't resemble the past.</li>
+<li><b>Nested CV</b> — needed when the same data both tunes and assesses.</li>
+</ul>`,
+
+m4: `
+<h4>Terms</h4>
+<ul>
+<li><b>Clustering</b> — unsupervised: no labels given, the groups are discovered. Classification's categories exist beforehand.</li>
+<li><b>Centroid</b> — the mean of the points in a cluster; k-means' "center".</li>
+<li><b>Heuristic</b> — not guaranteed optimal, but fast and usually close. k-means is one.</li>
+<li><b>Voronoi diagram</b> — assign every location to its nearest center and the space divides into regions; that is how a new point is predicted.</li>
+<li><b>Elbow</b> — the kink in total-distance-against-k, where extra clusters stop buying much.</li>
+</ul>
+<h4>Equations</h4>
+<ul class="eqs">
+<li>Euclidean: d = √( Σᵢ (xᵢ − yᵢ)² ) <i>straight line</i></li>
+<li>Manhattan / rectilinear: d = Σᵢ |xᵢ − yᵢ| <i>street grid</i></li>
+<li>p-norm (Minkowski order p): d = ( Σᵢ |xᵢ − yᵢ|ᵖ )^(1/p)</li>
+<li>∞-norm: d = maxᵢ |xᵢ − yᵢ| <i>only the biggest single gap counts</i></li>
+<li>k-means objective: min Σᵢ Σₖ yᵢₖ · d(xᵢ, zₖ) &nbsp; s.t. &nbsp; Σₖ yᵢₖ = 1 for every i</li>
+<li>cosine distance = 1 − (u·v)/(‖u‖‖v‖) <i>(3,4) vs (6,8): Euclidean 5, cosine 0</i></li>
+</ul>
+<h4>Notation</h4>
+<ul>
+<li><b>xᵢⱼ</b> — attribute j of point i. <i>Given.</i></li>
+<li><b>yᵢₖ</b> — 1 if point i is in cluster k, else 0. <i>Unknown.</i></li>
+<li><b>zₖⱼ</b> — coordinate j of center k. <i>Unknown.</i> y and z depend on each other, which is why k-means alternates.</li>
+</ul>
+<h4>The algorithm</h4>
+<ul>
+<li>Pick k starting centers → assign every point to its nearest center (the "maximization" half — it minimises distance) → recompute each center as the centroid of its points (the "expectation" half — it is a mean) → repeat.</li>
+<li>Stop when <b>no point changes cluster</b>: membership unchanged ⇒ centroids unchanged ⇒ the next assignment repeats itself. A fixed point.</li>
+</ul>
+<h4>Turn the knob</h4>
+<ul class="knob">
+<li><b>k ↑</b> — total distance to centers <i>always</i> falls, so "lowest total distance" is a useless rule: it picks one cluster per point. Use the elbow, or a practical constraint (budget for four fire stations, not six).</li>
+<li><b>p ↑</b> — bigger coordinate differences dominate; at p = ∞ only the single largest gap matters (the warehouse case).</li>
+<li><b>restarts ↑</b> — k-means is a heuristic and depends on its starting centers; run it several times and keep the best.</li>
+<li><b>outliers</b> — drag centroids, because a center is a mean. Deal with them first.</li>
+<li><span class="warn">Scale before any distance.</span> Units silently weight every dimension.</li>
+</ul>`,
+
+m5: `
+<h4>The three problems, before any model</h4>
+<ul>
+<li><b>Mismatched scales</b> — income ≈ 10⁵ against credit score ≈ 10². Fixed by scaling / standardizing (Module 2, Lesson 7).</li>
+<li><b>A few extreme points</b> — one or two points bend the answer. This module.</li>
+<li><b>Extraneous information</b> — columns carrying noise, not signal. Fixed by variable selection / dimensionality reduction: by dropping or combining <i>columns</i>, not by transforming values.</li>
+</ul>
+<h4>Terms</h4>
+<ul>
+<li><b>Data preparation</b> — everything done between collecting the data and handing it to a model. What "assume the data is given" is quietly assuming.</li>
+<li><b>Outlier</b> — a point very different from the rest of the dataset. Context-dependent: a value can be ordinary on its own and impossible in its neighbourhood.</li>
+<li><b>IQR</b> — 75th percentile minus 25th.</li>
+</ul>
+<h4>Box and whisker plot</h4>
+<ul>
+<li>Box edges = 25th and 75th percentiles. Line inside = the median, the 50th.</li>
+<li>Whiskers = a chosen reasonable range — 10th/90th, or 5th/95th.</li>
+<li>Every point beyond a whisker is drawn individually: those are the <i>candidates</i>, not verdicts.</li>
+</ul>
+<ul class="eqs">
+<li>software default whiskers: furthest point within Q1 − 1.5·IQR … Q3 + 1.5·IQR</li>
+<li>P(|x − μ| &gt; 2σ) = 4.55% &nbsp;·&nbsp; P(|x − μ| &gt; 3σ) = 0.270% <i>two-sided; ≈ 2,700 per million</i></li>
+</ul>
+<h4>Turn the knob</h4>
+<ul class="knob">
+<li><b>whiskers wider</b> (5th/95th, or the 1.5·IQR rule) — fewer points flagged. <b>narrower</b> (10th/90th) — more flagged, more to investigate. The plot does not decide the count; you do, so always ask which convention produced a reported number.</li>
+<li><b>n ↑</b> — expect <i>more</i> extreme points, not fewer. About 2,700 in a million normal readings sit beyond 3σ and are perfectly genuine.</li>
+</ul>
+<h4>Finding vs judging</h4>
+<ul>
+<li>One dimension → box plot. Many dimensions → no good general pre-model test; instead <b>fit a model first and look where it is most wrong</b> (the largest residual against a smooth fit).</li>
+<li>Detection only produces candidates. Then ask <b>what caused it</b>:</li>
+<li><b>Error</b> (typo, broken sensor) → correct or remove.</li>
+<li><b>Real, different mechanism</b> → split into two models rather than forcing one.</li>
+<li><b>Real and still unusable</b> → keep it, but don't let it drive the fit; record the decision.</li>
+<li><span class="warn">You cannot answer "which kind is it?" from inside the dataset.</span></li>
+</ul>`,
+
+m6: `
+<h4>Terms</h4>
+<ul>
+<li><b>Change detection</b> — deciding, as data arrives, whether the process has shifted, early enough to act and without over-reacting to noise.</li>
+<li><b>Why not a hypothesis test</b> — it answers "did it change?" once enough data has been collected. Here the answer is needed while the data is still arriving.</li>
+<li><b>CUSUM</b> — a cumulative sum of deviations from μ, slack-adjusted, floored at zero.</li>
+<li><b>μ</b> the expected value when nothing has changed · <b>C</b> the allowance: how much variation you agree to ignore · <b>T</b> the threshold: how much evidence before you call it.</li>
+</ul>
+<h4>Equations</h4>
+<ul class="eqs">
+<li>increase: S⁺ₜ = max{ 0 , S⁺ₜ₋₁ + (xₜ − μ − C) } , &nbsp; S₀ = 0</li>
+<li>decrease: S⁻ₜ = max{ 0 , S⁻ₜ₋₁ + (μ − xₜ − C) } &nbsp;≡&nbsp; max{ 0 , S⁻ₜ₋₁ − (xₜ − μ) − C }</li>
+<li>alarm when &nbsp; Sₜ ≥ T &nbsp; <i>run both recursions to watch both directions</i></li>
+<li>industrial notation: C⁺ᵢ , C⁻ᵢ with μ₀ = μ , K = C , H = T <i>identical; the "tabular CUSUM"</i></li>
+<li>EWMA: zₜ = λxₜ + (1 − λ)zₜ₋₁ , z₀ = μ ; limits μ ± Lσ√( λ/(2−λ)·[1 − (1−λ)^2t] ) <i>λ ≈ 0.05–0.25, L = 3</i></li>
+</ul>
+<h4>What each piece is for</h4>
+<ul>
+<li><b>running total</b> — carries evidence forward, so a small persistent shift accumulates into a signal.</li>
+<li><b>− C</b> — subtracts a little each period so ordinary noise doesn't accumulate.</li>
+<li><b>max{0, ·}</b> — throws the total away whenever the evidence turns negative, so noise can't build a head start.</li>
+</ul>
+<h4>Turn the knob</h4>
+<ul class="knob">
+<li><b>C ↓ or T ↓</b> — changes detected sooner, false alarms more frequent. Right when <i>late detection</i> is the expensive mistake (every chip made before detection is scrapped).</li>
+<li><b>C ↑ or T ↑</b> — false alarms rarer, real changes take longer to surface. Right when <i>interrupting a healthy process</i> is the expensive mistake.</li>
+<li><b>Why not C = 0 and raise T instead?</b> With C = 0 the total drifts upward on noise alone — in the example it reached 119 against a 150 threshold with nothing wrong. C keeps the baseline near zero instead.</li>
+<li><span class="warn">Do not update μ as new data arrives</span> — it would absorb the very shift you are trying to detect.</li>
+</ul>
+<h4>Worked example — μ = 300, +100 added from t = 11</h4>
+<ul>
+<li>C = 0, T = 450 → alarm at t = 14. Slow, but noise peaked at 119, never close.</li>
+<li>C = 0, T = 150 → alarm at t = 11. Fast, but noise had already reached 119 — 79% of the threshold.</li>
+<li>C = 15, T = 150 → alarm at t = 12. One period later, and the total never exceeded 23 beforehand.</li>
+</ul>`,
+
+m7: `
+<h4>Terms</h4>
+<ul>
+<li><b>Time series</b> — the same response recorded period after period. It moves for three reasons: <b>trend</b>, <b>cyclical/seasonal</b> variation, and <b>randomness</b>.</li>
+<li><b>Exponential smoothing</b> — today's estimate is a blend of the newest reading and yesterday's belief.</li>
+<li><b>S</b> baseline · <b>T</b> trend · <b>C</b> seasonal factor · <b>L</b> cycle length.</li>
+<li><b>Holt</b> = trend added. <b>Holt-Winters</b> = trend + seasonality.</li>
+<li><b>Stationary</b> — mean, variance and correlation structure don't drift; what ARIMA needs, reached by differencing.</li>
+</ul>
+<h4>Equations — smoothing</h4>
+<ul class="eqs">
+<li>Sₜ = α·xₜ + (1 − α)·Sₜ₋₁ , &nbsp; 0 &lt; α &lt; 1 , &nbsp; S₁ = x₁</li>
+<li>with trend: Sₜ = α·xₜ + (1 − α)(Sₜ₋₁ + Tₜ₋₁)</li>
+<li>Tₜ = β(Sₜ − Sₜ₋₁) + (1 − β)Tₜ₋₁ , &nbsp; T₁ = 0</li>
+<li>seasonal (multiplicative): Sₜ = α(xₜ / Cₜ₋L) + (1 − α)(Sₜ₋₁ + Tₜ₋₁)</li>
+<li>Cₜ = γ(xₜ / Sₜ) + (1 − γ)Cₜ₋L , &nbsp; first L factors = 1</li>
+<li>forecasts: Fₜ₊₁ = Sₜ &nbsp;·&nbsp; Sₜ + Tₜ &nbsp;·&nbsp; (Sₜ + Tₜ)·C₍ₜ₊₁₎₋L</li>
+<li>unrolled: Sₜ = αxₜ + α(1−α)xₜ₋₁ + α(1−α)²xₜ₋₂ + … <i>weight k periods back = α(1−α)ᵏ</i></li>
+<li>error-correction form: Fₜ₊₁ = Fₜ + α(xₜ − Fₜ) <i>new forecast = old + α × last error</i></li>
+<li>fitting: min Σₜ (Fₜ − xₜ)² over α, β, γ &nbsp; s.t. 0 ≤ α, β, γ ≤ 1</li>
+</ul>
+<h4>Equations — ARIMA &amp; GARCH</h4>
+<ul class="eqs">
+<li>ARIMA(p,d,q): Dₜ = μ + Σᵢ₌₁..p φᵢDₜ₋ᵢ + Σᵢ₌₁..q θᵢεₜ₋ᵢ + εₜ <i>D = the d-th differences, not the raw values</i></li>
+<li>GARCH(p,q): σ²ₜ = ω + Σᵢ βᵢσ²ₜ₋ᵢ + Σᵢ γᵢε²ₜ₋ᵢ <i>models the variance, not the value</i></li>
+<li>RiskMetrics: σ²ₜ = λσ²ₜ₋₁ + (1 − λ)ε²ₜ₋₁ , λ = 0.94 daily <i>smoothing on squared returns</i></li>
+<li>eₜ = Fₜ − xₜ ; MAE = mean|eₜ| ; RMSE = √(mean eₜ²) ; MAPE = mean|eₜ / xₜ|</li>
+</ul>
+<h4>Turn the knob</h4>
+<ul class="knob">
+<li><b>α ↑</b> — trust the newest reading: short memory, responsive, jumpy. <b>α ↓</b> — long memory, smooth, slow to react. Large randomness ⇒ small α.</li>
+<li><b>α = 1</b> — believe every reading (that is the naive forecast). <b>α = 0</b> — never update.</li>
+<li><b>β, γ</b> — the same trade-off applied to the trend and to the seasonal factors.</li>
+<li><b>d ↑</b> — more differencing to remove drift; stock prices usually need d = 1.</li>
+<li><b>p, q</b> — read off the <i>differenced</i> series: ACF dies away + PACF cuts off at lag p → AR(p); ACF cuts off at lag q + PACF dies away → MA(q); both die away → try small p and q and compare on AIC/BIC.</li>
+</ul>
+<h4>Rules that carry marks</h4>
+<ul>
+<li>Multiplicative seasonality scales with the level; additive is a fixed size.</li>
+<li>Use C₍ₜ₋L₎, not Cₜ₋₁ — the most recent factor from the <i>same stage</i> of the cycle. If today is Monday, use last Monday's.</li>
+<li>ARIMA is short-term, wants stable data and roughly 40+ observations; exponential smoothing handles jumpier, spikier series.</li>
+<li>Familiar models in disguise: naive = ARIMA(0,1,0); white noise = ARIMA(0,0,0).</li>
+<li><span class="warn">Never use shuffled k-fold on a time series</span> — training on March and July to "predict" May leaks the answer. Use <b>walk-forward</b>: fit 1–40 → forecast 41 → record the error → add 41 → refit → repeat → average.</li>
+<li>Signed errors cancel: +8, −8, +6, −6 gives mean error 0 but MAE 7 and RMSE ≈ 7.07.</li>
+<li>Beat the benchmarks: naive Fₜ₊₁ = xₜ, seasonal naive Fₜ₊₁ = x₍ₜ₊₁₎₋L. Leftover errors should look like white noise.</li>
+</ul>`,
+
+m8: `
+<h4>Terms</h4>
+<ul>
+<li><b>Regression</b> — estimate a numeric <b>response</b> from <b>predictors</b>. Two uses: <i>how a system works</i> (read the coefficients) and <i>what will happen</i> (read the predictions). Not directly prescriptive.</li>
+<li><b>aⱼ</b> — change in predicted y per one-unit rise in xⱼ, others held fixed. Units: response per predictor unit.</li>
+<li><b>Residual</b> — yᵢ − ŷᵢ, measured vertically in response units.</li>
+<li><b>Likelihood</b> — probability (density) of the observed data given the parameters. <b>Maximum likelihood</b>: the parameters that make it largest, value L*.</li>
+<li><b>Correlation</b> — move together. <b>Causation</b> — one drives the other. <b>Outside factor</b> — drives both.</li>
+<li><b>Interaction</b> — a product term x₁x₂: the effect of one attribute depends on the other.</li>
+<li><b>R²</b> — share of variability accounted for. <b>Adjusted R²</b> — the same, charged for each attribute.</li>
+</ul>
+<h4>Equations</h4>
+<ul class="eqs">
+<li>ŷ = a₀ + Σⱼ aⱼxⱼ <i>simple linear: ŷ = a₀ + a₁x₁</i></li>
+<li>SSE = Σᵢ ( yᵢ − (a₀ + Σⱼ aⱼxᵢⱼ) )² <i>minimise over a — convex, so set partials to 0</i></li>
+<li>normal iid errors: max L ⇔ min SSE</li>
+<li>AIC = 2k − 2 ln L* <i>regression: n·ln(SSE/n) + 2k + const</i></li>
+<li>AICc = AIC + 2k(k+1)/(n − k − 1) <i>finite-sample correction</i></li>
+<li>BIC = k·ln n − 2 ln L* <i>heavier than AIC once n ≥ 8</i></li>
+<li>relative likelihood of worse model = exp( (AIC_low − AIC_high)/2 ) <i>Δ = 4 → 13.5%, Δ = 6 → 5%</i></li>
+<li>y = a₀ + a₁x₁ + a₂x₁² &nbsp;·&nbsp; y = a₀ + a₁x₁ + a₂x₂ + a₃x₁x₂ <i>effect of x₁ = a₁ + a₃x₂</i></li>
+<li>Box-Cox: y(λ) = (y^λ − 1)/λ, y(0) = ln y <i>needs y &gt; 0; λ=1 none, ½ root, 0 log</i></li>
+<li>t = aⱼ / SE(aⱼ) &nbsp;·&nbsp; 95% CI ≈ aⱼ ± 2·SE(aⱼ)</li>
+<li>R² = 1 − SSE/SST &nbsp;·&nbsp; adj R² = 1 − (1 − R²)(n − 1)/(n − m − 1)</li>
+</ul>
+<h4>Turn the knob</h4>
+<ul class="knob">
+<li><b>k ↑</b> — likelihood and R² can only improve; AIC/BIC/adj R² decide if it paid. Under AIC a parameter must raise ln L* by more than 1.</li>
+<li><b>n ↑</b> — BIC penalty per parameter (ln n) grows, AICc correction shrinks toward AIC, and p-values shrink even for trivial effects.</li>
+<li><b>p threshold ↑</b> (0.10) — more attributes kept, more irrelevant ones in. <b>↓</b> (0.01) — fewer kept, more relevant ones lost.</li>
+<li><b>more tests</b> — more false positives: 100 null attributes at 0.02 → about 2 pass by chance.</li>
+<li><b>ΔBIC</b> — &gt;10 very likely · 6–10 likely · 2–6 somewhat · 0–2 slightly better.</li>
+</ul>
+<h4>Rules that carry marks</h4>
+<ul>
+<li>“Linear” = linear in the <i>coefficients</i>. x², ln x, x₁x₂ are new columns; fitting is unchanged.</li>
+<li>Reverse the regression and the p-value and fit are identical — <span class="warn">quality metrics can’t show direction.</span></li>
+<li>Causation rules of thumb: cause before effect · makes sense · no outside factor (hardest).</li>
+<li>Rule of thumb: drop attributes with p &gt; 0.05. Most p-values are clearly tiny (≤ 0.001) or large (≥ 0.3).</li>
+<li>Significant ≠ important: check coefficient × realistic change against the size of the response.</li>
+<li>p-value, t and CI are the same test; the estimate is the size.</li>
+<li>Compare AIC/BIC only across models on the same data. Use BIC only when n ≫ k.</li>
+<li>R² of 0.3–0.4 can be good for human behaviour.</li>
+<li><i>Lecture vs standard:</i> p-value = P(estimate this extreme | true coefficient 0), not P(coefficient = 0).</li>
+</ul>`,
+
+disc: `
+<h4>The eight points the instructor kept returning to</h4>
+<ul>
+<li><b>1 · Wider margin</b> — not aesthetics. A wide gap tolerates measurement error and new points landing slightly off; a narrow one flips classes on tiny perturbations.</li>
+<li><b>2 · Scaling vs standardization</b> — scaling bounds to [0,1] and keeps the shape but is dragged by outliers; standardizing gives mean 0, sd 1, is unbounded, and suits roughly normal data.</li>
+<li><b>3 · KNN or SVM</b> — decided by the shape of the boundary and the size of the data, not by which is "better". SVM: a compact rule with coefficients, fast at prediction time, wants a broadly linear separation. KNN: no boundary, handles irregular and local structure and many classes, but stores every point and slows as n grows.</li>
+<li><b>4 · Units weight distance</b> — every distance-based method silently gives the biggest-numbered attribute the most say. Recording dollars instead of thousands changes the answer. Scale first.</li>
+<li><b>5 · Validation bias</b> — every dataset holds real and random patterns, so the model that wins on validation won partly on luck and its error rises on the test set. That is why one set can't both choose and report.</li>
+<li><b>6 · Classification vs clustering</b> — supervised against unsupervised; whether the categories arrived with the data or were discovered. The phrasing test: "which of these two groups?" against "which groups are there?"</li>
+<li><b>7 · Kinds of outlier</b> — finding one and judging it are different problems. Easy to find and hard to judge is the common case, and the dataset alone can never say whether a point is an error, a rare real event, or the most informative row you have.</li>
+<li><b>8 · C and T</b> — T is how much evidence before you call it; C is how much variation you agree to ignore. <span class="warn">Don't set C = 0 and raise T instead</span> — the total then drifts up on noise. And don't update μ as data arrives.</li>
+</ul>`,
+
+exam: `
+<h4>Eight checkpoints — the recurring exam topics</h4>
+<ul>
+<li><b>Validation vs test data</b> — validation chooses among models; test estimates the winner's true quality, once.</li>
+<li><b>Classification vs clustering</b> — labels given, or groups discovered.</li>
+<li><b>Margins in SVM</b> — margin = 2/√(Σⱼ aⱼ²); wider is more robust to new points.</li>
+<li><b>Scaling vs standardization</b> — (x − x min)/(x max − x min) against (x − μ)/σ; bounded and outlier-sensitive against unbounded and outlier-tolerant.</li>
+<li><b>KNN vs SVM</b> — boundary shape, number of classes, size of the data, cost at prediction time.</li>
+<li><b>Why feature scale matters for distance</b> — the attribute with the largest numbers dominates every distance and every margin term.</li>
+<li><b>Kinds of outlier</b> — detection produces candidates only; the cause decides what you do about them.</li>
+<li><b>CUSUM: C, T and the fixed mean</b> — C trades false alarms against detection delay, T sets the evidence required, μ stays fixed.</li>
+</ul>
+<h4>How to use it</h4>
+<ul>
+<li>Answer, read the reasoning, move on. Nothing is timed and nothing is saved between visits — work through it once your handwritten sheet is drafted, and write down every item you had to look up.</li>
+</ul>`
+
 };
 
 function buildIndex(mods){
   var grid = document.getElementById("modgrid");
   if (!grid) return;
+  var cram = window.CRAM || {};
   var html = "";
   mods.forEach(function(m, i){
-    html += '<li><a class="modcard" href="' + m.file + '" data-mod="' + m.id + '" style="--c:' + m.colour + '">' +
+    var c = cram[m.id];
+    html += '<li><div class="modcard" data-mod="' + m.id + '" style="--c:' + m.colour + '">' +
               '<span class="mnum">' + (m.label || ("Module " + (i + 1))) + '</span>' +
               '<h3>' + m.title + '</h3>' +
-              '<p>' + m.blurb + '</p>' +
+              '<p class="blurb">' + m.blurb + '</p>' +
+              (c ? '<details class="cram">' +
+                     '<summary>Cram sheet <span class="hint-lbl">terms, equations, parameters</span></summary>' +
+                     '<div class="cbody">' + c + '</div>' +
+                   '</details>' : '') +
               '<span class="bar"><i></i></span>' +
               '<span class="pct">Not started</span>' +
-              '<span class="go">Open module &rarr;</span>' +
-            '</a></li>';
+              '<a class="go" href="' + m.file + '">Open module &rarr;</a>' +
+            '</div></li>';
   });
   grid.innerHTML = html;
+
+  /* expand or collapse every cram sheet at once — handy before printing */
+  var btn = document.getElementById("cramAll");
+  if (btn) btn.addEventListener("click", function(){
+    var all = document.querySelectorAll("details.cram");
+    var anyClosed = false;
+    Array.prototype.forEach.call(all, function(d){ if (!d.open) anyClosed = true; });
+    Array.prototype.forEach.call(all, function(d){ d.open = anyClosed; });
+    btn.textContent = anyClosed ? "Collapse summaries" : "Expand summaries";
+  });
 }
 </script>
 <script src="study.js"></script>
+<script src="search.js" defer></script>
 </body>
 </html>

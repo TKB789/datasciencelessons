@@ -695,7 +695,65 @@
   </div>
 </section>
 
-<section class="close" style="--accent:#131b26">
+<section class="close" id="targets" style="--accent:#1b5e7e">
+  <h2>Transfer practice &mdash; Clustering</h2>
+  <p class="h2meta">Same ideas, unfamiliar settings</p>
+  <div class="defn">
+    <span class="term">Why these are here</span>
+    <p>Each prompt below moves the module&rsquo;s ideas into a situation the lessons never mentioned. If you can only answer a question in the wording it was taught in, what you have memorised is the example rather than the concept &mdash; and an exam that changes the setting will find that out. Answer these out loud before opening them.</p>
+  </div>
+  <aside class="check">
+    <span class="n">Exam target</span>
+    <p class="q">Two runs of k-means on the same data with the same k produce different groupings. Is something broken?</p>
+    <details><summary>Show answer</summary>
+      <p class="a">No. k-means converges to an arrangement no record wants to leave, which is not necessarily the arrangement with the lowest total distance overall, and where it lands depends on the starting centres. The standard response is several restarts keeping the best result, and a spread-out initialisation so a poor start is less likely.</p>
+    </details>
+  </aside>
+  <aside class="check">
+    <span class="n">Exam target</span>
+    <p class="q">A colleague selects k by trying every value and keeping whichever gives the lowest total distance from records to their centres. What will that produce?</p>
+    <details><summary>Show answer</summary>
+      <p class="a">k equal to the number of records, each its own cluster at distance zero. Total distance falls monotonically as k rises, so it can compare solutions at a fixed k but cannot choose k. Use the elbow, an average silhouette, or a constraint from the decision the clustering serves.</p>
+    </details>
+  </aside>
+  <aside class="check">
+    <span class="n">Exam target</span>
+    <p class="q">Customers are described by annual spend in dollars and number of visits per year. What must happen before clustering, and what goes wrong otherwise?</p>
+    <details><summary>Show answer</summary>
+      <p class="a">Scale or standardise. Untransformed, spend runs in the thousands and visits in the tens, so squared differences in spend swamp the calculation entirely and the clustering is effectively on spend alone. Visits would contribute nothing, and nobody reading the output would be able to tell.</p>
+    </details>
+  </aside>
+  <aside class="check">
+    <span class="n">Exam target</span>
+    <p class="q">Two records have the same proportional spending across categories, but one spends ten times as much in total. Which distance measure calls them similar?</p>
+    <details><summary>Show answer</summary>
+      <p class="a">Cosine distance, which compares direction and ignores magnitude, treats them as nearly identical profiles. Euclidean distance places them far apart. Neither is right in the abstract: segmenting by taste wants the first, segmenting by customer value wants the second.</p>
+    </details>
+  </aside>
+  <aside class="check">
+    <span class="n">Exam target</span>
+    <p class="q">In a scatter plot the true groups are two long curved bands, and k-means with k = 2 cuts across both. What is the diagnosis?</p>
+    <details><summary>Show answer</summary>
+      <p class="a">Assigning each record to its nearest centre divides the space into straight-edged convex regions, which cannot follow a curved band. This is a limitation of the method rather than a tuning problem &mdash; no number of restarts fixes it. A different algorithm, or a transformation of the space, is what the situation calls for.</p>
+    </details>
+  </aside>
+  <aside class="check">
+    <span class="n">Exam target</span>
+    <p class="q">One record has a silhouette value of &minus;0.4. What does that indicate, and what would you do?</p>
+    <details><summary>Show answer</summary>
+      <p class="a">On average it is closer to the records of a neighbouring cluster than to those of its own, so it is probably assigned to the wrong group. A few such records are normal at boundaries; many of them suggest that k is wrong or that the groups genuinely overlap. Check whether they concentrate between one particular pair of clusters, which would argue those two should be merged.</p>
+    </details>
+  </aside>
+  <aside class="check">
+    <span class="n">Exam target</span>
+    <p class="q">A single record sits far from all others. Trace its effect on k-means.</p>
+    <details><summary>Show answer</summary>
+      <p class="a">A centre is a mean, and a mean is pulled by extreme values, so the cluster claiming the outlier has its centre dragged away from the bulk of its own records. That shifts the boundary and can change memberships elsewhere. With a large enough k it may take a centre entirely to itself, spending one of your groups on one record.</p>
+    </details>
+  </aside>
+</section>
+
+<section id="sec-8" class="close" style="--accent:#131b26">
   <h2>How the module fits together</h2>
   <p class="h2meta">The through-line across all six lessons</p>
   <ul class="thread">
@@ -1256,7 +1314,7 @@
   </div>
 </section>
 
-<section class="close" style="--accent:#131b26">
+<section id="sec-14" class="close" style="--accent:#131b26">
   <footer><span class="ai"><strong>Written by an AI model from lecture recordings.</strong> Not reviewed by any instructor or institution — verify anything you rely on against the original lectures. Examples here are generic illustrations rather than the ones used in class. The Marcus Obi case, the comparison with k-nearest neighbours, the note that k-means pairs naturally with the 2-norm, and “Four things worth noticing” are this summary’s own additions rather than lecture content.
   <br><br>
   <strong>Everything under “Additional resources” is outside material.</strong> Extras 1 to 4 — the survey of other clustering algorithms, the distance measures beyond the p-norms, the cluster-count and validation criteria, the concentric-rings figure, the worked silhouette numbers, the practice problems and the reading list — were assembled from published sources, principally the scikit-learn user guide, <em>An Introduction to Statistical Learning</em> (ch. 12), <em>The Elements of Statistical Learning</em> (ch. 14), and the original method papers cited in Extra 4. None of it was taught in this module. All worked numbers there are computed for illustration on invented data. Check quantitative claims against a primary source before relying on them, and treat the lectures as authoritative wherever the two differ.</span></footer>
@@ -1278,5 +1336,6 @@
 </dialog>
 
 <script src="study.js"></script>
+<script src="search.js" defer></script>
 </body>
 </html>

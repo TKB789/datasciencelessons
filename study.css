@@ -326,3 +326,18 @@ dialog textarea{width:100%;height:220px;font-family:var(--mono);font-size:.82rem
 @keyframes assign{to{fill:var(--dot)}}
 @keyframes fadein{to{opacity:1}}
 @media (prefers-reduced-motion:reduce){.pt{fill:var(--dot);animation:none}.ctr{opacity:1;animation:none}}
+
+/* ---------------- flag for retesting ---------------- */
+.flagrow{display:flex;align-items:center;gap:10px;margin-top:12px;flex-wrap:wrap}
+.flagrow[hidden]{display:none}
+.flagbtn{
+  font-family:var(--sans);font-size:.78rem;font-weight:500;line-height:1.2;
+  border:1px solid var(--rule);background:var(--surface);color:var(--ink-soft);
+  border-radius:100px;padding:5px 12px;cursor:pointer;
+  transition:border-color .15s,background .15s,color .15s;
+}
+.flagbtn:hover{border-color:var(--ink-soft);color:var(--ink)}
+.flagbtn[aria-pressed="true"]{background:#8a5a1c;border-color:#8a5a1c;color:#fff}
+.flagbtn[aria-pressed="true"]:hover{background:#754c17;border-color:#754c17;color:#fff}
+.flagnote{font-family:var(--sans);font-size:.75rem;color:var(--ink-soft);line-height:1.35}
+.flagnote a{color:var(--ink);text-decoration:underline}

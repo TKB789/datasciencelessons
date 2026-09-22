@@ -1022,7 +1022,58 @@
   </div>
 </section>
 
-<section class="close" style="--accent:#131b26">
+<section class="close" id="targets" style="--accent:#33507f">
+  <h2>Transfer practice &mdash; Classification</h2>
+  <p class="h2meta">Same ideas, unfamiliar settings</p>
+  <div class="defn">
+    <span class="term">Why these are here</span>
+    <p>Each prompt below moves the module&rsquo;s ideas into a situation the lessons never mentioned. If you can only answer a question in the wording it was taught in, what you have memorised is the example rather than the concept &mdash; and an exam that changes the setting will find that out. Answer these out loud before opening them.</p>
+  </div>
+  <aside class="check">
+    <span class="n">Exam target</span>
+    <p class="q">An email filter treats a legitimate message routed to spam as far worse than a spam message reaching the inbox. What do you change, and what do you leave alone?</p>
+    <details><summary>Show answer</summary>
+      <p class="a">Change the relative weight on the two error types &mdash; either by weighting each class's error term in the objective by its cost, or by moving the decision threshold so ambiguous messages land on the cheaper side. Leave the orientation of the boundary alone: the attributes that separate the classes have not changed, only what it costs to get each one wrong.</p>
+    </details>
+  </aside>
+  <aside class="check">
+    <span class="n">Exam target</span>
+    <p class="q">A report states the fitted coefficients are 0.02 and 340, concluding the second attribute is overwhelmingly more important. What do you ask first?</p>
+    <details><summary>Show answer</summary>
+      <p class="a">Whether the attributes were scaled before fitting. On unscaled data the coefficients reflect the units the attributes happened to be recorded in. An attribute measured in dollars and one measured in decades will produce wildly different coefficients for reasons that have nothing to do with importance.</p>
+    </details>
+  </aside>
+  <aside class="check">
+    <span class="n">Exam target</span>
+    <p class="q">You must sort records into seven categories, and the regions belonging to each are irregular and interleaved. Make the case for k-nearest neighbours over a support vector machine.</p>
+    <details><summary>Show answer</summary>
+      <p class="a">KNN handles any number of classes with no extra construction &mdash; it counts the classes among the nearest neighbours &mdash; whereas a support vector machine is natively a two-class method and needs one-vs-rest or one-vs-one decomposition. KNN also makes no assumption that the classes are separable by a single surface, so interleaved local pockets are exactly the situation it suits.</p>
+    </details>
+  </aside>
+  <aside class="check">
+    <span class="n">Exam target</span>
+    <p class="q">A soft-margin model has almost no training error and disappointing validation error. Which way do you move the regularisation weight, and what is the reasoning?</p>
+    <details><summary>Show answer</summary>
+      <p class="a">Up, so that margin width counts for more relative to errors on the training records. Near-zero training error with poor validation error is the signature of a boundary contorted to accommodate individual records, including the random ones. Widening the margin means accepting more training mistakes in exchange for a boundary that generalises.</p>
+    </details>
+  </aside>
+  <aside class="check">
+    <span class="n">Exam target</span>
+    <p class="q">Explain why a wider margin is more robust, in terms of measurement error rather than geometry.</p>
+    <details><summary>Show answer</summary>
+      <p class="a">Attributes are recorded with error &mdash; a reported income, a sensor reading, a self-reported figure. A record sitting close to the boundary can cross it on a small inaccuracy, changing its predicted class. A wide margin means a record has to be wrong by a lot before its classification flips, so the model's verdicts are stable against the imprecision that is present in any real dataset.</p>
+    </details>
+  </aside>
+  <aside class="check">
+    <span class="n">Exam target</span>
+    <p class="q">Someone proposes handling an imbalanced two-class problem by moving the boundary until accuracy is maximised. What is wrong with that?</p>
+    <details><summary>Show answer</summary>
+      <p class="a">On imbalanced data, accuracy is maximised by favouring the majority class, potentially to the point of never predicting the minority one at all. Accuracy treats the two errors as equally costly, which is rarely why the problem was worth solving. The threshold should be set against the costs of the two mistakes, or against recall on the class you actually care about.</p>
+    </details>
+  </aside>
+</section>
+
+<section id="sec-10" class="close" style="--accent:#131b26">
   <h2>How the module fits together</h2>
   <p class="h2meta">The through-line across all eight lessons</p>
   <ul class="thread">
@@ -1090,5 +1141,6 @@
 </dialog>
 
 <script src="study.js"></script>
+<script src="search.js" defer></script>
 </body>
 </html>

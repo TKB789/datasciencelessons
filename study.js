@@ -41,6 +41,10 @@ var MODULES = [
     title:"Basic Regression", colour:"#a0452e",
     blurb:"Fitting a line by least squares, why that is maximum likelihood, AIC and BIC for trading fit against complexity, what coefficients can and can’t claim, transformations and interactions, and how to read the output." },
 
+  { id:"m9", file:"module-9-advanced-data-preparation.html", tab:"Module 9 — Advanced Data Preparation",
+    title:"Advanced Data Preparation", colour:"#7a5c2e",
+    blurb:"Fixing the data before the model sees it: Box-Cox for a response whose spread grows with its size, detrending for drift over time, and principal component analysis — with the eigenvectors behind it — for too many correlated predictors." },
+
   /* Not lecture modules — study tools arranged by topic rather than by lecture.
      `label` overrides the "Module N" caption on the index card. */
   { id:"disc", file:"discussion.html", tab:"Study tools — Discussion",
@@ -51,9 +55,6 @@ var MODULES = [
   { id:"exam", file:"exam-prep.html", tab:"Study tools — Exam Prep",
     title:"Exam Prep", colour:"#4a6b2a", label:"Exam prep",
     blurb:"The textbook half of the course on one page: bias and variance, cross-validation, the classifiers and what each assumes, regression diagnostics, ridge and lasso, forests, PCA and clustering." }
-
-  /* , { id:"m9", file:"module-9-something.html", tab:"Module 9 — Title",
-       title:"Title", colour:"#7a5c2e", blurb:"One line about the module." } */
 ];
 
 (function(){

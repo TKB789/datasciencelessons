@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Module 9: Advanced Data Preparation — Study Notes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="study.css">
+</head>
+<body data-page="m9">
+<div class="wrap">
+
+<div class="topbar">
+  <div class="topline">
+    <a class="brand" href="index.html">Analytics Modeling &middot; Study Notes</a>
+    <nav class="tabs" aria-label="Modules"></nav>
+    <div class="toolbar">
+      <button class="btn" id="exportBtn">Export</button>
+      <button class="btn" id="importBtn">Import</button>
+    </div>
+  </div>
+  <nav class="rail" id="rail" aria-label="Lessons in this module"></nav>
+</div>
+
+<header class="hero">
+
+  <h1>Module 9: Advanced Data Preparation</h1>
+  <p class="sub">Three fixes to apply before a model ever sees the data: even out a response whose spread grows with its size, take the steady drift out of a time series, and turn many overlapping predictors into a few independent ones. Six lessons of class material, followed by an additional-resources appendix on using PCA in practice that the course does not cover.</p>
+
+  <svg class="plot" viewBox="0 0 660 350" role="img" aria-label="A tilted cloud of correlated points with two perpendicular arrows: a long one, d1, along the direction of greatest spread, and a short one, d2, at right angles to it."><defs><pattern id="grid" width="26" height="26" patternUnits="userSpaceOnUse"><path d="M 26 0 L 0 0 0 26" fill="none" stroke="#e3e9ee" stroke-width="1"/></pattern></defs><rect x="62" y="24" width="576" height="276" fill="url(#grid)"/><line x1="62" y1="300" x2="638" y2="300" stroke="#131b26" stroke-width="1.5"/><line x1="62" y1="300" x2="62" y2="24" stroke="#131b26" stroke-width="1.5"/><text x="350.0" y="332.0" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="13" fill="#4a5765" >factor x₁</text><text x="30.0" y="162.0" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="13" fill="#4a5765" transform="rotate(-90 30 162)">factor x₂</text><g style="--dot:#7a5c2e"><circle class="pt" cx="281.1" cy="193.9" r="5" style="animation-delay:0.30s"/><circle class="pt" cx="428.6" cy="87.7" r="5" style="animation-delay:0.33s"/><circle class="pt" cx="433.6" cy="116.5" r="5" style="animation-delay:0.36s"/><circle class="pt" cx="375.6" cy="153.6" r="5" style="animation-delay:0.39s"/><circle class="pt" cx="261.2" cy="219.0" r="5" style="animation-delay:0.42s"/><circle class="pt" cx="415.0" cy="122.2" r="5" style="animation-delay:0.45s"/><circle class="pt" cx="336.7" cy="191.3" r="5" style="animation-delay:0.48s"/><circle class="pt" cx="348.6" cy="175.0" r="5" style="animation-delay:0.51s"/><circle class="pt" cx="348.3" cy="152.6" r="5" style="animation-delay:0.54s"/><circle class="pt" cx="189.4" cy="249.3" r="5" style="animation-delay:0.57s"/><circle class="pt" cx="254.7" cy="232.4" r="5" style="animation-delay:0.60s"/><circle class="pt" cx="252.6" cy="190.4" r="5" style="animation-delay:0.63s"/><circle class="pt" cx="393.1" cy="128.6" r="5" style="animation-delay:0.66s"/><circle class="pt" cx="310.1" cy="213.5" r="5" style="animation-delay:0.69s"/><circle class="pt" cx="321.3" cy="173.0" r="5" style="animation-delay:0.72s"/><circle class="pt" cx="338.9" cy="153.4" r="5" style="animation-delay:0.75s"/><circle class="pt" cx="309.1" cy="145.9" r="5" style="animation-delay:0.78s"/><circle class="pt" cx="378.9" cy="104.6" r="5" style="animation-delay:0.81s"/><circle class="pt" cx="369.4" cy="156.6" r="5" style="animation-delay:0.84s"/><circle class="pt" cx="283.0" cy="180.6" r="5" style="animation-delay:0.87s"/><circle class="pt" cx="422.7" cy="120.1" r="5" style="animation-delay:0.90s"/><circle class="pt" cx="381.2" cy="151.1" r="5" style="animation-delay:0.93s"/><circle class="pt" cx="322.9" cy="182.6" r="5" style="animation-delay:0.96s"/><circle class="pt" cx="225.8" cy="249.4" r="5" style="animation-delay:0.99s"/><circle class="pt" cx="351.6" cy="158.5" r="5" style="animation-delay:1.02s"/><circle class="pt" cx="421.2" cy="110.9" r="5" style="animation-delay:1.05s"/><circle class="pt" cx="379.4" cy="145.4" r="5" style="animation-delay:1.08s"/><circle class="pt" cx="189.3" cy="246.5" r="5" style="animation-delay:1.11s"/><circle class="pt" cx="282.9" cy="187.4" r="5" style="animation-delay:1.14s"/><circle class="pt" cx="332.7" cy="178.4" r="5" style="animation-delay:1.17s"/><circle class="pt" cx="314.2" cy="187.3" r="5" style="animation-delay:1.20s"/><circle class="pt" cx="225.0" cy="262.3" r="5" style="animation-delay:1.23s"/><circle class="pt" cx="431.6" cy="109.6" r="5" style="animation-delay:1.26s"/><circle class="pt" cx="321.3" cy="184.7" r="5" style="animation-delay:1.29s"/><circle class="pt" cx="295.1" cy="122.8" r="5" style="animation-delay:1.32s"/><circle class="pt" cx="386.3" cy="142.9" r="5" style="animation-delay:1.35s"/><circle class="pt" cx="322.5" cy="226.7" r="5" style="animation-delay:1.38s"/><circle class="pt" cx="346.1" cy="135.0" r="5" style="animation-delay:1.41s"/><circle class="pt" cx="413.2" cy="123.0" r="5" style="animation-delay:1.44s"/><circle class="pt" cx="316.8" cy="204.8" r="5" style="animation-delay:1.47s"/><circle class="pt" cx="358.4" cy="166.5" r="5" style="animation-delay:1.50s"/><circle class="pt" cx="254.1" cy="178.3" r="5" style="animation-delay:1.53s"/><circle class="pt" cx="287.5" cy="206.9" r="5" style="animation-delay:1.56s"/><circle class="pt" cx="165.2" cy="224.5" r="5" style="animation-delay:1.59s"/><circle class="pt" cx="338.5" cy="169.9" r="5" style="animation-delay:1.62s"/><circle class="pt" cx="376.9" cy="165.7" r="5" style="animation-delay:1.65s"/></g><g class="ctr"><line x1="350.0" y1="162.0" x2="500.8" y2="81.8" stroke="#1b5e7e" stroke-width="3"/><polygon points="506.1,79.0 499.2,87.5 495.1,80.0" fill="#1b5e7e"/><line x1="350.0" y1="162.0" x2="324.7" y2="114.5" stroke="#9d3b3b" stroke-width="3"/><polygon points="321.9,109.2 330.5,116.1 322.9,120.2" fill="#9d3b3b"/><text x="510.1" y="67.0" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="15" fill="#1b5e7e" >d₁</text><text x="305.9" y="105.2" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="15" fill="#9d3b3b" >d₂</text></g></svg>
+
+  <ul class="track">
+    <li style="--dot:#1b5e7e"><a href="#l1"><span class="tnum">Lesson 1</span><span class="tname">Box-Cox transformations</span><span class="tq">What if the response is more spread out at one end than the other?</span></a></li>
+    <li style="--dot:#8a3d5c"><a href="#l2"><span class="tnum">Lesson 2</span><span class="tname">Detrending</span><span class="tq">How do you stop a steady drift over time from fooling the model?</span></a></li>
+    <li style="--dot:#4a6b2a"><a href="#l3"><span class="tnum">Lesson 3</span><span class="tname">Introduction to PCA</span><span class="tq">What do you do with too many predictors that move together?</span></a></li>
+    <li style="--dot:#8a5a1c"><a href="#l4"><span class="tnum">Lesson 4</span><span class="tname">Using PCA</span><span class="tq">How are the components computed — and translated back?</span></a></li>
+    <li style="--dot:#33507f"><a href="#l5"><span class="tnum">Lesson 5</span><span class="tname">Eigenvalues and eigenvectors</span><span class="tq">Which directions does a matrix leave pointing the same way?</span></a></li>
+    <li style="--dot:#6e4a8c"><a href="#l6"><span class="tnum">Lesson 6</span><span class="tname">PCA: good and bad</span><span class="tq">When does keeping the biggest-variance direction throw away the answer?</span></a></li>
+    <li style="--dot:#1f6b6b"><a href="#extra"><span class="tnum">Extra 1–2</span><span class="tname">PCA in practice, and practice</span><span class="tq">What does the software leave for you to decide?</span></a></li>
+  </ul>
+
+  <div class="badge-strip">
+    <p class="cap">Badges unlock when every activity in a lesson is finished. The last two cover the additional-resources material, which is not part of the class.</p>
+    <ul class="badges">
+      <li class="badge" data-for="l1" style="--b:#1b5e7e"><span class="gem">λ</span><span class="nm">Box-Cox</span></li>
+      <li class="badge" data-for="l2" style="--b:#8a3d5c"><span class="gem">↗</span><span class="nm">Detrending</span></li>
+      <li class="badge" data-for="l3" style="--b:#4a6b2a"><span class="gem">d₁</span><span class="nm">Components</span></li>
+      <li class="badge" data-for="l4" style="--b:#8a5a1c"><span class="gem">XV</span><span class="nm">The Recipe</span></li>
+      <li class="badge" data-for="l5" style="--b:#33507f"><span class="gem">Av</span><span class="nm">Eigenvectors</span></li>
+      <li class="badge" data-for="l6" style="--b:#6e4a8c"><span class="gem">D₂</span><span class="nm">Blind Spot</span></li>
+      <li class="badge" data-for="x1" style="--b:#1f6b6b"><span class="gem">%</span><span class="nm">In Practice</span></li>
+      <li class="badge" data-for="x2" style="--b:#4a5765"><span class="gem">✎</span><span class="nm">Practice</span></li>
+      <li class="badge" data-for="*" style="--b:#131b26"><span class="gem">★</span><span class="nm">Module 9 complete</span></li>
+    </ul>
+  </div>
+</header>
+
+<!-- ============ LESSON 1 ============ -->
+<section class="lesson" id="l1" data-short="Box-Cox" style="--accent:#1b5e7e">
+  <div class="lesson-head">
+    <span class="ln">Lesson 1</span>
+    <h2>Box-Cox transformations</h2>
+    <p class="keyline">Some models assume the response is roughly normal with the same spread everywhere. When the spread grows with the size of the value, a Box-Cox transformation reshapes the response so it doesn’t.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>When the spread isn’t even</h3>
+      <p>Several models in this course make normality assumptions about the response. If the response is far from normal, the model can give <strong>biased</strong> results.</p>
+      <p>The lecture’s example: a histogram of the heights of American women in their 40s is a good fit to the normal distribution, with about the same variance across the whole range. A histogram of the <em>weights</em> of the same women is not — there is less variation among smaller weights and much more among larger ones.</p>
+      <div class="defn">
+        <span class="term">Heteroscedasticity</span>
+        <p>Unequal variances: the spread of the data changes across its range. The opposite, roughly equal spread everywhere, is homoscedasticity.</p>
+      </div>
+      <p>Why it matters for regression: the high-variance end produces larger estimation errors, and because least squares squares every error, those points pull hardest on the fit. The model ends up fitting the noisy end better than the rest.</p>
+      <p>The same thing appears in time series. A stock index’s quarterly close, or the prediction errors of an exponential smoothing model some days ahead, often vary little in early periods and much more in later ones.</p>
+      <figure><svg class="fig" viewBox="0 0 700 330" role="img" aria-label="Two residual plots side by side. Left: errors are tightly bunched for small fitted values and fan out widely for large ones. Right: after a Box-Cox transformation the errors form an even horizontal band."><defs><pattern id="g91" width="30" height="30" patternUnits="userSpaceOnUse"><path d="M 30 0 L 0 0 0 30" fill="none" stroke="#eef1f4" stroke-width="1"/></pattern></defs><rect x="60" y="40" width="270" height="220" fill="url(#g91)"/><line x1="60" y1="260" x2="330" y2="260" stroke="#131b26" stroke-width="1.5"/><line x1="60" y1="260" x2="60" y2="40" stroke="#131b26" stroke-width="1.5"/><text x="195.0" y="286.0" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="12.5" fill="#4a5765" >fitted value</text><text x="36.0" y="150.0" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="12.5" fill="#4a5765" transform="rotate(-90 36 150.0)">error</text><line x1="60" y1="150.0" x2="330" y2="150.0" stroke="#4a5765" stroke-dasharray="3 3"/><text x="195.0" y="24.0" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="13" fill="#131b26" >before: spread grows with the value</text><circle cx="130.7" cy="138.1" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="110.1" cy="143.0" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="87.7" cy="164.2" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="274.0" cy="100.5" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="265.0" cy="142.0" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="141.0" cy="129.8" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="114.6" cy="143.3" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="306.2" cy="131.3" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="281.2" cy="125.4" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="119.9" cy="172.0" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="149.4" cy="170.3" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="287.7" cy="196.9" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="294.2" cy="101.6" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="241.3" cy="126.8" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="199.2" cy="137.1" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="93.5" cy="141.1" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="308.0" cy="113.5" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="147.0" cy="166.5" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="301.5" cy="229.3" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="286.0" cy="186.5" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="199.8" cy="180.2" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="180.2" cy="134.1" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="111.7" cy="157.3" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="81.8" cy="138.2" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="82.6" cy="154.0" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="206.5" cy="165.7" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="190.4" cy="196.5" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="120.4" cy="112.3" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="175.6" cy="140.8" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="140.9" cy="127.7" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="161.1" cy="150.3" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="212.6" cy="174.8" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="300.3" cy="137.8" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="128.9" cy="146.9" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="265.0" cy="170.2" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="154.8" cy="159.2" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="115.9" cy="153.5" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="247.8" cy="147.4" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="298.2" cy="84.1" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="314.4" cy="170.5" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="75.4" cy="153.7" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="267.6" cy="56.3" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="175.0" cy="121.3" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="278.4" cy="168.9" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="145.3" cy="143.3" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="105.4" cy="139.2" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="167.7" cy="131.8" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="73.2" cy="151.2" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="82.2" cy="144.1" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="162.9" cy="119.3" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="144.5" cy="110.4" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="178.4" cy="113.4" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="123.6" cy="145.7" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="113.6" cy="148.5" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="242.6" cy="144.4" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="195.3" cy="144.1" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="134.0" cy="142.2" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="205.1" cy="150.2" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="267.2" cy="242.5" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="192.1" cy="110.3" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="132.2" cy="153.5" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="177.7" cy="146.7" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="133.9" cy="127.8" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="197.3" cy="181.0" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="78.8" cy="150.1" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="123.6" cy="139.8" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="129.5" cy="144.5" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="83.8" cy="152.9" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="306.3" cy="251.2" r="4" fill="#9d3b3b" opacity=".75"/><circle cx="173.1" cy="176.5" r="4" fill="#9d3b3b" opacity=".75"/><rect x="390" y="40" width="270" height="220" fill="url(#g91)"/><line x1="390" y1="260" x2="660" y2="260" stroke="#131b26" stroke-width="1.5"/><line x1="390" y1="260" x2="390" y2="40" stroke="#131b26" stroke-width="1.5"/><text x="525.0" y="286.0" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="12.5" fill="#4a5765" >fitted value</text><text x="366.0" y="150.0" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="12.5" fill="#4a5765" transform="rotate(-90 366 150.0)">error</text><line x1="390" y1="150.0" x2="660" y2="150.0" stroke="#4a5765" stroke-dasharray="3 3"/><text x="525.0" y="24.0" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="13" fill="#131b26" >after Box-Cox: an even band</text><circle cx="629.5" cy="172.1" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="589.8" cy="182.0" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="526.3" cy="137.4" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="622.6" cy="141.7" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="629.2" cy="132.3" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="567.5" cy="159.1" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="603.7" cy="175.3" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="534.8" cy="181.5" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="567.0" cy="156.8" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="635.0" cy="166.0" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="643.5" cy="97.7" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="644.9" cy="123.6" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="570.4" cy="104.7" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="433.2" cy="137.0" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="646.6" cy="153.9" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="443.3" cy="156.7" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="562.0" cy="183.1" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="636.2" cy="165.4" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="456.3" cy="100.3" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="404.1" cy="149.0" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="623.2" cy="120.1" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="599.5" cy="123.3" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="623.6" cy="192.9" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="452.0" cy="164.1" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="571.2" cy="172.5" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="597.1" cy="109.4" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="520.5" cy="155.0" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="409.5" cy="150.8" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="551.7" cy="193.9" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="555.1" cy="146.9" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="436.0" cy="174.4" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="533.5" cy="121.4" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="403.5" cy="128.4" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="422.4" cy="185.1" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="538.7" cy="178.4" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="479.8" cy="123.7" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="460.1" cy="207.1" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="424.9" cy="145.2" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="429.8" cy="183.2" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="530.9" cy="181.5" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="510.9" cy="126.1" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="417.8" cy="179.7" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="624.5" cy="143.8" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="613.1" cy="132.4" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="508.0" cy="146.0" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="622.7" cy="162.7" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="445.6" cy="134.8" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="486.7" cy="129.3" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="538.3" cy="121.5" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="402.2" cy="169.6" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="479.9" cy="174.4" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="582.4" cy="157.1" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="523.7" cy="135.3" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="615.9" cy="142.4" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="491.4" cy="143.3" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="559.9" cy="213.8" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="572.6" cy="164.7" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="632.5" cy="162.1" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="519.3" cy="134.0" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="621.0" cy="159.9" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="600.5" cy="168.0" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="436.5" cy="165.5" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="596.5" cy="171.0" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="434.6" cy="125.3" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="421.8" cy="125.3" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="445.9" cy="118.5" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="629.7" cy="170.0" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="489.7" cy="129.2" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="558.4" cy="131.4" r="4" fill="#1b5e7e" opacity=".75"/><circle cx="638.4" cy="137.6" r="4" fill="#1b5e7e" opacity=".75"/></svg><figcaption>Heteroscedasticity in a residual plot: the misses at the high end are several times the size of those at the low end, so least squares works hardest to fit those points. After the transformation the spread is roughly the same everywhere.</figcaption></figure>
+
+      <div class="ix" data-quiz="m9l1-q1">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Monthly electricity bills for small shops vary by about ±$20; for large supermarkets they vary by about ±$2,000. Which problem does this describe?</p>
+        <div class="opts">
+          <button class="opt" data-fb="Correlation between predictors is a different problem, and the one PCA addresses. Here the issue is the spread of the response itself.">Correlated predictors</button>
+          <button class="opt" data-right data-fb="The variability of the response grows with its size. A regression on raw bills would be pulled toward fitting the supermarkets, whose errors are a hundred times bigger once squared.">Heteroscedasticity — the variance of the response changes across its range</button>
+          <button class="opt" data-fb="A trend is a steady rise or fall over time. Nothing here is about time.">A trend in the response</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Check 1</span>
+      <p class="q">Why can heteroscedasticity bias a least-squares regression, rather than just making it a bit noisier?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">The high-variance points make larger errors, and squaring makes large errors dominate the sum. Minimising the SSE therefore bends the fit toward those points at the expense of the rest.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>The transformation</h3>
+      <p>A Box-Cox transformation stretches out the smaller range to enlarge its variability and shrinks the larger range to reduce it. You choose the value of λ that makes the transformed response as close to normal as possible.</p>
+      <div class="formula">t(y) = (y<sup>λ</sup> − 1) / λ<span class="cap">y is the vector of responses and t(y) the transformed vector. λ is chosen so that t(y) is close to normally distributed. Good statistical software finds the best λ for you.</span></div>
+      <div class="formula">t(y) = ln y &nbsp;when λ = 0<span class="cap">The limit of the formula as λ → 0. Standard definition; the lecture does not write it out.</span></div>
+      <table>
+        <tr><th>λ</th><th>Effect on the response</th></tr>
+        <tr><td>1</td><td>No change in shape — just a shift by 1</td></tr>
+        <tr><td>½</td><td>Square-root-like: a mild pull on the large values</td></tr>
+        <tr><td>0</td><td>Logarithm: a strong pull on the large values</td></tr>
+        <tr><td>−1</td><td>Reciprocal-like: stronger still</td></tr>
+      </table>
+      <div class="callout">
+        <p class="tag">Lecture vs standard practice — is Box-Cox “logarithmic”?</p>
+        <p><strong>Lecture:</strong> describes Box-Cox as a logarithmic transformation.</p>
+        <p><strong>Standard description:</strong> it is a family of <em>power</em> transformations, of which the log is the λ = 0 member. For the λ values usually chosen (between −1 and 1) it behaves like a log — pulling in large values more than small ones — which is the sense the lecture means. It needs every y to be positive.</p>
+      </div>
+
+      <div class="ix" data-match="m9l1-match" data-win="The further λ falls below 1, the harder the transformation pulls in the large values.">
+        <div class="ix-head"><span class="ix-kind">match the pairs</span><span class="ix-done">matched</span></div>
+        <p class="prompt">Click a value of λ, then what it does to the response.</p>
+        <div class="match">
+          <div class="col" data-side="a"><h4>λ</h4>
+            <button class="cell" data-pair="1">λ = 1</button>
+            <button class="cell" data-pair="2">λ = ½</button>
+            <button class="cell" data-pair="3">λ = 0</button>
+            <button class="cell" data-pair="4">λ = −1</button>
+          </div>
+          <div class="col" data-side="b"><h4>Effect</h4>
+            <button class="cell" data-pair="3" data-fb="The λ → 0 limit of (y^λ − 1)/λ is ln y.">A natural log</button>
+            <button class="cell" data-pair="1" data-fb="(y¹ − 1)/1 = y − 1: every value moves by the same amount, so the spread is unchanged.">Leaves the shape alone</button>
+            <button class="cell" data-pair="4" data-fb="(y⁻¹ − 1)/−1 = 1 − 1/y: the strongest pull of the four.">Behaves like 1/y — the strongest squeeze</button>
+            <button class="cell" data-pair="2" data-fb="(√y − 1)/½: a gentler squeeze than the log.">Behaves like a square root</button>
+          </div>
+        </div>
+        <p class="fb"></p>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Check 2</span>
+      <p class="q">In a Box-Cox transformation, what does the software choose, and by what criterion?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">It chooses λ — a single number — so that the transformed response t(y) = (y<sup>λ</sup> − 1)/λ is as close to normally distributed as possible.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Check whether you need it</h3>
+      <p>The important step is remembering to <strong>check</strong> whether a transformation is needed at all — for example with a <strong>Q-Q plot</strong>, which plots the data’s quantiles against those of a normal distribution. Points that follow the straight line suggest normal data; a systematic bend suggests a transformation may help.</p>
+      <p>One practical consequence the lecture leaves implicit: a model fitted to t(y) predicts <em>t(y)</em>. Before reporting a prediction, undo the transformation — y = (λt + 1)<sup>1/λ</sup>, or eᵗ when λ = 0.</p>
+      <div class="defn">
+        <span class="term">Why “Box”?</span>
+        <p>There is no box. Unlike the box in a box-and-whisker plot, the Box in Box-Cox is a name: the statistician George Box, who developed the technique with David Cox.</p>
+      </div>
+
+      <div class="ix" data-quiz="m9l1-q2">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">A model is fitted to Box-Cox-transformed house prices with λ = 0. For a new house it predicts 12.9. What should you report?</p>
+        <div class="opts">
+          <button class="opt" data-fb="The model never saw prices; it saw ln(price). 12.9 is on the log scale.">A price of $12.90</button>
+          <button class="opt" data-fb="Multiplying by λ = 0 gives zero — and multiplying isn’t how the transformation is undone in any case.">12.9 × λ</button>
+          <button class="opt" data-right data-fb="With λ = 0 the transformation is ln y, so the inverse is eᵗ: e^12.9 ≈ $400,000. The prediction is only meaningful once converted back.">e<sup>12.9</sup> ≈ $400,000</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="note">
+        <div class="note-head"><span class="lbl">Class discussion — Lesson 1</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="m9l1" data-placeholder="boxcox() in R, qqnorm(), the Q-Q plot lesson, anything the TA said about when to bother…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Check 3</span>
+      <p class="q">What should you do before a Box-Cox transformation, and what after it?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Before: check whether it is needed — a Q-Q plot of the response, or a residual plot that fans out.</p>
+        <p class="a">After: convert any prediction back to the original units by inverting the transformation.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
+<!-- ============ LESSON 2 ============ -->
+<section class="lesson" id="l2" data-short="Detrending" style="--accent:#8a3d5c">
+  <div class="lesson-head">
+    <span class="ln">Lesson 2</span>
+    <h2>Detrending</h2>
+    <p class="keyline">A trend — a steady increase or decrease over time — can make identical conditions look different just because they happened in different years. Detrending subtracts it before a factor-based model is fitted.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Why a trend gets in the way</h3>
+      <div class="defn">
+        <span class="term">Trend</span>
+        <p>Data that is increasing or decreasing over time — the same word used in the time-series lessons.</p>
+      </div>
+      <p>The lecture’s example is the end-of-year price of gold, which has risen over time. Part of that rise is inflation: the dollar has been losing value, which gives an upward trend to the price of almost everything. Adjusted for inflation, the true fluctuations in gold’s price relative to other things stand out, without the upward trend in the way.</p>
+      <p>Now suppose a regression estimates the gold price from other factors. With the trend left in, the same factor values in 1974 and 2009 could go with very different prices. Adjusted for inflation, the baseline price in those two years is about the same.</p>
+      <p>It isn’t only the response: some <strong>predictors</strong> may need detrending too. In general, at least consider detrending whenever you use a <strong>factor-based model</strong> — regression, support vector machines and so on — on <strong>time-series data</strong>.</p>
+
+      <div class="ix" data-quiz="m9l2-q1">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">An SVM classifies each week of a bakery’s last ten years as “busy” or “quiet” from weather and local events. Footfall has grown steadily as the town has grown. What is the risk?</p>
+        <div class="opts">
+          <button class="opt" data-right data-fb="With growth left in, recent weeks look busy and early weeks quiet regardless of weather or events, so the model partly learns “later = busier”. Detrending footfall (and any trending predictors) lets the factors do the explaining.">The trend makes the same weather and events look busy in recent years and quiet in early ones</button>
+          <button class="opt" data-fb="SVMs don’t assume normality. The issue is a steady rise over time, not the shape of the distribution.">SVMs require normally distributed data</button>
+          <button class="opt" data-fb="Correlated predictors are a separate issue. Nothing in the scenario says the weather and event variables overlap.">The weather and event predictors will be too correlated</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Check 4</span>
+      <p class="q">When should you at least consider detrending, and which variables might need it?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Whenever you use a factor-based model, such as regression or an SVM, on time-series data.</p>
+        <p class="a">The response, and possibly some of the predictors as well.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>How to detrend</h3>
+      <p>In the gold example the lecture could adjust each data point by historical inflation, found on any number of websites. In most cases, though, you don’t know what the trend has been except from the data you’re trying to detrend. A simple method works factor by factor:</p>
+      <ol class="steps">
+        <li>Fit a one-dimensional regression of the factor on time — usually a line, y = a₀ + a₁·t, though a more complicated function is possible.</li>
+        <li>Subtract the fitted trend from each actual value.</li>
+      </ol>
+      <div class="formula">detrended value = actual − (a₀ + a₁·t)<span class="cap">For the lecture’s gold data, the linear fit is price ≈ −45,600 + 23.2 × year, so the detrended price = actual price − (−45,600 + 23.2 × year).</span></div>
+      <figure><svg class="fig" viewBox="0 0 700 360" role="img" aria-label="Two line charts. Left: a price series that climbs over fifty years with a dashed straight trend line through it. Right: the same series with the trend line subtracted, which wanders up and down around zero with no overall climb."><defs><pattern id="g92" width="30" height="30" patternUnits="userSpaceOnUse"><path d="M 30 0 L 0 0 0 30" fill="none" stroke="#eef1f4" stroke-width="1"/></pattern></defs><rect x="70" y="40" width="260" height="230" fill="url(#g92)"/><line x1="70" y1="270" x2="330" y2="270" stroke="#131b26" stroke-width="1.5"/><line x1="70" y1="270" x2="70" y2="40" stroke="#131b26" stroke-width="1.5"/><text x="200.0" y="296.0" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="12.5" fill="#4a5765" >year</text><text x="46.0" y="155.0" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="12.5" fill="#4a5765" transform="rotate(-90 46 155.0)">price</text><text x="200.0" y="24.0" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="13" fill="#131b26" >raw price, with fitted trend line</text><text x="117.8" y="284.0" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="10.5" fill="#4a5765" >1980</text><text x="223.9" y="284.0" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="10.5" fill="#4a5765" >2000</text><text x="330.0" y="284.0" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="10.5" fill="#4a5765" >2020</text><line x1="70.0" y1="257.5" x2="330.0" y2="80.4" stroke="#131b26" stroke-width="1.8" stroke-dasharray="6 4"/><text x="328.0" y="258.0" text-anchor="end" font-family="IBM Plex Mono,monospace" font-size="11" fill="#131b26" >trend: −45,600 + 23.2·year</text><polyline fill="none" stroke="#9d3b3b" stroke-width="2.2" points="70.0,257.5 75.3,252.7 80.6,232.0 85.9,228.3 91.2,225.6 96.5,234.2 101.8,226.1 107.1,192.8 112.4,179.1 117.8,155.7 123.1,152.4 128.4,147.0 133.7,147.1 139.0,184.0 144.3,164.5 149.6,156.5 154.9,151.0 160.2,190.3 165.5,223.7 170.8,234.3 176.1,235.2 181.4,221.3 186.7,217.5 192.0,203.6 197.3,215.4 202.7,206.1 208.0,196.6 213.3,209.2 218.6,171.8 223.9,163.6 229.2,143.2 234.5,161.1 239.8,176.2 245.1,178.6 250.4,173.9 255.7,153.6 261.0,142.7 266.3,145.4 271.6,155.3 276.9,152.5 282.2,113.9 287.6,120.8 292.9,103.7 298.2,84.6 303.5,105.4 308.8,90.4 314.1,52.5 319.4,86.4 324.7,79.5 330.0,69.3"/><rect x="400" y="40" width="260" height="230" fill="url(#g92)"/><line x1="400" y1="270" x2="660" y2="270" stroke="#131b26" stroke-width="1.5"/><line x1="400" y1="270" x2="400" y2="40" stroke="#131b26" stroke-width="1.5"/><text x="530.0" y="296.0" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="12.5" fill="#4a5765" >year</text><text x="376.0" y="155.0" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="12.5" fill="#4a5765" transform="rotate(-90 376 155.0)">price − trend</text><text x="530.0" y="24.0" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="13" fill="#131b26" >detrended: actual − trend</text><text x="447.8" y="284.0" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="10.5" fill="#4a5765" >1980</text><text x="553.9" y="284.0" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="10.5" fill="#4a5765" >2000</text><text x="660.0" y="284.0" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="10.5" fill="#4a5765" >2020</text><line x1="400" y1="171.4" x2="660" y2="171.4" stroke="#4a5765" stroke-dasharray="3 3"/><polyline fill="none" stroke="#1b5e7e" stroke-width="2.2" points="400.0,171.4 405.3,169.5 410.6,142.5 415.9,142.3 421.2,143.8 426.5,163.2 431.8,156.0 437.1,109.1 442.4,93.1 447.8,62.0 453.1,62.5 458.4,59.7 463.7,65.5 469.0,129.4 474.3,104.4 479.6,97.5 484.9,94.5 490.2,162.4 495.5,220.7 500.8,243.2 506.1,250.3 511.4,234.1 516.7,233.8 522.0,217.6 527.3,242.0 532.7,232.9 538.0,223.7 543.3,249.3 548.6,195.8 553.9,188.6 559.2,162.1 564.5,196.2 569.8,225.6 575.1,235.2 580.4,233.5 585.7,207.1 591.0,195.5 596.3,205.5 601.6,227.0 606.9,228.2 612.2,172.9 617.6,189.5 622.9,168.2 628.2,143.8 633.5,182.3 638.8,164.4 644.1,110.2 649.4,169.4 654.7,164.3 660.0,153.8"/></svg><figcaption>An illustrative series in the shape of the lecture’s gold example (not the real prices). Subtracting the fitted line removes the steady climb, leaving the fluctuations a factor-based model can actually explain.</figcaption></figure>
+      <p>The linearly detrended series looks much like the inflation-adjusted one, but not exactly: a straight line assumes a <strong>constant</strong> rate of inflation, while the inflation-adjusted series uses a different rate each year. Without inflation data, the simple procedure still works pretty well.</p>
+
+      <div class="ix" data-order="m9l2-order" data-win="Notice the trend, fit it from the data, subtract it, then model the residue — and repeat for any predictor that trends too.">
+        <div class="ix-head"><span class="ix-kind">put in order</span><span class="ix-done">solved</span></div>
+        <p class="prompt">Put the steps of detrending a response for a regression in order. Drag, or use the arrows.</p>
+        <ol class="order">
+          <li data-pos="1">Plot the response over time and see that it drifts steadily upward</li>
+          <li data-pos="2">Fit a one-dimensional regression of the response on time</li>
+          <li data-pos="3">Subtract the fitted trend value from each actual value</li>
+          <li data-pos="4">Check the predictors for trends and detrend any that have one</li>
+          <li data-pos="5">Fit the factor-based model to the detrended data</li>
+        </ol>
+        <button class="btn check">Check order</button>
+        <p class="fb"></p>
+      </div>
+
+      <div class="ix" data-quiz="m9l2-q2">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Using the trend line price ≈ −45,600 + 23.2 × year, what is the detrended value for a year-2010 price of $1,420?</p>
+        <div class="opts">
+          <button class="opt" data-fb="That is the trend estimate for 2010 — step one of two. Subtract it from the actual price.">$1,032</button>
+          <button class="opt" data-right data-fb="Trend in 2010: −45,600 + 23.2 × 2010 = 1,032. Detrended: 1,420 − 1,032 = 388. The price sat $388 above its long-run line that year.">$388</button>
+          <button class="opt" data-fb="Detrending subtracts the trend from the actual value; this subtracts the other way round.">−$388</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Check 5</span>
+      <p class="q">Why does the linearly detrended gold series differ slightly from the inflation-adjusted one?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">The line assumes one constant rate of increase for the whole period. Real inflation differed from year to year, and the inflation-adjusted series accounts for each year’s actual rate.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <div class="branch" data-branch="m9l2-case">
+        <div class="persona">
+          <span class="av">LH</span>
+          <span class="who"><b>Lena Hoffmann</b><span>Analyst, regional water utility</span></span>
+        </div>
+        <div class="scene" data-step="1">
+          <p>Lena regresses monthly water demand over fifteen years on rainfall and average temperature. The utility’s customer base has grown by about 2% a year the whole time. Temperature comes out with a large positive coefficient; rainfall barely matters.</p>
+          <p class="said">Her manager: “So hot months drive demand. Good — plan capacity off the temperature forecasts.”</p>
+          <p><strong>What should Lena check first?</strong></p>
+          <div class="choices">
+            <button class="choice" data-go="2" data-tone="good" data-head="What she finds"
+              data-outcome="Demand has a strong upward trend from customer growth — and average temperature has crept up over the fifteen years too. With both trending, part of the temperature coefficient is really “later years have more customers”. She fits a line to each against time and subtracts it.">
+              Whether demand and the predictors trend over time, and detrend any that do.
+            </button>
+            <button class="choice" data-go="2" data-tone="bad" data-head="What she’d miss"
+              data-outcome="A Box-Cox transformation evens out spread; it doesn’t remove a steady rise. The trend would still be sitting in both demand and temperature.">
+              Whether demand needs a Box-Cox transformation.
+            </button>
+            <button class="choice" data-go="2" data-tone="bad" data-head="What goes wrong"
+              data-outcome="Dropping rainfall doesn’t touch the real problem. The temperature coefficient is still carrying fifteen years of customer growth.">
+              Drop rainfall, since it barely matters, and refit.
+            </button>
+          </div>
+        </div>
+        <div class="scene" data-step="2" data-end="1" hidden>
+          <p><strong>After detrending, the temperature coefficient is about a third of its original size.</strong> What does Lena tell her manager?</p>
+          <div class="choices">
+            <button class="choice" data-tone="good" data-head="The honest split"
+              data-outcome="Capacity planning uses both: the growth trend for the long-run level, and the (smaller) temperature effect for month-to-month swings around it. Forecasts from the original model would have over-reacted to every heatwave.">
+              Demand is mostly a growth trend plus a modest temperature effect; plan for both separately.
+            </button>
+            <button class="choice" data-tone="bad" data-head="Back to square one"
+              data-outcome="The raw coefficient mixed two stories together. Reporting it would double-count growth whenever a hot month is forecast.">
+              Keep the original coefficient, since it fit the raw data better.
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="note-head"><span class="lbl">Class discussion — Lesson 2</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="m9l2" data-placeholder="lm(y ~ time) then residuals(), inflation adjustment sources, links to the time-series module…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Check 6</span>
+      <p class="q">What is the difference between the problem detrending fixes and the problem Box-Cox fixes?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Detrending removes a change in <em>level</em> over time — a steady rise or fall.</p>
+        <p class="a">Box-Cox fixes a change in <em>spread</em> — variance that grows or shrinks across the range of the response. A series can need either, both or neither.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
+<!-- ============ LESSON 3 ============ -->
+<section class="lesson" id="l3" data-short="PCA idea" style="--accent:#4a6b2a">
+  <div class="lesson-head">
+    <span class="ln">Lesson 3</span>
+    <h2>Introduction to PCA</h2>
+    <p class="keyline">Principal component analysis rotates the data onto new directions that are uncorrelated and ranked by how much variance each carries, so you can keep the few that matter most.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Too many predictors, and they overlap</h3>
+      <p>Could the performance of certain stocks on one day predict the overall market the next? About 3,000 securities trade on the New York Stock Exchange, roughly another 3,000 on the Nasdaq, and a few hundred elsewhere. (External events — wars, elections, natural disasters — will always move markets, but on other days a good combination of stocks might predict well.) Two difficulties appear:</p>
+      <ol class="steps">
+        <li><strong>Too many predictors.</strong> With more than 6,000 factors, before interactions, you need a lot of data — and each data point is one day, so you need many years of it. So many that the situation itself changes: Tesla wasn’t publicly traded until mid-2010, and Kmart, perhaps a good predictor in 1997, merged with Sears in 2004.</li>
+        <li><strong>Correlated predictors.</strong> ExxonMobil, Chevron and Phillips 66 may move up and down roughly in sync; so may General Motors and Ford.</li>
+      </ol>
+      <div class="defn">
+        <span class="term">Feature extraction</span>
+        <p>Building a smaller set of new factors from the original ones, rather than choosing a subset of the originals. PCA is a feature-extraction method.</p>
+      </div>
+
+      <div class="ix" data-quiz="m9l3-q1">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">A hospital has 400 lab measurements per patient, many of them near-duplicates (several ways of measuring kidney function, for example), and records for 900 patients. Why is PCA a natural first step before regression?</p>
+        <div class="opts">
+          <button class="opt" data-fb="PCA doesn’t fill in data. Missing values have to be handled separately.">It fills in missing lab values</button>
+          <button class="opt" data-fb="PCA never looks at the outcome. It works on the predictors alone.">It picks the measurements most related to the outcome</button>
+          <button class="opt" data-right data-fb="Both of PCA’s problems are here: 400 predictors is a lot for 900 patients, and near-duplicate tests are highly correlated. A handful of uncorrelated components tackles both at once.">It addresses both problems at once: too many predictors for the data, and strong correlation between them</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Check 7</span>
+      <p class="q">Name the two problems with using thousands of stock prices as predictors.</p>
+      <details><summary>Show answer</summary>
+        <p class="a">So many predictors need many years of daily data — so many that the underlying situation changes over that time.</p>
+        <p class="a">Many predictors are highly correlated, like oil companies or car makers that move together.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>What PCA does</h3>
+      <p>PCA transforms the data to do two things:</p>
+      <ol class="steps">
+        <li>It <strong>changes coordinates to remove correlation</strong>: the new directions are orthogonal, so the data expressed in them has zero correlation.</li>
+        <li>It <strong>ranks the new directions by variance</strong>, so the most important come first.</li>
+      </ol>
+      <figure class="hotwrap" data-hotspot="m9l3-hot"><svg class="fig" viewBox="0 0 700 400" role="img" aria-label="Scatter plot of two strongly correlated factors with PCA’s two new directions drawn through the centre. Four clickable areas: the cloud of points, the long arrow d1, the short arrow d2, and the right angle between them."><defs><pattern id="g93" width="30" height="30" patternUnits="userSpaceOnUse"><path d="M 30 0 L 0 0 0 30" fill="none" stroke="#eef1f4" stroke-width="1"/></pattern></defs><rect x="70" y="30" width="590" height="300" fill="url(#g93)"/><line x1="70" y1="330" x2="660" y2="330" stroke="#131b26" stroke-width="1.5"/><line x1="70" y1="330" x2="70" y2="30" stroke="#131b26" stroke-width="1.5"/><text x="365.0" y="356.0" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="12.5" fill="#4a5765" >factor x₁</text><text x="46.0" y="180.0" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="12.5" fill="#4a5765" transform="rotate(-90 46 180.0)">factor x₂</text><circle cx="372.3" cy="146.7" r="4.5" fill="#131b26" opacity=".6"/><circle cx="285.0" cy="244.8" r="4.5" fill="#131b26" opacity=".6"/><circle cx="339.9" cy="156.2" r="4.5" fill="#131b26" opacity=".6"/><circle cx="370.6" cy="201.2" r="4.5" fill="#131b26" opacity=".6"/><circle cx="278.6" cy="230.2" r="4.5" fill="#131b26" opacity=".6"/><circle cx="397.5" cy="160.6" r="4.5" fill="#131b26" opacity=".6"/><circle cx="308.9" cy="216.4" r="4.5" fill="#131b26" opacity=".6"/><circle cx="350.5" cy="203.5" r="4.5" fill="#131b26" opacity=".6"/><circle cx="329.5" cy="193.9" r="4.5" fill="#131b26" opacity=".6"/><circle cx="445.4" cy="133.9" r="4.5" fill="#131b26" opacity=".6"/><circle cx="408.1" cy="176.4" r="4.5" fill="#131b26" opacity=".6"/><circle cx="389.6" cy="161.4" r="4.5" fill="#131b26" opacity=".6"/><circle cx="295.0" cy="220.0" r="4.5" fill="#131b26" opacity=".6"/><circle cx="397.1" cy="167.5" r="4.5" fill="#131b26" opacity=".6"/><circle cx="388.5" cy="132.7" r="4.5" fill="#131b26" opacity=".6"/><circle cx="428.7" cy="107.4" r="4.5" fill="#131b26" opacity=".6"/><circle cx="241.2" cy="243.2" r="4.5" fill="#131b26" opacity=".6"/><circle cx="276.2" cy="209.9" r="4.5" fill="#131b26" opacity=".6"/><circle cx="335.1" cy="191.5" r="4.5" fill="#131b26" opacity=".6"/><circle cx="369.4" cy="189.2" r="4.5" fill="#131b26" opacity=".6"/><circle cx="345.5" cy="205.8" r="4.5" fill="#131b26" opacity=".6"/><circle cx="480.0" cy="122.5" r="4.5" fill="#131b26" opacity=".6"/><circle cx="349.7" cy="225.9" r="4.5" fill="#131b26" opacity=".6"/><circle cx="238.1" cy="270.4" r="4.5" fill="#131b26" opacity=".6"/><circle cx="379.9" cy="153.8" r="4.5" fill="#131b26" opacity=".6"/><circle cx="357.6" cy="197.1" r="4.5" fill="#131b26" opacity=".6"/><circle cx="469.5" cy="140.8" r="4.5" fill="#131b26" opacity=".6"/><circle cx="268.6" cy="224.2" r="4.5" fill="#131b26" opacity=".6"/><circle cx="261.0" cy="233.3" r="4.5" fill="#131b26" opacity=".6"/><circle cx="399.8" cy="160.4" r="4.5" fill="#131b26" opacity=".6"/><circle cx="360.0" cy="181.1" r="4.5" fill="#131b26" opacity=".6"/><circle cx="315.3" cy="276.2" r="4.5" fill="#131b26" opacity=".6"/><circle cx="248.0" cy="246.7" r="4.5" fill="#131b26" opacity=".6"/><circle cx="224.0" cy="272.6" r="4.5" fill="#131b26" opacity=".6"/><circle cx="334.0" cy="168.0" r="4.5" fill="#131b26" opacity=".6"/><circle cx="242.6" cy="261.1" r="4.5" fill="#131b26" opacity=".6"/><circle cx="342.8" cy="180.4" r="4.5" fill="#131b26" opacity=".6"/><circle cx="219.1" cy="223.0" r="4.5" fill="#131b26" opacity=".6"/><circle cx="265.4" cy="213.0" r="4.5" fill="#131b26" opacity=".6"/><circle cx="314.4" cy="199.4" r="4.5" fill="#131b26" opacity=".6"/><circle cx="441.1" cy="119.7" r="4.5" fill="#131b26" opacity=".6"/><circle cx="350.6" cy="209.1" r="4.5" fill="#131b26" opacity=".6"/><circle cx="300.1" cy="247.4" r="4.5" fill="#131b26" opacity=".6"/><circle cx="486.8" cy="142.4" r="4.5" fill="#131b26" opacity=".6"/><circle cx="137.9" cy="274.5" r="4.5" fill="#131b26" opacity=".6"/><circle cx="424.3" cy="152.6" r="4.5" fill="#131b26" opacity=".6"/><circle cx="398.1" cy="177.8" r="4.5" fill="#131b26" opacity=".6"/><circle cx="287.3" cy="213.0" r="4.5" fill="#131b26" opacity=".6"/><circle cx="363.8" cy="189.7" r="4.5" fill="#131b26" opacity=".6"/><circle cx="438.1" cy="120.8" r="4.5" fill="#131b26" opacity=".6"/><circle cx="352.9" cy="211.7" r="4.5" fill="#131b26" opacity=".6"/><circle cx="344.6" cy="197.7" r="4.5" fill="#131b26" opacity=".6"/><circle cx="319.2" cy="188.1" r="4.5" fill="#131b26" opacity=".6"/><circle cx="289.5" cy="216.8" r="4.5" fill="#131b26" opacity=".6"/><circle cx="384.2" cy="160.2" r="4.5" fill="#131b26" opacity=".6"/><circle cx="508.4" cy="134.3" r="4.5" fill="#131b26" opacity=".6"/><circle cx="338.8" cy="220.0" r="4.5" fill="#131b26" opacity=".6"/><circle cx="303.5" cy="159.8" r="4.5" fill="#131b26" opacity=".6"/><circle cx="220.4" cy="269.0" r="4.5" fill="#131b26" opacity=".6"/><circle cx="376.6" cy="170.4" r="4.5" fill="#131b26" opacity=".6"/><circle cx="410.4" cy="186.9" r="4.5" fill="#131b26" opacity=".6"/><circle cx="408.9" cy="174.7" r="4.5" fill="#131b26" opacity=".6"/><circle cx="241.4" cy="238.1" r="4.5" fill="#131b26" opacity=".6"/><circle cx="371.9" cy="191.1" r="4.5" fill="#131b26" opacity=".6"/><circle cx="276.4" cy="234.7" r="4.5" fill="#131b26" opacity=".6"/><circle cx="332.5" cy="201.7" r="4.5" fill="#131b26" opacity=".6"/><circle cx="282.7" cy="277.4" r="4.5" fill="#131b26" opacity=".6"/><circle cx="421.5" cy="142.8" r="4.5" fill="#131b26" opacity=".6"/><circle cx="259.6" cy="274.4" r="4.5" fill="#131b26" opacity=".6"/><circle cx="286.9" cy="233.4" r="4.5" fill="#131b26" opacity=".6"/><line x1="330.0" y1="200.0" x2="480.0" y2="113.4" stroke="#1b5e7e" stroke-width="3.2"/><polygon points="485.2,110.4 478.6,119.2 474.3,111.8" fill="#1b5e7e"/><line x1="330.0" y1="200.0" x2="296.6" y2="142.1" stroke="#9d3b3b" stroke-width="3.2"/><polygon points="293.6,137.0 302.4,143.6 295.0,147.9" fill="#9d3b3b"/><text x="499.2" y="114.4" text-anchor="start" font-family="IBM Plex Mono,monospace" font-size="15" fill="#1b5e7e" >d₁</text><text x="287.6" y="127.0" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="15" fill="#9d3b3b" >d₂</text><polyline points="343.9,192.0 335.9,178.1 322.0,186.1" fill="none" stroke="#131b26" stroke-width="1.5"/><text x="70.0" y="390.0" text-anchor="start" font-family="IBM Plex Sans,sans-serif" font-size="11.5" fill="#4a5765" >Click each of the four outlined areas.</text><g class="hs" data-title="The correlated cloud" data-body="Measured on the original axes, the two factors rise together: knowing x₁ tells you a lot about x₂. In a regression that makes their coefficients unstable, and it means the two columns carry much of the same information."><rect class="hit" x="180" y="222" width="120" height="64"/><rect class="ring" x="180" y="222" width="120" height="64" rx="3"/></g><g class="hs" data-title="d₁ — the first principal component" data-body="The direction along which the data are most spread out. PCA puts it first. If you could keep only one factor, this is the one PCA would give you, because it carries the most variance — and, when noise is similar in every factor, the best signal-to-noise ratio."><rect class="hit" x="445" y="86" width="70" height="50"/><rect class="ring" x="445" y="86" width="70" height="50" rx="3"/></g><g class="hs" data-title="d₂ — the second principal component" data-body="What is left over: the direction of greatest spread among all directions at right angles to d₁. With two factors there is nothing else. It has much less variance, so PCA ranks it second."><rect class="hit" x="268" y="107" width="52" height="52"/><rect class="ring" x="268" y="107" width="52" height="52" rx="3"/></g><g class="hs" data-title="The right angle" data-body="d₁ and d₂ are orthogonal. Re-express every point by how far it lies along d₁ and along d₂ and the two new coordinates have zero correlation — even if you rotate the picture back to the original axes."><rect class="hit" x="322" y="170" width="36" height="34"/><rect class="ring" x="322" y="170" width="36" height="34" rx="3"/></g></svg><div class="hotpanel"><span class="hint">Four areas are clickable. Open all four to finish this activity.</span></div></figure>
+      <p>Rotating the picture only makes the new axes easier to see; rotate it back and the correlation in the new coordinates is still zero.</p>
+      <p>Keeping only the first n components has another benefit: less randomness. If the random noise is about the same size in every factor, the first components — where the real variation concentrates — have a higher <strong>signal-to-noise ratio</strong>. Further down the list, noise makes up more of what’s left.</p>
+
+      <div class="ix" data-quiz="m9l3-q2">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">You keep the first 5 of 50 principal components. How many of the original 50 measurements must you still collect for each new data point?</p>
+        <div class="opts">
+          <button class="opt" data-fb="The five components aren’t five of the original measurements — each one blends all of them.">5</button>
+          <button class="opt" data-right data-fb="Every component is a weighted combination of all 50 originals, so computing a new point’s components needs all 50. PCA reduces what goes into the model, not what you measure.">All 50</button>
+          <button class="opt" data-fb="Nothing is dropped from the original list; the reduction happens in the new coordinates.">45</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="note">
+        <div class="note-head"><span class="lbl">Class discussion — Lesson 3</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="m9l3" data-placeholder="prcomp(), how many components the homework keeps, the stock example…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Check 8</span>
+      <p class="q">Why are the first principal components likely to have a higher signal-to-noise ratio than later ones?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">If noise is about the same in every factor, it spreads evenly across all directions, while real effects concentrate in the directions of greatest variance. So the top components carry a higher ratio of real variation to random variation, and the ratio falls as you go down the list.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
+<!-- ============ LESSON 4 ============ -->
+<section class="lesson" id="l4" data-short="PCA math" style="--accent:#8a5a1c">
+  <div class="lesson-head">
+    <span class="ln">Lesson 4</span>
+    <h2>Using PCA</h2>
+    <p class="keyline">Centre the data, take the eigenvectors of XᵀX sorted by eigenvalue, and multiply. Each component is a weighted sum of the original factors — which is also what lets you translate a PCA model back.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>The recipe</h3>
+      <p>Start with a data matrix X, where x<sub>ij</sub> is the jth factor value for data point i — after scaling, so that for each factor j the average over all data points is shifted to zero.</p>
+      <ol class="steps">
+        <li>Find all the eigenvectors of the matrix XᵀX (Lesson 5 covers eigenvectors).</li>
+        <li>Put them as the columns of a matrix V, sorted from largest eigenvalue to smallest.</li>
+        <li>The principal components are XV: the first is X times the first column of V, the second X times the second column, and so on.</li>
+      </ol>
+      <p>V is a linear transformation of the data from X to the principal components, so each new factor is a linear combination of the original ones:</p>
+      <div class="formula">t<sub>ik</sub> = x<sub>i1</sub>v<sub>1k</sub> + x<sub>i2</sub>v<sub>2k</sub> + … + x<sub>im</sub>v<sub>mk</sub><span class="cap">The kth new factor value for data point i: the original factor values weighted by the entries of the kth eigenvector.</span></div>
+
+      <div class="ix" data-order="m9l4-order" data-win="Centre, decompose, sort, multiply, then decide how many to keep — the only step that’s yours.">
+        <div class="ix-head"><span class="ix-kind">put in order</span><span class="ix-done">solved</span></div>
+        <p class="prompt">Put the steps of PCA in order. Drag, or use the arrows.</p>
+        <ol class="order">
+          <li data-pos="1">Shift each factor so its average over all data points is zero</li>
+          <li data-pos="2">Find the eigenvectors of XᵀX</li>
+          <li data-pos="3">Sort them from largest eigenvalue to smallest, as the columns of V</li>
+          <li data-pos="4">Multiply X by V to get the principal components</li>
+          <li data-pos="5">Keep all the components, or only the first n, depending on the goal</li>
+        </ol>
+        <button class="btn check">Check order</button>
+        <p class="fb"></p>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Check 9</span>
+      <p class="q">What is the second principal component, in terms of X and V?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">X times the second column of V — the eigenvector of XᵀX with the second-largest eigenvalue.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>How many components?</h3>
+      <table>
+        <tr><th>Goal</th><th>Use</th></tr>
+        <tr><td>You have enough data and only want to remove correlation</td><td>The whole set of principal components</td></tr>
+        <tr><td>You also want fewer variables in the model</td><td>The first n components, for an n you choose</td></tr>
+      </table>
+      <p>The math above finds a <strong>linear</strong> transformation. Using <strong>kernels</strong> — the same idea as in the support vector machine lessons — PCA can use nonlinear functions too. For this course, just know that it can be done, the idea is the same, and most good analytics software can do it for you.</p>
+
+      <div class="ix" data-quiz="m9l4-q1">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">You have 20 correlated factors and 50,000 data points, and you only want the regression coefficients to stop swinging about. How many components should you use?</p>
+        <div class="opts">
+          <button class="opt" data-right data-fb="With plenty of data, there’s no need to reduce dimension. Using all 20 components keeps all the information, just re-expressed without correlation.">All 20</button>
+          <button class="opt" data-fb="Keeping one component would throw away information you have enough data to use.">Just the first</button>
+          <button class="opt" data-fb="The smallest-eigenvalue components carry the least variance; keeping only them discards the most.">Only those with the smallest eigenvalues</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Check 10</span>
+      <p class="q">How can PCA handle relationships that aren’t linear?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">With kernels, the same idea used to make SVMs nonlinear. The principle is unchanged and standard software does the math.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Translating the model back</h3>
+      <p>Suppose you fit a regression on L principal components: y<sub>i</sub> = b₀ + Σ<sub>k=1..L</sub> b<sub>k</sub>t<sub>ik</sub>. The components have no intuitive meaning — each is a blend of the original factors. Luckily, plugging in the formula for each t<sub>ik</sub> gives an implied coefficient for every original factor:</p>
+      <div class="formula">a<sub>j</sub> = Σ<sub>k=1..L</sub> b<sub>k</sub>v<sub>jk</sub><span class="cap">The implied coefficient on original factor j. With it you can explain the model in terms of the factors people understand.</span></div>
+      <div class="callout">
+        <p class="tag">Worth knowing — which units a<sub>j</sub> is in</p>
+        <p>The a<sub>j</sub> apply to the factors as they entered PCA. If you only centred them, a<sub>j</sub> is per original unit. If you also scaled each factor to standard deviation 1 (common in software), divide a<sub>j</sub> by that factor’s standard deviation to get the effect per original unit. The lecture doesn’t go into this.</p>
+      </div>
+
+      <div class="ix" data-quiz="m9l4-q2">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">A regression on two components gives b₁ = 2 and b₂ = −1. For original factor j, v<sub>j1</sub> = 0.6 and v<sub>j2</sub> = 0.8. What is a<sub>j</sub>?</p>
+        <div class="opts">
+          <button class="opt" data-fb="That adds 1.2 and 0.8, losing the minus sign on b₂.">2.0</button>
+          <button class="opt" data-right data-fb="a_j = b₁v_j1 + b₂v_j2 = 2(0.6) + (−1)(0.8) = 1.2 − 0.8 = 0.4.">0.4</button>
+          <button class="opt" data-fb="That adds the eigenvector entries without weighting them by the b’s.">1.4</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="note">
+        <div class="note-head"><span class="lbl">Class discussion — Lesson 4</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="m9l4" data-placeholder="pca$rotation %*% b, whether the homework scales, kernel PCA packages…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Check 11</span>
+      <p class="q">Why can a model built on principal components still be explained in terms of the original factors?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Each component is a linear combination of the original factors, so substituting t<sub>ik</sub> = Σ<sub>j</sub> x<sub>ij</sub>v<sub>jk</sub> into the model gives one coefficient per original factor: a<sub>j</sub> = Σ<sub>k</sub> b<sub>k</sub>v<sub>jk</sub>.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
+<!-- ============ LESSON 5 ============ -->
+<section class="lesson" id="l5" data-short="Eigenvectors" style="--accent:#33507f">
+  <div class="lesson-head">
+    <span class="ln">Lesson 5</span>
+    <h2>Eigenvalues and eigenvectors</h2>
+    <p class="keyline">An eigenvector is a direction a matrix only stretches or shrinks, never turns; the eigenvalue is how much. PCA’s directions are the eigenvectors of XᵀX.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>The definition</h3>
+      <div class="formula">A v = λ v<span class="cap">For a square matrix A: if a vector v and a constant λ satisfy this, v is an eigenvector of A and λ is its eigenvalue.</span></div>
+      <p>Apply the linear transformation A to v and you get a vector pointing in exactly the same direction — longer or shorter, scaled by λ, but not turned.</p>
+      <figure><svg class="fig" viewBox="0 0 700 300" role="img" aria-label="Two panels. Left: a short vector v and a longer vector Av lying along the same line, three times as long. Right: a vector u and the vector Au pointing in a different direction."><defs><pattern id="g94" width="30" height="30" patternUnits="userSpaceOnUse"><path d="M 30 0 L 0 0 0 30" fill="none" stroke="#eef1f4" stroke-width="1"/></pattern></defs><rect x="60" y="40" width="260" height="220" fill="url(#g94)"/><line x1="60" y1="260" x2="320" y2="260" stroke="#131b26" stroke-width="1.5"/><line x1="60" y1="260" x2="60" y2="40" stroke="#131b26" stroke-width="1.5"/><text x="190.0" y="26.0" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="13" fill="#131b26" >eigenvector: A only stretches it</text><rect x="390" y="40" width="260" height="220" fill="url(#g94)"/><line x1="390" y1="260" x2="650" y2="260" stroke="#131b26" stroke-width="1.5"/><line x1="390" y1="260" x2="390" y2="40" stroke="#131b26" stroke-width="1.5"/><text x="520.0" y="26.0" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="13" fill="#131b26" >not an eigenvector: A turns it</text><line x1="90.0" y1="250.0" x2="261.3" y2="164.4" stroke="#1b5e7e" stroke-width="3"/><polygon points="266.6,161.7 259.5,170.0 255.7,162.4" fill="#1b5e7e"/><line x1="90" y1="250" x2="148.9" y2="220.6" stroke="#131b26" stroke-width="6" stroke-linecap="round"/><text x="126.8" y="257.3" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="15" fill="#131b26" >v</text><text x="256.6" y="149.7" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="14" fill="#1b5e7e" >Av = 3v</text><line x1="420.0" y1="250.0" x2="486.6" y2="183.4" stroke="#131b26" stroke-width="3"/><polygon points="490.8,179.2 486.7,189.4 480.6,183.3" fill="#131b26"/><text x="476.8" y="171.2" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="15" fill="#131b26" >u</text><line x1="420.0" y1="250.0" x2="561.4" y2="216.9" stroke="#9d3b3b" stroke-width="3"/><polygon points="567.2,215.5 558.3,222.0 556.4,213.6" fill="#9d3b3b"/><text x="563.2" y="203.5" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="15" fill="#9d3b3b" >Au</text></svg><figcaption>Multiplying by a matrix usually changes a vector’s direction. An eigenvector is one of the special directions it leaves alone; the eigenvalue λ is the stretch factor.</figcaption></figure>
+      <p>Every value of λ for which the determinant of A − λI is zero is an eigenvalue of A. Plug each one into Av = λv and solve for its eigenvector v. Plenty of software does this for you.</p>
+      <div class="formula">det( A − λI ) = 0<span class="cap">I is the identity matrix. Each solution λ is an eigenvalue.</span></div>
+      <div class="callout">
+        <p class="tag">Lecture vs standard notation — a slip of the tongue</p>
+        <p><strong>Lecture (spoken):</strong> “the determinant of A minus lambda times A identity matrix.”</p>
+        <p><strong>Standard:</strong> det(A − λI) = 0 — λ times <em>the</em> identity matrix. The meaning is the same; write it the standard way.</p>
+      </div>
+
+      <div class="ix" data-quiz="m9l5-q1">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">A = [[2, 0], [0, 3]] and v = (0, 1). Is v an eigenvector, and with what eigenvalue?</p>
+        <div class="opts">
+          <button class="opt" data-fb="2 goes with (1, 0). Multiply it out: A(0, 1) = (0, 3).">Yes, λ = 2</button>
+          <button class="opt" data-right data-fb="A(0, 1) = (2·0 + 0·1, 0·0 + 3·1) = (0, 3) = 3·(0, 1). Same direction, three times as long.">Yes, λ = 3</button>
+          <button class="opt" data-fb="Av doesn’t have to equal v — only point the same way. It does, three times longer.">No, because Av ≠ v</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Check 12</span>
+      <p class="q">In words, what does Av = λv say about v?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Transforming v by A doesn’t change its direction; it only scales its length by λ (a negative λ flips it to point the opposite way along the same line).</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Why PCA needs them</h3>
+      <p>The first step of PCA is finding all the eigenvectors of XᵀX; multiplying X by each eigenvector gives the principal components. The course skips the theory, but the properties of eigenvectors and eigenvalues give not just a transformed set of coordinate directions, but directions that are all <strong>orthogonal</strong> to each other. Standard fact, not stated in the lecture: each eigenvalue measures how much of the data’s variance lies along its eigenvector, which is why sorting by eigenvalue ranks the components.</p>
+
+      <div class="ix" data-match="m9l5-match" data-win="The eigen-machinery supplies PCA’s directions, their ranking, and their independence.">
+        <div class="ix-head"><span class="ix-kind">match the pairs</span><span class="ix-done">matched</span></div>
+        <p class="prompt">Click a term, then its role.</p>
+        <div class="match">
+          <div class="col" data-side="a"><h4>Term</h4>
+            <button class="cell" data-pair="1">Eigenvector of XᵀX</button>
+            <button class="cell" data-pair="2">Eigenvalue of XᵀX</button>
+            <button class="cell" data-pair="3">det(A − λI) = 0</button>
+            <button class="cell" data-pair="4">Orthogonal</button>
+            <button class="cell" data-pair="5">XV</button>
+          </div>
+          <div class="col" data-side="b"><h4>Role</h4>
+            <button class="cell" data-pair="4" data-fb="Directions at right angles give coordinates with zero correlation.">Why the components are uncorrelated</button>
+            <button class="cell" data-pair="5" data-fb="The data re-expressed in the new directions.">The principal components themselves</button>
+            <button class="cell" data-pair="1" data-fb="Each eigenvector is one of PCA’s new directions.">A new coordinate direction</button>
+            <button class="cell" data-pair="3" data-fb="Solving it gives every eigenvalue; each then yields its eigenvector.">How the eigenvalues are found</button>
+            <button class="cell" data-pair="2" data-fb="Bigger eigenvalue, more variance along that direction — so it ranks the components.">How much variance a direction carries</button>
+          </div>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="note">
+        <div class="note-head"><span class="lbl">Class discussion — Lesson 5</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="m9l5" data-placeholder="eigen() in R, how much linear algebra the exam expects…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Check 13</span>
+      <p class="q">Two programs report the same first principal component with every sign flipped. Is one of them wrong?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">No. If v is an eigenvector, so is −v: A(−v) = λ(−v). The direction is the same line either way, so the sign is arbitrary.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
+<!-- ============ LESSON 6 ============ -->
+<section class="lesson" id="l6" data-short="Good &amp; bad" style="--accent:#6e4a8c">
+  <div class="lesson-head">
+    <span class="ln">Lesson 6</span>
+    <h2>PCA: good and bad</h2>
+    <p class="keyline">PCA ranks directions by the spread of the predictors and never looks at the response. Usually the widest direction is also the most useful one — but not always.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Same components, different answer</h3>
+      <p>Because PCA depends only on the independent variables, nothing about the response enters the calculation. So although it isn’t likely, the response could be affected only by variables with <em>low</em> variability, not by the ones with high variability. The lecture shows this with classification, but the idea is the same for other kinds of question.</p>
+      <figure><svg class="fig" viewBox="0 0 700 330" role="img" aria-label="Two scatter plots with identical principal directions D1 and D2. In the first, red and blue points split along D1. In the second, they split along D2 and are completely mixed along D1."><rect x="20" y="36" width="320" height="250" fill="none" stroke="#dde3e8"/><text x="180.0" y="24.0" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="13" fill="#131b26" >Figure 1: PCA helps</text><circle cx="203.6" cy="137.8" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="195.2" cy="144.4" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="173.7" cy="178.7" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="155.1" cy="169.4" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="241.1" cy="133.2" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="153.0" cy="162.9" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="210.2" cy="163.2" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="208.2" cy="165.2" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="155.9" cy="139.1" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="286.4" cy="93.2" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="126.6" cy="169.4" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="158.9" cy="175.1" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="200.5" cy="150.0" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="201.7" cy="144.7" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="169.6" cy="158.1" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="170.0" cy="190.4" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="184.2" cy="158.3" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="153.7" cy="200.0" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="208.3" cy="153.4" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="193.6" cy="115.3" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="145.1" cy="143.4" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="244.0" cy="128.3" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="178.8" cy="176.3" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="227.0" cy="159.8" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="169.4" cy="171.6" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="163.7" cy="195.8" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="90.7" cy="185.0" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="267.8" cy="119.6" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="269.7" cy="76.8" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="261.3" cy="115.9" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="177.4" cy="184.9" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="143.0" cy="181.3" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="149.1" cy="172.5" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="186.0" cy="185.2" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="114.6" cy="198.9" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="224.2" cy="133.9" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="125.5" cy="203.1" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="212.3" cy="147.1" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="129.5" cy="202.2" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="197.6" cy="122.3" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="165.5" cy="159.3" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="218.1" cy="149.6" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="133.6" cy="203.4" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="235.1" cy="190.2" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="231.5" cy="134.7" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="174.9" cy="183.3" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="223.1" cy="150.7" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="127.0" cy="179.4" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="211.5" cy="167.1" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="143.6" cy="154.7" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="222.1" cy="150.3" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="174.1" cy="204.5" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="63.7" cy="239.9" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="122.1" cy="180.7" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="195.7" cy="178.2" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="153.3" cy="182.7" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="106.2" cy="203.9" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="143.8" cy="211.7" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="250.1" cy="112.3" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="96.9" cy="206.5" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="99.4" cy="256.6" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="141.0" cy="177.5" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="276.8" cy="84.3" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="131.3" cy="186.0" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="214.2" cy="156.2" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="238.8" cy="133.0" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="180.2" cy="180.6" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="183.0" cy="157.0" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="138.2" cy="179.0" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="249.9" cy="110.6" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="180.2" cy="144.7" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="146.9" cy="164.0" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="229.4" cy="168.7" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="130.2" cy="190.7" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="79.7" cy="229.6" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="137.9" cy="206.9" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="180.8" cy="153.1" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="153.4" cy="170.7" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="218.8" cy="147.1" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="190.4" cy="154.4" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="284.3" cy="89.8" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="191.0" cy="162.3" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="141.0" cy="169.5" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="205.8" cy="183.8" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="224.2" cy="77.0" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="173.2" cy="181.3" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="195.4" cy="141.9" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="177.6" cy="214.1" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="118.7" cy="223.7" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="146.3" cy="166.8" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="139.8" cy="182.8" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="143.8" cy="189.5" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="242.1" cy="153.0" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="171.3" cy="172.2" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="222.6" cy="106.9" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="175.6" cy="143.1" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="255.1" cy="147.9" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="192.9" cy="164.7" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="44.2" cy="264.1" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="226.9" cy="155.7" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="188.4" cy="146.4" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="181.8" cy="145.5" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="181.3" cy="137.0" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="199.4" cy="160.2" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="227.8" cy="121.3" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="139.9" cy="203.9" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="118.9" cy="180.7" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="217.2" cy="154.7" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="160.2" cy="166.0" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="165.9" cy="171.9" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="128.0" cy="204.5" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="160.1" cy="197.3" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="235.5" cy="136.6" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="231.7" cy="146.9" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="122.9" cy="194.4" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="263.2" cy="144.0" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="160.1" cy="180.4" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="187.3" cy="133.7" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="242.1" cy="139.2" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="219.7" cy="151.1" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="226.9" cy="116.7" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="108.0" cy="233.1" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="174.7" cy="178.7" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="163.3" cy="183.3" r="4" fill="#9d3b3b" opacity=".8"/><line x1="55.3" y1="237.0" x2="304.7" y2="93.0" stroke="#131b26" stroke-width="1.6" opacity=".7"/><line x1="210.0" y1="217.0" x2="150.0" y2="113.0" stroke="#131b26" stroke-width="1.6" opacity=".7"/><text x="314.7" y="97.0" text-anchor="start" font-family="IBM Plex Mono,monospace" font-size="13" fill="#131b26" >D1</text><text x="144.0" y="105.0" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="13" fill="#131b26" >D2</text><text x="180.0" y="310.0" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="12.5" fill="#2f6b45" >keep D1 only → classes still split</text><rect x="360" y="36" width="320" height="250" fill="none" stroke="#dde3e8"/><text x="520.0" y="24.0" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="13" fill="#131b26" >Figure 2: PCA hurts</text><circle cx="549.3" cy="142.1" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="467.2" cy="158.0" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="564.5" cy="126.4" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="563.0" cy="158.9" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="626.6" cy="116.5" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="525.1" cy="171.7" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="587.2" cy="155.6" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="554.9" cy="148.4" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="541.0" cy="148.3" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="524.3" cy="159.4" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="497.5" cy="169.2" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="459.1" cy="160.6" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="554.5" cy="115.6" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="525.4" cy="185.8" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="447.1" cy="221.6" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="491.0" cy="188.7" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="496.1" cy="166.6" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="381.6" cy="213.0" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="501.0" cy="172.9" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="423.8" cy="215.6" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="439.6" cy="201.8" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="534.1" cy="153.3" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="513.5" cy="173.7" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="496.1" cy="161.6" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="522.9" cy="158.6" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="490.2" cy="224.4" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="390.0" cy="237.7" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="575.3" cy="152.6" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="460.3" cy="202.9" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="520.1" cy="147.2" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="519.4" cy="177.4" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="564.2" cy="157.3" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="452.5" cy="224.9" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="506.3" cy="180.9" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="642.6" cy="86.5" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="417.5" cy="251.0" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="535.5" cy="171.9" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="638.8" cy="105.0" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="502.5" cy="164.9" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="503.2" cy="169.0" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="508.5" cy="221.8" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="528.6" cy="128.9" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="473.2" cy="202.8" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="566.5" cy="148.0" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="527.9" cy="164.9" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="553.3" cy="148.3" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="517.9" cy="193.5" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="532.8" cy="175.5" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="549.6" cy="137.3" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="667.1" cy="95.1" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="518.5" cy="146.1" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="407.5" cy="217.7" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="508.5" cy="148.3" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="532.6" cy="152.1" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="571.9" cy="149.7" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="625.2" cy="110.8" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="523.5" cy="170.3" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="396.1" cy="267.2" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="559.8" cy="91.7" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="474.2" cy="164.9" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="593.1" cy="125.3" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="511.5" cy="167.0" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="526.6" cy="154.1" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="518.8" cy="206.7" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="471.6" cy="178.3" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="486.1" cy="201.5" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="544.2" cy="140.3" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="524.3" cy="150.7" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="559.8" cy="132.3" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="524.1" cy="127.5" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="443.1" cy="166.7" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="541.3" cy="166.3" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="549.8" cy="128.0" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="454.9" cy="198.8" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="558.8" cy="126.7" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="532.0" cy="178.1" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="498.1" cy="135.9" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="446.4" cy="149.6" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="490.6" cy="178.6" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="540.4" cy="172.0" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="619.9" cy="84.0" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="552.1" cy="170.6" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="502.7" cy="178.0" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="461.8" cy="201.8" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="573.2" cy="147.7" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="429.3" cy="194.6" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="582.6" cy="151.5" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="564.4" cy="148.8" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="553.5" cy="135.2" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="455.0" cy="221.9" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="524.1" cy="188.6" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="465.0" cy="213.0" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="481.9" cy="191.3" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="579.5" cy="119.5" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="548.4" cy="161.3" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="494.8" cy="202.3" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="490.7" cy="215.9" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="516.0" cy="174.4" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="489.3" cy="194.2" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="446.5" cy="193.6" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="543.7" cy="128.3" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="540.4" cy="156.0" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="578.6" cy="154.5" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="439.3" cy="193.8" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="544.8" cy="145.5" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="529.9" cy="150.8" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="455.0" cy="194.9" r="4" fill="#1b5e7e" opacity=".8"/><circle cx="489.6" cy="197.5" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="410.7" cy="243.6" r="4" fill="#9d3b3b" opacity=".8"/><circle cx="582.4" cy="105.2" r="4" fill="#1b5e7e" opacity=".8"/><line x1="395.3" y1="237.0" x2="644.7" y2="93.0" stroke="#131b26" stroke-width="1.6" opacity=".7"/><line x1="550.0" y1="217.0" x2="490.0" y2="113.0" stroke="#131b26" stroke-width="1.6" opacity=".7"/><text x="654.7" y="97.0" text-anchor="start" font-family="IBM Plex Mono,monospace" font-size="13" fill="#131b26" >D1</text><text x="484.0" y="105.0" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="13" fill="#131b26" >D2</text><text x="520.0" y="310.0" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="12.5" fill="#9d3b3b" >keep D1 only → classes fully mixed</text></svg><figcaption>The predictors are spread identically in both figures, so PCA returns the same D1 and D2 and makes the same recommendation. Only the colours — the response, which PCA never sees — differ.</figcaption></figure>
+      <p><strong>Figure 1:</strong> D1 explains more variance than D2, and it also separates red from blue — put the dividing line exactly on the D2 axis and D1 splits the data perfectly. Reducing from two dimensions to one, PCA would suggest D1, and D1 still gives an excellent separator.</p>
+      <p><strong>Figure 2:</strong> PCA gives exactly the same recommendation — D1 explains more variance — but now D1 doesn’t separate red from blue at all. The helpful separator is D2, the one PCA says to drop.</p>
+
+      <div class="ix" data-quiz="m9l6-q1">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Why does PCA give the same recommendation in Figure 1 and Figure 2?</p>
+        <div class="opts">
+          <button class="opt" data-fb="The class labels are exactly what differs between the figures — and PCA never uses them.">Because the class labels are the same in both</button>
+          <button class="opt" data-right data-fb="The predictors are spread the same way in both figures, and PCA uses only the predictors. The response (the colours) is not part of the calculation.">Because the predictors are spread identically, and PCA doesn’t use the response</button>
+          <button class="opt" data-fb="PCA always ranks by variance; there is no step that checks classification accuracy.">Because PCA picks the direction that classifies best, and both happen to be D1</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Check 14</span>
+      <p class="q">In one sentence, what is PCA’s blind spot?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">It ranks directions by how much the predictors vary, without ever looking at the response, so a low-variance direction that actually drives the response can be ranked last and discarded.</p>
+      </details>
+    </aside>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>So why use it?</h3>
+      <p>Because <strong>often</strong> the dimensions with more variability are the better differentiators — precisely because they carry more information. It isn’t always true, so reducing dimension with PCA isn’t guaranteed to keep the explanatory or predictive power. Overall, though, it is often an approach that reduces dimension without losing too much.</p>
+
+      <div class="branch" data-branch="m9l6-case">
+        <div class="persona">
+          <span class="av">DO</span>
+          <span class="who"><b>Dana Okafor</b><span>Fraud analyst, card issuer</span></span>
+        </div>
+        <div class="scene" data-step="1">
+          <p>Dana has 30 correlated features for each card transaction — amount, time of day, merchant type, distances between purchases and so on. She runs PCA, keeps the first 3 components (78% of the variance), and trains a classifier for fraud. It barely beats guessing.</p>
+          <p class="said">A colleague: “The features just don’t contain fraud signal. Time to buy a vendor model.”</p>
+          <p><strong>What should Dana try first?</strong></p>
+          <div class="choices">
+            <button class="choice" data-go="2" data-tone="good" data-head="What she finds"
+              data-outcome="She plots fraud rate against each of the first ten components. The first three track ordinary shopping patterns — big weekend spends, daily commutes — that vary a lot but say nothing about fraud. Component 8, with under 2% of the variance, separates fraud sharply: it picks up small test purchases far from home. This is Figure 2.">
+              Check whether lower-ranked components, which PCA put at the bottom, relate to fraud.
+            </button>
+            <button class="choice" data-go="2" data-tone="bad" data-head="What goes wrong"
+              data-outcome="Two components carry even less of the rare signal than three. Accuracy drops further, and the colleague’s conclusion looks confirmed — wrongly.">
+              Keep only 2 components to reduce overfitting.
+            </button>
+            <button class="choice" data-go="2" data-tone="bad" data-head="What she’d miss"
+              data-outcome="Box-Cox reshapes a response’s spread; it can’t move fraud signal into the top components. The same three components come back.">
+              Box-Cox transform the features and rerun PCA.
+            </button>
+          </div>
+        </div>
+        <div class="scene" data-step="2" data-end="1" hidden>
+          <p><strong>How should Dana choose which components to keep?</strong></p>
+          <div class="choices">
+            <button class="choice" data-tone="good" data-head="Let the response weigh in"
+              data-outcome="She compares classifiers on validation data using the first 3, the first 8, and the first 10 components. The first 8 wins clearly. PCA still does its job — removing correlation and cutting 30 features to 8 — but the number kept is decided by performance on the question being asked, not by variance alone.">
+              Compare validation performance for different numbers of components.
+            </button>
+            <button class="choice" data-tone="bad" data-head="Same trap, new number"
+              data-outcome="A 95% variance rule might keep component 8 or might not — it depends on the other components, not on fraud. The cut-off is still blind to the response.">
+              Keep however many components explain 95% of the variance.
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="ix" data-quiz="m9l6-q2">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Given that PCA can discard the useful direction, what is the best description of when to use it?</p>
+        <div class="opts">
+          <button class="opt" data-fb="The lesson shows exactly the case where it loses what matters.">Always — the highest-variance directions are always the most predictive</button>
+          <button class="opt" data-fb="That throws away a tool that usually works well.">Never — it can’t be trusted for prediction</button>
+          <button class="opt" data-right data-fb="High-variance directions usually carry more information, so PCA usually loses little — but it isn’t guaranteed, so check the result against the response.">Often — it usually reduces dimension without losing much, but check it</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+
+      <div class="note">
+        <div class="note-head"><span class="lbl">Class discussion — Lesson 6</span><span class="hint">click to type; saves automatically</span></div>
+        <div class="note-body" contenteditable="true" data-note="m9l6" data-placeholder="Examples from the forums where PCA hurt, how the homework picks n…"></div>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Check 15</span>
+      <p class="q">If PCA can throw away the most useful direction, why is it still a standard tool?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">Because dimensions with more variability are often better differentiators — they carry more information — so PCA usually reduces dimension without losing much explanatory or predictive power. The Figure 2 case is possible but not likely.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
+<section class="close" id="targets" style="--accent:#7a5c2e">
+  <h2>Transfer practice &mdash; Advanced data preparation</h2>
+  <p class="h2meta">Same ideas, unfamiliar settings</p>
+  <div class="defn">
+    <span class="term">Why these are here</span>
+    <p>Each prompt below moves the module&rsquo;s ideas into a situation the lessons never mentioned. If you can only answer a question in the wording it was taught in, what you have memorised is the example rather than the concept &mdash; and an exam that changes the setting will find that out. Answer these out loud before opening them.</p>
+  </div>
+  <aside class="check">
+    <span class="n">Exam target</span>
+    <p class="q">A ride-hailing company models trip fares. Residuals are within &plusmn;$1 for short trips and &plusmn;$25 for long ones. What would you check, and what might you do?</p>
+    <details><summary>Show answer</summary>
+      <p class="a">That is heteroscedasticity: the spread of the response grows with its size, so the long trips dominate a least-squares fit. Check with a Q-Q plot of the fares (or the residuals). If it bends, let software choose a Box-Cox &lambda;, refit on t(y), and convert predictions back to dollars before reporting them.</p>
+    </details>
+  </aside>
+  <aside class="check">
+    <span class="n">Exam target</span>
+    <p class="q">A university regresses 25 years of annual applications on tuition and ranking. Applications have grown steadily with population. Before fitting, what should happen, and to which variables?</p>
+    <details><summary>Show answer</summary>
+      <p class="a">Consider detrending: it is a factor-based model on time-series data. Fit a line of applications against year and subtract it; do the same for tuition, which has almost certainly trended upward too. Otherwise the model can credit tuition with growth that really came from population &mdash; same tuition-to-ranking conditions, very different application counts in different decades.</p>
+    </details>
+  </aside>
+  <aside class="check">
+    <span class="n">Exam target</span>
+    <p class="q">A trend line for a town&rsquo;s annual water use is 1,800 + 45&middot;(year &minus; 2000) megalitres. In 2014 the town used 2,300. What is the detrended value, and what does it mean?</p>
+    <details><summary>Show answer</summary>
+      <p class="a">Trend in 2014: 1,800 + 45&times;14 = 2,430. Detrended: 2,300 &minus; 2,430 = &minus;130 megalitres. The town used 130 ML less than its long-run trend predicted &mdash; perhaps a wet year or restrictions &mdash; which is exactly the kind of variation a factor-based model should try to explain.</p>
+    </details>
+  </aside>
+  <aside class="check">
+    <span class="n">Exam target</span>
+    <p class="q">A soil lab measures 120 chemical properties for 300 samples, many strongly correlated. An agronomist wants a regression for crop yield she can explain factor by factor. Outline an approach.</p>
+    <details><summary>Show answer</summary>
+      <p class="a">Centre (and, since the units differ, scale) the properties; run PCA; keep the first n components, choosing n by validation; regress yield on them. Then convert back with a<sub>j</sub> = &Sigma;<sub>k</sub> b<sub>k</sub>v<sub>jk</sub> to get one implied coefficient per original property (divided by each property&rsquo;s standard deviation if they were scaled). That gives her the explanation in soil-chemistry terms without fitting 120 correlated coefficients to 300 samples.</p>
+    </details>
+  </aside>
+  <aside class="check">
+    <span class="n">Exam target</span>
+    <p class="q">For A = [[4, 1], [2, 3]], check that v = (1, 1) is an eigenvector and find its eigenvalue.</p>
+    <details><summary>Show answer</summary>
+      <p class="a">Av = (4&middot;1 + 1&middot;1, 2&middot;1 + 3&middot;1) = (5, 5) = 5&middot;(1, 1). Same direction, five times as long: v is an eigenvector with &lambda; = 5. (The other eigenvalue is 2, with eigenvector (1, &minus;2): det(A &minus; &lambda;I) = (4 &minus; &lambda;)(3 &minus; &lambda;) &minus; 2 = &lambda;&sup2; &minus; 7&lambda; + 10 = 0.)</p>
+    </details>
+  </aside>
+  <aside class="check">
+    <span class="n">Exam target</span>
+    <p class="q">A factory monitors 60 vibration sensors to predict a rare bearing failure. PCA&rsquo;s first 4 components explain 95% of the variance, but a model on them misses most failures. Explain what may be happening.</p>
+    <details><summary>Show answer</summary>
+      <p class="a">PCA ranked directions by how much the sensors vary, not by how well they predict failure. The big components probably track normal operating swings &mdash; load, speed, temperature &mdash; while an early failure shows up as a small, specific pattern in a low-variance direction. Check how each lower-ranked component relates to failure, and choose how many to keep by validation, not by the 95% rule.</p>
+    </details>
+  </aside>
+</section>
+
+<section id="wrap" class="close" style="--accent:#131b26">
+  <h2>How the module fits together</h2>
+  <p class="h2meta">The through-line across all six lessons</p>
+  <ul class="thread">
+    <li><span class="dot" style="--d:#1b5e7e"></span><span class="lbl">Lesson 1</span><span>Fixes the response’s spread: Box-Cox chooses λ so the transformed response is close to normal and evenly spread.</span></li>
+    <li><span class="dot" style="--d:#8a3d5c"></span><span class="lbl">Lesson 2</span><span>Fixes drift over time: fit a line to each trending factor and subtract it before a factor-based model sees the data.</span></li>
+    <li><span class="dot" style="--d:#4a6b2a"></span><span class="lbl">Lesson 3</span><span>Fixes too many overlapping predictors: PCA rotates to uncorrelated directions, ranked by variance.</span></li>
+    <li><span class="dot" style="--d:#8a5a1c"></span><span class="lbl">Lesson 4</span><span>Gives PCA’s recipe — centre, eigenvectors of XᵀX, sort, multiply — and the formula to translate a PCA model back to the original factors.</span></li>
+    <li><span class="dot" style="--d:#33507f"></span><span class="lbl">Lesson 5</span><span>Supplies the linear algebra: Av = λv, eigenvalues from det(A − λI) = 0, and orthogonal directions.</span></li>
+    <li><span class="dot" style="--d:#6e4a8c"></span><span class="lbl">Lesson 6</span><span>Marks the limit: PCA never sees the response, so the direction it discards can occasionally be the one that matters.</span></li>
+  </ul>
+
+  <h3 style="color:#131b26">Four things worth noticing</h3>
+  <ul>
+    <li><strong>Each fix targets a different part of the data.</strong> Box-Cox reshapes the response; detrending works on the response and any trending predictor; PCA works only on the predictors.</li>
+    <li><strong>Each fix changes the units you report in.</strong> Box-Cox predictions must be transformed back; detrended values are deviations from a trend; PCA coefficients must be translated back to the original factors.</li>
+    <li><strong>Software does the arithmetic, you make the calls.</strong> λ, the trend line and the eigenvectors are all computed; whether to transform, what to detrend and how many components to keep are yours.</li>
+    <li><strong>PCA and Module 8 meet at correlation.</strong> Correlated predictors made regression coefficients hard to interpret; PCA removes the correlation, and a<sub>j</sub> = Σ b<sub>k</sub>v<sub>jk</sub> restores the interpretation.</li>
+  </ul>
+
+  <h3 style="color:#131b26">Likely exam targets</h3>
+  <ul>
+    <li>Define heteroscedasticity, give an example, and explain why it biases a regression.</li>
+    <li>Write the Box-Cox formula; say what is chosen and how you check whether it is needed.</li>
+    <li>Explain why a trend misleads a factor-based model, and compute a detrended value.</li>
+    <li>State the two things PCA does and the two problems it addresses.</li>
+    <li>Give PCA’s steps and the formula for t<sub>ik</sub>; say when to use all components and when the first n.</li>
+    <li>Convert PCA regression coefficients back with a<sub>j</sub> = Σ b<sub>k</sub>v<sub>jk</sub>.</li>
+    <li>Define an eigenvector and eigenvalue and verify one for a small matrix.</li>
+    <li>Draw or describe a case where PCA’s first component is useless for the response, and explain why PCA is still used.</li>
+  </ul>
+  <p style="font-family:var(--sans);font-size:.9rem;color:var(--ink-soft);max-width:66ch">Everything above is class material. <a href="#extra">Additional resources</a> follow — using PCA in practice and practice problems — none of it taught in this module.</p>
+
+  <div class="note">
+    <div class="note-head"><span class="lbl">Module 9 — my own summary</span><span class="hint">click to type; saves automatically</span></div>
+    <div class="note-body" contenteditable="true" data-note="m9summary" data-placeholder="Write the module back in your own words — the fastest way to find out what you don't actually know yet."></div>
+  </div>
+
+</section>
+
+<!-- ==================== ADDITIONAL RESOURCES DIVIDER ==================== -->
+<section class="close" id="extra" style="--accent:#1f6b6b">
+  <h2>Additional resources</h2>
+  <p class="h2meta">Everything below this line is <strong>not class material</strong></p>
+  <div class="defn">
+    <span class="term">Read this first</span>
+    <p>The six lessons above are the module as taught: Box-Cox, detrending, PCA and the eigenvectors behind it, and PCA’s blind spot. Everything from here on was assembled from outside sources — textbooks, method papers and the documentation of the standard libraries. None of it is examinable unless your instructor says so, and where a convention differs from the lectures, <strong>the lectures win</strong>.</p>
+  </div>
+  <p>The lectures show what PCA computes but leave the practical decisions — whether to scale, how many components, how to avoid leaking information — mostly unstated. The appendix fills those in, then provides practice.</p>
+  <ul class="thread">
+    <li><span class="dot" style="--d:#1f6b6b"></span><span class="lbl">Extra 1</span><span>PCA in practice: scaling, choosing the number of components, and fitting it inside validation.</span></li>
+    <li><span class="dot" style="--d:#4a5765"></span><span class="lbl">Extra 2</span><span>Practice problems with worked solutions, and where to read further.</span></li>
+  </ul>
+</section>
+
+<!-- ==================== EXTRA 1 ==================== -->
+<section class="lesson" id="x1" data-short="In practice" style="--accent:#1f6b6b">
+  <div class="lesson-head">
+    <span class="ln">Extra 1</span>
+    <h2>PCA in practice</h2>
+    <p class="keyline">Three decisions the math leaves to you: whether to scale, how many components to keep, and where in the workflow PCA gets fitted.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Centre, and usually scale</h3>
+      <p>The lecture centres each factor. Software such as R’s <code>prcomp()</code> centres by default and can also scale each factor to standard deviation 1 (<code>scale. = TRUE</code>). Without scaling, PCA ranks directions by raw variance, so a factor recorded in large units — income in dollars against age in years — dominates the first component purely because of its units, the same problem the scaling lessons in Module 2 warned about for distances. When factors are in different units, scaling is almost always right; when they share units and their spread is meaningful (say, 40 sensors all in millimetres), leaving them unscaled can be reasonable.</p>
+      <h3>How many components</h3>
+      <ul>
+        <li><strong>Proportion of variance explained</strong> — each eigenvalue divided by their total. A <strong>scree plot</strong> of these often shows an “elbow” after which each component adds little.</li>
+        <li><strong>Cumulative thresholds</strong> such as 80–95% are common rules of thumb, but, as Lesson 6 shows, variance is not the same as usefulness.</li>
+        <li><strong>Validation</strong> — when the components feed a model, treat n like any other choice and compare candidates on validation data (Module 3). This is the only one of the three that looks at the response.</li>
+      </ul>
+      <h3>Fit PCA inside the validation loop</h3>
+      <p>The eigenvectors are estimated from data, so they are part of the model. Computing them on the whole dataset and <em>then</em> splitting into training and test lets the test data influence the model — a form of leakage. Fit the centring, scaling and eigenvectors on the training data only, then apply that same transformation to validation and test points.</p>
+
+      <div class="ix" data-quiz="m9x1-q1">
+        <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
+        <p class="prompt">You run unscaled PCA on house data with price in dollars, floor area in square metres and number of rooms. The first component is almost exactly “price”. Why?</p>
+        <div class="opts">
+          <button class="opt" data-right data-fb="Prices vary by hundreds of thousands, area by tens, rooms by a few. Unscaled PCA ranks by raw variance, so price’s units hand it the first component. Scale each factor first.">Price has by far the largest raw variance because of its units, so it dominates unscaled PCA</button>
+          <button class="opt" data-fb="PCA doesn’t know which column is ‘most important’. It sees only variances and covariances.">Price is the most important variable, and PCA detects that</button>
+          <button class="opt" data-fb="Correlation with other factors would spread the component across them, not concentrate it on price.">Price is uncorrelated with everything else</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Check 16</span>
+      <p class="q">Why should PCA be fitted on the training data only, rather than the whole dataset before splitting?</p>
+      <details><summary>Show answer</summary>
+        <p class="a">The eigenvectors (and the centring and scaling) are estimated from data, so they are part of the model. Estimating them with the test data included lets the test set influence the model, which makes the test estimate optimistic.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
+<!-- ==================== EXTRA 2 ==================== -->
+<section class="lesson" id="x2" data-short="Practice &amp; reading" style="--accent:#4a5765">
+  <div class="lesson-head">
+    <span class="ln">Extra 2</span>
+    <h2>Practice and reading</h2>
+    <p class="keyline">Problems with worked solutions, and where to go next.</p>
+  </div>
+
+  <div class="row">
+    <div class="main">
+      <h3>Practice</h3>
+      <ol class="steps">
+        <li><strong>Box-Cox by hand.</strong> With λ = ½, transform y = 4, 16 and 64. How much further apart are the largest two than the smallest two, before and after? <em>(Before: 12 and 48. After: t = 2(√y − 1) = 2, 6, 14, so gaps of 4 and 8 — the large-value gap shrinks from 4× to 2× the small one.)</em></li>
+        <li><strong>Detrending.</strong> Quarterly sales follow the trend 500 + 12t. In quarter t = 20 sales were 690. Detrended value? <em>(Trend 740; detrended −50.)</em></li>
+        <li><strong>Back-translation.</strong> A model on three components has b = (1.5, −0.5, 2). Factor j has v<sub>j·</sub> = (0.2, 0.4, −0.1). Find a<sub>j</sub>. <em>(0.3 − 0.2 − 0.2 = −0.1.)</em></li>
+        <li><strong>Eigenvalues.</strong> For A = [[3, 1], [0, 2]], solve det(A − λI) = 0. <em>((3 − λ)(2 − λ) = 0, so λ = 3 and 2.)</em></li>
+        <li><strong>Variance explained.</strong> Eigenvalues are 6, 2, 1, 0.6, 0.4. What share do the first two explain? <em>(8/10 = 80%.)</em></li>
+      </ol>
+      <h3>Sources and further reading</h3>
+      <ul>
+        <li>G. E. P. Box and D. R. Cox, “An analysis of transformations”, <em>Journal of the Royal Statistical Society, Series B</em>, 1964 — the original Box-Cox paper.</li>
+        <li>R. J. Hyndman and G. Athanasopoulos, <em>Forecasting: Principles and Practice</em> (free online), the chapter on transformations and adjustments — Box-Cox and inflation adjustment for time series.</li>
+        <li>James, Witten, Hastie and Tibshirani, <em>An Introduction to Statistical Learning</em> (free online) — principal components regression, and the unsupervised-learning chapter on PCA.</li>
+        <li>Hastie, Tibshirani and Friedman, <em>The Elements of Statistical Learning</em> — principal components and kernel PCA, at a more mathematical level.</li>
+        <li>I. T. Jolliffe and J. Cadima, “Principal component analysis: a review and recent developments”, <em>Philosophical Transactions of the Royal Society A</em>, 2016.</li>
+        <li>3Blue1Brown, <em>Essence of Linear Algebra</em> (video series) — the episode on eigenvectors and eigenvalues gives the geometric picture behind Lesson 5.</li>
+      </ul>
+
+      <div class="ix" data-quiz="m9x2-q1">
+        <div class="ix-head"><span class="ix-kind">self-test</span><span class="ix-done">answered</span></div>
+        <p class="prompt">Eigenvalues of XᵀX are 5, 3, 1.5, 0.5. You keep enough components to explain at least 80% of the variance. How many?</p>
+        <div class="opts">
+          <button class="opt" data-fb="5 of 10 is only 50%.">1</button>
+          <button class="opt" data-fb="Three reach 95% — more than the 80% you need. The first two already give (5 + 3)/10 = 80%.">3</button>
+          <button class="opt" data-right data-fb="Total 10. First two: (5 + 3)/10 = 80%, which meets the threshold.">2</button>
+        </div>
+        <p class="fb"></p>
+      </div>
+    </div>
+    <aside class="check">
+      <span class="n">Check 17</span>
+      <p class="q">Name three ways to choose how many principal components to keep, and the one that looks at the response.</p>
+      <details><summary>Show answer</summary>
+        <p class="a">A scree plot’s elbow, a cumulative-variance threshold, and validation performance.</p>
+        <p class="a">Only validation uses the response.</p>
+      </details>
+    </aside>
+  </div>
+</section>
+
+<section id="foot" class="close" style="--accent:#131b26">
+  <footer><span class="ai"><strong>Written by an AI model from lecture recordings.</strong> Not reviewed by any instructor or institution — verify anything you rely on against the original lectures. Examples here are generic illustrations rather than the ones used in class, except the heights and weights, gold price, stock market and Figure 1 / Figure 2 examples, which follow the lectures. The Lena Hoffmann and Dana Okafor cases, the “Lecture vs standard practice” callouts, the note on the units of a<sub>j</sub>, and “Four things worth noticing” are this summary’s own additions rather than lecture content. The λ = 0 log case, the inverse transformation, and the link between eigenvalues and variance are given in their standard textbook form; the lectures did not state them. The gold-price chart is an illustrative series built around the lecture’s trend line, not the real prices.
+  <br><br>
+  <strong>Everything under “Additional resources” is outside material.</strong> Extras 1 and 2 — scaling, choosing the number of components, fitting PCA inside validation, the practice problems and the reading list — were assembled from published sources listed in Extra 2. None of it was taught in this module. Treat the lectures as authoritative wherever the two differ.</span></footer>
+</section>
+</div>
+
+<dialog id="dlg">
+  <div class="dlg-in">
+    <h3 id="dlgTitle">Your notes</h3>
+    <p id="dlgHelp" style="font-family:var(--sans);font-size:.88rem;color:var(--ink-soft);max-width:none">Copy this text and keep it somewhere safe.</p>
+    <textarea id="dlgText" spellcheck="false"></textarea>
+    <div class="dlg-row">
+      <button class="btn" id="dlgCopy">Copy to clipboard</button>
+      <button class="btn" id="dlgLoad" hidden>Load these notes</button>
+      <button class="btn" id="dlgClose">Close</button>
+      <span class="status" id="dlgStatus"></span>
+    </div>
+  </div>
+</dialog>
+
+<script src="study.js"></script>
+<script src="search.js" defer></script>
+</body>
+</html>

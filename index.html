@@ -151,6 +151,7 @@
      m7   =  34  (27 quizzes, 2 orders, 2 matches, 1 hotspot, 2 branches;
                   the 11 written answers and the α explorer are not scored)
      m8   =  29  (21 quizzes, 2 orders, 2 matches, 2 hotspots, 2 branches)
+     m9   =  20  (13 quizzes, 2 orders, 2 matches, 1 hotspot, 2 branches)
      disc =  25
      exam = 110  (22 topics: 85 multiple choice + 25 discussion — revealing
                   a model answer counts as done on that page)
@@ -164,6 +165,7 @@ window.MODULE_ITEM_COUNTS = {
   m6: 19,
   m7: 34,
   m8: 29,
+  m9: 20,
   disc: 25,
   exam: 110
 };
@@ -486,6 +488,42 @@ m8: `
 <li>Compare AIC/BIC only across models on the same data. Use BIC only when n ≫ k.</li>
 <li>R² of 0.3–0.4 can be good for human behaviour.</li>
 <li><i>Lecture vs standard:</i> p-value = P(estimate this extreme | true coefficient 0), not P(coefficient = 0).</li>
+</ul>`,
+
+m9: `
+<h4>Terms</h4>
+<ul>
+<li><b>Heteroscedasticity</b> — unequal variance across the range (weights spread more at the heavy end). Biases least squares toward the noisy end.</li>
+<li><b>Box-Cox</b> — power transformation of the <i>response</i>; software picks λ so t(y) ≈ normal. Named after George Box &amp; David Cox — no box.</li>
+<li><b>Trend</b> — steady rise or fall over time. <b>Detrending</b> — subtract a fitted trend so only the fluctuations remain.</li>
+<li><b>PCA</b> — feature extraction: new directions that are <b>orthogonal</b> (uncorrelated) and <b>ranked by variance</b>. Uses only the predictors.</li>
+<li><b>Principal component</b> — weighted sum of <i>all</i> original factors; weights = an eigenvector.</li>
+<li><b>Eigenvector / eigenvalue</b> — a direction A only stretches, and the stretch factor.</li>
+</ul>
+<h4>Equations</h4>
+<ul class="eqs">
+<li>t(y) = (y^λ − 1)/λ <i>λ = 0 → ln y; needs y &gt; 0; invert: y = (λt + 1)^(1/λ)</i></li>
+<li>detrended = actual − (a₀ + a₁·t) <i>gold: −45,600 + 23.2·year</i></li>
+<li>PCA: centre X → eigenvectors of XᵀX, sorted by eigenvalue = V → components = XV</li>
+<li>t_ik = Σⱼ x_ij v_jk <i>component k for point i</i></li>
+<li>a_j = Σₖ b_k v_jk <i>back to original factor j</i></li>
+<li>A v = λ v &nbsp;·&nbsp; eigenvalues: det(A − λI) = 0</li>
+</ul>
+<h4>Turn the knob</h4>
+<ul class="knob">
+<li><b>λ ↓ from 1</b> — stronger pull on large values: 1 none · ½ root · 0 log · −1 reciprocal.</li>
+<li><b>n components ↑</b> — more information kept, more noise, less reduction. All of them = just decorrelate.</li>
+<li><b>eigenvalue ↑</b> — more variance along that direction → ranked earlier, higher signal-to-noise (if noise is even).</li>
+</ul>
+<h4>Rules that carry marks</h4>
+<ul>
+<li>Check before transforming: Q-Q plot. Convert Box-Cox predictions back.</li>
+<li>Consider detrending for any factor-based model (regression, SVM) on time series — response <i>and</i> predictors.</li>
+<li>Linear detrend ≈ inflation adjustment, but assumes a constant rate.</li>
+<li>PCA's two problems: too many predictors for the data · correlated predictors.</li>
+<li>Keeping 5 of 50 components still needs all 50 measurements.</li>
+<li>Nonlinear PCA: kernels, as with SVMs.</li>
+<li><span class="warn">PCA never sees the response</span> — the dropped low-variance direction can be the useful one. Usually it isn't.</li>
 </ul>`,
 
 disc: `

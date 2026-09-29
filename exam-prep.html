@@ -1427,15 +1427,15 @@ const MODULES = [
     questions: [
       {
         type: "mc",
-        text: "Two models fitted to the same data have AIC values of 450 and 454. What is the relative likelihood that the higher-AIC model is the better one?",
+        text: "Two models are fitted to the same data. As the gap between their AIC values grows from 2 to 10, what happens to the relative likelihood that the higher-AIC model is the better one?",
         options: [
-          "About 99%, since the values are nearly equal in size.",
-          "About 13.5%.",
-          "About 1.8%.",
-          "It cannot be computed without the number of data points."
+          "It stays about the same, since both AIC values are large.",
+          "It falls exponentially — from roughly 37% at a gap of 2 to under 1% at a gap of 10.",
+          "It falls in a straight line, by the same amount for each extra point.",
+          "It cannot be judged without the number of data points."
         ],
         answer: 1,
-        why: "<p>The relative likelihood is exp((AIC<sub>low</sub> − AIC<sub>high</sub>)/2) = exp(−2) ≈ 0.135. Only the difference matters; the absolute size of AIC values depends on the data and carries no meaning on its own. Forgetting to halve the difference gives exp(−4) ≈ 1.8%, a common slip.</p>"
+        why: "<p>The relative likelihood is exp((AIC<sub>low</sub> − AIC<sub>high</sub>)/2) = exp(−gap/2), so every extra 2 points of gap divides it by e ≈ 2.7. Only the difference matters; the absolute size of AIC values depends on the data and carries no meaning on its own.</p>"
       },
       {
         type: "mc",

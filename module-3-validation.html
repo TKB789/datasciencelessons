@@ -1095,12 +1095,12 @@ p.frq-lead{font-size:.92rem;color:var(--ink-soft,#4a5765);margin:.2rem 0 .8rem}
 
       <div class="ix" data-quiz="m3l8-q2">
         <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
-        <p class="prompt">10-fold CV gives these mean errors, with the standard error across folds in brackets: 3 predictors 0.248 (0.011), 4 predictors 0.239 (0.010), 6 predictors 0.234 (0.012), 9 predictors 0.236 (0.011). What does the one-standard-error rule select?</p>
+        <p class="prompt">Under the one-standard-error rule, what happens as the fold-to-fold standard error of the best model’s score gets larger?</p>
         <div class="opts">
-          <button class="opt" data-fb="6 predictors is the raw minimum, which is what the rule is designed not to select automatically. The rule exists because 0.234 and 0.239 are not distinguishable at this precision.">6 predictors, since 0.234 is the lowest score.</button>
-          <button class="opt" data-right data-fb="Best is 0.234 with SE 0.012, so the band is anything at or below 0.246. The 3-predictor model at 0.248 is outside it; the 4-predictor model at 0.239 is inside and is the smallest model that qualifies.">4 predictors — the smallest model scoring within 0.246.</button>
-          <button class="opt" data-fb="3 predictors scores 0.248, which is above the 0.234 + 0.012 = 0.246 threshold. Close, but outside the band — the rule is a calculation, not a preference for the smallest model available.">3 predictors, since simpler is better whenever the curve is flat.</button>
-          <button class="opt" data-fb="9 predictors is neither the minimum nor the simplest qualifying model. It is strictly dominated here — more complexity for a worse score.">9 predictors, since more predictors reduce bias.</button>
+          <button class="opt" data-right data-fb="The rule chooses the simplest model within one SE of the best score. A larger SE means the scores are less precise, more models fall inside the band, and the smallest of them wins — the rule leans harder toward simplicity exactly when the evidence for the minimum is weakest.">The band of “statistically tied” models widens, so the rule picks a simpler model more often</button>
+          <button class="opt" data-fb="That is the raw minimum, which the rule is designed not to trust when scores are imprecise.">The rule picks the lowest-scoring model more often</button>
+          <button class="opt" data-fb="The standard error sets the width of the band.">Nothing; the rule only depends on the mean scores</button>
+          <button class="opt" data-fb="Wider bands favour the simpler models.">The rule picks a more complex model to reduce bias</button>
         </div>
         <p class="fb"></p>
       </div>
@@ -1392,9 +1392,10 @@ p.frq-lead{font-size:.92rem;color:var(--ink-soft,#4a5765);margin:.2rem 0 .8rem}
     </div>
     <aside class="check">
       <span class="n">Exam target</span>
-      <p class="q">What fraction of the original observations appears in a typical bootstrap sample, and where does the number come from?</p>
+      <p class="q">What happens to the chance that a given observation is left out of a bootstrap sample as n grows, and why does it matter?</p>
       <details><summary>Show answer</summary>
-        <p class="a">About 63.2%. Each draw misses a given observation with probability (1 − 1/n); n independent draws miss it with probability (1 − 1/n)<sup>n</sup> → 1/e ≈ 0.368, so it appears with probability ≈ 0.632.</p>
+        <p class="a">It rises toward 1/e ≈ 37%: each of n draws misses it with probability (1 − 1/n), and (1 − 1/n)<sup>n</sup> → 1/e. So about 63% of observations appear and about 37% are out-of-bag, however large n is.</p>
+        <p class="a">That permanent out-of-bag share is what lets bagging and random forests estimate error without a separate validation set.</p>
       </details>
     </aside>
   </div>
@@ -1472,13 +1473,12 @@ p.frq-lead{font-size:.92rem;color:var(--ink-soft,#4a5765);margin:.2rem 0 .8rem}
       <h3>Section A — Multiple choice, midterm style</h3>
 
       <div class="ix" data-quiz="m3x-q1">
-        <div class="ix-head"><span class="ix-kind">midterm · calculation</span><span class="ix-done">answered</span></div>
-        <p class="prompt">You tune an SVM over 6 values of λ and 4 values of γ using 10-fold cross-validation, then deploy the winner. How many times is the model fitted in total?</p>
+        <div class="ix-head"><span class="ix-kind">what if</span><span class="ix-done">answered</span></div>
+        <p class="prompt">You tune an SVM with 10-fold cross-validation over a grid of λ and γ values. What happens to the total number of model fits if you double the number of λ values, or switch to 20 folds?</p>
         <div class="opts">
-          <button class="opt" data-fb="240 is the cross-validation work, but it omits the final refit. The fold models are not the deliverable — none of them was trained on all the data.">240</button>
-          <button class="opt" data-right data-fb="6 × 4 = 24 candidate settings, each cross-validated over 10 folds = 240 fits, plus one final refit of the winning setting on all the training-and-validation data = 241. Forgetting the final refit is the most common slip here, and it is also a conceptual error, not just an arithmetic one.">241</button>
-          <button class="opt" data-fb="24 counts the candidate settings but not the folds. Each setting is fitted ten times, once per held-out fold.">24</button>
-          <button class="opt" data-fb="This adds a fit for each fold's 'winner', which does not happen — a single winning setting is chosen from the averaged scores and refitted once.">250</button>
+          <button class="opt" data-right data-fb="Every candidate setting is cross-validated over every fold, so the count multiplies: twice the settings or twice the folds means about twice the fits. The one final refit on all the training-and-validation data is added once either way — forgetting it is the classic slip.">Either change doubles the fitting work, because fits = settings × folds (+ one final refit)</button>
+          <button class="opt" data-fb="Each extra fold is one more fit for every candidate setting.">Doubling λ values doubles the work, but more folds costs nothing extra</button>
+          <button class="opt" data-fb="Every setting is fitted in every fold before a winner exists. The final refit is only the last of many fits.">Neither changes the count much, since only the winning model is fitted</button>
         </div>
         <p class="fb"></p>
       </div>
@@ -1532,13 +1532,13 @@ p.frq-lead{font-size:.92rem;color:var(--ink-soft,#4a5765);margin:.2rem 0 .8rem}
       </div>
 
       <div class="ix" data-quiz="m3x-q6">
-        <div class="ix-head"><span class="ix-kind">final · calculation</span><span class="ix-done">answered</span></div>
-        <p class="prompt">Roughly what proportion of the original distinct observations appears in a single bootstrap sample of size n, for large n?</p>
+        <div class="ix-head"><span class="ix-kind">final · what if</span><span class="ix-done">answered</span></div>
+        <p class="prompt">What happens to the share of distinct original observations in a bootstrap sample as the dataset size n grows?</p>
         <div class="opts">
-          <button class="opt" data-fb="100% would require sampling without replacement, which returns the original dataset and produces no variation between resamples at all.">All of them — the sample is the same size as the original.</button>
-          <button class="opt" data-fb="Half is a common guess but has no basis. The correct figure comes from the probability that a given observation survives n draws.">About 50%</button>
-          <button class="opt" data-right data-fb="P(an observation is chosen at least once) = 1 − (1 − 1/n)ⁿ → 1 − 1/e ≈ 0.632. So roughly 63% appear and 37% are out-of-bag.">About 63%</button>
-          <button class="opt" data-fb="About 37% is the out-of-bag fraction — the observations left out, not the ones included. Getting these the wrong way round is the usual slip.">About 37%</button>
+          <button class="opt" data-right data-fb="Each observation is missed with probability (1 − 1/n)ⁿ, which approaches 1/e ≈ 0.368 as n grows. So a bootstrap sample never converges to the full dataset — roughly a third is always left out, which is what makes out-of-bag error possible.">It settles at about 63% (1 − 1/e), leaving about 37% out-of-bag, however large n gets</button>
+          <button class="opt" data-fb="Sampling with replacement repeats some points and misses others, at any n.">It approaches 100%, since the sample is the same size as the data</button>
+          <button class="opt" data-fb="The limit is 1 − 1/e, not a half.">It falls toward 50%</button>
+          <button class="opt" data-fb="About 37% is the share left <em>out</em>, not the share included.">It falls toward 37%</button>
         </div>
         <p class="fb"></p>
       </div>

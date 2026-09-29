@@ -202,13 +202,13 @@ figure{overflow-x:auto}
       </div>
 
       <div class="ix" data-quiz="m7l1-q2">
-        <div class="ix-head"><span class="ix-kind">calculation</span><span class="ix-done">answered</span></div>
-        <p class="prompt">With α = 0.4, S<sub>t−1</sub> = 50 and x<sub>t</sub> = 40, what is S<sub>t</sub>?</p>
+        <div class="ix-head"><span class="ix-kind">what if</span><span class="ix-done">answered</span></div>
+        <p class="prompt">A new reading x<sub>t</sub> comes in well below yesterday’s baseline S<sub>t−1</sub>. What happens to the new baseline S<sub>t</sub> as α increases?</p>
         <div class="opts">
-          <button class="opt" data-fb="That puts 0.4 on yesterday's baseline and 0.6 on the reading — the weights are the wrong way round. α always multiplies the new observation.">44</button>
-          <button class="opt" data-right data-fb="0.4 × 40 + 0.6 × 50 = 16 + 30 = 46. The baseline moves 40% of the way from 50 toward 40.">46</button>
-          <button class="opt" data-fb="45 is the plain average, which would be α = 0.5.">45</button>
-          <button class="opt" data-fb="That would be believing the reading completely (α = 1).">40</button>
+          <button class="opt" data-right data-fb="S<sub>t</sub> = αx<sub>t</sub> + (1 − α)S<sub>t−1</sub>. α = 0 ignores the reading; α = 1 jumps all the way to it; in between, the baseline moves α of the way.">It moves further toward the new reading: α is the share of the gap the baseline closes</button>
+          <button class="opt" data-fb="That’s backward — α multiplies the new observation.">It moves less, because a larger α trusts history more</button>
+          <button class="opt" data-fb="α is the baseline’s own smoothing constant.">It is unaffected; α only matters for trend</button>
+          <button class="opt" data-fb="With 0 &lt; α &lt; 1 it always lands between the old baseline and the new reading.">It overshoots past the new reading</button>
         </div>
         <p class="fb"></p>
       </div>
@@ -366,25 +366,24 @@ figure{overflow-x:auto}
       </table>
 
       <div class="ix" data-quiz="m7l2-q1">
-        <div class="ix-head"><span class="ix-kind">calculation</span><span class="ix-done">answered</span></div>
-        <p class="prompt">A café’s Saturday seasonal factor is 1.25. It serves 600 coffees this Saturday. How many of those are baseline demand?</p>
+        <div class="ix-head"><span class="ix-kind">what if</span><span class="ix-done">answered</span></div>
+        <p class="prompt">A café’s Saturday seasonal factor is estimated at 1.25. If that factor were revised upward, with Saturday sales unchanged, what happens to the estimated baseline demand?</p>
         <div class="opts">
-          <button class="opt" data-fb="That subtracts 25% of 600. The factor multiplies the baseline, so the lift is 25% of the baseline, not of the total.">450</button>
-          <button class="opt" data-right data-fb="600 / 1.25 = 480. The remaining 120 is the Saturday lift — 25% of 480. This is exactly the division x_t / C_(t−L) that the baseline equation performs.">480</button>
-          <button class="opt" data-fb="600 × 1.25 inflates instead of deflating. To remove a seasonal effect from an observation, divide by the factor.">750</button>
-          <button class="opt" data-fb="600 − 25 treats the factor as an additive count. With a multiplicative model the lift scales with the baseline.">575</button>
+          <button class="opt" data-right data-fb="Deseasonalising divides by the factor. The larger the factor, the more of the observed sales are put down to the day rather than to underlying demand.">It falls: baseline = actual ÷ seasonal factor, so a bigger factor explains more of the sales as “it’s Saturday”</button>
+          <button class="opt" data-fb="Dividing by a larger number gives a smaller baseline.">It rises in proportion</button>
+          <button class="opt" data-fb="The factor is also used to strip seasonality out of observations.">It is unchanged; the factor only affects forecasts</button>
         </div>
         <p class="fb"></p>
       </div>
 
       <div class="ix" data-quiz="m7l2-q2">
-        <div class="ix-head"><span class="ix-kind">calculation</span><span class="ix-done">answered</span></div>
-        <p class="prompt">With γ = 0.1, this period’s observation is 660, the new baseline S<sub>t</sub> is 600, and last cycle’s factor for this stage was 1.2. What is the updated factor C<sub>t</sub>?</p>
+        <div class="ix-head"><span class="ix-kind">what if</span><span class="ix-done">answered</span></div>
+        <p class="prompt">An unusually quiet period comes in at a normally busy stage of the cycle. What happens to that stage’s seasonal factor C<sub>t</sub> as γ increases?</p>
         <div class="opts">
-          <button class="opt" data-fb="1.1 is the observed ratio 660/600 on its own — that would be γ = 1.">1.10</button>
-          <button class="opt" data-right data-fb="0.1 × (660/600) + 0.9 × 1.2 = 0.11 + 1.08 = 1.19. One weaker-than-usual period nudges the factor down only slightly, because γ is small.">1.19</button>
-          <button class="opt" data-fb="That swaps the weights — 0.9 on the new ratio and 0.1 on the old factor.">1.11</button>
-          <button class="opt" data-fb="1.2 would mean the factor didn't update at all (γ = 0).">1.20</button>
+          <button class="opt" data-right data-fb="C<sub>t</sub> = γ(x<sub>t</sub>/S<sub>t</sub>) + (1 − γ)C<sub>t−L</sub>. A larger γ gives the latest ratio more say, so one odd period can reshape the seasonal pattern.">It drops further toward this period’s low ratio x<sub>t</sub>/S<sub>t</sub>; a small γ barely moves it</button>
+          <button class="opt" data-fb="γ controls how fast the factor updates, not whether it grows.">It rises, because a larger γ strengthens the seasonal effect</button>
+          <button class="opt" data-fb="Only γ = 0 freezes the factor.">It stays exactly at last cycle’s value</button>
+          <button class="opt" data-fb="γ acts on the seasonal factor; α acts on the baseline.">It changes the baseline S<sub>t</sub> instead</button>
         </div>
         <p class="fb"></p>
       </div>
@@ -509,9 +508,10 @@ figure{overflow-x:auto}
     </div>
     <aside class="check">
       <span class="n">Exam target</span>
-      <p class="q">What weight does x<sub>t−3</sub> receive in S<sub>t</sub>?</p>
+      <p class="q">As α goes down, what happens to the weight on an observation three periods old?</p>
       <details><summary>Show answer</summary>
-        <p class="a">α(1 − α)³. With α = 0.5 that is 0.0625; with α = 0.2 it is 0.1024 — the smaller α gives <em>more</em> weight to an observation three periods old.</p>
+        <p class="a">For most α it goes <em>up</em>. The weight is α(1 − α)³: a smaller α discounts older data more slowly, so more of the weight reaches back in time — α = 0.5 gives about 6%, α = 0.2 about 10%.</p>
+        <p class="a">Only at very small α (below 0.25) does the weight start falling again, because by then every single observation, old or new, gets very little.</p>
       </details>
     </aside>
   </div>
@@ -569,22 +569,22 @@ figure{overflow-x:auto}
       <p>A 5-day moving average gives each of the last five days a weight of 0.2 and every earlier day a weight of 0. That cliff causes a quirk: when a big value <em>drops out</em> of the window, the average jumps, even though nothing happened today. Exponential weights fade smoothly instead, so there is no drop-out jump. They also need only one stored number, S<sub>t−1</sub>, rather than the whole window — a big reason the method suited 1950s inventory systems.</p>
 
       <div class="ix" data-quiz="m7l3-q2">
-        <div class="ix-head"><span class="ix-kind">calculation</span><span class="ix-done">answered</span></div>
-        <p class="prompt">A team wants a smoothed daily metric whose data is, on average, about 4 days old. Which α gives that?</p>
+        <div class="ix-head"><span class="ix-kind">what if</span><span class="ix-done">answered</span></div>
+        <p class="prompt">What happens to the average age of the data inside S<sub>t</sub> as α decreases?</p>
         <div class="opts">
-          <button class="opt" data-fb="With α = 0.25, (1 − α)/α = 0.75/0.25 = 3 days.">0.25</button>
-          <button class="opt" data-right data-fb="(1 − 0.2)/0.2 = 4. Solving (1 − α)/α = 4 gives α = 1/5.">0.20</button>
-          <button class="opt" data-fb="With α = 0.4, (1 − α)/α = 1.5 days — far more reactive than asked.">0.40</button>
-          <button class="opt" data-fb="With α = 0.1 the average age is 9 days — more than twice what was asked.">0.10</button>
+          <button class="opt" data-right data-fb="At α = 0.5 the data is on average 1 period old; at α = 0.2, 4 periods; at α = 0.1, 9. Smoothing more means reacting later.">It gets older: the average age is (1 − α)/α, so smaller α means a longer memory and a slower response</button>
+          <button class="opt" data-fb="A small α trusts the new reading less, so it reacts more slowly.">It gets younger, because a smaller α reacts faster</button>
+          <button class="opt" data-fb="Noise reduction and lag are the same trade-off.">It doesn’t change; α only affects noise</button>
+          <button class="opt" data-fb="For a long series it is set by α alone.">It depends only on how much data you have</button>
         </div>
         <p class="fb"></p>
       </div>
     </div>
     <aside class="check">
       <span class="n">Check</span>
-      <p class="q">With α = 0.5, what fraction of S<sub>t</sub>’s weight sits on data more than three periods old?</p>
+      <p class="q">What happens to the share of S<sub>t</sub>’s weight sitting on data more than three periods old as α increases?</p>
       <details><summary>Show answer</summary>
-        <p class="a">(1 − α)<sup>4</sup> = 0.5<sup>4</sup> = 6.25%. Today and the three periods before it carry 50 + 25 + 12.5 + 6.25 = 93.75%.</p>
+        <p class="a">It shrinks. That share is (1 − α)<sup>4</sup>: large α concentrates almost all the weight on the last few readings (α = 0.5 leaves about 6% older than three periods), while small α leaves much more on old data (α = 0.2 leaves about 41%).</p>
       </details>
     </aside>
   </div>
@@ -647,13 +647,13 @@ figure{overflow-x:auto}
       </div>
 
       <div class="ix" data-quiz="m7l4-q1">
-        <div class="ix-head"><span class="ix-kind">calculation</span><span class="ix-done">answered</span></div>
-        <p class="prompt">S<sub>t</sub> = 200, T<sub>t</sub> = 4, and the seasonal factor from the matching stage last cycle is 0.9. What is F<sub>t+1</sub>?</p>
+        <div class="ix-head"><span class="ix-kind">what if</span><span class="ix-done">answered</span></div>
+        <p class="prompt">In a multiplicative Holt-Winters forecast F<sub>t+1</sub> = (S<sub>t</sub> + T<sub>t</sub>) × C<sub>(t+1)−L</sub>, what happens as the seasonal factor for the coming stage drops below 1?</p>
         <div class="opts">
-          <button class="opt" data-fb="That applies the factor to the baseline only and adds the trend afterwards. In the multiplicative model the factor scales baseline plus trend together.">184.0</button>
-          <button class="opt" data-right data-fb="(200 + 4) × 0.9 = 183.6. The low factor says next period sits at a quiet stage of the cycle.">183.6</button>
-          <button class="opt" data-fb="204 ignores the seasonal factor entirely.">204.0</button>
-          <button class="opt" data-fb="Dividing by the factor is how you remove seasonality from an observation. To put it back into a forecast, multiply.">226.7</button>
+          <button class="opt" data-right data-fb="The factor multiplies baseline plus trend together. A factor of 0.9 means “10% below normal for this stage”; the same factor takes more off when the level is higher.">The forecast falls below baseline + trend, by a proportion rather than a fixed amount</button>
+          <button class="opt" data-fb="Dividing by the factor removes seasonality from an observation; to put it back into a forecast you multiply.">The forecast rises, since the factor is divided out</button>
+          <button class="opt" data-fb="The factor scales baseline and trend together.">Only the trend is reduced</button>
+          <button class="opt" data-fb="They are what put the seasonal shape into the forecast.">The forecast is unaffected; seasonal factors only matter when fitting</button>
         </div>
         <p class="fb"></p>
       </div>
@@ -1000,13 +1000,12 @@ figure{overflow-x:auto}
       <p>Fitted on 1949–1958 for this page, its two error coefficients came out at about −0.32 and −0.57, similar to published fits. Its 1959–60 forecasts had a MAPE of 8.4% (RMSE 43) — in the same range as Holt-Winters in Lesson 4, with just two parameters. Lesson 7 shows how the correlation plots point to this exact model.</p>
 
       <div class="ix" data-quiz="m7l5-q2">
-        <div class="ix-head"><span class="ix-kind">calculation</span><span class="ix-done">answered</span></div>
-        <p class="prompt">Using the error-correction form with α = 0.25: last period’s forecast was 80 and the actual value was 72. What is the new forecast?</p>
+        <div class="ix-head"><span class="ix-kind">what if</span><span class="ix-done">answered</span></div>
+        <p class="prompt">In the error-correction form F<sub>t+1</sub> = F<sub>t</sub> + α(x<sub>t</sub> − F<sub>t</sub>), what happens as the last forecast error gets larger, and as α increases?</p>
         <div class="opts">
-          <button class="opt" data-fb="That moves 75% of the way toward the actual. The correction uses α, not 1 − α.">74</button>
-          <button class="opt" data-right data-fb="Error = 72 − 80 = −8. New forecast = 80 + 0.25 × (−8) = 78. Same answer as 0.25 × 72 + 0.75 × 80.">78</button>
-          <button class="opt" data-fb="The error must be x − F = −8, not +8. Adding 2 moves the forecast away from the actual.">82</button>
-          <button class="opt" data-fb="72 is α = 1 — the naive forecast.">72</button>
+          <button class="opt" data-right data-fb="The new forecast moves α of the way from the old forecast to the actual value. α = 0 never corrects; α = 1 jumps to the last actual.">A bigger error means a bigger correction, and a bigger α corrects a larger share of it</button>
+          <button class="opt" data-fb="Exponential smoothing has no outlier rule; every error feeds in.">A bigger error is ignored as an outlier</button>
+          <button class="opt" data-fb="α is the share of the error corrected.">A bigger α makes the correction smaller</button>
         </div>
         <p class="fb"></p>
       </div>
@@ -1153,13 +1152,13 @@ figure{overflow-x:auto}
       <p>Banks use volatility forecasts like these in <strong>value-at-risk</strong> calculations — the loss a portfolio should exceed only with some small probability — which feed regulatory capital requirements. The Nobel committee’s own illustration: $1 million held in the S&amp;P 500 on 31 July 2002 had, by such a model, a 99% chance of losing no more than about $61,500 the next day.</p>
 
       <div class="ix" data-quiz="m7l6-q3">
-        <div class="ix-head"><span class="ix-kind">calculation</span><span class="ix-done">answered</span></div>
-        <p class="prompt">A GARCH(1, 1) has ω = 0.04, β = 0.90 on the past variance and γ = 0.05 on the past squared error. Yesterday’s variance was 0.8 and yesterday’s return was 2%. What is today’s variance, and what is the long-run variance?</p>
+        <div class="ix-head"><span class="ix-kind">what if</span><span class="ix-done">answered</span></div>
+        <p class="prompt">In GARCH(1, 1), σ²<sub>t</sub> = ω + βσ²<sub>t−1</sub> + γε²<sub>t−1</sub>. What happens as β + γ gets closer to 1?</p>
         <div class="opts">
-          <button class="opt" data-right data-fb="0.04 + 0.90 × 0.8 + 0.05 × 4 = 0.04 + 0.72 + 0.20 = 0.96. Long run: 0.04 / (1 − 0.95) = 0.8. The 2% move lifted variance above its usual level; over time it drifts back to 0.8.">Today 0.96; long run 0.80</button>
-          <button class="opt" data-fb="0.86 uses the return (2) instead of its square (4). GARCH works with squared errors.">Today 0.86; long run 0.80</button>
-          <button class="opt" data-fb="Today's value is right, but the long-run variance is ω divided by (1 − β − γ), not ω divided by (β + γ).">Today 0.96; long run 0.04</button>
-          <button class="opt" data-fb="That swaps the weights — 0.05 on the past variance and 0.90 on the squared error.">Today 3.64; long run 0.80</button>
+          <button class="opt" data-right data-fb="β + γ is the persistence. Near 1, a turbulent day keeps variance high for a long time, and the level variance returns to rises sharply.">Shocks to volatility die away more slowly, and the long-run variance ω/(1 − β − γ) grows</button>
+          <button class="opt" data-fb="Higher persistence means slower return.">Volatility returns to normal faster</button>
+          <button class="opt" data-fb="γ is the weight on past squared errors; raising it increases that dependence.">The model stops depending on past errors</button>
+          <button class="opt" data-fb="The denominator 1 − β − γ shrinks, so the long-run variance rises.">The long-run variance falls toward ω</button>
         </div>
         <p class="fb"></p>
       </div>
@@ -1206,13 +1205,12 @@ figure{overflow-x:auto}
       <p>Stop as soon as the series looks stationary. Differencing more than needed adds noise and makes forecasts worse, so the usual choice is d = 0, 1, or occasionally 2.</p>
 
       <div class="ix" data-quiz="m7l7-q1">
-        <div class="ix-head"><span class="ix-kind">calculation</span><span class="ix-done">answered</span></div>
-        <p class="prompt">A series runs 2, 5, 10, 17, 26, 37. What is the smallest d that makes it stationary?</p>
+        <div class="ix-head"><span class="ix-kind">what if</span><span class="ix-done">answered</span></div>
+        <p class="prompt">What happens if you difference a series more times than it needs to become stationary?</p>
         <div class="opts">
-          <button class="opt" data-fb="The raw series is clearly climbing, so its mean isn't constant.">d = 0</button>
-          <button class="opt" data-fb="First differences are 3, 5, 7, 9, 11 — still climbing by 2 each time. One more difference is needed.">d = 1</button>
-          <button class="opt" data-right data-fb="First differences: 3, 5, 7, 9, 11. Second differences: 2, 2, 2, 2. Constant at d = 2 — the signature of a quadratic trend.">d = 2</button>
-          <button class="opt" data-fb="Second differences are already constant. A third round would give 0, 0, 0 and only add noise on real data — that is over-differencing.">d = 3</button>
+          <button class="opt" data-right data-fb="Each unnecessary difference subtracts noise from noise, inflating variance and making consecutive values move oppositely. Use the smallest d that removes the trend.">It gets noisier and picks up artificial negative correlation between neighbouring values</button>
+          <button class="opt" data-fb="Past the needed order, differencing hurts.">It becomes even more stationary, which only helps</button>
+          <button class="opt" data-fb="Only for a perfectly smooth series; real data has noise.">Nothing; extra differences are all zero</button>
         </div>
         <p class="fb"></p>
       </div>
@@ -1379,13 +1377,12 @@ figure{overflow-x:auto}
       <p>Finally, check what the model leaves behind. If the model has captured the pattern, the leftover errors should look like <strong>white noise</strong> — ARIMA(0, 0, 0). Remaining correlation means there is structure left to model.</p>
 
       <div class="ix" data-quiz="m7l8-q1">
-        <div class="ix-head"><span class="ix-kind">calculation trap</span><span class="ix-done">answered</span></div>
-        <p class="prompt">A forecaster’s errors over four weeks are +8, −8, +6, −6. They report “average error: zero — the model is perfect.” What are the MAE and RMSE?</p>
+        <div class="ix-head"><span class="ix-kind">what if</span><span class="ix-done">answered</span></div>
+        <p class="prompt">A forecaster’s errors are mostly small, but one week has a big miss. What happens to MAE and RMSE as that one miss gets bigger?</p>
         <div class="opts">
-          <button class="opt" data-fb="That repeats the forecaster's mistake. Signed errors cancel; absolute and squared ones don't.">MAE 0, RMSE 0</button>
-          <button class="opt" data-right data-fb="MAE = (8 + 8 + 6 + 6)/4 = 7. RMSE = √((64 + 64 + 36 + 36)/4) = √50 ≈ 7.07. The zero average only shows the model isn't biased in one direction. It says nothing about how big the misses are.">MAE 7, RMSE ≈ 7.07</button>
-          <button class="opt" data-fb="50 is the mean squared error. RMSE takes its square root, putting it back in the data's units.">MAE 7, RMSE 50</button>
-          <button class="opt" data-fb="28 is the total absolute error. MAE divides by the number of periods.">MAE 28, RMSE ≈ 14.1</button>
+          <button class="opt" data-right data-fb="MAE grows in proportion to the miss; RMSE grows with its square. A widening gap between RMSE and MAE is the signature of a few large errors.">Both rise, but RMSE rises much faster, because squaring gives large errors extra weight</button>
+          <button class="opt" data-fb="Squaring makes RMSE the more sensitive of the two.">MAE rises faster than RMSE</button>
+          <button class="opt" data-fb="That’s the plain average error; MAE and RMSE don’t cancel.">Neither changes, since positive and negative errors cancel</button>
         </div>
         <p class="fb"></p>
       </div>
@@ -1487,7 +1484,7 @@ figure{overflow-x:auto}
   <div class="lesson-head">
     <span class="ln">Exam workout</span>
     <h2>Midterm and final-style questions</h2>
-    <p class="keyline">Short calculations, “explain and justify” prompts where the reasoning carries the marks, and multi-part cases where each part builds on the last.</p>
+    <p class="keyline">Short “what happens if” questions, “explain and justify” prompts where the reasoning carries the marks, and multi-part cases where each part builds on the last.</p>
   </div>
 
   <div class="row">
@@ -1500,25 +1497,24 @@ figure{overflow-x:auto}
       <h3>Section A — Multiple choice, midterm style</h3>
 
       <div class="ix" data-quiz="m7x-q1">
-        <div class="ix-head"><span class="ix-kind">midterm · calculation</span><span class="ix-done">answered</span></div>
-        <p class="prompt">A Holt model (no seasonality) ends the training data with S<sub>t</sub> = 50 and T<sub>t</sub> = 2. Using the standard multi-step form, what is the forecast three periods ahead?</p>
+        <div class="ix-head"><span class="ix-kind">what if</span><span class="ix-done">answered</span></div>
+        <p class="prompt">A Holt model (no seasonality) forecasts h periods ahead with F<sub>t+h</sub> = S<sub>t</sub> + h·T<sub>t</sub>. What happens as the horizon h increases?</p>
         <div class="opts">
-          <button class="opt" data-fb="52 is the one-step forecast. Three steps ahead the trend is applied three times.">52</button>
-          <button class="opt" data-right data-fb="F_(t+3) = S_t + 3·T_t = 50 + 6 = 56.">56</button>
-          <button class="opt" data-fb="50 ignores the trend. That would be the forecast from single exponential smoothing.">50</button>
-          <button class="opt" data-fb="54 applies the trend twice — the forecast for t + 2.">54</button>
+          <button class="opt" data-right data-fb="The trend is projected in a straight line. A trend that is slightly off is multiplied by h — which is why damped-trend methods often forecast better far ahead.">The forecast keeps moving by T<sub>t</sub> per step, so any error in the trend estimate grows with h</button>
+          <button class="opt" data-fb="That’s single smoothing (or a damped trend). Plain Holt keeps adding T<sub>t</sub>.">The forecast levels off at S<sub>t</sub></button>
+          <button class="opt" data-fb="Uncertainty grows with the horizon.">The forecast becomes more accurate, since it uses more trend</button>
+          <button class="opt" data-fb="The trend is frozen at T<sub>t</sub> once the data ends.">The trend is re-estimated each step from the forecasts</button>
         </div>
         <p class="fb"></p>
       </div>
 
       <div class="ix" data-quiz="m7x-q2">
-        <div class="ix-head"><span class="ix-kind">midterm · calculation</span><span class="ix-done">answered</span></div>
-        <p class="prompt">With α = 0.3, what weight does the observation from two periods ago, x<sub>t−2</sub>, carry in S<sub>t</sub>?</p>
+        <div class="ix-head"><span class="ix-kind">what if</span><span class="ix-done">answered</span></div>
+        <p class="prompt">How does the weight on an observation from a few periods ago change as α increases?</p>
         <div class="opts">
-          <button class="opt" data-fb="0.49 is (1 − α)² alone. The weight on any observation also includes a factor of α.">0.490</button>
-          <button class="opt" data-fb="0.21 is α(1 − α) — the weight on x_(t−1), one period back.">0.210</button>
-          <button class="opt" data-right data-fb="α(1 − α)² = 0.3 × 0.49 = 0.147.">0.147</button>
-          <button class="opt" data-fb="0.09 is α². The exponent belongs on (1 − α), not on α.">0.090</button>
+          <button class="opt" data-right data-fb="A larger α means (1 − α)ᵏ falls quickly, so older data fades fast. A small α spreads weight much further back.">It shrinks faster with age: weights are α(1 − α)ᵏ, so a high α concentrates weight on the newest readings</button>
+          <button class="opt" data-fb="The (1 − α)ᵏ factor dominates for older data.">It grows, because α is multiplied in</button>
+          <button class="opt" data-fb="Every weight depends on α.">It stays the same; α only affects the newest reading</button>
         </div>
         <p class="fb"></p>
       </div>
@@ -1536,13 +1532,13 @@ figure{overflow-x:auto}
       </div>
 
       <div class="ix" data-quiz="m7x-q4">
-        <div class="ix-head"><span class="ix-kind">midterm · calculation</span><span class="ix-done">answered</span></div>
-        <p class="prompt">Monthly values: 4, 6, 10, 16, 24, 34. What order of differencing makes this series stationary, and what constant does it reach?</p>
+        <div class="ix-head"><span class="ix-kind">what if</span><span class="ix-done">answered</span></div>
+        <p class="prompt">A series grows like a curve (each step up is bigger than the last). What happens if you difference it once versus twice?</p>
         <div class="opts">
-          <button class="opt" data-fb="First differences are 2, 4, 6, 8, 10 — still rising.">d = 1, constant 2</button>
-          <button class="opt" data-right data-fb="First differences 2, 4, 6, 8, 10; second differences 2, 2, 2, 2. A quadratic trend needs d = 2.">d = 2, constant 2</button>
-          <button class="opt" data-fb="Second differences are 2, not 4. Check the subtraction on 2, 4, 6, 8, 10.">d = 2, constant 4</button>
-          <button class="opt" data-fb="Third differences would be all zero — already past the point where the series became stationary.">d = 3, constant 0</button>
+          <button class="opt" data-right data-fb="A quadratic-shaped trend needs d = 2. Each extra difference removes one level of trend, but over-differencing creates artificial negative correlation and more noise.">Once still leaves a rising pattern; twice makes it roughly constant. Differencing more than needed just adds noise</button>
+          <button class="opt" data-fb="One difference removes a straight-line trend, not a curved one.">Once is always enough for any trend</button>
+          <button class="opt" data-fb="Past the needed order, it hurts.">More differencing always makes forecasts better</button>
+          <button class="opt" data-fb="Ordinary differencing targets the trend.">Differencing changes the seasonal pattern only</button>
         </div>
         <p class="fb"></p>
       </div>
@@ -1597,9 +1593,9 @@ figure{overflow-x:auto}
     </div>
     <aside class="check">
       <span class="n">How to read the options</span>
-      <p class="q">Several wrong answers above are the right number for a <em>neighbouring</em> question. Why?</p>
+      <p class="q">Several wrong answers above describe the right effect in the <em>wrong direction</em>. Why?</p>
       <details><summary>Show answer</summary>
-        <p class="a">Examiners build wrong answers from specific slips: the one-step instead of three-step forecast, the weight on t−1 instead of t−2, the MSE instead of the RMSE. If your answer appears as an option, check that it answers the question actually asked.</p>
+        <p class="a">Examiners build wrong answers from specific slips: reading α as the weight on history instead of on the new reading, treating a smaller α as faster, confusing RMSE with MAE. Before choosing, say out loud which way the quantity moves and why — then check the option says the same.</p>
       </details>
     </aside>
   </div>
@@ -1622,12 +1618,13 @@ figure{overflow-x:auto}
       </div>
 
       <div class="frq">
-        <p class="qn">B2 · <strong>Compute by hand.</strong> With α = 0.5, smooth the series 10, 14, 12, 18. Give S<sub>1</sub> to S<sub>4</sub>, the forecast for period 5, and the sum of squared one-step errors for periods 2 to 4.</p>
+        <p class="qn">B2 · <strong>Turn the knob.</strong> A series is flat, then jumps to a new level and stays there. Describe what happens to S<sub>t</sub>, the one-step forecasts and the one-step errors after the jump when α is raised from 0.2 to 0.8. Which value should each period’s error be scored against?</p>
         <details><summary>Model answer</summary>
           <div class="ans">
-            <p>S<sub>1</sub> = 10 (starting condition). S<sub>2</sub> = 0.5·14 + 0.5·10 = 12. S<sub>3</sub> = 0.5·12 + 0.5·12 = 12. S<sub>4</sub> = 0.5·18 + 0.5·12 = 15. F<sub>5</sub> = S<sub>4</sub> = 15.</p>
-            <p>One-step forecasts are F<sub>2</sub> = S<sub>1</sub> = 10, F<sub>3</sub> = S<sub>2</sub> = 12, F<sub>4</sub> = S<sub>3</sub> = 12. Errors: 10 − 14 = −4, 12 − 12 = 0, 12 − 18 = −6. Sum of squares = 16 + 0 + 36 = 52.</p>
-            <p class="mark"><strong>Marking notes.</strong> The common slip is scoring S<sub>t</sub> against x<sub>t</sub>. S<sub>t</sub> has already seen x<sub>t</sub>, so that isn’t a forecast. The error for period t uses the forecast made at t − 1. Stating S<sub>1</sub> = x<sub>1</sub> explicitly earns its own mark.</p>
+            <p>With α = 0.2 the baseline closes only 20% of the remaining gap each period, so S<sub>t</sub> creeps toward the new level; forecasts lag for many periods and the errors stay large for a long time before shrinking. With α = 0.8 it closes 80% of the gap each period, so it catches up within a couple of periods and the errors die out quickly.</p>
+            <p>The price of the higher α appears before the jump: on the flat but noisy stretch, α = 0.8 chases every random wobble, so its errors there are larger than α = 0.2’s. Which α wins overall depends on how much of the movement is real change and how much is noise.</p>
+            <p>Each period’s error is the forecast made at t − 1 (that is, S<sub>t−1</sub>) against x<sub>t</sub>, never S<sub>t</sub> against x<sub>t</sub>.</p>
+            <p class="mark"><strong>Marking notes.</strong> Full marks name both directions: faster recovery after the jump, and more noise-chasing before it. The common slip is scoring S<sub>t</sub> against x<sub>t</sub> — S<sub>t</sub> has already seen x<sub>t</sub>, so that isn’t a forecast.</p>
           </div>
         </details>
       </div>

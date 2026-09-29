@@ -159,11 +159,11 @@
 
       <div class="ix" data-quiz="m9l1-q2">
         <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
-        <p class="prompt">A model is fitted to Box-Cox-transformed house prices with λ = 0. For a new house it predicts 12.9. What should you report?</p>
+        <p class="prompt">A model is fitted to Box-Cox-transformed prices with λ close to 0 (a log). As the model’s transformed prediction t goes up by 1, what happens to the prediction in original units?</p>
         <div class="opts">
-          <button class="opt" data-fb="The model never saw prices; it saw ln(price). 12.9 is on the log scale.">A price of $12.90</button>
-          <button class="opt" data-fb="Multiplying by λ = 0 gives zero — and multiplying isn’t how the transformation is undone in any case.">12.9 × λ</button>
-          <button class="opt" data-right data-fb="With λ = 0 the transformation is ln y, so the inverse is eᵗ: e^12.9 ≈ $400,000. The prediction is only meaningful once converted back.">e<sup>12.9</sup> ≈ $400,000</button>
+          <button class="opt" data-fb="That would be true with no transformation (λ = 1). On a log scale, equal steps in t are not equal steps in y.">It always goes up by the same fixed amount</button>
+          <button class="opt" data-right data-fb="With λ = 0, y = eᵗ, so each +1 in t multiplies y by about 2.7. Equal steps on the transformed scale become bigger and bigger steps in real units — which is why predictions must be converted back before they are read.">It is multiplied by roughly e ≈ 2.7, so equal steps in t mean larger and larger jumps in y</button>
+          <button class="opt" data-fb="The transformation is increasing, so a higher t always means a higher y.">It can go up or down, depending on the data</button>
         </div>
         <p class="fb"></p>
       </div>
@@ -252,11 +252,11 @@
 
       <div class="ix" data-quiz="m9l2-q2">
         <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
-        <p class="prompt">Using the trend line price ≈ −45,600 + 23.2 × year, what is the detrended value for a year-2010 price of $1,420?</p>
+        <p class="prompt">You detrend a series with a line that is <em>steeper</em> than its true long-run trend. What happens to the detrended values?</p>
         <div class="opts">
-          <button class="opt" data-fb="That is the trend estimate for 2010 — step one of two. Subtract it from the actual price.">$1,032</button>
-          <button class="opt" data-right data-fb="Trend in 2010: −45,600 + 23.2 × 2010 = 1,032. Detrended: 1,420 − 1,032 = 388. The price sat $388 above its long-run line that year.">$388</button>
-          <button class="opt" data-fb="Detrending subtracts the trend from the actual value; this subtracts the other way round.">−$388</button>
+          <button class="opt" data-fb="A different slope subtracts different amounts each year, so the result can’t be unchanged.">Nothing — any line removes the trend</button>
+          <button class="opt" data-right data-fb="Detrended = actual − trend. A too-steep line subtracts too little early on and too much later, so the leftovers tilt downward over time — a false trend the model may try to explain.">Early values come out too high and later values too low, leaving a false downward drift</button>
+          <button class="opt" data-fb="Shifting every value equally is what a wrong <em>intercept</em> does. A wrong slope changes the amount subtracted year by year.">Every value shifts down by the same amount</button>
         </div>
         <p class="fb"></p>
       </div>
@@ -492,11 +492,11 @@
 
       <div class="ix" data-quiz="m9l4-q2">
         <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
-        <p class="prompt">A regression on two components gives b₁ = 2 and b₂ = −1. For original factor j, v<sub>j1</sub> = 0.6 and v<sub>j2</sub> = 0.8. What is a<sub>j</sub>?</p>
+        <p class="prompt">You keep increasing the number of components L in the regression, up to all of them. What happens to the implied coefficients a<sub>j</sub> = Σ b<sub>k</sub>v<sub>jk</sub>?</p>
         <div class="opts">
-          <button class="opt" data-fb="That adds 1.2 and 0.8, losing the minus sign on b₂.">2.0</button>
-          <button class="opt" data-right data-fb="a_j = b₁v_j1 + b₂v_j2 = 2(0.6) + (−1)(0.8) = 1.2 − 0.8 = 0.4.">0.4</button>
-          <button class="opt" data-fb="That adds the eigenvector entries without weighting them by the b’s.">1.4</button>
+          <button class="opt" data-fb="Each extra component adds a b<sub>k</sub>v<sub>jk</sub> term to every a<sub>j</sub>, so they do change.">They stay the same whatever L is</button>
+          <button class="opt" data-right data-fb="Every added component contributes another term. Using all of them is just a rotation of the original factors, so the a<sub>j</sub> match an ordinary regression on the centred factors; fewer components give smaller, more stable coefficients.">They change as terms are added, and with all components they match an ordinary regression on the original factors</button>
+          <button class="opt" data-fb="Adding terms doesn’t force the coefficients down; if anything, dropping components is what shrinks them.">They all shrink toward zero</button>
         </div>
         <p class="fb"></p>
       </div>
@@ -540,11 +540,11 @@
 
       <div class="ix" data-quiz="m9l5-q1">
         <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
-        <p class="prompt">A = [[2, 0], [0, 3]] and v = (0, 1). Is v an eigenvector, and with what eigenvalue?</p>
+        <p class="prompt">v is an eigenvector of A with eigenvalue λ. What happens to Av as λ changes?</p>
         <div class="opts">
-          <button class="opt" data-fb="2 goes with (1, 0). Multiply it out: A(0, 1) = (0, 3).">Yes, λ = 2</button>
-          <button class="opt" data-right data-fb="A(0, 1) = (2·0 + 0·1, 0·0 + 3·1) = (0, 3) = 3·(0, 1). Same direction, three times as long.">Yes, λ = 3</button>
-          <button class="opt" data-fb="Av doesn’t have to equal v — only point the same way. It does, three times longer.">No, because Av ≠ v</button>
+          <button class="opt" data-fb="An eigenvector is never turned — that’s what makes it an eigenvector.">A larger λ turns v further away from its original direction</button>
+          <button class="opt" data-right data-fb="Av = λv: λ &gt; 1 stretches v, 0 &lt; λ &lt; 1 shrinks it, and a negative λ flips it to point the other way along the same line.">λ &gt; 1 stretches v, 0 &lt; λ &lt; 1 shrinks it, and λ &lt; 0 flips it along the same line</button>
+          <button class="opt" data-fb="Only λ = 1 leaves v unchanged.">Nothing — Av always equals v</button>
         </div>
         <p class="fb"></p>
       </div>
@@ -729,9 +729,9 @@
   </aside>
   <aside class="check">
     <span class="n">Exam target</span>
-    <p class="q">A trend line for a town&rsquo;s annual water use is 1,800 + 45&middot;(year &minus; 2000) megalitres. In 2014 the town used 2,300. What is the detrended value, and what does it mean?</p>
+    <p class="q">A town&rsquo;s water use was detrended with a line fitted to 2000&ndash;2015, when use grew quickly. A conservation campaign has since slowed the growth, but the old line is still used for 2016&ndash;2025. What happens to the detrended values, and why does it matter?</p>
     <details><summary>Show answer</summary>
-      <p class="a">Trend in 2014: 1,800 + 45&times;14 = 2,430. Detrended: 2,300 &minus; 2,430 = &minus;130 megalitres. The town used 130 ML less than its long-run trend predicted &mdash; perhaps a wet year or restrictions &mdash; which is exactly the kind of variation a factor-based model should try to explain.</p>
+      <p class="a">The old line keeps rising faster than actual use, so it subtracts more and more each year: the detrended values drift increasingly negative. A factor-based model will then try to explain that artificial decline with whatever predictors happen to trend over the same years. Refit the trend (or use a trend shape that can bend) whenever the underlying growth rate changes.</p>
     </details>
   </aside>
   <aside class="check">
@@ -743,9 +743,9 @@
   </aside>
   <aside class="check">
     <span class="n">Exam target</span>
-    <p class="q">For A = [[4, 1], [2, 3]], check that v = (1, 1) is an eigenvector and find its eigenvalue.</p>
+    <p class="q">Before running PCA without scaling, an analyst records one of ten factors in grams instead of kilograms. What happens to the first principal component, and what should change?</p>
     <details><summary>Show answer</summary>
-      <p class="a">Av = (4&middot;1 + 1&middot;1, 2&middot;1 + 3&middot;1) = (5, 5) = 5&middot;(1, 1). Same direction, five times as long: v is an eigenvector with &lambda; = 5. (The other eigenvalue is 2, with eigenvector (1, &minus;2): det(A &minus; &lambda;I) = (4 &minus; &lambda;)(3 &minus; &lambda;) &minus; 2 = &lambda;&sup2; &minus; 7&lambda; + 10 = 0.)</p>
+      <p class="a">Multiplying a factor by 1,000 multiplies its variance by 1,000,000. Unscaled PCA ranks directions by raw variance, so the first component swings almost entirely onto that one factor &mdash; because of its units, not its importance. Scale each factor to standard deviation 1 before PCA when factors are in different units.</p>
     </details>
   </aside>
   <aside class="check">
@@ -864,13 +864,13 @@
 
   <div class="row">
     <div class="main">
-      <h3>Practice</h3>
+      <h3>Practice: turn the knob</h3>
       <ol class="steps">
-        <li><strong>Box-Cox by hand.</strong> With λ = ½, transform y = 4, 16 and 64. How much further apart are the largest two than the smallest two, before and after? <em>(Before: 12 and 48. After: t = 2(√y − 1) = 2, 6, 14, so gaps of 4 and 8 — the large-value gap shrinks from 4× to 2× the small one.)</em></li>
-        <li><strong>Detrending.</strong> Quarterly sales follow the trend 500 + 12t. In quarter t = 20 sales were 690. Detrended value? <em>(Trend 740; detrended −50.)</em></li>
-        <li><strong>Back-translation.</strong> A model on three components has b = (1.5, −0.5, 2). Factor j has v<sub>j·</sub> = (0.2, 0.4, −0.1). Find a<sub>j</sub>. <em>(0.3 − 0.2 − 0.2 = −0.1.)</em></li>
-        <li><strong>Eigenvalues.</strong> For A = [[3, 1], [0, 2]], solve det(A − λI) = 0. <em>((3 − λ)(2 − λ) = 0, so λ = 3 and 2.)</em></li>
-        <li><strong>Variance explained.</strong> Eigenvalues are 6, 2, 1, 0.6, 0.4. What share do the first two explain? <em>(8/10 = 80%.)</em></li>
+        <li><strong>λ down.</strong> Software moves λ from 1 to 0.3. What happens to the gaps between large responses compared with small ones? <em>(The large-value gaps shrink much more than the small ones, evening out the spread. At λ = 1 nothing changed; the further below 1, the stronger the squeeze.)</em></li>
+        <li><strong>Trend slope wrong.</strong> The fitted trend is flatter than the real one. What do the detrended values look like? <em>(Too little is subtracted in later periods, so an upward drift is left behind.)</em></li>
+        <li><strong>More components.</strong> What happens to variance kept, noise and dimension as n rises? <em>(More variance kept, but each added component carries less of it and relatively more noise, and the model has more inputs.)</em></li>
+        <li><strong>Units up.</strong> One factor is multiplied by 100 before unscaled PCA. <em>(Its variance rises 10,000-fold; it takes over the first component. Scaling removes the effect.)</em></li>
+        <li><strong>Noise up.</strong> Random noise rises equally in every factor. What happens to the later components? <em>(Their signal-to-noise ratio falls furthest, because they had the least real variance to begin with — another reason to keep the top few.)</em></li>
       </ol>
       <h3>Sources and further reading</h3>
       <ul>
@@ -884,11 +884,11 @@
 
       <div class="ix" data-quiz="m9x2-q1">
         <div class="ix-head"><span class="ix-kind">self-test</span><span class="ix-done">answered</span></div>
-        <p class="prompt">Eigenvalues of XᵀX are 5, 3, 1.5, 0.5. You keep enough components to explain at least 80% of the variance. How many?</p>
+        <p class="prompt">You raise your variance threshold for keeping components from 80% to 95%. What happens?</p>
         <div class="opts">
-          <button class="opt" data-fb="5 of 10 is only 50%.">1</button>
-          <button class="opt" data-fb="Three reach 95% — more than the 80% you need. The first two already give (5 + 3)/10 = 80%.">3</button>
-          <button class="opt" data-right data-fb="Total 10. First two: (5 + 3)/10 = 80%, which meets the threshold.">2</button>
+          <button class="opt" data-fb="A higher threshold can only keep as many components or more.">You keep fewer components</button>
+          <button class="opt" data-fb="Every extra component is still a blend of all the original factors, and the ranking doesn’t change — only where you cut it.">The components themselves change</button>
+          <button class="opt" data-right data-fb="You keep more components: more information, but each added one has less variance and relatively more noise, and there is less dimension reduction. Neither threshold looks at the response.">You keep more components — more information, but more noise and less reduction</button>
         </div>
         <p class="fb"></p>
       </div>

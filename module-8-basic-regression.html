@@ -315,10 +315,10 @@
     </div>
     <aside class="check">
       <span class="n">Check 6</span>
-      <p class="q">Adding a parameter raises ln(L*) by 0.6. Does AIC go up or down?</p>
+      <p class="q">Adding a parameter improves ln(L*) by a small amount. What happens to AIC as that improvement grows?</p>
       <details><summary>Show answer</summary>
-        <p class="a">Up. The penalty rises by 2, and the fit term falls by 2 × 0.6 = 1.2, a net increase of 0.8. The parameter improved the fit, but not by enough to pay for itself.</p>
-        <p class="a">Under AIC, an extra parameter has to raise ln(L*) by more than 1 to be worth keeping.</p>
+        <p class="a">The penalty always rises by 2, and the fit term falls by twice the improvement. A small improvement (under 1) leaves AIC higher — the parameter didn’t pay for itself. Once the improvement passes 1, AIC falls, and the bigger the improvement, the more it falls.</p>
+        <p class="a">Under BIC the bar is higher and rises with n: the improvement must exceed ln(n)/2.</p>
       </details>
     </aside>
   </div>
@@ -336,12 +336,11 @@
 
       <div class="ix" data-quiz="m8l2-q1">
         <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
-        <p class="prompt">Model A has AIC 318; model B has AIC 324. Roughly how likely is B, relative to A, to be the better model?</p>
+        <p class="prompt">Two models are fitted to the same data. What happens to the relative likelihood that the higher-AIC model is actually better, exp((AIC<sub>low</sub> − AIC<sub>high</sub>)/2), as the AIC gap widens?</p>
         <div class="opts">
-          <button class="opt" data-fb="That would be exp(−1): a gap of 2. The gap here is 6, and the formula halves it: exp(−6/2) = exp(−3).">About 37%</button>
-          <button class="opt" data-fb="The AIC values themselves aren’t probabilities, and their ratio (324/318) means nothing. Only the difference matters.">About 98% — the two values are nearly the same size.</button>
-          <button class="opt" data-right data-fb="exp((318 − 324)/2) = e⁻³ ≈ 0.050. B is about 5% as likely as A to be the better model — strong evidence for A.">About 5%</button>
-          <button class="opt" data-fb="exp(−6) ≈ 0.25% forgets to halve the difference.">About 0.25%</button>
+          <button class="opt" data-right data-fb="A gap of 2 gives about 37%, 4 about 13.5%, 6 about 5%, 10 under 1%. Only the difference matters, not the size of the AIC values.">It falls fast — exponentially — so each extra couple of points makes the worse model much less plausible</button>
+          <button class="opt" data-fb="It’s an exponential, so it drops off much faster than linearly.">It falls in a straight line with the gap</button>
+          <button class="opt" data-fb="The absolute size of AIC carries no meaning; only differences do.">It depends on how large the AIC values are, not their gap</button>
         </div>
         <p class="fb"></p>
       </div>
@@ -1069,16 +1068,17 @@
   </aside>
   <aside class="check">
     <span class="n">Exam target</span>
-    <p class="q">Two models of server response time, fitted to the same logs, have AIC 1,204 and 1,210. How much more likely is the first to be the better model?</p>
+    <p class="q">Two models are fitted to the same logs. As the gap between their AIC values widens, what happens to how likely the higher-AIC model is to be the better one?</p>
     <details><summary>Show answer</summary>
-      <p class="a">exp((1,204 &minus; 1,210)/2) = e<sup>&minus;3</sup> &asymp; 0.05. The second model is about 5% as likely as the first to be the better one &mdash; equivalently, the first is about twenty times as likely. Only the difference matters; the size of the AIC values themselves carries no meaning.</p>
+      <p class="a">It falls exponentially: exp(−gap/2). A gap of 2 still leaves the worse model about a 37% chance; 6 leaves about 5%; 10 leaves under 1%. Only the difference matters — the size of the AIC values themselves carries no meaning.</p>
     </details>
   </aside>
   <aside class="check">
     <span class="n">Exam target</span>
-    <p class="q">A startup has 12 months of revenue data and a model with 9 parameters. Which of AIC, AICc and BIC would you trust to compare it with a 3-parameter model?</p>
+    <p class="q">What happens to the AICc correction 2k(k + 1)/(n − k − 1) as the number of parameters k gets close to the number of data points n — and as n grows with k fixed?</p>
     <details><summary>Show answer</summary>
-      <p class="a">AICc is the appropriate one of the three, and it will be damning: its correction 2k(k+1)/(n&minus;k&minus;1) is 2&middot;9&middot;10/2 = 90 for the large model, against 2&middot;3&middot;4/8 = 3 for the small one. Plain AIC assumes plenty of data and BIC is a large-sample approximation, so neither is reliable here. The deeper point: 12 observations cannot support 9 parameters at all, and the large model is almost certainly fitting random effects.</p>
+      <p class="a">As k approaches n the denominator shrinks toward zero and the correction explodes, so AICc punishes big models on small data very heavily — exactly the case where plain AIC and BIC are unreliable.</p>
+      <p class="a">As n grows with k fixed the correction shrinks toward zero and AICc becomes plain AIC. The deeper point: a handful of observations cannot support many parameters at all.</p>
     </details>
   </aside>
   <aside class="check">
@@ -1097,9 +1097,10 @@
   </aside>
   <aside class="check">
     <span class="n">Exam target</span>
-    <p class="q">An online shop fits spend = a&#8320; + a&#8321;&middot;discount + a&#8322;&middot;member + a&#8323;&middot;(discount &times; member), where member is 1 for loyalty-scheme members and 0 otherwise. The fit gives a&#8321; = 3 and a&#8323; = 4. What does each extra unit of discount do?</p>
+    <p class="q">An online shop fits spend = a&#8320; + a&#8321;&middot;discount + a&#8322;&middot;member + a&#8323;&middot;(discount &times; member), where member is 1 for loyalty-scheme members and 0 otherwise. What happens to the gap between members’ and non-members’ response to a discount as a&#8323; increases? What if a&#8323; were zero?</p>
     <details><summary>Show answer</summary>
-      <p class="a">For non-members (member = 0) the discount effect is a&#8321; = 3 per unit. For members it is a&#8321; + a&#8323; = 7 per unit. The interaction term lets the discount&rsquo;s effect differ between the two groups; without it, the model would force one common slope and report something in between that is right for neither.</p>
+      <p class="a">The discount effect is a&#8321; for non-members and a&#8321; + a&#8323; for members, so the gap between the groups is a&#8323; itself: the larger a&#8323;, the more strongly members respond compared with non-members. A negative a&#8323; would mean members respond less.</p>
+      <p class="a">If a&#8323; were zero the two groups would share one slope, and the interaction term would add nothing.</p>
     </details>
   </aside>
 </section>
@@ -1284,11 +1285,11 @@
 
       <div class="ix" data-quiz="m8x2-q1">
         <div class="ix-head"><span class="ix-kind">quick check</span><span class="ix-done">answered</span></div>
-        <p class="prompt">You test 50 predictors and want at most a 5% chance of any false positive across all of them. What threshold does Bonferroni give each test?</p>
+        <p class="prompt">Using Bonferroni (threshold = 0.05 / M), what happens as the number of tests M grows?</p>
         <div class="opts">
-          <button class="opt" data-fb="0.05 per test gives roughly a 92% chance of at least one false positive across 50 null tests (1 − 0.95⁵⁰).">0.05</button>
-          <button class="opt" data-right data-fb="α / M = 0.05 / 50 = 0.001. Each test becomes much stricter so that the family as a whole keeps a 5% error rate.">0.001</button>
-          <button class="opt" data-fb="That multiplies instead of dividing.">2.5</button>
+          <button class="opt" data-right data-fb="0.05/M falls as M rises. That protects the family-wise error rate, at the cost of power — genuine but modest effects start failing the stricter bar.">Each test’s threshold shrinks, so false positives stay controlled but real effects get harder to detect</button>
+          <button class="opt" data-fb="That would make false positives worse.">Each threshold grows, since there are more chances to find something</button>
+          <button class="opt" data-fb="Then with many tests, at least one false positive becomes almost certain.">The threshold stays at 0.05</button>
         </div>
         <p class="fb"></p>
       </div>

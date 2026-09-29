@@ -1146,11 +1146,11 @@
 
       <div class="ix" data-quiz="m6x3-q1">
         <div class="ix-head"><span class="ix-kind">self-test</span><span class="ix-done">answered</span></div>
-        <p class="prompt">S<sup>−</sup><sub>t−1</sub> = 14, μ = 50, x<sub>t</sub> = 61, C = 4. What is S<sup>−</sup><sub>t</sub>?</p>
+        <p class="prompt">Monitoring for a <em>decrease</em>, S<sup>−</sup> has built up to a moderate value. Then one reading comes in well <em>above</em> μ. What happens to S<sup>−</sup>, and how does the size of the jump matter?</p>
         <div class="opts">
-          <button class="opt" data-fb="That would be the result of adding the deviation without its sign. μ − x is 50 − 61 = −11, not +11, because the observation came in above expectation.">29</button>
-          <button class="opt" data-right data-fb="μ − x = 50 − 61 = −11; minus C = 4 gives −15; plus 14 gives −1, which is negative, so the floor applies and the answer is 0. A single strongly above-expectation reading wiped out the accumulated evidence for a decrease.">0</button>
-          <button class="opt" data-fb="−1 is the value before the floor is applied. The max with zero is part of the recursion, not an optional display convention — the statistic never takes a negative value.">−1</button>
+          <button class="opt" data-right data-fb="μ − x is negative for an above-expectation reading, and C is subtracted too, so S<sup>−</sup> falls. A large enough jump takes it below zero, where max{0, ·} resets it — the evidence for a decrease is wiped out.">S<sup>−</sup> drops; a big enough upward reading wipes it back to 0, because the floor stops it going negative</button>
+          <button class="opt" data-fb="The sign matters: S<sup>−</sup> only accumulates readings below μ − C.">S<sup>−</sup> rises, because any large deviation counts as evidence</button>
+          <button class="opt" data-fb="The floor at zero is part of the recursion; the statistic never goes negative.">S<sup>−</sup> goes negative in proportion to the jump</button>
         </div>
         <p class="fb"></p>
       </div>
@@ -1168,11 +1168,11 @@
 
       <div class="ix" data-quiz="m6x3-q3">
         <div class="ix-head"><span class="ix-kind">self-test</span><span class="ix-done">answered</span></div>
-        <p class="prompt">You want to detect a 2σ shift as fast as possible with CUSUM. What is k?</p>
+        <p class="prompt">You tune a CUSUM to detect a particular shift as fast as possible, using k = δ/2. What happens to k if the shift you care about gets larger?</p>
         <div class="opts">
-          <button class="opt" data-fb="0.5 is the default, and it targets a 1σ shift. It would still detect a 2σ shift, just not as quickly as a scheme tuned for it.">0.5, the standard default.</button>
-          <button class="opt" data-right data-fb="k = δ/2 = 1.0, so K = σ. This is the value that makes each period's contribution the log-likelihood ratio between unchanged and shifted-by-2σ, which is what makes CUSUM fastest for that specific shift.">1.0, since k = δ/2.</button>
-          <button class="opt" data-fb="k = δ would set the allowance equal to the whole shift, so a process that had shifted by exactly 2σ would contribute nothing on average and the statistic would never climb. The halving is what leaves room for the evidence to accumulate.">2.0, matching the shift size you are targeting.</button>
+          <button class="opt" data-right data-fb="k = δ/2: a larger target shift means a larger allowance. The scheme stops reacting to modest changes and becomes fastest at catching the big one.">k rises with it, so small wobbles are ignored and only big shifts build up quickly</button>
+          <button class="opt" data-fb="A smaller k suits a smaller shift; for a bigger shift you can afford more allowance.">k falls, to become more sensitive</button>
+          <button class="opt" data-fb="0.5 is the default because it targets a 1σ shift; it is not optimal for others.">k stays at the 0.5 default whatever the shift</button>
         </div>
         <p class="fb"></p>
       </div>

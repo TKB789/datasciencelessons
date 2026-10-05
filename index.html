@@ -152,6 +152,7 @@
                   the 11 written answers and the α explorer are not scored)
      m8   =  29  (21 quizzes, 2 orders, 2 matches, 2 hotspots, 2 branches)
      m9   =  20  (13 quizzes, 2 orders, 2 matches, 1 hotspot, 2 branches)
+     m10  =  23  (16 quizzes, 1 order, 3 matches, 1 hotspot, 2 branches)
      disc =  25
      exam = 110  (22 topics: 85 multiple choice + 25 discussion — revealing
                   a model answer counts as done on that page)
@@ -166,6 +167,7 @@ window.MODULE_ITEM_COUNTS = {
   m7: 34,
   m8: 29,
   m9: 20,
+  m10: 23,
   disc: 25,
   exam: 110
 };
@@ -524,6 +526,46 @@ m9: `
 <li>Keeping 5 of 50 components still needs all 50 measurements.</li>
 <li>Nonlinear PCA: kernels, as with SVMs.</li>
 <li><span class="warn">PCA never sees the response</span> — the dropped low-variance direction can be the useful one. Usually it isn't.</li>
+</ul>`,
+
+m10: `
+<h4>Terms</h4>
+<ul>
+<li><b>CART</b> — split the data into branches, separate model per leaf. Root at the top, leaves at the bottom (drawn upside down).</li>
+<li><b>Leaf model in practice</b> — regression: mean response · logistic: fraction true · classification: most common class.</li>
+<li><b>Random forest</b> — many unpruned trees, each on a bootstrap sample, each split choosing from a random subset of factors; average (regression) or mode (classification).</li>
+<li><b>Explainability</b> — how easily you can say how the model reaches its answer. Linear regression high, tree low, forest very low.</li>
+<li><b>Logistic regression</b> — probability between 0 and 1; pseudo-R² only; threshold turns it into yes/no.</li>
+<li><b>TP / FP / TN / FN</b> — positive/negative = what the model said; true/false = whether it was right.</li>
+<li><b>Parametric</b> — formula chosen (Poisson, Bayesian). <b>Nonparametric</b> — no fixed form (splines, KNN regression).</li>
+</ul>
+<h4>Equations</h4>
+<ul class="eqs">
+<li>p = 1 / (1 + e^−(a₀ + Σ aⱼxⱼ)) <i>≡ ln(p/(1−p)) = a₀ + Σ aⱼxⱼ</i></li>
+<li>sensitivity = TP/(TP + FN) · specificity = TN/(TN + FP)</li>
+<li>inbox spam share = FP/(TP + FP) · real lost = FN/(TP + FN) <i>real = positive</i></li>
+<li>expected cost = Σ cell count × cell cost <i>rescale rows for a new class mix</i></li>
+<li>ROC: sensitivity vs 1 − specificity · AUC = P(random yes scored above random no) <i>0.5 = guessing</i></li>
+<li>factors per split ≈ 1 + log n <i>software: √m classification, m/3 regression</i></li>
+</ul>
+<h4>Turn the knob</h4>
+<ul class="knob">
+<li><b>Δ ↑</b> — fewer splits, smaller tree, less overfitting (too high misses structure).</li>
+<li><b>min leaf size ↑</b> — fewer, larger, more reliable leaves. Rule of thumb ≥ 5%.</li>
+<li><b>factors per split ↓</b> — trees more different, each weaker. <b>trees ↑</b> — steadier, slower, no overfitting.</li>
+<li><b>|a₁| ↑</b> — steeper S. <b>a₀</b> — slides the S.</li>
+<li><b>threshold ↑</b> — fewer yes: specificity ↑, sensitivity ↓. AUC unchanged.</li>
+<li><b>cost of FN ↑</b> — lower the threshold / more lenient model.</li>
+<li><b>knots ↑</b> — more flexible spline. <b>data ↑ (Bayesian)</b> — prior matters less. <b>k ↑ (KNN)</b> — smoother.</li>
+</ul>
+<h4>Rules that carry marks</h4>
+<ul>
+<li>Branch one factor at a time on the biggest variance drop; split only if drop &gt; Δ and both sides big enough; prune on the other half.</li>
+<li>Forests: better predictions, only variable importance — a good “default” black box.</li>
+<li>Explainability trade-off is decided by the model's use and decision-makers; can be a legal requirement.</li>
+<li>Don't memorise every metric — reason from the four cells.</li>
+<li><span class="warn">More accurate ≠ better</span> — cost the mistakes. AUC ignores costs.</li>
+<li>Poisson: counts with λ(x) · splines: smooth pieces at knots (MARS / earth) · Bayesian: prior + data, best with little data · KNN regression: average of k nearest.</li>
 </ul>`,
 
 disc: `

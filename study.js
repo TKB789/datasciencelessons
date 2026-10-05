@@ -45,6 +45,10 @@ var MODULES = [
     title:"Advanced Data Preparation", colour:"#7a5c2e",
     blurb:"Fixing the data before the model sees it: Box-Cox for a response whose spread grows with its size, detrending for drift over time, and principal component analysis — with the eigenvectors behind it — for too many correlated predictors." },
 
+  { id:"m10", file:"module-10-advanced-regression.html", tab:"Module 10 — Advanced Regression",
+    title:"Advanced Regression", colour:"#9a3b6b",
+    blurb:"Regression stretched three ways: trees and random forests that model each part of the data separately, logistic regression for probabilities, and confusion matrices for judging a classifier by what its mistakes cost — plus a tour of Poisson, spline, Bayesian and KNN regression." },
+
   /* Not lecture modules — study tools arranged by topic rather than by lecture.
      `label` overrides the "Module N" caption on the index card. */
   { id:"disc", file:"discussion.html", tab:"Study tools — Discussion",
